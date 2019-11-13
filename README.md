@@ -6,7 +6,9 @@ Entourage Web App
     * [Bibliothèques internes](#bibliothèques-internes)
 * [Installation](#installation)
 * [Architecture](#architecture)
-* [Tests Unitaires](#tests-unitaires)
+* [Tests](#tests)
+  * [Jest](#jest)
+  * [Git hooks](#git-hooks)
 * [Versionning & Release](#versionning--release)
 * [Ressources React](#ressources-react)
     * [Docs & blogs](#docs--blogs)
@@ -36,7 +38,11 @@ Entourage Web App
 # Architecture
 ...
 
-# Tests Unitaires
+# Tests
+
+## Jest
+
+Les tests unitaires sont réalisés avec [Jest](https://jestjs.io)
 
 Architecture
 
@@ -51,6 +57,22 @@ Exécuter les tests unitaires:
 
 ```
 yarn test:jest
+```
+
+## Git hooks
+
+[Huksy](https://github.com/typicode/husky) est utilisé pour activer les git hooks.
+
+Git hooks actifs:
+```json
+"pre-commit": "yarn test:eslint",
+"pre-push": "yarn test"
+```
+
+Pour contourner les git hook, vous pouvez utiliser `--no-verify`, mais à faire uniquement en cas de force majeur :wink:
+```
+git commit -m "votre message" --no-verify
+git push --no-verify
 ```
 
 # Versionning & Release
