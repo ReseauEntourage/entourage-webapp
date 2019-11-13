@@ -6,6 +6,7 @@ Entourage Web App
     * [Bibliothèques internes](#bibliothèques-internes)
 * [Installation](#installation)
 * [Architecture](#architecture)
+* [Tests Unitaires](#tests-unitaires)
 * [Versionning & Release](#versionning--release)
 * [Ressources React](#ressources-react)
     * [Docs & blogs](#docs--blogs)
@@ -34,6 +35,23 @@ Entourage Web App
 
 # Architecture
 ...
+
+# Tests Unitaires
+
+Architecture
+
+```
+Button.tsx
+Button.styles.ts
+__tests__
+  Button.spec.ts
+```
+
+Exécuter les tests unitaires:
+
+```
+yarn test:jest
+```
 
 # Versionning & Release
 
