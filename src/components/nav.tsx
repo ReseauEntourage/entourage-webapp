@@ -3,17 +3,18 @@ import Link from 'next/link'
 
 const links = [
   { href: 'https://zeit.co/now', label: 'ZEIT', key: '' },
-  { href: 'https://github.com/zeit/next.js', label: 'GitHub', key: '' }
-].map(link => {
+  { href: 'https://github.com/zeit/next.js', label: 'GitHub', key: '' },
+].map((link) => {
+  // eslint-disable-next-line
   link.key = `nav-link-${link.href}-${link.label}`
   return link
 })
 
-const Nav = () => (
+export const Nav: React.SFC = () => (
   <nav>
     <ul>
       <li>
-        <Link href='/'>
+        <Link href="/">
           <a>Home</a>
         </Link>
       </li>
@@ -24,7 +25,8 @@ const Nav = () => (
       ))}
     </ul>
 
-    <style jsx>{`
+    <style jsx={true}>
+      {`
       :global(body) {
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
@@ -49,8 +51,8 @@ const Nav = () => (
         text-decoration: none;
         font-size: 13px;
       }
-    `}</style>
+    `}
+
+    </style>
   </nav>
 )
-
-export default Nav
