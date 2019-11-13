@@ -46,6 +46,15 @@ module.exports = {
     'no-console': [1, { allow: ['warn', 'error'] }],
     'semi': [1, 'never'],
   },
+  'overrides': [
+    {
+      // storybook use both default export and named exports
+      'files': ['src/**/*.stories.tsx'],
+      'rules': {
+        'import/no-default-export': 0,
+      }
+    }
+  ],
   settings: {
     'import/resolver': {
       // use <root>/tsconfig.json

@@ -6,6 +6,7 @@ Entourage Web App
     * [Bibliothèques internes](#bibliothèques-internes)
 * [Installation](#installation)
 * [Architecture](#architecture)
+* [Storybook](#storybook)
 * [Tests](#tests)
   * [Jest](#jest)
   * [Git hooks](#git-hooks)
@@ -37,6 +38,27 @@ Entourage Web App
 
 # Architecture
 ...
+
+# Storybook
+
+Créer un fichier `*.stories.tsx` au même que le componsant
+
+```
+Button.tsx
+Button.stories.ts
+```
+
+```js
+import React from 'react'
+import { Button } from './Button'
+
+export default {
+  title: 'Button',
+}
+
+export const BasicButton = () => <Button />
+```
+
 
 # Tests
 

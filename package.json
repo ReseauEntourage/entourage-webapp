@@ -8,7 +8,8 @@
     "start": "next start",
     "test": "run-s test:*",
     "test:eslint": "npx eslint src --ext ts,tsx --max-warnings=0",
-    "test:jest": "npx jest"
+    "test:jest": "npx jest",
+    "storybook": "start-storybook"
   },
   "husky": {
     "hooks": {
@@ -22,11 +23,14 @@
     "react-dom": "16.11.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.2",
+    "@storybook/react": "^5.2.6",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.12.7",
     "@types/react": "^16.9.11",
     "@typescript-eslint/eslint-plugin": "^2.7.0",
     "@typescript-eslint/parser": "^2.7.0",
+    "babel-loader": "^8.0.6",
     "eslint": "^6.6.0",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-import-resolver-typescript": "^2.0.0",
@@ -38,6 +42,7 @@
     "jest": "^24.9.0",
     "npm-run-all": "^4.1.5",
     "ts-jest": "^24.1.0",
+    "ts-loader": "^6.2.1",
     "typescript": "^3.7.2"
   }
 }
