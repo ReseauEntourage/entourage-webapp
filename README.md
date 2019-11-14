@@ -45,7 +45,7 @@ Créer un fichier `*.stories.tsx` au même que le componsant
 
 ```
 Button.tsx
-Button.stories.ts
+Button.stories.tsx
 ```
 
 ```js
