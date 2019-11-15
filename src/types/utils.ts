@@ -1,0 +1,1 @@
+export type DateISO = string

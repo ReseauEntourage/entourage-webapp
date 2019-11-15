@@ -26,6 +26,10 @@ module.exports = {
         "requireLast": true
       },
     }],
+    '@typescript-eslint/no-empty-interface': 0,
+    // many times, typing will bring duplication
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/ban-ts-ignore': 0,
 
     // Import Rules
     'import/no-default-export': 2,
@@ -45,6 +49,8 @@ module.exports = {
     // Plain JavaScript Rules
     'no-console': [1, { allow: ['warn', 'error'] }],
     'semi': [1, 'never'],
+    'max-len': [1, { code: 120 }],
+    'arrow-body-style': 0,
   },
   'overrides': [
     {
