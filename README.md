@@ -6,6 +6,7 @@ Entourage Web App
     * [Bibliothèques internes](#bibliothèques-internes)
 * [Installation](#installation)
 * [Architecture](#architecture)
+* [API](#api)
 * [Storybook](#storybook)
 * [Tests](#tests)
   * [Jest](#jest)
@@ -29,6 +30,7 @@ Entourage Web App
 
 ## Bibliothèques internes
 * Forms - [react-hook-form](https://react-hook-form.com)
+* Design system - [@material-ui](https://material-ui.com/)
 * Styles - [styled-components](https://www.styled-components.com)
 * HTTP client - [axios](https://github.com/axios/axios)
 * WebSocket client - [socket.io-client](https://github.com/socketio/socket.io-client)
@@ -38,6 +40,31 @@ Entourage Web App
 
 # Architecture
 ...
+
+# API
+
+Le schéma de l'api est défini dans [src/api/schema](src/api/schema.ts) et utilise le format [request-schema](https://github.com/GuillaumeJasmin/request-schema).
+
+Utilisation de l'API:
+```js
+import { api } from 'src/api'
+
+const users = await api.request({
+  routeName: 'GET users',
+  urlParams: {
+    ...
+  },
+  params: {
+    ...
+  },
+  data: {
+    ...
+  }
+})
+```
+
+Les valeur de `routeName` seront autocompletées, ainsi que les valeurs requises pour `params`, `data`, etc.  
+L'objet `api` est une instance axios.  
 
 # Storybook
 
