@@ -1,11 +1,10 @@
+import { AxiosInstance } from 'axios'
+import { createAxiosInstance } from 'request-schema'
 import { env } from 'src/core/env'
-import { Client } from './Client'
-import { createResource } from './createResource'
+import { schema } from './schema'
+import { addAxiosInterceptors } from './interceptors'
 
-const client = new Client(env.API_V1_URL)
+const axiosInstance = createAxiosInstance({ baseURL: env.API_V1_URL }, schema)
+addAxiosInterceptors(axiosInstance as AxiosInstance)
 
-export const api = {
-  anonymousUser: createResource(client, 'POST anonymous_users'),
-  myFeeds: createResource(client, 'GET myfeeds'),
-  userMeGet: createResource(client, 'GET users/me'),
-}
+export const api = axiosInstance
