@@ -13,8 +13,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test:eslint",
-      "pre-push": "yarn test"
+      "pre-commit": "yarn test:eslint"
     }
   },
   "dependencies": {
