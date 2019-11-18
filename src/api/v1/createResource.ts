@@ -1,6 +1,6 @@
 import { AxiosPromise, AxiosRequestConfig } from 'axios'
 import { compile, pathToRegexp } from 'path-to-regexp'
-import { Schema } from './Schema'
+import { Schema } from './schema'
 import { Client } from './Client'
 
 type SchemaKeys = keyof typeof Schema
