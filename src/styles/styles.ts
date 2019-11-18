@@ -8,5 +8,6 @@ export const styles = {
     grey: '#344055',
     black: '#070707',
     text: '#040D2B',
+    marker: '#ffa018',
   },
 }

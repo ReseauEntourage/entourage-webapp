@@ -1,14 +1,42 @@
 
 import { DateISO } from 'src/types/utils'
 
-type UserType = 'public'
+export type UserType = 'public'
 
-type FeedType = 'Entourage'
-type FeedStatus = 'open'
-type FeedGroupType = 'action'
-type FeedEntourageType = 'contribution'
-type FeedDisplayCategory = 'info'
-type FeedJoinStatus = 'accepted'
+export type FeedType = 'Entourage'
+export type FeedStatus = 'open'
+export type FeedGroupType = 'action'
+export type FeedEntourageType = 'contribution' | 'ask_for_help'
+export type FeedDisplayCategory = 'info'
+export type FeedJoinStatus = 'accepted' | 'not_requested'
+
+export type Location = {
+  latitude: number;
+  longitude: number;
+}
+
+type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
+
+/**
+ * Values: as,ae,am,ar,ai,ak,ao
+ *
+ * as : ask_for_help_social
+ * ae = ask_for_help_event
+ * am = ask_for_help_mat_help
+ * ar = ask_for_help_resource
+ * ai = ask_for_help_info
+ * ak = ask_for_help_skill
+ * ao = ask_for_help_other
+ * cs = contribution_social
+ * ce = contribution_event
+ * cm = contribution_mat_help
+ * cr = contribution_resource
+ * ci = contribution_info
+ * ck = contribution_skill
+ * co = contribution_other
+ * ou = outing (event)
+ */
+type FeedTypesFilter = string
 
 export const schema = {
   'POST anonymous_users': {
@@ -18,77 +46,138 @@ export const schema = {
     data: null,
     response: {} as {
       user: {
-        id: null;
-        email: null;
-        displayName: null;
-        firstName: null;
-        lastName: null;
-        roles: unknown[];
         about: null;
-        token: string;
-        avatarUrl: null;
-        userType: UserType;
-        partner: null;
-        hasPassword: boolean;
+        address: null;
         anonymous: true;
-        uuid: string;
+        avatarUrl: null;
+        displayName: null;
+        email: null;
+        firstName: null;
         firebaseProperties: {
           ActionZoneDep: string;
           ActionZoneCP: string;
         };
-        placeholders: string[];
+        hasPassword: boolean;
+        id: null;
+        lastName: null;
         organization: null;
+        partner: null;
+        placeholders: string[];
+        roles: unknown[];
         stats: {
           tourCount: number;
           encounterCount: number;
           entourageCount: number;
         };
-        address: null;
+        token: string;
+        userType: UserType;
+        uuid: string;
       };
+    },
+  },
+  'GET feeds': {
+    url: 'feeds',
+    method: 'GET',
+    params: {} as {
+      announcements?: 'v1';
+      types?: FeedTypesFilter;
+      /**
+       * Number of hours to filter
+       */
+      timeRange?: number;
+      /**
+       * Show past events (defaults to false)
+       */
+      longitude: number;
+      latitude: number;
+      showPastEvents?: boolean;
+      pageToken?: string;
+    },
+    data: null,
+    response: {} as {
+      feeds: {
+        data: {
+          author: {
+            id: 3006;
+            displayName: string;
+            avatarUrl?: string;
+            partner: unknown;
+          };
+          createdAt: DateISO;
+          description: string;
+          displayCategory: FeedDisplayCategory;
+          entourageType: EntourageTypes;
+          groupType: FeedGroupType;
+          id: number;
+          joinStatus: FeedJoinStatus;
+          location: Location;
+          metadata: {};
+          numberOfPeople: number;
+          numberOfUnreadMessages: number | null;
+          public: boolean;
+          shareUrl: string;
+          status: FeedStatus;
+          title: string;
+          updatedAt: DateISO;
+          uuid: string;
+        };
+        type: FeedType;
+        heatmapSize: number;
+      }[];
     },
   },
   'GET myfeeds': {
     url: 'myfeeds',
     method: 'GET',
-    params: {} as {
-      status?: 'all';
-      showTours?: boolean;
+    params: {} as void | {
+      /**
+       * currentUser has accepted an invite to join
+       */
+      acceptedInvitation?: boolean;
+      /**
+       * currentUser is the author
+       */
+      createdByMe?: boolean;
+      /**
+       * Types of entourages separated by coma
+       */
+      entourageTypes?: EntourageTypes;
+      /**
+       * Page number
+       */
+      page?: number;
+      /**
+       * Number of entourages per page
+       */
+      per?: number;
+      showTours?: boolean; // TO VALIDATE
+      status?: 'all' | 'active' | 'close';
+      /**
+       * Number of hours to filter
+       */
       timeRange?: number;
+      /**
+       * Types of tours separated by coma
+       */
+      tourTypes?: string;
     },
     data: null,
     response: {} as {
       feeds: {
-        type: FeedType;
         data: {
-          id: string;
-          uuid: string;
-          status: FeedStatus;
-          title: string;
-          groupType: FeedGroupType;
-          public: boolean;
-          metadata: {
-            city: string;
-            displayAddress: string;
-          };
-          entourageType: FeedEntourageType;
-          displayCategory: FeedDisplayCategory;
-          joinStatus: FeedJoinStatus;
-          numberOfUnreadMessages: number;
-          numberOfPeople: number;
-          createdAt: DateISO;
-          updatedAt: DateISO;
-          description: string;
-          shareUrl: string;
           author: {
             id: string;
             displayName: string;
             avatarUrl: string;
             partner: null; // TO DEFINED
           };
-          location: {
-            latitude: number;
-            longitude: number;
-          };
+          createdAt: DateISO;
+          description: string;
+          displayCategory: FeedDisplayCategory;
+          entourageType: FeedEntourageType;
+          groupType: FeedGroupType;
+          id: string;
+          joinStatus: FeedJoinStatus;
           lastMessage: {
             text: string;
             author: {
@@ -96,7 +185,21 @@ export const schema = {
               lastName: string;
             };
           };
+          location: Location;
+          metadata: {
+            city: string;
+            displayAddress: string;
+          };
+          numberOfPeople: number;
+          numberOfUnreadMessages: number;
+          public: boolean;
+          shareUrl: string;
+          status: FeedStatus;
+          title: string;
+          updatedAt: DateISO;
+          uuid: string;
         };
+        type: FeedType;
         heatmapSize: number;
       }[];
     },
@@ -108,36 +211,36 @@ export const schema = {
     data: null,
     response: {} as {
       user: {
-        id: null;
-        email: null;
-        displayName: null;
-        firstName: null;
-        lastName: null;
-        roles: unknown[];
         about: null;
-        token: string;
+        address: null;
+        anonymous: true;
         avatarUrl: null;
-        userType: UserType;
-        partner: null;
-        memberships: unknown[];
-        hasPassword: boolean;
         conversation: {
           uuid: string;
         };
-        anonymous: true;
-        uuid: string;
+        displayName: null;
+        email: null;
         firebaseProperties: {
           ActionZoneDep: string;
           ActionZoneCP: string;
         };
-        placeholders: string[];
+        firstName: null;
+        hasPassword: boolean;
+        id: null;
+        lastName: null;
+        memberships: unknown[];
         organization: null;
+        partner: null;
+        placeholders: string[];
+        roles: unknown[];
         stats: {
           tourCount: number;
           encounterCount: number;
           entourageCount: number;
         };
-        address: null;
+        token: string;
+        userType: UserType;
+        uuid: string;
       };
     },
   },

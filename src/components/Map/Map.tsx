@@ -1,7 +1,6 @@
 import React from 'react'
 import GoogleMapReact from 'google-map-react'
 import { env } from 'src/core/env'
-import { Container } from './Map.styles'
 
 const Paris = {
   lat: 48.8564918,
@@ -9,9 +8,12 @@ const Paris = {
   zoom: 12.85,
 }
 
-interface Props {}
+interface Props {
+  children: JSX.Element[];
+}
 
-export function Map() {
+export function Map(props: Props) {
+  const { children } = props
   const center = {
     lat: Paris.lat,
     lng: Paris.lng,
@@ -20,12 +22,13 @@ export function Map() {
   const { zoom } = Paris
 
   return (
-    <Container>
-      <GoogleMapReact
-        bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
-        defaultCenter={center}
-        defaultZoom={zoom}
-      />
-    </Container>
+    <GoogleMapReact
+      bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
+      defaultCenter={center}
+      defaultZoom={zoom}
+      yesIWantToUseGoogleMapApiInternals={true}
+    >
+      {children}
+    </GoogleMapReact>
   )
 }

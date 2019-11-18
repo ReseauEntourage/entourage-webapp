@@ -3,29 +3,37 @@ import humps from 'humps'
 import { getTokenFromCookies } from './services/authToken'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
-  let userToken: string | void
-
   function getUserToken(): string | void {
-    if (userToken) {
-      return userToken
-    }
-
-    userToken = getTokenFromCookies()
-
-    return userToken
+    // TODO: improve with token cache in memory for browser side
+    return getTokenFromCookies()
   }
 
-  client.interceptors.request.use((request) => ({
-    ...request,
-    params: {
-      ...humps.decamelizeKeys(request.params || {}),
-      token: getUserToken() || undefined,
-    },
-    data: request.data && humps.decamelizeKeys(request.data),
-  }))
+  client.interceptors.request.use((request) => {
+    const { params = {} } = request
 
-  client.interceptors.response.use((response) => ({
-    ...response,
-    data: response.data && humps.camelizeKeys(response.data),
-  }))
+    return {
+      ...request,
+      params: {
+        ...humps.decamelizeKeys(request.params || {}),
+        token: params.token || getUserToken(),
+      },
+      data: request.data && humps.decamelizeKeys(request.data),
+    }
+  })
+
+  client.interceptors.response.use(
+    (response) => {
+      return {
+        ...response,
+        data: response.data && humps.camelizeKeys(response.data),
+      }
+    },
+    (error) => {
+      if (error.response.status >= 500) {
+        const errorMessage = `\n${error.response.status} SERVER ERROR: ${error.request.path}\n`
+        console.error(errorMessage)
+        throw new Error(errorMessage)
+      }
+    },
+  )
 }
