@@ -45,6 +45,8 @@ module.exports = {
     'react/jsx-one-expression-per-line': 0,
     'react-hooks/rules-of-hooks': 2,
     'react-hooks/exhaustive-deps': 2,
+    // with TypeScript strict mode, no issue
+    'react/jsx-props-no-spreading': 0,
 
     // Plain JavaScript Rules
     'no-console': [1, { allow: ['warn', 'error'] }],
