@@ -98,7 +98,7 @@ export const schema = {
       feeds: {
         data: {
           author: {
-            id: 3006;
+            id: number;
             displayName: string;
             avatarUrl?: string;
             partner: unknown;
@@ -166,7 +166,7 @@ export const schema = {
       feeds: {
         data: {
           author: {
-            id: string;
+            id: number;
             displayName: string;
             avatarUrl: string;
             partner: null; // TO DEFINED

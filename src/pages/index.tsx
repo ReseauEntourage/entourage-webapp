@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { StatelessPage } from 'src/types'
 import { Map, DefaultMarker } from 'src/components/Map'
 import { api } from 'src/api'
-import { fetchFeeds, useReadFeeds } from 'src/store'
+import { fetchResources, useReadResource } from 'src/store'
 
 interface Props {
   requestKey: string;
@@ -11,7 +11,7 @@ interface Props {
 
 const Home: StatelessPage<Props> = (props: Props) => {
   const { requestKey } = props
-  const [feeds] = useReadFeeds(requestKey)
+  const [feeds] = useReadResource('feeds', requestKey)
 
   return (
     <>
@@ -51,7 +51,7 @@ Home.getInitialProps = async (ctx) => {
     },
   })
 
-  const { requestKey } = ctx.store.dispatch(fetchFeeds(res))
+  const { requestKey } = ctx.store.dispatch(fetchResources('feeds', res))
 
   return {
     requestKey,
