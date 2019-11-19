@@ -2,13 +2,17 @@ import React from 'react'
 import Head from 'next/head'
 import { StatelessPage } from 'src/types'
 import { Map, DefaultMarker } from 'src/components/Map'
-import { api, RequestResponse } from 'src/api'
+import { api } from 'src/api'
+import { fetchFeeds, useReadFeeds } from 'src/store'
 
 interface Props {
-  feeds: RequestResponse<'GET feeds'>['feeds'];
+  requestKey: string;
 }
 
-const Home: StatelessPage<Props> = ({ feeds }: Props) => {
+const Home: StatelessPage<Props> = (props: Props) => {
+  const { requestKey } = props
+  const [feeds] = useReadFeeds(requestKey)
+
   return (
     <>
       <Head>
@@ -16,7 +20,7 @@ const Home: StatelessPage<Props> = ({ feeds }: Props) => {
       </Head>
       <Map>
         {feeds.map((feed) => {
-          const { location, id } = feed.data
+          const { location, id } = feed
           return (
             <DefaultMarker
               key={id}
@@ -32,31 +36,25 @@ const Home: StatelessPage<Props> = ({ feeds }: Props) => {
 }
 
 Home.getInitialProps = async (ctx) => {
-  try {
-    const Paris = {
-      lat: 48.8564918,
-      lng: 2.3348084,
-      zoom: 12.85,
-    }
+  const Paris = {
+    lat: 48.8564918,
+    lng: 2.3348084,
+    zoom: 12.85,
+  }
 
-    const res = await api.ssr(ctx).request({
-      routeName: 'GET feeds',
-      params: {
-        timeRange: 36000,
-        latitude: Paris.lat,
-        longitude: Paris.lng,
-      },
-    })
+  const res = await api.ssr(ctx).request({
+    routeName: 'GET feeds',
+    params: {
+      timeRange: 36000,
+      latitude: Paris.lat,
+      longitude: Paris.lng,
+    },
+  })
 
-    const { feeds } = res.data
+  const { requestKey } = ctx.store.dispatch(fetchFeeds(res))
 
-    return {
-      feeds,
-    }
-  } catch (e) {
-    return {
-      feeds: [],
-    }
+  return {
+    requestKey,
   }
 }
 

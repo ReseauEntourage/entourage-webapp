@@ -3,11 +3,14 @@ import { Reset } from 'styled-reset'
 import NextApp from 'next/app'
 import Head from 'next/head'
 import { ThemeProvider } from '@material-ui/core/styles'
+import withRedux from 'next-redux-wrapper'
+import { Provider } from 'react-resources-store'
+import { makeStore, schemaRelations, resolver } from 'src/store'
 import { theme } from 'src/styles/theme'
 import { Nav } from 'src/components/Nav'
 import { Layout } from 'src/components/Layout'
 
-export default class App extends NextApp {
+class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to
   // perform automatic static optimization, causing every page in your app to
@@ -17,14 +20,12 @@ export default class App extends NextApp {
   //   // calls page's `getInitialProps` and fills `appProps.pageProps`
   //   const appProps = await NextApp.getInitialProps(appContext)
 
-  //   console.log('appProps', appProps)
-  //   // await autoLoginOnStart()
-
   //   return { ...appProps }
   // }
 
   render() {
-    const { Component, pageProps } = this.props
+    // @ts-ignore
+    const { Component, pageProps, store } = this.props
 
     return (
       <>
@@ -34,19 +35,27 @@ export default class App extends NextApp {
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         </Head>
         <Reset />
-        <ThemeProvider theme={theme}>
-          <Layout>
-            <>
-              <Layout.Nav>
-                <Nav />
-              </Layout.Nav>
-              <Layout.Page>
-                <Component {...pageProps} />
-              </Layout.Page>
-            </>
-          </Layout>
-        </ThemeProvider>
+        <Provider
+          schema={schemaRelations}
+          store={store}
+          resolver={resolver}
+        >
+          <ThemeProvider theme={theme}>
+            <Layout>
+              <>
+                <Layout.Nav>
+                  <Nav />
+                </Layout.Nav>
+                <Layout.Page>
+                  <Component {...pageProps} />
+                </Layout.Page>
+              </>
+            </Layout>
+          </ThemeProvider>
+        </Provider>
       </>
     )
   }
 }
+
+export default withRedux(makeStore, { debug: false })(App)
