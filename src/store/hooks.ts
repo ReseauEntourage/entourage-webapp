@@ -1,9 +1,18 @@
 import { useRequest } from 'react-resources-store'
 import { ResourceType, Resource } from './resources'
 
-export function useReadResource<T extends ResourceType>(resourceType: T, requestKey: string) {
-  return useRequest<Resource<T>[]>({
-    resourceType,
+function readResolver(resourceType: string, requestKey: string) {
+  return () => ({
+    method: 'GET',
     requestKey,
-  }, { fetchPolicy: 'cache-only' })
+    resourceType,
+    resourceId: '',
+    request: () => {},
+  })
+}
+
+export function useReadResource<T extends ResourceType>(resourceType: T, requestKey: string) {
+  const resolverArgs = readResolver(resourceType, requestKey)
+
+  return useRequest<Resource<T>[]>(resolverArgs, { fetchPolicy: 'cache-only' })
 }
