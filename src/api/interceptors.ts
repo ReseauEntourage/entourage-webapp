@@ -29,6 +29,8 @@ export function addAxiosInterceptors(client: AxiosInstance) {
       }
     },
     (error) => {
+      console.error(error)
+
       if (error.response.status >= 500) {
         const errorMessage = `\n${error.response.status} SERVER ERROR: ${error.request.path}\n`
         console.error(errorMessage)

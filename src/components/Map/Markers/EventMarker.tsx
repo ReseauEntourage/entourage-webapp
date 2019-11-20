@@ -21,7 +21,7 @@ interface Props extends MarkerProps {}
 // disable ESLint because lat and lng are internaly use by Google Map
 // eslint-disable-next-line
 export function EventMarker(props: Props) {
-  const { zoom, center: { lat } } = useMapContext()
+  const { zoom, center: { lat } } = useMapContext().value
   const size = getMarkerSize(lat, zoom)
 
   return (

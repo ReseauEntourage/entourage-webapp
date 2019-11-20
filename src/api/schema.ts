@@ -15,10 +15,32 @@ export type Location = {
   longitude: number;
 }
 
-type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
+export type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
+
+export type POICategory =
+  | { id: 1; name: 'Se nourrir'; }
+  | { id: 2; name: 'Se loger'; }
+  | { id: 3; name: 'Se soigner'; }
+  | { id: 4; name: 'Se rafraîchir'; }
+  | { id: 5; name: 'S\'orienter'; }
+  | { id: 6; name: 'S\'occuper de soi'; }
+  | { id: 7; name: 'Se réinsérer'; }
 
 /**
- * Values: as,ae,am,ar,ai,ak,ao
+ * Values splited by coma: 1,2,3,4,5,6,7
+ *
+ * 1 = Se nourrir
+ * 2 = Se loger
+ * 3 = Se soigner
+ * 4 = Se rafraîchir
+ * 5 = S'orienter
+ * 6 = S'occuper de soi
+ * 7 = Se réinsérer
+ */
+export type POICategoriesIds = string
+
+/**
+ * Values splited by coma: as,ae,am,ar,ai,ak,ao
  *
  * as : ask_for_help_social
  * ae = ask_for_help_event
@@ -242,6 +264,35 @@ export const schema = {
         userType: UserType;
         uuid: string;
       };
+    },
+  },
+  'GET pois': {
+    url: 'pois',
+    method: 'GET',
+    params: {} as {
+      latitude: number;
+      longitude: number;
+      distance: number;
+      categoryIds: POICategoriesIds;
+    },
+    data: null,
+    response: {} as {
+      categories: POICategory[];
+      pois: {
+        adress: string;
+        audience: string;
+        category: POICategory;
+        categoryId: number;
+        description: string;
+        email: string;
+        id: number;
+        latitude: number;
+        longitude: number;
+        name: string;
+        phone: string;
+        validated: boolean;
+        website: string;
+      }[];
     },
   },
 }

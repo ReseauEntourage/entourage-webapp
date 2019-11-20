@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios'
 import { getRequestHash } from 'react-resources-store'
-import { Parameters } from 'src/types'
+import { Parameters, AnyToFix } from 'src/types'
 import { ResourceType, ResourceConfig, resourcesConfig } from './resources'
 import { ActionResource } from './types'
 
@@ -9,14 +9,14 @@ function fetchResources<T extends ResourceType>(
   response: AxiosResponse<Parameters<ResourceConfig<T>['fetchResolver']>[0]>,
 ): ActionResource {
   const { config } = response
-  const { fetchResolver } = resourcesConfig[resourceType]
+  const { fetchResolver }: (typeof resourcesConfig)[T] = resourcesConfig[resourceType]
 
   return {
     key: '@@REACT_RESOURCES_HOOK',
     type: 'UPDATE_SUCCEEDED',
     resourceType,
     requestKey: getRequestHash(config.url || '', config.method || '', config.params),
-    payload: fetchResolver(response.data),
+    payload: fetchResolver(response.data as AnyToFix),
   }
 }
 

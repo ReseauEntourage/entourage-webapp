@@ -1,5 +1,6 @@
 import { RequestResponse } from 'src/api'
 import { getId } from '../utils'
+import { SchemaRelation } from '../types'
 
 export function fetchResolver(feedsPayload: RequestResponse<'GET feeds'>) {
   const feeds = feedsPayload.feeds.map((feed) => ({
@@ -16,3 +17,5 @@ export function fetchResolver(feedsPayload: RequestResponse<'GET feeds'>) {
 
 export type ResourceList = ReturnType<typeof fetchResolver>
 export type Resource = ResourceList[0]
+
+export const relations: SchemaRelation = {}

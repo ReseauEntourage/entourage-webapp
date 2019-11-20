@@ -9,6 +9,7 @@ import { makeStore, schemaRelations, resolver } from 'src/store'
 import { theme } from 'src/styles/theme'
 import { Nav } from 'src/components/Nav'
 import { Layout } from 'src/components/Layout'
+import { MapProvider } from 'src/components/Map'
 
 class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
@@ -41,16 +42,18 @@ class App extends NextApp {
           resolver={resolver}
         >
           <ThemeProvider theme={theme}>
-            <Layout>
-              <>
-                <Layout.Nav>
-                  <Nav />
-                </Layout.Nav>
-                <Layout.Page>
-                  <Component {...pageProps} />
-                </Layout.Page>
-              </>
-            </Layout>
+            <MapProvider>
+              <Layout>
+                <>
+                  <Layout.Nav>
+                    <Nav />
+                  </Layout.Nav>
+                  <Layout.Page>
+                    <Component {...pageProps} />
+                  </Layout.Page>
+                </>
+              </Layout>
+            </MapProvider>
           </ThemeProvider>
         </Provider>
       </>

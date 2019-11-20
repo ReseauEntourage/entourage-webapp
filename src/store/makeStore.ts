@@ -1,6 +1,9 @@
+import { useContext } from 'react'
 import { createStore, combineReducers } from 'redux'
-import { createReducers } from 'react-resources-store'
+import { createReducers, Context } from 'react-resources-store'
+import { AnyToFix } from 'src/types'
 import { schemaRelations } from './resources'
+import { Store } from './types'
 
 /**
 * @param {object} initialState
@@ -26,4 +29,10 @@ export function makeStore(initialState: {} /* , options: any */) {
     initialState,
     enhancer || undefined,
   )
+}
+
+export function useStore(): Store {
+  const { store } = useContext(Context)
+
+  return store as AnyToFix
 }
