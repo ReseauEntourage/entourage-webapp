@@ -77,7 +77,6 @@ const Home: StatelessPage<Props> = (props: Props) => {
     }
   })
 
-
   const feedsContent = feeds.map((feed) => {
     const { location, id } = feed
     return (

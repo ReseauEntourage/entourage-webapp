@@ -8,7 +8,6 @@ export interface Store extends ReduxStore<StoreState, Action> {}
 
 type Action = ActionResource
 
-
 // ----------------------------------------
 
 type ActionType =

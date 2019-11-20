@@ -20,7 +20,6 @@ function fetchResources<T extends ResourceType>(
   }
 }
 
-
 export const actions = {
   fetchResources,
 }

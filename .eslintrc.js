@@ -49,10 +49,11 @@ module.exports = {
     'react/jsx-props-no-spreading': 0,
 
     // Plain JavaScript Rules
-    'no-console': [1, { allow: ['warn', 'error'] }],
-    'semi': [1, 'never'],
-    'max-len': [1, { code: 120 }],
     'arrow-body-style': 0,
+    'max-len': [1, { code: 120 }],
+    'no-console': [1, { allow: ['warn', 'error'] }],
+    'no-multiple-empty-lines': [2, { "max": 1 }], // prettier like
+    'semi': [1, 'never'],
   },
   'overrides': [
     {
