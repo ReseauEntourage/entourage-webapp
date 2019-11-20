@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios'
 import { NextPageContext } from 'next'
 import { createAxiosInstance } from 'request-schema'
-import { env } from 'src/core/env'
+import { env } from 'src/core'
 import { schema } from './schema'
 import { getTokenFromCookies } from './services/authToken'
 import { createAnonymousUser } from './services/login'
