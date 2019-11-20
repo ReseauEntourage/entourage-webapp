@@ -1,6 +1,6 @@
 import { createStore, combineReducers } from 'redux'
 import { createReducers } from 'react-resources-store'
-import { schemaRelations } from './schemaRelations'
+import { schemaRelations } from './resources'
 
 /**
 * @param {object} initialState

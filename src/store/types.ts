@@ -1,4 +1,5 @@
 import { Store as ReduxStore } from 'redux'
+import { Schema as SchemaRelationStore } from 'react-resources-store'
 import { ResourcesState } from './resources'
 
 interface StoreState extends ResourcesState {}
@@ -28,3 +29,5 @@ export interface ActionResource {
 }
 
 // ----------------------------------------
+
+export type SchemaRelation = SchemaRelationStore['']

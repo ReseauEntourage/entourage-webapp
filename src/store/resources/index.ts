@@ -13,3 +13,7 @@ export type ResourcesState = StoreState<ResourcesSchema>;
 export type ResourceType = keyof ResourcesState
 export type Resource<T extends ResourceType> = ResourcesSchema[T]
 export type ResourceConfig<T extends ResourceType> = (typeof resourcesConfig)[T]
+
+export const schemaRelations = {
+  feeds: feeds.relations,
+}
