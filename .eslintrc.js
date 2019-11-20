@@ -1,9 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaFeatures: {
-      experimentalObjectRestSpread: true,
-    },
+    project: './tsconfig.json'
   },
   env: {
     browser: true,
@@ -11,7 +9,12 @@ module.exports = {
     node: true,
     jest: true
   },
-  extends: ['airbnb', 'plugin:@typescript-eslint/recommended'],
+  extends: [
+    'airbnb',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking'
+  ],
   plugins: ['@typescript-eslint', 'react', 'react-hooks'],
   rules: {
     // TypeScript Rules
@@ -30,6 +33,7 @@ module.exports = {
     // many times, typing will bring duplication
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/ban-ts-ignore': 0,
+    '@typescript-eslint/indent': ['error', 2],
 
     // Import Rules
     'import/no-default-export': 2,
@@ -61,6 +65,13 @@ module.exports = {
       'files': ['src/**/*.stories.tsx'],
       'rules': {
         'import/no-default-export': 0,
+      }
+    },
+    {
+      'files': ['src/pages/**'],
+      'rules': {
+        'import/no-default-export': 0,
+        'import/prefer-default-export': 2,
       }
     }
   ],
