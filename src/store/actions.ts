@@ -4,7 +4,7 @@ import { Parameters } from 'src/types'
 import { ResourceType, ResourceConfig, resourcesConfig } from './resources'
 import { ActionResource } from './types'
 
-export function fetchResources<T extends ResourceType>(
+function fetchResources<T extends ResourceType>(
   resourceType: T,
   response: AxiosResponse<Parameters<ResourceConfig<T>['fetchResolver']>[0]>,
 ): ActionResource {
@@ -18,4 +18,9 @@ export function fetchResources<T extends ResourceType>(
     requestKey: getRequestHash(config.url || '', config.method || '', config.params),
     payload: fetchResolver(response.data),
   }
+}
+
+
+export const actions = {
+  fetchResources,
 }

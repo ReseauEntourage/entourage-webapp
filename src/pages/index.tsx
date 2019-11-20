@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { StatelessPage } from 'src/types'
 import { Map, DefaultMarker } from 'src/components/Map'
 import { api } from 'src/api'
-import { fetchResources, useReadResource } from 'src/store'
+import { actions, useReadResource } from 'src/store'
 
 interface Props {
   requestKey: string;
@@ -51,7 +51,7 @@ Home.getInitialProps = async (ctx) => {
     },
   })
 
-  const { requestKey } = ctx.store.dispatch(fetchResources('feeds', res))
+  const { requestKey } = ctx.store.dispatch(actions.fetchResources('feeds', res))
 
   return {
     requestKey,

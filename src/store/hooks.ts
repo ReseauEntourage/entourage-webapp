@@ -1,7 +1,7 @@
 import { useRequest } from 'react-resources-store'
 import { ResourceType, Resource } from './resources'
 
-function readResolver(resourceType: string, requestKey: string) {
+function createReadResolver(resourceType: string, requestKey: string) {
   return () => ({
     method: 'GET',
     requestKey,
@@ -12,7 +12,7 @@ function readResolver(resourceType: string, requestKey: string) {
 }
 
 export function useReadResource<T extends ResourceType>(resourceType: T, requestKey: string) {
-  const resolverArgs = readResolver(resourceType, requestKey)
+  const resolver = createReadResolver(resourceType, requestKey)
 
-  return useRequest<Resource<T>[]>(resolverArgs, { fetchPolicy: 'cache-only' })
+  return useRequest<Resource<T>[]>(resolver, { fetchPolicy: 'cache-only' })
 }
