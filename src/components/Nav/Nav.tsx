@@ -17,7 +17,7 @@ export function Nav() {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static">
+      <AppBar position="static" color="default">
         <Toolbar>
           <a href="/">
             <img src="logo-entourage-orange.png" alt="Entourage" height="34" />

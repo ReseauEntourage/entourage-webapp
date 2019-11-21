@@ -1,5 +1,5 @@
 import React from 'react'
-import { styles } from 'src/styles'
+import { colors } from 'src/styles'
 import { getPixelPerMeter } from 'src/utils'
 import { constants } from 'src/constants'
 import { useMapContext } from '../context'
@@ -32,7 +32,7 @@ export function EventMarker(props: Props) {
           height: size,
           width: size,
           borderRadius: '50%',
-          backgroundColor: styles.colors.marker,
+          backgroundColor: colors.main.marker,
           opacity: 0.7,
           cursor: 'pointer',
         }}

@@ -1,5 +1,5 @@
-export const styles = {
-  colors: {
+export const colors = {
+  main: {
     primary: '#F55F24',
     second: '#344055',
     green: '#13B686',
@@ -19,4 +19,5 @@ export const styles = {
     6: '#e880d2',
     7: '#ffc800',
   },
+  borderColor: '#eee',
 }

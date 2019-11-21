@@ -6,7 +6,7 @@ import PeopleIcon from '@material-ui/icons/People'
 import ExploreIcon from '@material-ui/icons/Explore'
 import LocalDrinkIcon from '@material-ui/icons/LocalDrink'
 import SpaIcon from '@material-ui/icons/Spa'
-import { styles } from 'src/styles'
+import { colors } from 'src/styles'
 import { POICategory } from 'src/api'
 import { BaseMarker } from './BaseMarker'
 import { MarkerProps } from './types'
@@ -38,7 +38,7 @@ export function POIMarker(props: Props) {
   const { category } = props
   const { zoom } = useMapContext().value
   const { size, iconSize } = getSize(zoom)
-  const color = styles.pois[category.id]
+  const color = colors.pois[category.id]
   const Icon = icons[category.id]
 
   return (
