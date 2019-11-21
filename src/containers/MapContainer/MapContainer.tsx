@@ -1,6 +1,7 @@
 import React from 'react'
 import { useQuery } from 'react-query'
 import { api } from 'src/api'
+import { constants } from 'src/constants'
 import {
   Map, EventMarker, POIMarker, useMapContext,
 } from 'src/components/Map'
@@ -17,7 +18,7 @@ function useFeeds() {
   const { data } = useQuery(['feeds', feedsParams], (params) => api.request({
     routeName: 'GET feeds',
     params,
-  }), { staleTime: 1000 * 60 })
+  }), { staleTime: constants.QUERIES_CACHE_TTL })
 
   return data
 }
@@ -35,7 +36,7 @@ function usePOIs() {
   const { data } = useQuery(['POIs', POIsParams], (params) => api.request({
     routeName: 'GET pois',
     params,
-  }), { staleTime: 1000 * 60 })
+  }), { staleTime: constants.QUERIES_CACHE_TTL })
 
   return data
 }
