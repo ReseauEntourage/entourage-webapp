@@ -1,84 +1,55 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React from 'react'
+import { useQuery } from 'react-query'
 import Head from 'next/head'
 import { StatelessPage } from 'src/types'
-import {
-  Map, EventMarker, POIMarker, useMapContext, MapContextValue,
-} from 'src/components/Map'
 import { api } from 'src/api'
-import { actions, useReadResource, useStore } from 'src/store'
-import { usePrevious } from 'src/hooks'
+import {
+  Map, EventMarker, POIMarker, useMapContext,
+} from 'src/components/Map'
 
-function useMapUpdated(currentMapContext: MapContextValue) {
-  const prevMapContext = usePrevious(currentMapContext)
+function useFeeds() {
+  const mapContext = useMapContext()
 
-  const currentValue = currentMapContext.value
-  const prevValue = prevMapContext && prevMapContext.value
-
-  if (!prevValue) {
-    return false
+  const feedsParams = {
+    timeRange: 36000,
+    latitude: mapContext.value.center.lat,
+    longitude: mapContext.value.center.lng,
   }
 
-  const zoomChanged = prevValue.zoom !== currentValue.zoom
-  const latChanged = prevValue.center.lat !== currentValue.center.lat
-  const lngChanged = prevValue.center.lng !== currentValue.center.lng
+  const { data } = useQuery(['feeds', feedsParams], (params) => api.request({
+    routeName: 'GET feeds',
+    params,
+  }), { staleTime: 1000 * 60 })
 
-  return zoomChanged || latChanged || lngChanged
+  return data
 }
 
-interface Props {
-  feedsRequestKey: string;
-  POIsRequestKey: string;
-}
-
-const Home: StatelessPage<Props> = (props: Props) => {
-  const { feedsRequestKey, POIsRequestKey } = props
-  const [localFeedsRequestKey, setLocalFeedsRequestKey] = useState(feedsRequestKey)
-  const [localPOIsRequestKey, setLocalPOIsRequestKey] = useState(POIsRequestKey)
+function usePOIs() {
   const mapContext = useMapContext()
-  const mapUpdated = useMapUpdated(mapContext)
-  const [feeds] = useReadResource('feeds', localFeedsRequestKey)
-  const [POIs] = useReadResource('pois', localPOIsRequestKey)
 
-  const store = useStore()
+  const POIsParams = {
+    distance: 5,
+    latitude: mapContext.value.center.lat,
+    longitude: mapContext.value.center.lng,
+    categoryIds: '1,2,3,4,5,6,7',
+  }
 
-  const refetchFeeds = useCallback(async () => {
-    const feedsResponse = await api.request({
-      routeName: 'GET feeds',
-      params: {
-        timeRange: 36000,
-        latitude: mapContext.value.center.lat,
-        longitude: mapContext.value.center.lng,
-      },
-    })
+  const { data } = useQuery(['POIs', POIsParams], (params) => api.request({
+    routeName: 'GET pois',
+    params,
+  }), { staleTime: 1000 * 60 })
 
-    const { requestKey } = store.dispatch(actions.fetchResources('feeds', feedsResponse))
-    setLocalFeedsRequestKey(requestKey)
-  }, [mapContext.value.center.lat, mapContext.value.center.lng, store])
+  return data
+}
 
-  const refetchPOIs = useCallback(async () => {
-    const POIsResponse = await api.request({
-      routeName: 'GET pois',
-      params: {
-        distance: 5,
-        latitude: mapContext.value.center.lat,
-        longitude: mapContext.value.center.lng,
-        categoryIds: '1,2,3,4,5,6,7',
-      },
-    })
+interface Props {}
 
-    const { requestKey } = store.dispatch(actions.fetchResources('pois', POIsResponse))
-    setLocalPOIsRequestKey(requestKey)
-  }, [mapContext.value.center.lat, mapContext.value.center.lng, store])
+const Home: StatelessPage<Props> = () => {
+  const feeds = useFeeds()
+  const POIs = usePOIs()
 
-  useEffect(() => {
-    if (mapUpdated) {
-      refetchFeeds()
-      refetchPOIs()
-    }
-  })
-
-  const feedsContent = feeds.map((feed) => {
-    const { location, id } = feed
+  const feedsContent = feeds && feeds.data.feeds.map((feed) => {
+    const { location, id } = feed.data
     return (
       <EventMarker
         key={id}
@@ -88,7 +59,7 @@ const Home: StatelessPage<Props> = (props: Props) => {
     )
   })
 
-  const POIsContent = POIs.map((poi) => (
+  const POIsContent = POIs && POIs.data.pois.map((poi) => (
     <POIMarker
       key={poi.id}
       lat={poi.latitude}
@@ -110,40 +81,9 @@ const Home: StatelessPage<Props> = (props: Props) => {
   )
 }
 
-Home.getInitialProps = async (ctx) => {
-  const Paris = {
-    lat: 48.8564918,
-    lng: 2.3348084,
-    zoom: 12.85,
-  }
-
-  const feedsResponse = await api.ssr(ctx).request({
-    routeName: 'GET feeds',
-    params: {
-      timeRange: 36000,
-      latitude: Paris.lat,
-      longitude: Paris.lng,
-    },
-  })
-
-  const { requestKey: feedsRequestKey } = ctx.store.dispatch(actions.fetchResources('feeds', feedsResponse))
-
-  const POIsResponse = await api.ssr(ctx).request({
-    routeName: 'GET pois',
-    params: {
-      distance: 5,
-      latitude: Paris.lat,
-      longitude: Paris.lng,
-      categoryIds: '1,2,3,4,5,6,7',
-    },
-  })
-
-  const { requestKey: POIsRequestKey } = ctx.store.dispatch(actions.fetchResources('pois', POIsResponse))
-
-  return {
-    feedsRequestKey,
-    POIsRequestKey,
-  }
-}
+// Home.getInitialProps = async (ctx) => {
+//    Wait until React Queries support SSR. Coming soon
+//    see https://github.com/tannerlinsley/react-query/issues/14
+// }
 
 export default Home

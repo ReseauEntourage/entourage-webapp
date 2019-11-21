@@ -1,11 +1,8 @@
 import { NextPageContext } from 'next'
-import { Store } from 'src/store'
 
 export type DateISO = string
 
-export interface PageContext extends NextPageContext {
-  store: Store;
-}
+export interface PageContext extends NextPageContext {}
 
 export interface StatelessPage<P = void> extends React.SFC<P> {
   getInitialProps?: (ctx: PageContext) => Promise<P>;
