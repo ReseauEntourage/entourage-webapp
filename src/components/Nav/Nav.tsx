@@ -17,10 +17,10 @@ export function Nav() {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static" color="default">
+      <AppBar position="static" style={{ backgroundColor: '#fff' }}>
         <Toolbar>
           <a href="/">
-            <img src="logo-entourage-orange.png" alt="Entourage" height="34" />
+            <img src="/logo-entourage-orange.png" alt="Entourage" height="34" />
           </a>
           <div className={classes.grow} />
           <Avatar alt="John Doe" src="https://i.pravatar.cc/100" />

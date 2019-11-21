@@ -13,6 +13,7 @@ const Nav = styled('div')({
 
 const Page = styled('div')({
   flex: 1,
+  overflow: 'hidden',
 })
 
 export class Layout extends React.PureComponent<{children: JSX.Element;}> {

@@ -16,11 +16,14 @@ function getMarkerSize(lat: number, zoom: number) {
     : size
 }
 
-interface Props extends MarkerProps {}
+interface Props extends MarkerProps {
+  isActive: boolean;
+}
 
 // disable ESLint because lat and lng are internaly use by Google Map
 // eslint-disable-next-line
 export function EventMarker(props: Props) {
+  const { isActive } = props
   const { zoom, center: { lat } } = useMapContext().value
   const size = getMarkerSize(lat, zoom)
 
@@ -28,13 +31,15 @@ export function EventMarker(props: Props) {
     <BaseMarker size={size}>
       <div
         style={{
+          position: 'relative',
           display: 'block',
           height: size,
           width: size,
           borderRadius: '50%',
-          backgroundColor: colors.main.marker,
-          opacity: 0.7,
+          backgroundColor: isActive ? colors.main.red : colors.main.marker,
+          opacity: isActive ? 1 : 0.7,
           cursor: 'pointer',
+          zIndex: isActive ? 2 : 1,
         }}
       />
     </BaseMarker>
