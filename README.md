@@ -7,6 +7,7 @@ Entourage Web App
 * [Installation](#installation)
 * [Architecture](#architecture)
 * [API](#api)
+* [Store data](#store-data)
 * [Storybook](#storybook)
 * [Tests](#tests)
   * [Jest](#jest)
@@ -31,7 +32,7 @@ Entourage Web App
 ## Bibliothèques internes
 * Forms - [react-hook-form](https://react-hook-form.com)
 * Design system - [@material-ui](https://material-ui.com/)
-* Styles - [styled-components](https://www.styled-components.com)
+* Data - [react-query](https://github.com/tannerlinsley/react-query)
 * HTTP client - [axios](https://github.com/axios/axios)
 * WebSocket client - [socket.io-client](https://github.com/socketio/socket.io-client)
 
@@ -67,88 +68,22 @@ Les valeur de `routeName` seront autocompletées, ainsi que les valeurs requises
 L'objet `api` est une instance axios.
 
 # Store data
-
-Le store permet de stocker les données à un seul endroit dans l'application afin de respect le principe de [`source de confiance (single source of truth)`](https://en.wikipedia.org/wiki/Single_source_of_truth).
-
-Ici, le store utilisé est redux, avec un wrapper spécifique pour NextJS.
-
-## Fetch et lecture des données
-
-```js
-import { api } from 'src/api'
-import { actions, useReadResource } from 'src/store'
-
-interface Props {
-  requestKey: string
-}
-
-function MyPage(props) {
-  const { requestKey } = props
-
-  const [feeds] = useReadResource('feeds', requestKey)
-
-  return (
-    <div>
-      {feeds.map(feed => (
-        ...
-      ))}
-    </div>
-  )
-}
-
-MyPage.getInitialProps = async (ctx) => {
-  const feedsResponse = await api.ssr(ctx).request({
-    routeName: 'GET feeds',
-  })
-  
-  const action = actions.fetchResources('feeds', feedsResponse)
-  const { requestKey } = ctx.store.dispatch(action)
-
-  return {
-    requestKey,
-  }
-}
-```
-
-`feedsResponse` correspond à un object `AxiosResponse`.
-
-`fetchResources()`  va utiliser les informations de la requête (url, method, params) pour stocker les informations dans le store de la resource `feeds`  
-L'objet `action` va contenir `requestKey` qui est un identifiant unique de la requête, généré à partir des information de la requête `url`, `method` et `params` (optionnel).  
-
-Nous avons besoin d'envoyer `requestKey` en paramètre à notre Page pour que celle-ci puisse récupérer les données tout en s'abonnant aux modifications futures. Nous pourrions directement retourner les données de `feedsResponse` mais nous ne bénéficerions pas des mises à jours du store.
-
-
-## Ecriture de données
-
-```js
-import React, { useCallback } from 'react';
-import { api } from 'src/api';
-import { actions, useReadResource, useLazyRequest } from 'src/store'
-
-function MyPage(props) {
-  const { requestKey } = props
-
-  const [feeds] = useReadResource('feeds', requestKey)
-  const [createFeed] = useLazyRequest('feeds', 'create');
-
-  const onClickAdd = useCallback(() => {
-    createFeed({
-      ...
-    })
-  }, [])
-
-  return (
-    <div>
-      {feeds.map(feed => (
-        ...
-      ))}
-      <button onClick={onClickAdd}>Ajouter</button>
-    </div>
-  )
-}
-```
+[react-query](https://github.com/tannerlinsley/react-query)
 
 # Storybook
+
+## Lancer le styleguide
+```
+yarn storybook
+```
+
+:warning: Next écrase la configuration du fichier tsconfig.json de storybook. Il faut changer la variable suivante:
+```diff
+- "jsx": "preserve",
++ "jsx": "react",
+```
+
+## Créer une story
 
 Créer un fichier `*.stories.tsx` au même endroit que le composant
 
