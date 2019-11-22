@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
@@ -11,22 +11,50 @@ import {
 } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
 // import { LeftCards } from './LeftCards'
+import { useOnScroll } from 'src/hooks'
+import { AnyToFix } from 'src/types'
 
 function useFeeds() {
   const mapContext = useMapContext()
 
-  const feedsParams = {
+  const feedsParams = useMemo(() => ({
     timeRange: 36000,
     latitude: mapContext.value.center.lat,
     longitude: mapContext.value.center.lng,
-  }
+    pageToken: undefined as string | undefined,
+  }), [mapContext.value.center.lat, mapContext.value.center.lng])
 
-  const { data, isLoading } = useQuery(['feeds', feedsParams], (params) => api.request({
+  const {
+    data: pages,
+    isLoading,
+    fetchMore,
+    isFetchingMore,
+  } = useQuery(['feeds', feedsParams], (params) => api.request({
     routeName: 'GET feeds',
     params,
-  }), { staleTime: constants.QUERIES_CACHE_TTL })
+  }), {
+    staleTime: constants.QUERIES_CACHE_TTL,
+    paginated: true,
+    getCanFetchMore: (lastPage: AnyToFix) => {
+      return lastPage.data.nextPageToken
+    },
+  })
 
-  return [data, isLoading] as [typeof data, boolean]
+  const fetchModeWithParams = useCallback(() => {
+    if (!pages || isFetchingMore) return
+    const currentPage = pages[pages.length - 1]
+    const { nextPageToken } = currentPage.data
+    fetchMore({ ...feedsParams, pageToken: nextPageToken })
+  }, [pages, isFetchingMore, fetchMore, feedsParams])
+
+  const feeds = !pages
+    ? []
+    : pages
+      .map((res) => res.data.feeds)
+      .reduce((pageA, pageB) => [...pageA, ...pageB], [])
+      .map((feed) => feed.data)
+
+  return [feeds, isLoading, fetchModeWithParams] as [typeof feeds, boolean, typeof fetchMore]
 }
 
 function usePOIs() {
@@ -42,7 +70,9 @@ function usePOIs() {
   const { data, isLoading } = useQuery(['POIs', POIsParams], (params) => api.request({
     routeName: 'GET pois',
     params,
-  }), { staleTime: constants.QUERIES_CACHE_TTL })
+  }), {
+    staleTime: constants.QUERIES_CACHE_TTL,
+  })
 
   return [data, isLoading] as [typeof data, boolean]
 }
@@ -51,27 +81,32 @@ interface Props {}
 
 export function MapContainer() {
   const router = useRouter()
-  const [feeds, feedsLoading] = useFeeds()
+  const [feeds, feedsLoading, fetchMore] = useFeeds()
   const [POIs] = usePOIs()
 
-  const feedsMarkersContent = feeds && feeds.data.feeds.map((feed) => {
-    const { location, uuid } = feed.data
+  const { onScroll } = useOnScroll(fetchMore)
+
+  const feedsMarkersContent = feeds.map((feed) => {
+    const { location, uuid } = feed
     return (
-      <Link
+      <div
         key={uuid}
-        href="/actions/[actionId]"
-        as={`/actions/${uuid}`}
         // @ts-ignore ignore because lat and lng are required for Map children
         lat={location.latitude}
         lng={location.longitude}
       >
-        <a>
-          <EventMarker
-            key={uuid}
-            isActive={uuid === router.query.actionId}
-          />
-        </a>
-      </Link>
+        <Link
+          href="/actions/[actionId]"
+          as={`/actions/${uuid}`}
+        >
+          <a>
+            <EventMarker
+              key={uuid}
+              isActive={uuid === router.query.actionId}
+            />
+          </a>
+        </Link>
+      </div>
     )
   })
 
@@ -84,22 +119,22 @@ export function MapContainer() {
     />
   ))
 
-  const feedsListContent = feeds && feeds.data.feeds.map((feed) => {
+  const feedsListContent = feeds.map((feed) => {
     const secondText = `
-      Créé le ${new Date(feed.data.createdAt).toLocaleDateString()}
-      par ${feed.data.author.displayName}
+      Créé le ${new Date(feed.createdAt).toLocaleDateString()}
+      par ${feed.author.displayName}
     `
 
     return (
-      <li>
-        <Link href="/actions/[actionId]" as={`/actions/${feed.data.uuid}`}>
+      <li key={feed.uuid}>
+        <Link href="/actions/[actionId]" as={`/actions/${feed.uuid}`}>
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
-              key={feed.data.uuid}
-              isActive={feed.data.uuid === router.query.actionId}
-              primaryText={feed.data.title}
+              key={feed.uuid}
+              isActive={feed.uuid === router.query.actionId}
+              primaryText={feed.title}
               secondText={secondText}
-              profilePictureURL={feed.data.author.avatarUrl}
+              profilePictureURL={feed.author.avatarUrl}
             />
           </a>
         </Link>
@@ -117,7 +152,12 @@ export function MapContainer() {
 
   return (
     <Box display="flex" height="100%">
-      <Box width={350} overflow="scroll" height="100%">
+      <Box
+        width={350}
+        overflow="scroll"
+        height="100%"
+        onScroll={onScroll}
+      >
         {feedsContent}
       </Box>
       <Box flex="1" position="relative">

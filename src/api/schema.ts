@@ -163,6 +163,7 @@ export const schema = {
         type: FeedType;
         heatmapSize: number;
       }[];
+      nextPageToken?: string;
     },
   },
   'GET myfeeds': {
