@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -9,7 +10,7 @@ import {
   Map, EventMarker, POIMarker, useMapContext,
 } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
-import { useRouter } from 'next/dist/client/router'
+// import { LeftCards } from './LeftCards'
 
 function useFeeds() {
   const mapContext = useMapContext()
@@ -83,7 +84,7 @@ export function MapContainer() {
     />
   ))
 
-  const feedsContent = feeds && feeds.data.feeds.map((feed) => {
+  const feedsListContent = feeds && feeds.data.feeds.map((feed) => {
     const secondText = `
       Créé le ${new Date(feed.data.createdAt).toLocaleDateString()}
       par ${feed.data.author.displayName}
@@ -106,22 +107,25 @@ export function MapContainer() {
     )
   })
 
+  const feedsContent = feedsLoading ? (
+    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+      <CircularProgress variant="indeterminate" />
+    </Box>
+  ) : (
+    <ul>{feedsListContent}</ul>
+  )
+
   return (
     <Box display="flex" height="100%">
       <Box width={350} overflow="scroll" height="100%">
-        {feedsLoading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <CircularProgress variant="indeterminate" />
-          </Box>
-        ) : (
-          <ul>{feedsContent}</ul>
-        )}
+        {feedsContent}
       </Box>
-      <Box flex="1">
+      <Box flex="1" position="relative">
         <Map>
           {POIsMarkersContent}
           {feedsMarkersContent}
         </Map>
+        {/* <LeftCards /> */}
       </Box>
     </Box>
   )
