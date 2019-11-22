@@ -4,11 +4,28 @@ import { DateISO } from 'src/types/utils'
 export type UserType = 'public'
 
 export type FeedType = 'Entourage'
-export type FeedStatus = 'open'
-export type FeedGroupType = 'action'
+
+export type FeedStatus = 'open' | 'closed' | 'suspended'
+
+export type FeedGroupType = 'action' | 'outing' | 'conversation'
+
 export type FeedEntourageType = 'contribution' | 'ask_for_help'
-export type FeedDisplayCategory = 'info'
-export type FeedJoinStatus = 'accepted' | 'not_requested'
+
+export type FeedDisplayCategory =
+  | 'info'
+  | 'social'
+  | 'resource'
+  | 'other'
+  | 'mat_help'
+  | 'event'
+  | 'skill'
+
+export type FeedJoinStatus =
+  | 'accepted'
+  | 'pending'
+  | 'rejected'
+  | 'cancelled'
+  | 'not_requested'
 
 export type Location = {
   latitude: number;
