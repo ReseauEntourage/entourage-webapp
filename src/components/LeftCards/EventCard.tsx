@@ -26,7 +26,7 @@ export function EventCard(props: Props) {
   } = props
 
   return (
-    <Box p={2}>
+    <Box>
       <Typography variant={variants.title1}>{title}</Typography>
       <Box>
         <Typography variant={variants.footNote}>{dateLabel}</Typography>

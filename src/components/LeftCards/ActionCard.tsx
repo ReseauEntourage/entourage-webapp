@@ -24,7 +24,7 @@ export function ActionCard(props: Props) {
   } = props
 
   return (
-    <Box p={2}>
+    <Box>
       <Typography variant={variants.title1}>{title}</Typography>
       <Box display="flex" marginY={1} alignItems="center" justifyContent="flex-start">
         <Box marginRight={1}>

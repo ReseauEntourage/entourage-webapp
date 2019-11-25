@@ -87,7 +87,7 @@ interface FeedOutingMetadata {
 
 type FeedMetadata = FeedOutingMetadata
 
-interface FeedAuthorPartner {
+interface UserPartner {
   default: boolean;
   id: string;
   largeLogoUrl: string;
@@ -158,7 +158,7 @@ export const schema = {
             id: number;
             displayName: string;
             avatarUrl?: string;
-            partner: FeedAuthorPartner | null;
+            partner: UserPartner | null;
           };
           createdAt: DateISO;
           description: string;
@@ -328,6 +328,29 @@ export const schema = {
         phone: string;
         validated: boolean;
         website: string;
+      }[];
+    },
+  },
+  'GET /entourages/:entourageId/users': {
+    url: (params: { entourageId: string; }) => `entourages/${params.entourageId}/users`,
+    method: 'GET',
+    params: {} as null | {
+      page?: number;
+      per?: number;
+    },
+    data: null,
+    response: {} as {
+      users: {
+        avatarUrl: string;
+        communityRoles: unknown[];
+        displayName: string;
+        groupRole: 'member';
+        id: number;
+        message: null;
+        partner: UserPartner;
+        requestedAt: DateISO;
+        role: 'member';
+        status: FeedJoinStatus;
       }[];
     },
   },

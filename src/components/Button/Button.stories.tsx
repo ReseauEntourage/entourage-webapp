@@ -1,7 +1,6 @@
 import React from 'react'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import ThemeProvider from '@material-ui/styles/ThemeProvider'
-import { theme } from 'src/styles/theme'
+import { ThemeProvider, theme } from 'src/styles'
 import { Button } from './Button'
 
 const useStyles = makeStyles(() => createStyles({
@@ -18,7 +17,7 @@ export const Buttons = () => {
   const classes = useStyles()
 
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <div>
         <div>
           <Button className={classes.margin}>Participer</Button>

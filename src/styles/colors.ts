@@ -10,6 +10,7 @@ export const colors = {
     text: '#040D2B',
     marker: '#ffa018',
     greyLight: '#e9e9e9',
+    greyishBrown: '#4a4a4a',
     borderColorNav: '#979797',
   },
   pois: {

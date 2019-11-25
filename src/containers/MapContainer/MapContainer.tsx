@@ -186,8 +186,7 @@ export function MapContainer() {
       {currentFeedItem && (
         <Box
           boxShadow={4}
-          p={2}
-          width={400}
+          width={500}
           zIndex={2}
         >
           <LeftCards

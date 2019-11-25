@@ -1,22 +1,43 @@
 import React from 'react'
 import Link from 'next/link'
+import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
-import { Button } from 'src/components/Button'
+import CloseIcon from '@material-ui/icons/Close'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
+import { Button } from 'src/components/Button'
 import { useMount } from 'src/hooks'
-import { FeedItem } from 'src/api'
+import { api, FeedItem } from 'src/api'
 import { useMainContext } from 'src/containers/MainContext'
-import CloseIcon from '@material-ui/icons/Close'
 import { ActionCard, EventCard } from 'src/components/LeftCards'
+import { UsersList } from 'src/components/UsersList'
+import { Typography } from '@material-ui/core'
+import { variants } from 'src/styles'
 
 interface Props {
-  feedItem?: FeedItem | null;
+  feedItem: FeedItem;
+}
+
+function useEntourageUsers(entourageId: string) {
+  const { data, isLoading } = useQuery(['entourage-users', { entourageId }], (urlParams) => {
+    return api.request({
+      routeName: 'GET /entourages/:entourageId/users',
+      urlParams: {
+        entourageId: urlParams.entourageId,
+      },
+    })
+  })
+
+  const users = data ? data.data.users : []
+
+  return [users, isLoading] as [typeof users, boolean]
 }
 
 export function LeftCards(props: Props) {
   const { feedItem } = props
   const mainContext = useMainContext()
+
+  const [entourageUsers] = useEntourageUsers(feedItem.uuid)
 
   useMount(() => {
     if (feedItem) {
@@ -70,16 +91,26 @@ export function LeftCards(props: Props) {
   }
 
   return (
-    <>
-      <Box display="flex" justifyContent="flex-end">
+    <Box
+      display="flex"
+      flexDirection="column"
+      height="100%"
+      paddingY={2}
+      style={{
+        boxSizing: 'border-box',
+      }}
+    >
+      <Box marginRight={1} display="flex" justifyContent="flex-end">
         <Link href="/actions">
           <a>
             <CloseIcon color="primary" fontSize="large" />
           </a>
         </Link>
       </Box>
-      {card}
-      <Box display="flex" justifyContent="space-around">
+      <Box marginX={4}>
+        {card}
+      </Box>
+      <Box marginX={4} marginY={2} display="flex" justifyContent="space-around">
         <Button>
           Participer
         </Button>
@@ -90,6 +121,28 @@ export function LeftCards(props: Props) {
           Signaler
         </Button>
       </Box>
-    </>
+      {/* <Box flexGrow="1" /> */}
+      <Box
+        marginX={4}
+        marginTop={2}
+        display="flex"
+        flexDirection="column"
+        overflow="hidden"
+      >
+        <Typography variant={variants.title1} style={{ textTransform: 'uppercase' }}>
+          Participants
+        </Typography>
+        <UsersList
+          users={entourageUsers.map((user) => ({
+            userId: `${user.id}`,
+            userName: user.displayName,
+            profilePictureURL: user.avatarUrl,
+            isOwner: feedItem.author.id === user.id,
+            isPartner: !!user.partner,
+            partnerName: user.partner ? user.partner.name : undefined,
+          }))}
+        />
+      </Box>
+    </Box>
   )
 }

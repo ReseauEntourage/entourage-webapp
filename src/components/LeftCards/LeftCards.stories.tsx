@@ -1,7 +1,5 @@
 import React from 'react'
-import { colors } from 'src/styles'
-import ThemeProvider from '@material-ui/styles/ThemeProvider'
-import { theme } from 'src/styles/theme'
+import { colors, ThemeProvider } from 'src/styles'
 import { EventCard } from './EventCard'
 import { ActionCard } from './ActionCard'
 
@@ -12,7 +10,7 @@ export default {
 function Wrapper(props: { children: React.ReactChild | React.ReactChild[]; }) {
   const { children } = props
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider>
       <div style={{ border: `solid 1px ${colors.borderColor}`, maxWidth: 600, margin: 20 }}>
         {children}
       </div>
