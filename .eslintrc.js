@@ -58,6 +58,8 @@ module.exports = {
     'no-console': [1, { allow: ['warn', 'error'] }],
     'no-multiple-empty-lines': [2, { "max": 1 }], // prettier like
     'semi': [1, 'never'],
+    // max-len is enought
+    'object-curly-newline': 0,
   },
   'overrides': [
     {

@@ -77,6 +77,24 @@ export type POICategoriesIds = string
  */
 type FeedTypesFilter = string
 
+interface FeedOutingMetadata {
+  displayAddress: string;
+  googlePlaceId: string;
+  placeName: string;
+  startsAt: DateISO;
+  streetAddress: string;
+}
+
+type FeedMetadata = FeedOutingMetadata
+
+interface FeedAuthorPartner {
+  default: boolean;
+  id: string;
+  largeLogoUrl: string;
+  name: string;
+  smallLogoUrl: string;
+}
+
 export const schema = {
   'POST anonymous_users': {
     url: 'anonymous_users',
@@ -140,17 +158,17 @@ export const schema = {
             id: number;
             displayName: string;
             avatarUrl?: string;
-            partner: unknown;
+            partner: FeedAuthorPartner | null;
           };
           createdAt: DateISO;
           description: string;
           displayCategory: FeedDisplayCategory;
-          entourageType: EntourageTypes;
+          entourageType: FeedEntourageType;
           groupType: FeedGroupType;
           id: number;
           joinStatus: FeedJoinStatus;
           location: Location;
-          metadata: {};
+          metadata: FeedMetadata;
           numberOfPeople: number;
           numberOfUnreadMessages: number | null;
           public: boolean;
@@ -314,3 +332,5 @@ export const schema = {
     },
   },
 }
+
+export type FeedItem = typeof schema['GET feeds']['response']['feeds'][0]['data']

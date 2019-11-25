@@ -7,6 +7,7 @@ import { theme } from 'src/styles/theme'
 import { Nav } from 'src/components/Nav'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
+import { Provider as MainContextProvider } from 'src/containers/MainContext'
 
 export default class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
@@ -34,18 +35,20 @@ export default class App extends NextApp {
         </Head>
         <Reset />
         <ThemeProvider theme={theme}>
-          <MapProvider>
-            <Layout>
-              <>
-                <Layout.Nav>
-                  <Nav />
-                </Layout.Nav>
-                <Layout.Page>
-                  <Component {...pageProps} />
-                </Layout.Page>
-              </>
-            </Layout>
-          </MapProvider>
+          <MainContextProvider>
+            <MapProvider>
+              <Layout>
+                <>
+                  <Layout.Nav>
+                    <Nav />
+                  </Layout.Nav>
+                  <Layout.Page>
+                    <Component {...pageProps} />
+                  </Layout.Page>
+                </>
+              </Layout>
+            </MapProvider>
+          </MainContextProvider>
         </ThemeProvider>
       </>
     )

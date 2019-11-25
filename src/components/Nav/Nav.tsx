@@ -5,6 +5,7 @@ import {
 import AppBar from '@material-ui/core/AppBar'
 import Avatar from '@material-ui/core/Avatar'
 import Toolbar from '@material-ui/core/Toolbar'
+import { colors } from 'src/styles'
 
 const useStyles = makeStyles(() => createStyles({
   grow: {
@@ -17,7 +18,13 @@ export function Nav() {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static" style={{ backgroundColor: '#fff' }}>
+      <AppBar
+        position="static"
+        style={{
+          backgroundColor: '#fff',
+          borderBottom: `solid 1px ${colors.main.borderColorNav}`,
+        }}
+      >
         <Toolbar>
           <a href="/">
             <img src="/logo-entourage-orange.png" alt="Entourage" height="34" />

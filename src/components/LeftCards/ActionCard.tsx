@@ -3,39 +3,45 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Avatar from '@material-ui/core/Avatar'
 import { variants } from 'src/styles'
-import { DateISO } from 'src/types'
 
 interface Props {
   title: string;
-  dateISO: DateISO;
+  dateLabel: string | JSX.Element;
   organizerPictureURL?: string;
-  organizerName: string | JSX.Element;
+  organizerLabel: string | JSX.Element;
   description: string;
+  isAssociation?: boolean;
 }
 
 export function ActionCard(props: Props) {
   const {
     title,
-    dateISO,
-    organizerName,
+    dateLabel,
+    organizerLabel,
     organizerPictureURL,
     description,
+    isAssociation,
   } = props
 
   return (
     <Box p={2}>
       <Typography variant={variants.title1}>{title}</Typography>
-      <Box>
-        <Typography variant={variants.footNote}>
-          {organizerName} a créé {'l\'action'} le {new Date(dateISO).toLocaleDateString()}
-        </Typography>
-      </Box>
       <Box display="flex" marginY={1} alignItems="center" justifyContent="flex-start">
         <Box marginRight={1}>
           <Avatar alt="Organizer" src={organizerPictureURL} />
         </Box>
+        <Box>
+          <Typography variant={variants.footNote} color={isAssociation ? 'primary' : undefined}>
+            {organizerLabel}
+          </Typography>
+        </Box>
       </Box>
       <Typography variant={variants.bodyRegular}>{description}</Typography>
+      <Box marginY={1}>
+        <Typography variant={variants.footNote}>
+          {dateLabel}
+        </Typography>
+      </Box>
     </Box>
   )
 }

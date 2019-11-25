@@ -11,6 +11,7 @@ interface Props {
   organizerPictureURL?: string;
   organizerLabel: string | JSX.Element;
   description: string;
+  isAssociation?: boolean;
 }
 
 export function EventCard(props: Props) {
@@ -21,6 +22,7 @@ export function EventCard(props: Props) {
     organizerLabel,
     organizerPictureURL,
     description,
+    isAssociation,
   } = props
 
   return (
@@ -36,7 +38,9 @@ export function EventCard(props: Props) {
         <Box marginRight={1}>
           <Avatar alt="Organizer" src={organizerPictureURL} />
         </Box>
-        <Typography variant={variants.footNote} color="primary">{organizerLabel}</Typography>
+        <Typography variant={variants.footNote} color={isAssociation ? 'primary' : undefined}>
+          {organizerLabel}
+        </Typography>
       </Box>
       <Typography variant={variants.bodyRegular}>{description}</Typography>
     </Box>

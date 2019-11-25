@@ -4,14 +4,15 @@ import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { api } from 'src/api'
+import { useMainContext } from 'src/containers/MainContext'
 import { constants } from 'src/constants'
 import {
   Map, EventMarker, POIMarker, useMapContext,
 } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
-// import { LeftCards } from './LeftCards'
 import { useOnScroll } from 'src/hooks'
 import { AnyToFix } from 'src/types'
+import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
 
 function useFeeds() {
@@ -81,10 +82,17 @@ interface Props {}
 
 export function MapContainer() {
   const actionId = useActionId()
+  const mainContext = useMainContext()
   const [feeds, feedsLoading, fetchMore] = useFeeds()
   const [POIs] = usePOIs()
 
   const { onScroll } = useOnScroll(fetchMore)
+
+  const selectedFeedItemFromFeed = feeds.find((feedItem) => feedItem.uuid === actionId)
+  const prevFeedItem = mainContext.feedItem
+  const currentFeedItem = actionId
+    ? (selectedFeedItemFromFeed || prevFeedItem)
+    : null
 
   const feedsMarkersContent = feeds.map((feed) => {
     const { location, uuid } = feed
@@ -157,16 +165,34 @@ export function MapContainer() {
         overflow="scroll"
         height="100%"
         onScroll={onScroll}
+        zIndex={2}
+        boxShadow={4}
       >
         {feedsContent}
       </Box>
-      <Box flex="1" position="relative">
+      <Box
+        flex="1"
+        position="relative"
+        zIndex={1}
+      >
         <Map>
           {POIsMarkersContent}
           {feedsMarkersContent}
         </Map>
-        {/* <LeftCards /> */}
       </Box>
+      {currentFeedItem && (
+        <Box
+          boxShadow={4}
+          p={2}
+          width={400}
+          zIndex={2}
+        >
+          <LeftCards
+            key={actionId}
+            feedItem={currentFeedItem}
+          />
+        </Box>
+      )}
     </Box>
   )
 }
