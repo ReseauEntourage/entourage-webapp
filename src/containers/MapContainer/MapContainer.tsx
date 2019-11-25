@@ -2,6 +2,8 @@ import React, { useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
+import { formatDistance } from 'date-fns' // eslint-disable-line
+import { fr } from 'date-fns/locale' // eslint-disable-line
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { api } from 'src/api'
 import { useMainContext } from 'src/containers/MainContext'
@@ -128,8 +130,9 @@ export function MapContainer() {
   ))
 
   const feedsListContent = feeds.map((feed) => {
+    const createAtDistance = formatDistance(new Date(feed.createdAt), new Date(), { locale: fr })
     const secondText = `
-      Créé le ${new Date(feed.createdAt).toLocaleDateString()}
+      Créé il y a ${createAtDistance}
       par ${feed.author.displayName}
     `
 
