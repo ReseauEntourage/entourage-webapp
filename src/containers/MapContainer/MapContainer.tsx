@@ -9,7 +9,7 @@ import { api } from 'src/api'
 import { useMainContext } from 'src/containers/MainContext'
 import { constants } from 'src/constants'
 import {
-  Map, EventMarker, POIMarker, useMapContext,
+  Map, EventMarker, POIMarker, MarkerWrapper, useMapContext,
 } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
 import { useOnScroll } from 'src/hooks'
@@ -99,9 +99,8 @@ export function MapContainer() {
   const feedsMarkersContent = feeds.map((feed) => {
     const { location, uuid } = feed
     return (
-      <div
+      <MarkerWrapper
         key={uuid}
-        // @ts-ignore ignore because lat and lng are required for Map children
         lat={location.latitude}
         lng={location.longitude}
       >
@@ -116,17 +115,20 @@ export function MapContainer() {
             />
           </a>
         </Link>
-      </div>
+      </MarkerWrapper>
     )
   })
 
   const POIsMarkersContent = POIs && POIs.data.pois.map((poi) => (
-    <POIMarker
+    <MarkerWrapper
       key={poi.id}
       lat={poi.latitude}
       lng={poi.longitude}
-      category={poi.category}
-    />
+    >
+      <POIMarker
+        category={poi.category}
+      />
+    </MarkerWrapper>
   ))
 
   const feedsListContent = feeds.map((feed) => {

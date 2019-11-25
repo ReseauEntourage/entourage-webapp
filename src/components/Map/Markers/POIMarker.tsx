@@ -9,7 +9,6 @@ import SpaIcon from '@material-ui/icons/Spa'
 import { colors } from 'src/styles'
 import { POICategory } from 'src/api'
 import { BaseMarker } from './BaseMarker'
-import { MarkerProps } from './types'
 import { useMapContext } from '../context'
 
 function getSize(zoom: number): { size: number; iconSize: number; } {
@@ -28,12 +27,10 @@ const icons = {
   7: PeopleIcon,
 }
 
-interface Props extends MarkerProps {
+interface Props {
   category: POICategory;
 }
 
-// disable ESLint because lat and lng are internaly use by Google Map
-// eslint-disable-next-line
 export function POIMarker(props: Props) {
   const { category } = props
   const { zoom } = useMapContext().value

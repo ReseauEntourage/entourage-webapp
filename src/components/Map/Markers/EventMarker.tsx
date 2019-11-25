@@ -4,7 +4,6 @@ import { getPixelPerMeter } from 'src/utils'
 import { constants } from 'src/constants'
 import { useMapContext } from '../context'
 import { BaseMarker } from './BaseMarker'
-import { MarkerProps } from './types'
 
 function getMarkerSize(lat: number, zoom: number) {
   const MIN_PX_SIZE = 30
@@ -16,7 +15,7 @@ function getMarkerSize(lat: number, zoom: number) {
     : size
 }
 
-interface Props extends MarkerProps {
+interface Props {
   isActive: boolean;
 }
 
