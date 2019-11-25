@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -13,6 +12,7 @@ import { FeedItem } from 'src/components/FeedItem'
 // import { LeftCards } from './LeftCards'
 import { useOnScroll } from 'src/hooks'
 import { AnyToFix } from 'src/types'
+import { useActionId } from './useActionId'
 
 function useFeeds() {
   const mapContext = useMapContext()
@@ -80,7 +80,7 @@ function usePOIs() {
 interface Props {}
 
 export function MapContainer() {
-  const router = useRouter()
+  const actionId = useActionId()
   const [feeds, feedsLoading, fetchMore] = useFeeds()
   const [POIs] = usePOIs()
 
@@ -102,7 +102,7 @@ export function MapContainer() {
           <a>
             <EventMarker
               key={uuid}
-              isActive={uuid === router.query.actionId}
+              isActive={uuid === actionId}
             />
           </a>
         </Link>
@@ -131,7 +131,7 @@ export function MapContainer() {
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
               key={feed.uuid}
-              isActive={feed.uuid === router.query.actionId}
+              isActive={feed.uuid === actionId}
               primaryText={feed.title}
               secondText={secondText}
               profilePictureURL={feed.author.avatarUrl}
