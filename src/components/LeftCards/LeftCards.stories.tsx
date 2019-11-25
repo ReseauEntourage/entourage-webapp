@@ -73,7 +73,7 @@ export const Event = () => (
         dateLabel="Jeudi 12 décembre à de 17h"
         address="35 avenue  des Batignolles 75017 Paris"
         organizerPictureURL="https://i.pravatar.cc/100"
-        organizerLabel={<div>Organisé par<b>Association Aurore</b></div>}
+        organizerLabel={<div>Organisé par <b>Association Aurore</b></div>}
         description={`
           Les personnes hébergées au CHRS comptent parmi elles des artistes qui ont pu réaliser cette année des œuvres.
           Nous vous invitons à les découvrir lors d’un vernissage convivial.
