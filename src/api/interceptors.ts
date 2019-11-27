@@ -1,5 +1,7 @@
 import { AxiosInstance } from 'axios'
 import humps from 'humps'
+import { env } from 'src/core'
+import { notifServerError } from 'src/utils'
 import { getTokenFromCookies } from './services/authToken'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
@@ -16,6 +18,7 @@ export function addAxiosInterceptors(client: AxiosInstance) {
       params: {
         ...humps.decamelizeKeys(request.params || {}),
         token: params.token || getUserToken(),
+        api_key: env.API_KEY, // eslint-disable-line
       },
       data: request.data && humps.decamelizeKeys(request.data),
     }
@@ -31,11 +34,22 @@ export function addAxiosInterceptors(client: AxiosInstance) {
     (error) => {
       console.error(error)
 
-      if (error.response.status >= 500) {
+      if (error.response && error.response.status >= 500) {
         const errorMessage = `\n${error.response.status} SERVER ERROR: ${error.request.path}\n`
         console.error(errorMessage)
-        throw new Error(errorMessage)
+        throw errorMessage
       }
+
+      const timer = setTimeout(() => {
+        notifServerError(error)
+      }, 500)
+
+      // eslint-disable-next-line
+      error.stopPropagation = () => {
+        clearTimeout(timer)
+      }
+
+      throw error
     },
   )
 }

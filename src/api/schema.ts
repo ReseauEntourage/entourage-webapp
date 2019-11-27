@@ -262,6 +262,17 @@ export const schema = {
       }[];
     },
   },
+  'POST users': {
+    url: 'users',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      user: {
+        phone: string;
+      };
+    },
+    response: {} as {},
+  },
   'GET users/me': {
     url: 'users/me',
     method: 'GET',
@@ -352,6 +363,65 @@ export const schema = {
         role: 'member';
         status: FeedJoinStatus;
       }[];
+    },
+  },
+  'POST /users/lookup': {
+    url: 'users/lookup',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      phone: string;
+    },
+    response: {} as {
+      status: 'not_found' | 'unavailable' | 'found';
+      // présent uniquement si status = found
+      // entre 8 et 256 caracters
+      secretType: 'password' | 'code';
+    },
+  },
+  'POST /login': {
+    url: 'login',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      user: {
+        phone: string;
+        secret: string;
+      };
+    },
+    response: {} as {
+      firstSignIn: boolean;
+      user: {
+        about: null;
+        address: null;
+        anonymous: boolean;
+        avatarUrl: null;
+        conversation: {
+          uuid: string;
+        };
+        displayName: string | null;
+        email: string | null;
+        firebaseProperties: {
+          ActionZoneDep: 'not_set';
+          ActionZoneCP: 'not_set';
+        };
+        firstName: string | null;
+        hasPassword: boolean;
+        id: number;
+        lastName: string | null;
+        memberships: [];
+        organization: string | null;
+        partner: null;
+        roles: [];
+        stats: {
+          tourCount: number;
+          encounterCount: number;
+          entourageCount: number;
+        };
+        token: string;
+        userType: string;
+        uuid: string;
+      };
     },
   },
 }

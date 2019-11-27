@@ -10,7 +10,7 @@ export const theme = createMuiTheme({
       main: colors.main.black,
     },
     error: {
-      main: colors.main.red,
+      main: '#f00',
     },
     background: {
       default: '#fff',

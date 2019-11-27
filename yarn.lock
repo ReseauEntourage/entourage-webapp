@@ -2040,6 +2040,11 @@
     "@types/react-native" "*"
     csstype "^2.2.0"
 
+"@types/validator@^12.0.1":
+  version "12.0.1"
+  resolved "https://registry.yarnpkg.com/@types/validator/-/validator-12.0.1.tgz#73dbc7f5f730ff7131754bca682824eb3c260b79"
+  integrity sha512-l57fIANZLMe8DArz+SDb+7ATXnDm15P7u2wHBw5mb0aSMd+UuvmvhouBF2hdLgQPDMJ39sh9g2MJO4GkZ0VAdQ==
+
 "@types/webpack-env@^1.13.7":
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/@types/webpack-env/-/webpack-env-1.14.1.tgz#0d8a53f308f017c53a5ddc3d07f4d6fa76b790d7"
@@ -3676,6 +3681,11 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
+
+cogo-toast@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/cogo-toast/-/cogo-toast-4.1.1.tgz#623f05eab713f45f1406851e3dab83e7c6bc7fb0"
+  integrity sha512-PZ16evCEtkcb43ycKubxpmjEb5ZFzSRqjKccJDJ1wbdhfQVdZreOFpJCo1q3xkGDghwXtNse/xsoG854k5pSmg==
 
 collection-visit@^1.0.0:
   version "1.0.0"
@@ -9579,6 +9589,11 @@ react-helmet-async@^1.0.2:
     react-fast-compare "^2.0.4"
     shallowequal "^1.1.0"
 
+react-hook-form@^3.28.4:
+  version "3.28.4"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-3.28.4.tgz#ce98c4a63d98e94cad5261af7276cbf8e816538a"
+  integrity sha512-V4zItF6Ny/29uWkvc1jHTHJ0+3IyjPSh6IB/VXpuSPa039HSEWCBTJstds7ST6K/eJr+ezeQFMm2EJuE1DIHzQ==
+
 react-hotkeys@2.0.0-pre4:
   version "2.0.0-pre4"
   resolved "https://registry.yarnpkg.com/react-hotkeys/-/react-hotkeys-2.0.0-pre4.tgz#a1c248a51bdba4282c36bf3204f80d58abc73333"
@@ -11475,6 +11490,11 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+validator@^12.1.0:
+  version "12.1.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-12.1.0.tgz#a3a7315d5238cbc15e46ad8d5e479aafa7119925"
+  integrity sha512-gIC2RBuFRi574Rb9vewGCJ7TCLxHXNx6EKthEgs+Iz0pYa9a9Te1VLG/bGLsAyGWrqR5FfR7tbFUI7FEF2LiGA==
 
 vary@~1.1.2:
   version "1.1.2"

@@ -11,6 +11,7 @@ export function Button(props: ButtonProps = {}) {
       {...restProps}
       style={{
         borderRadius: 20,
+        textTransform: 'none',
         ...style,
       }}
     />
