@@ -1,10 +1,10 @@
 import React, { useState, createContext, useMemo, useContext } from 'react'
-import { FeedItem, schema } from 'src/api'
+import { FeedItem, User } from 'src/api'
 
 interface MainContextValue {
   feedItem: FeedItem | null;
   onChangeFeedItem: (value: MainContextValue['feedItem']) => void;
-  me: typeof schema['GET users/me']['response']['user'] | null;
+  me: User;
   setMe: (value: MainContextValue['me']) => void;
 }
 
@@ -14,9 +14,15 @@ export function useMainContext() {
   return useContext(MainContext)
 }
 
-export function Provider(props: { children: React.ReactChild; }) {
+interface ProviderProps {
+  children: React.ReactChild;
+  me: MainContextValue['me'];
+}
+
+export function Provider(props: ProviderProps) {
+  const { me: meProp, children } = props
   const [feedItem, onChangeFeedItem] = useState<MainContextValue['feedItem']>(null)
-  const [me, setMe] = useState<MainContextValue['me']>(null)
+  const [me, setMe] = useState<MainContextValue['me']>(meProp)
 
   const contextValue = useMemo(() => ({
     feedItem,
@@ -25,7 +31,6 @@ export function Provider(props: { children: React.ReactChild; }) {
     setMe,
   }), [feedItem, me])
 
-  const { children } = props
   return (
     <MainContext.Provider value={contextValue}>
       {children}

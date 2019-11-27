@@ -43,7 +43,7 @@ export function Nav() {
             <img src="/logo-entourage-orange.png" alt="Entourage" height="34" />
           </a>
           <div className={classes.grow} />
-          {mainContext.me ? (
+          {!mainContext.me.anonymous ? (
             <Avatar alt="John Doe" src="https://i.pravatar.cc/100" />
           ) : (
             <>

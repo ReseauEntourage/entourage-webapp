@@ -1,99 +1,23 @@
-
 import { DateISO } from 'src/types/utils'
 
-export type UserType = 'public'
+import {
+  FeedTypesFilter,
+  UserPartner,
+  FeedDisplayCategory,
+  FeedEntourageType,
+  FeedGroupType,
+  FeedJoinStatus,
+  FeedMetadata,
+  FeedStatus,
+  EntourageTypes,
+  FeedType,
+  POICategoriesIds,
+  POICategory,
+  User,
+  Location,
+} from './types'
 
-export type FeedType = 'Entourage'
-
-export type FeedStatus = 'open' | 'closed' | 'suspended'
-
-export type FeedGroupType = 'action' | 'outing' | 'conversation'
-
-export type FeedEntourageType = 'contribution' | 'ask_for_help'
-
-export type FeedDisplayCategory =
-  | 'info'
-  | 'social'
-  | 'resource'
-  | 'other'
-  | 'mat_help'
-  | 'event'
-  | 'skill'
-
-export type FeedJoinStatus =
-  | 'accepted'
-  | 'pending'
-  | 'rejected'
-  | 'cancelled'
-  | 'not_requested'
-
-export type Location = {
-  latitude: number;
-  longitude: number;
-}
-
-export type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
-
-export type POICategory =
-  | { id: 1; name: 'Se nourrir'; }
-  | { id: 2; name: 'Se loger'; }
-  | { id: 3; name: 'Se soigner'; }
-  | { id: 4; name: 'Se rafraîchir'; }
-  | { id: 5; name: 'S\'orienter'; }
-  | { id: 6; name: 'S\'occuper de soi'; }
-  | { id: 7; name: 'Se réinsérer'; }
-
-/**
- * Values splited by coma: 1,2,3,4,5,6,7
- *
- * 1 = Se nourrir
- * 2 = Se loger
- * 3 = Se soigner
- * 4 = Se rafraîchir
- * 5 = S'orienter
- * 6 = S'occuper de soi
- * 7 = Se réinsérer
- */
-export type POICategoriesIds = string
-
-/**
- * Values splited by coma: as,ae,am,ar,ai,ak,ao
- *
- * as : ask_for_help_social
- * ae = ask_for_help_event
- * am = ask_for_help_mat_help
- * ar = ask_for_help_resource
- * ai = ask_for_help_info
- * ak = ask_for_help_skill
- * ao = ask_for_help_other
- * cs = contribution_social
- * ce = contribution_event
- * cm = contribution_mat_help
- * cr = contribution_resource
- * ci = contribution_info
- * ck = contribution_skill
- * co = contribution_other
- * ou = outing (event)
- */
-type FeedTypesFilter = string
-
-interface FeedOutingMetadata {
-  displayAddress: string;
-  googlePlaceId: string;
-  placeName: string;
-  startsAt: DateISO;
-  streetAddress: string;
-}
-
-type FeedMetadata = FeedOutingMetadata
-
-interface UserPartner {
-  default: boolean;
-  id: string;
-  largeLogoUrl: string;
-  name: string;
-  smallLogoUrl: string;
-}
+export * from './types'
 
 export const schema = {
   'POST anonymous_users': {
@@ -102,34 +26,7 @@ export const schema = {
     params: null,
     data: null,
     response: {} as {
-      user: {
-        about: null;
-        address: null;
-        anonymous: true;
-        avatarUrl: null;
-        displayName: null;
-        email: null;
-        firstName: null;
-        firebaseProperties: {
-          ActionZoneDep: string;
-          ActionZoneCP: string;
-        };
-        hasPassword: boolean;
-        id: null;
-        lastName: null;
-        organization: null;
-        partner: null;
-        placeholders: string[];
-        roles: unknown[];
-        stats: {
-          tourCount: number;
-          encounterCount: number;
-          entourageCount: number;
-        };
-        token: string;
-        userType: UserType;
-        uuid: string;
-      };
+      user: User;
     },
   },
   'GET feeds': {
@@ -279,38 +176,20 @@ export const schema = {
     params: null,
     data: null,
     response: {} as {
+      user: User;
+    },
+  },
+  'PATCH users/me': {
+    url: 'users/me',
+    method: 'PATCH',
+    params: null,
+    data: {} as {
       user: {
-        about: null;
-        address: null;
-        anonymous: true;
-        avatarUrl: null;
-        conversation: {
-          uuid: string;
-        };
-        displayName: null;
-        email: null;
-        firebaseProperties: {
-          ActionZoneDep: string;
-          ActionZoneCP: string;
-        };
-        firstName: null;
-        hasPassword: boolean;
-        id: null;
-        lastName: null;
-        memberships: unknown[];
-        organization: null;
-        partner: null;
-        placeholders: string[];
-        roles: unknown[];
-        stats: {
-          tourCount: number;
-          encounterCount: number;
-          entourageCount: number;
-        };
-        token: string;
-        userType: UserType;
-        uuid: string;
+        password?: string;
       };
+    },
+    response: {} as {
+      user: User;
     },
   },
   'GET pois': {
@@ -391,37 +270,7 @@ export const schema = {
     },
     response: {} as {
       firstSignIn: boolean;
-      user: {
-        about: null;
-        address: null;
-        anonymous: boolean;
-        avatarUrl: null;
-        conversation: {
-          uuid: string;
-        };
-        displayName: string | null;
-        email: string | null;
-        firebaseProperties: {
-          ActionZoneDep: 'not_set';
-          ActionZoneCP: 'not_set';
-        };
-        firstName: string | null;
-        hasPassword: boolean;
-        id: number;
-        lastName: string | null;
-        memberships: [];
-        organization: string | null;
-        partner: null;
-        roles: [];
-        stats: {
-          tourCount: number;
-          encounterCount: number;
-          entourageCount: number;
-        };
-        token: string;
-        userType: string;
-        uuid: string;
-      };
+      user: User;
     },
   },
 }

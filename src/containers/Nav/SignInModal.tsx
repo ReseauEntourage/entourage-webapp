@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useRef, useEffect } from 'react'
 import useForm from 'react-hook-form'
 import { TextField, validators } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
@@ -6,24 +6,28 @@ import { api, setTokenIntoCookies } from 'src/api'
 import { handleServerError } from 'src/utils'
 import { texts } from 'src/i18n'
 import { AnyToFix } from 'src/types'
+import { useMainContext } from 'src/containers/MainContext'
 
 type Step =
   | 'phone'
-  | 'user-not-found-code-SMS'
-  | 'user-found-password'
-  | 'user-found-code-SMS'
+  | 'code-SMS'
+  | 'password'
+  | 'define-password'
 
-type SetStep = (step: Step) => void
+type SetNextStep = (step: Step) => void
+type PhoneForm = ReturnType<typeof useForm>
+type SecretForm = ReturnType<typeof useForm>
+type DefinePasswordForm = ReturnType<typeof useForm>
 
-function usePhoneStep(setStep: SetStep) {
-  const formPhone = useForm<{ phone: string; }>()
+function usePhoneStep(setNextStep: SetNextStep) {
+  const phoneForm = useForm<{ phone: string; }>()
 
   const onValidate = useCallback(async () => {
-    if (!await formPhone.triggerValidation()) {
+    if (!await phoneForm.triggerValidation()) {
       return false
     }
 
-    const { phone } = formPhone.getValues()
+    const { phone } = phoneForm.getValues()
 
     try {
       const lookupResponse = await api.request({
@@ -37,27 +41,24 @@ function usePhoneStep(setStep: SetStep) {
       const lookupSecretType = lookupResponse.data.secretType
 
       if (lookupStatus === 'not_found') {
-        try {
-          await api.request({
-            routeName: 'POST users',
-            data: {
-              user: {
-                phone,
-              },
+        await api.request({
+          routeName: 'POST users',
+          data: {
+            user: {
+              phone,
             },
-          })
+          },
+        })
 
-          setStep('user-not-found-code-SMS')
-        } catch (error) {
-          console.error('POST users', error)
-          return false
-        }
+        setNextStep('code-SMS')
       } else if (lookupStatus === 'found') {
         if (lookupSecretType === 'code') {
-          setStep('user-found-code-SMS')
+          setNextStep('code-SMS')
         } else {
-          setStep('user-found-password')
+          setNextStep('password')
         }
+      } else {
+        console.error('UNHANDLED')
       }
 
       return false
@@ -65,7 +66,7 @@ function usePhoneStep(setStep: SetStep) {
       handleServerError(error, () => {
         const serverError = error.response && error.response.data && error.response.data && error.response.data.error
         if (serverError && serverError.code === 'INVALID_PHONE_FORMAT') {
-          formPhone.setError('phone', serverError.code, texts.form.BAD_FORMAT)
+          phoneForm.setError('phone', serverError.code, texts.form.BAD_FORMAT)
           return true
         }
 
@@ -74,16 +75,44 @@ function usePhoneStep(setStep: SetStep) {
 
       return false
     }
-  }, [formPhone, setStep])
+  }, [phoneForm, setNextStep])
 
-  return [formPhone, onValidate] as [typeof formPhone, typeof onValidate]
+  return [phoneForm, onValidate] as [typeof phoneForm, typeof onValidate]
 }
 
-function useSecretStep(setStep: SetStep, formPhone: AnyToFix) {
-  const formSecret = useForm<{ secret: string; }>()
+interface PhoneFieldProps {
+  step: Step;
+  phoneForm: PhoneForm;
+}
+
+function PhoneField(props: PhoneFieldProps) {
+  const { phoneForm, step } = props
+
+  return (
+    <TextField
+      autoFocus={true}
+      label="Téléphone"
+      type="text"
+      name="phone"
+      fullWidth={true}
+      inputRef={phoneForm.register({
+        required: true,
+        validate: {
+          phone: validators.phone,
+        },
+      })}
+      formError={phoneForm.errors.phone}
+      disabled={step !== 'phone'}
+    />
+  )
+}
+
+function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
+  const secretForm = useForm<{ secret: string; }>()
+  const mainContext = useMainContext()
 
   const onValidate = useCallback(async () => {
-    if (!await formSecret.triggerValidation()) {
+    if (!await secretForm.triggerValidation()) {
       return false
     }
 
@@ -92,21 +121,28 @@ function useSecretStep(setStep: SetStep, formPhone: AnyToFix) {
         routeName: 'POST /login',
         data: {
           user: {
-            phone: formPhone.getValues().phone,
-            secret: formSecret.getValues().secret,
+            phone: phoneForm.getValues().phone,
+            secret: secretForm.getValues().secret,
           },
         },
       })
 
-      const { token } = loginResponse.data.user
+      const { token, hasPassword } = loginResponse.data.user
 
       setTokenIntoCookies(token)
+
+      if (!hasPassword) {
+        setNextStep('define-password')
+        return false
+      }
+
+      mainContext.setMe(loginResponse.data.user)
 
       return true
     } catch (error) {
       handleServerError(error, () => {
         if (error.response.status === 401) {
-          formSecret.setError('secret', '401', texts.form.INCORRECT_VALUE)
+          secretForm.setError('secret', '401', texts.form.INCORRECT_VALUE)
           return true
         }
 
@@ -115,27 +151,178 @@ function useSecretStep(setStep: SetStep, formPhone: AnyToFix) {
 
       return false
     }
-  }, [formPhone, formSecret])
+  }, [mainContext, phoneForm, secretForm, setNextStep])
 
-  return [formSecret, onValidate] as [typeof formSecret, typeof onValidate]
+  return [secretForm, onValidate] as [typeof secretForm, typeof onValidate]
+}
+
+interface SecretFieldProps {
+  step: Step;
+  phoneForm: PhoneForm;
+  secretForm: SecretForm;
+}
+
+function SecretField(props: SecretFieldProps) {
+  const { secretForm, step } = props
+  const secretTypeRef = useRef<'password' | 'code-SMS'>()
+  const secretTypeDone = secretTypeRef.current && step !== 'code-SMS' && step !== 'password'
+  const secretTypeActive = step === 'code-SMS' || step === 'password'
+
+  useEffect(() => {
+    if (step === 'password' || step === 'code-SMS') {
+      secretTypeRef.current = step
+    }
+  }, [step])
+
+  if (!secretTypeActive && !secretTypeDone) {
+    return null
+  }
+
+  return (
+    <TextField
+      autoFocus={true}
+      label={step === 'password' ? 'Mot de passe' : 'Code SMS'}
+      type="text"
+      name="secret"
+      fullWidth={true}
+      inputRef={secretForm.register({
+        required: true,
+      })}
+      formError={secretForm.errors.secret}
+      disabled={secretTypeDone}
+    />
+  )
+}
+
+function useDefinePasswordStep() {
+  const definePasswordForm = useForm<{password: string; confirmationPassword: string; }>()
+  const mainContext = useMainContext()
+
+  const onValidate = useCallback(async () => {
+    if (!await definePasswordForm.triggerValidation()) {
+      return false
+    }
+
+    try {
+      const updatePasswordResponse = await api.request({
+        routeName: 'PATCH users/me',
+        data: {
+          user: {
+            password: definePasswordForm.getValues().password,
+          },
+        },
+      })
+
+      mainContext.setMe(updatePasswordResponse.data.user)
+
+      return true
+    } catch (error) {
+      handleServerError(error, () => {
+        if (error.response.status === 400) {
+          definePasswordForm.setError('password', error.response.data.error.code, error.response.data.error.message)
+          return true
+        }
+
+        return false
+      })
+
+      return false
+    }
+  }, [definePasswordForm, mainContext])
+
+  return [definePasswordForm, onValidate] as [typeof definePasswordForm, typeof onValidate]
+}
+
+interface DefinePasswordFieldProps {
+  definePasswordForm: DefinePasswordForm;
+  step: Step;
+}
+
+function DefinePasswordField(props: DefinePasswordFieldProps) {
+  const { definePasswordForm, step } = props
+  const stepDone = useRef<boolean>()
+
+  useEffect(() => {
+    if (step === 'define-password') {
+      stepDone.current = true
+    }
+  }, [step])
+
+  const showFields = step === 'define-password' || stepDone.current
+  const stepPast = step !== 'define-password' && stepDone.current
+
+  if (!showFields) {
+    return null
+  }
+
+  return (
+    <>
+      <TextField
+        autoFocus={true}
+        label="Mot de passe"
+        type="password"
+        name="password"
+        fullWidth={true}
+        inputRef={definePasswordForm.register({
+          required: true,
+        })}
+        formError={definePasswordForm.errors.password}
+        disabled={stepPast}
+      />
+      <TextField
+        label="Confirmation mot de passe"
+        type="password"
+        name="confirmationPassword"
+        fullWidth={true}
+        inputRef={definePasswordForm.register({
+          required: true,
+          validate: {
+            confirmation: (confirmationPassword) => {
+              return confirmationPassword !== definePasswordForm.getValues().password
+                ? texts.form.INCORRECT_VALUE
+                : true
+            },
+          },
+        })}
+        formError={definePasswordForm.errors.confirmationPassword}
+        disabled={stepPast}
+      />
+    </>
+  )
 }
 
 export function SignInModal() {
   const [step, setStep] = useState<Step>('phone')
-  const [formPhone, onValidatePhoneStep] = usePhoneStep(setStep)
-  const [formSecret, onValidateSecretStep] = useSecretStep(setStep, formPhone)
+  const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
+  const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)
+  const [definePasswordForm, onValidateDefinePasswordStep] = useDefinePasswordStep()
 
-  const onValidate = useCallback(async () => {
+  const onValidate = useCallback(() => {
     if (step === 'phone') {
       return onValidatePhoneStep()
+    } if (step === 'password' || step === 'code-SMS') {
+      return onValidateSecretStep()
+    } if (step === 'define-password') {
+      return onValidateDefinePasswordStep()
     }
 
-    return onValidateSecretStep()
-  }, [onValidatePhoneStep, onValidateSecretStep, step])
+    return false
+  }, [onValidateDefinePasswordStep, onValidatePhoneStep, onValidateSecretStep, step])
 
-  const validateLabel = step === 'phone'
-    ? 'Valider le numéro'
-    : 'Valider le code'
+  const validateLabel = (() => {
+    switch (step) {
+      case 'phone':
+        return 'Valider le numéro'
+      case 'code-SMS':
+        return 'Valider le code SMS'
+      case 'define-password':
+        return 'Valider le mot de passe'
+      case 'password':
+        return 'Connexion'
+      default:
+        throw new Error('UNHANDLED')
+    }
+  })()
 
   return (
     <Modal
@@ -143,39 +330,9 @@ export function SignInModal() {
       onValidate={onValidate}
       validateLabel={validateLabel}
     >
-      <TextField
-        autoFocus={true}
-        label="Téléphone"
-        type="text"
-        name="phone"
-        fullWidth={true}
-        inputRef={formPhone.register({
-          required: true,
-          validate: {
-            phone: validators.phone,
-          },
-        })}
-        formError={formPhone.errors.phone}
-        disabled={step !== 'phone'}
-      />
-      {step === 'phone' ? null : (
-        <TextField
-          autoFocus={true}
-          label={step === 'user-found-password' ? 'Mot de passe' : 'Code SMS'}
-          type="text"
-          name="secret"
-          fullWidth={true}
-          inputRef={formSecret.register({
-            required: true,
-          })}
-          formError={formSecret.errors.secret}
-          disabled={
-            step !== 'user-found-code-SMS'
-            && step !== 'user-found-password'
-            && step !== 'user-not-found-code-SMS'
-          }
-        />
-      )}
+      <PhoneField step={step} phoneForm={phoneForm} />
+      <SecretField step={step} phoneForm={phoneForm} secretForm={secretForm} />
+      <DefinePasswordField step={step} definePasswordForm={definePasswordForm} />
     </Modal>
   )
 }

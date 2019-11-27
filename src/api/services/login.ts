@@ -8,6 +8,7 @@ export async function createAnonymousUser(ctx: NextPageContext): Promise<string>
   })
 
   const anonymousToken = anonymousUsersRes.data.user.token
+
   setTokenIntoCookies(anonymousToken, ctx)
 
   return anonymousToken
