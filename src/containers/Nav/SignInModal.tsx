@@ -181,7 +181,11 @@ function SecretField(props: SecretFieldProps) {
   return (
     <TextField
       autoFocus={true}
-      label={step === 'password' ? 'Mot de passe' : 'Code SMS'}
+      label={
+        step === 'password'
+          ? 'Entre votre mot de passe (au moins 8 caractères)'
+          : 'Entrez le code d\'activation reçu'
+      }
       type="text"
       name="secret"
       fullWidth={true}
@@ -259,7 +263,7 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
     <>
       <TextField
         autoFocus={true}
-        label="Mot de passe"
+        label="Choisissez votre mot de passe"
         type="password"
         name="password"
         fullWidth={true}
@@ -270,7 +274,7 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
         disabled={stepPast}
       />
       <TextField
-        label="Confirmation mot de passe"
+        label="Confirmez votre mot de passe"
         type="password"
         name="confirmationPassword"
         fullWidth={true}
