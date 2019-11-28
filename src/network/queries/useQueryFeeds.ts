@@ -4,7 +4,7 @@ import { api } from 'src/network/api'
 import { AnyToFix } from 'src/types'
 import { useMapContext } from 'src/components/Map'
 
-export function useFeeds() {
+export function useQueryFeeds() {
   const mapContext = useMapContext()
 
   const feedsParams = useMemo(() => ({

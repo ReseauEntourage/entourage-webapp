@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
 import { api } from 'src/network/api'
 
-export function useEntourageUsers(entourageId: string) {
+export function useQueryEntourageUsers(entourageId: string) {
   const { data, isLoading } = useQuery(['entourage-users', { entourageId }], (urlParams) => {
     return api.request({
       routeName: 'GET /entourages/:entourageId/users',

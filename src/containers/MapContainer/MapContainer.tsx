@@ -8,7 +8,7 @@ import { useMainContext } from 'src/containers/MainContext'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
 import { useOnScroll } from 'src/hooks'
-import { usePOIs, useFeeds } from 'src/network/queries'
+import { useQueryPOIs, useQueryFeeds } from 'src/network/queries'
 import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
 
@@ -17,8 +17,8 @@ interface Props {}
 export function MapContainer() {
   const actionId = useActionId()
   const mainContext = useMainContext()
-  const [feeds, feedsLoading, fetchMore] = useFeeds()
-  const [POIs] = usePOIs()
+  const [feeds, feedsLoading, fetchMore] = useQueryFeeds()
+  const [POIs] = useQueryPOIs()
 
   const { onScroll } = useOnScroll(fetchMore)
 
