@@ -1,10 +1,11 @@
 import React from 'react'
 import { Reset } from 'styled-reset'
-import NextApp from 'next/app'
+import NextApp, { AppContext, AppInitialProps } from 'next/app'
 import Head from 'next/head'
 import { hijackEffects } from 'stop-runaway-react-effects'
 import { ReactQueryConfigProvider } from 'react-query'
 import { ThemeProvider } from '@material-ui/core/styles'
+import { api } from 'src/api'
 import { config as queryConfig } from 'src/queries'
 import { theme } from 'src/styles/theme'
 import { Nav } from 'src/containers/Nav'
@@ -22,17 +23,23 @@ export default class App extends NextApp {
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  // static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
-  //   // calls page's `getInitialProps` and fills `appProps.pageProps`
-  //   const appProps = await NextApp.getInitialProps(appContext)
+  static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
+    // calls page's `getInitialProps` and fills `appProps.pageProps`
+    const appProps = await NextApp.getInitialProps(appContext)
 
-  //   return {
-  //     ...appProps,
-  //   }
-  // }
+    // use to get token, either anonyous token or authenticated token
+    if (!process.browser) {
+      await api.ssr(appContext.ctx).request({
+        routeName: 'GET users/me',
+      })
+    }
+
+    return {
+      ...appProps,
+    }
+  }
 
   render() {
-    // @ts-ignore
     const { Component, pageProps } = this.props
 
     return (

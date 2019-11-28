@@ -336,7 +336,7 @@ export function SignInModal() {
       <Box style={{ paddingLeft: 250 }}>
         <img
           alt="Personnage"
-          src="./personnage-entourage-1.png"
+          src="/personnage-entourage-1.png"
           width="200"
           style={{
             position: 'absolute',

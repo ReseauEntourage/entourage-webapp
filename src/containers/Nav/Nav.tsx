@@ -3,7 +3,6 @@ import {
   makeStyles, createStyles,
 } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
-import Avatar from '@material-ui/core/Avatar'
 import PersonIcon from '@material-ui/icons/Person'
 import Toolbar from '@material-ui/core/Toolbar'
 import { ModalTrigger } from 'src/components/Modal'
@@ -11,6 +10,7 @@ import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
 import { useQueryMe } from 'src/queries'
 import { SignInModal } from './SignInModal'
+import { LoggedChunk } from './LoggedChunk'
 
 const useStyles = makeStyles((theme) => createStyles({
   appBar: {
@@ -46,7 +46,7 @@ export function Nav() {
           </a>
           <div className={classes.grow} />
           {iAmLogged ? (
-            <Avatar alt="John Doe" src="https://i.pravatar.cc/100" />
+            <LoggedChunk />
           ) : (
             <>
               <ModalTrigger
@@ -54,7 +54,6 @@ export function Nav() {
               >
                 <Button className={classes.buttonMarginLeft}>
                   <PersonIcon className={classes.buttonIcon} />
-                  {/* Rejoignez le réseau ! */}
                   Connexion / Inscription
                 </Button>
               </ModalTrigger>
