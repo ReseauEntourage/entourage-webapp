@@ -68,7 +68,11 @@ export function Modal(props: Props) {
       disableBackdropClick={true}
     >
       <DialogTitle
-        style={{ backgroundColor: colors.main.primary, color: '#fff' }}
+        style={{
+          backgroundColor: colors.main.primary,
+          color: '#fff',
+          textAlign: 'center',
+        }}
         id="form-dialog-title"
       >
         {title}

@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react'
 import useForm from 'react-hook-form'
+import Box from '@material-ui/core/Box'
 import { TextField, validators } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
 import { api, setTokenIntoCookies } from 'src/api'
@@ -186,7 +187,7 @@ function SecretField(props: SecretFieldProps) {
           ? 'Entre votre mot de passe (au moins 8 caractères)'
           : 'Entrez le code d\'activation reçu'
       }
-      type="text"
+      type="password"
       name="secret"
       fullWidth={true}
       inputRef={secretForm.register({
@@ -330,13 +331,25 @@ export function SignInModal() {
 
   return (
     <Modal
-      title="Envie de passer à l'action ? Super ! Rejoignez le réseau"
+      title="Connexion / Inscription"
       onValidate={onValidate}
       validateLabel={validateLabel}
     >
-      <PhoneField step={step} phoneForm={phoneForm} />
-      <SecretField step={step} phoneForm={phoneForm} secretForm={secretForm} />
-      <DefinePasswordField step={step} definePasswordForm={definePasswordForm} />
+      <Box style={{ paddingLeft: 250 }}>
+        <img
+          alt="Personnage"
+          src="./personnage-entourage-1.png"
+          width="200"
+          style={{
+            position: 'absolute',
+            left: 20,
+            bottom: 0,
+          }}
+        />
+        <PhoneField step={step} phoneForm={phoneForm} />
+        <SecretField step={step} phoneForm={phoneForm} secretForm={secretForm} />
+        <DefinePasswordField step={step} definePasswordForm={definePasswordForm} />
+      </Box>
     </Modal>
   )
 }
