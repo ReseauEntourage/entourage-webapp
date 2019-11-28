@@ -20,7 +20,7 @@ export function useFeeds() {
     fetchMore,
     isFetchingMore,
   } = useQuery(['feeds', feedsParams], (params) => api.request({
-    routeName: 'GET feeds',
+    routeName: 'GET /feeds',
     params,
   }), {
     paginated: true,

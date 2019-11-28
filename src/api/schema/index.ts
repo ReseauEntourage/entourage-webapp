@@ -20,7 +20,7 @@ import {
 export * from './types'
 
 export const schema = {
-  'POST anonymous_users': {
+  'POST /anonymous_users': {
     url: 'anonymous_users',
     method: 'POST',
     params: null,
@@ -29,7 +29,7 @@ export const schema = {
       user: User;
     },
   },
-  'GET feeds': {
+  'GET /feeds': {
     url: 'feeds',
     method: 'GET',
     params: {} as {
@@ -81,7 +81,7 @@ export const schema = {
       nextPageToken?: string;
     },
   },
-  'GET myfeeds': {
+  'GET /myfeeds': {
     url: 'myfeeds',
     method: 'GET',
     params: {} as void | {
@@ -159,7 +159,7 @@ export const schema = {
       }[];
     },
   },
-  'POST users': {
+  'POST /users': {
     url: 'users',
     method: 'POST',
     params: null,
@@ -170,7 +170,7 @@ export const schema = {
     },
     response: {} as {},
   },
-  'GET users/me': {
+  'GET /users/me': {
     url: 'users/me',
     method: 'GET',
     params: null,
@@ -179,7 +179,7 @@ export const schema = {
       user: User;
     },
   },
-  'PATCH users/me': {
+  'PATCH /users/me': {
     url: 'users/me',
     method: 'PATCH',
     params: null,
@@ -192,7 +192,7 @@ export const schema = {
       user: User;
     },
   },
-  'GET pois': {
+  'GET /pois': {
     url: 'pois',
     method: 'GET',
     params: {} as {
@@ -275,4 +275,4 @@ export const schema = {
   },
 }
 
-export type FeedItem = typeof schema['GET feeds']['response']['feeds'][0]['data']
+export type FeedItem = typeof schema['GET /feeds']['response']['feeds'][0]['data']

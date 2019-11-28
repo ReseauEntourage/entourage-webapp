@@ -44,7 +44,7 @@ function usePhoneStep(setNextStep: SetNextStep) {
 
       if (lookupStatus === 'not_found') {
         await api.request({
-          routeName: 'POST users',
+          routeName: 'POST /users',
           data: {
             user: {
               phone,
@@ -208,7 +208,7 @@ function useDefinePasswordStep() {
 
     try {
       await api.request({
-        routeName: 'PATCH users/me',
+        routeName: 'PATCH /users/me',
         data: {
           user: {
             password: definePasswordForm.getValues().password,

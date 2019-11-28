@@ -3,8 +3,13 @@ import cogoToast from 'cogo-toast'
 import Typography from '@material-ui/core/Typography'
 import { AnyToFix } from 'src/types'
 import { variants } from 'src/styles'
+import { isSSR } from 'src/utils'
 
 export function notifServerError(error: AnyToFix) {
+  if (isSSR) {
+    return
+  }
+
   try {
     const { status, data } = error.response
     const errorMessage = `${status}: ${data.error.code} - ${data.error.message}`

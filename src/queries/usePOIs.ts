@@ -13,7 +13,7 @@ export function usePOIs() {
   }
 
   const { data, isLoading } = useQuery(['POIs', POIsParams], (params) => api.request({
-    routeName: 'GET pois',
+    routeName: 'GET /pois',
     params,
   }))
 

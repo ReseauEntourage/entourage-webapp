@@ -12,6 +12,7 @@ import { Nav } from 'src/containers/Nav'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
+import { isSSR } from 'src/utils'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
@@ -28,9 +29,9 @@ export default class App extends NextApp {
     const appProps = await NextApp.getInitialProps(appContext)
 
     // use to get token, either anonyous token or authenticated token
-    if (!process.browser) {
+    if (isSSR) {
       await api.ssr(appContext.ctx).request({
-        routeName: 'GET users/me',
+        routeName: 'GET /users/me',
       })
     }
 
