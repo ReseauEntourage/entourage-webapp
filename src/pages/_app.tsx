@@ -2,6 +2,7 @@ import React from 'react'
 import { Reset } from 'styled-reset'
 import NextApp from 'next/app'
 import Head from 'next/head'
+import { hijackEffects } from 'stop-runaway-react-effects'
 import { ReactQueryConfigProvider } from 'react-query'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { config as queryConfig } from 'src/queries'
@@ -10,6 +11,10 @@ import { Nav } from 'src/containers/Nav'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
+
+if (process.env.NODE_ENV !== 'production') {
+  hijackEffects()
+}
 
 export default class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
