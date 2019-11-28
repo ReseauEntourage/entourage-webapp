@@ -7,7 +7,7 @@ import ExploreIcon from '@material-ui/icons/Explore'
 import LocalDrinkIcon from '@material-ui/icons/LocalDrink'
 import SpaIcon from '@material-ui/icons/Spa'
 import { colors } from 'src/styles'
-import { POICategory } from 'src/api'
+import { POICategory } from 'src/network/api'
 import { BaseMarker } from './BaseMarker'
 import { useMapContext } from '../context'
 

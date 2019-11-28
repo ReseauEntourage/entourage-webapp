@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { api } from 'src/api'
+import { api } from 'src/network/api'
 import { useMapContext } from 'src/components/Map'
 
 export function usePOIs() {

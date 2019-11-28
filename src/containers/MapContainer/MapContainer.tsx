@@ -8,7 +8,7 @@ import { useMainContext } from 'src/containers/MainContext'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
 import { useOnScroll } from 'src/hooks'
-import { usePOIs, useFeeds } from 'src/queries'
+import { usePOIs, useFeeds } from 'src/network/queries'
 import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
 

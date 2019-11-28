@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 import { useQuery } from 'react-query'
-import { api } from 'src/api'
+import { api } from 'src/network/api'
 import { AnyToFix } from 'src/types'
 import { useMapContext } from 'src/components/Map'
 

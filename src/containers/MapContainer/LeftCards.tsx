@@ -6,8 +6,8 @@ import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import { Typography } from '@material-ui/core'
 import { useMount } from 'src/hooks'
-import { FeedItem } from 'src/api'
-import { useEntourageUsers } from 'src/queries'
+import { FeedItem } from 'src/network/api'
+import { useEntourageUsers } from 'src/network/queries'
 import { Button } from 'src/components/Button'
 import { useMainContext } from 'src/containers/MainContext'
 import { ActionCard, EventCard } from 'src/components/LeftCards'

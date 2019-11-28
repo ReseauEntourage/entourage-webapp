@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react'
 import { refetchQuery } from 'react-query'
-import { setTokenIntoCookies } from 'src/api'
+import { setTokenIntoCookies } from 'src/network/api'
 import Avatar from '@material-ui/core/Avatar'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { queryKeys } from 'src/queries'
-import { createAnonymousUser } from 'src/api/services/login'
+import { queryKeys } from 'src/network/queries'
+import { createAnonymousUser } from 'src/network/api/services/login'
 
 interface LoggedChunkProps {}
 

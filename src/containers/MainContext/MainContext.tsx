@@ -1,5 +1,5 @@
 import React, { useState, createContext, useMemo, useContext } from 'react'
-import { FeedItem } from 'src/api'
+import { FeedItem } from 'src/network/api'
 
 interface MainContextValue {
   feedItem: FeedItem | null;

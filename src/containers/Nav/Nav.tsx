@@ -8,7 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import { ModalTrigger } from 'src/components/Modal'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
-import { useQueryMe } from 'src/queries'
+import { useQueryMe } from 'src/network/queries'
 import { SignInModal } from './SignInModal'
 import { LoggedChunk } from './LoggedChunk'
 

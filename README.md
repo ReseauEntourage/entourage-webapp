@@ -48,7 +48,7 @@ Le schéma de l'api est défini dans [src/api/schema](src/api/schema.ts) et util
 
 Utilisation de l'API:
 ```js
-import { api } from 'src/api'
+import { api } from 'src/network/api'
 
 const users = await api.request({
   routeName: 'GET users',
