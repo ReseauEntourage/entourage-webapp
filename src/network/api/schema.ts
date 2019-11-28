@@ -15,9 +15,7 @@ import {
   POICategory,
   User,
   Location,
-} from './types'
-
-export * from './types'
+} from './SchemaTypes'
 
 export const schema = {
   'POST /anonymous_users': {
