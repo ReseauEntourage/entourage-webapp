@@ -1,36 +1,21 @@
 import React from 'react'
 import Link from 'next/link'
-import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
 import CloseIcon from '@material-ui/icons/Close'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import { Button } from 'src/components/Button'
+import { Typography } from '@material-ui/core'
 import { useMount } from 'src/hooks'
-import { api, FeedItem } from 'src/api'
+import { FeedItem } from 'src/api'
+import { useEntourageUsers } from 'src/queries'
+import { Button } from 'src/components/Button'
 import { useMainContext } from 'src/containers/MainContext'
 import { ActionCard, EventCard } from 'src/components/LeftCards'
 import { UsersList } from 'src/components/UsersList'
-import { Typography } from '@material-ui/core'
 import { variants } from 'src/styles'
 
 interface Props {
   feedItem: FeedItem;
-}
-
-function useEntourageUsers(entourageId: string) {
-  const { data, isLoading } = useQuery(['entourage-users', { entourageId }], (urlParams) => {
-    return api.request({
-      routeName: 'GET /entourages/:entourageId/users',
-      urlParams: {
-        entourageId: urlParams.entourageId,
-      },
-    })
-  })
-
-  const users = data ? data.data.users : []
-
-  return [users, isLoading] as [typeof users, boolean]
 }
 
 export function LeftCards(props: Props) {

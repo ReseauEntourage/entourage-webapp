@@ -7,7 +7,8 @@ import { api, setTokenIntoCookies } from 'src/api'
 import { handleServerError } from 'src/utils'
 import { texts } from 'src/i18n'
 import { AnyToFix } from 'src/types'
-import { useMainContext } from 'src/containers/MainContext'
+import { refetchQuery } from 'react-query'
+import { queryKeys } from 'src/queries'
 
 type Step =
   | 'phone'
@@ -110,7 +111,6 @@ function PhoneField(props: PhoneFieldProps) {
 
 function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
   const secretForm = useForm<{ secret: string; }>()
-  const mainContext = useMainContext()
 
   const onValidate = useCallback(async () => {
     if (!await secretForm.triggerValidation()) {
@@ -131,13 +131,12 @@ function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
       const { token, hasPassword } = loginResponse.data.user
 
       setTokenIntoCookies(token)
+      refetchQuery(queryKeys.me, { force: true })
 
       if (!hasPassword) {
         setNextStep('define-password')
         return false
       }
-
-      mainContext.setMe(loginResponse.data.user)
 
       return true
     } catch (error) {
@@ -152,7 +151,7 @@ function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
 
       return false
     }
-  }, [mainContext, phoneForm, secretForm, setNextStep])
+  }, [phoneForm, secretForm, setNextStep])
 
   return [secretForm, onValidate] as [typeof secretForm, typeof onValidate]
 }
@@ -201,7 +200,6 @@ function SecretField(props: SecretFieldProps) {
 
 function useDefinePasswordStep() {
   const definePasswordForm = useForm<{password: string; confirmationPassword: string; }>()
-  const mainContext = useMainContext()
 
   const onValidate = useCallback(async () => {
     if (!await definePasswordForm.triggerValidation()) {
@@ -209,7 +207,7 @@ function useDefinePasswordStep() {
     }
 
     try {
-      const updatePasswordResponse = await api.request({
+      await api.request({
         routeName: 'PATCH users/me',
         data: {
           user: {
@@ -218,7 +216,7 @@ function useDefinePasswordStep() {
         },
       })
 
-      mainContext.setMe(updatePasswordResponse.data.user)
+      // refetchQuery(queryKeys.me)
 
       return true
     } catch (error) {
@@ -233,7 +231,7 @@ function useDefinePasswordStep() {
 
       return false
     }
-  }, [definePasswordForm, mainContext])
+  }, [definePasswordForm])
 
   return [definePasswordForm, onValidate] as [typeof definePasswordForm, typeof onValidate]
 }

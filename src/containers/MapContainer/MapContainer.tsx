@@ -1,84 +1,16 @@
-import React, { useCallback, useMemo } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useQuery } from 'react-query'
 import Box from '@material-ui/core/Box'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { api } from 'src/api'
 import { useMainContext } from 'src/containers/MainContext'
-import { constants } from 'src/constants'
-import {
-  Map, EventMarker, POIMarker, MarkerWrapper, useMapContext,
-} from 'src/components/Map'
+import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { FeedItem } from 'src/components/FeedItem'
 import { useOnScroll } from 'src/hooks'
-import { AnyToFix } from 'src/types'
+import { usePOIs, useFeeds } from 'src/queries'
 import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
-
-function useFeeds() {
-  const mapContext = useMapContext()
-
-  const feedsParams = useMemo(() => ({
-    timeRange: 36000,
-    latitude: mapContext.value.center.lat,
-    longitude: mapContext.value.center.lng,
-    pageToken: undefined as string | undefined,
-  }), [mapContext.value.center.lat, mapContext.value.center.lng])
-
-  const {
-    data: pages,
-    isLoading,
-    fetchMore,
-    isFetchingMore,
-  } = useQuery(['feeds', feedsParams], (params) => api.request({
-    routeName: 'GET feeds',
-    params,
-  }), {
-    staleTime: constants.QUERIES_CACHE_TTL,
-    paginated: true,
-    getCanFetchMore: (lastPage: AnyToFix) => {
-      return lastPage.data.nextPageToken
-    },
-  })
-
-  const fetchModeWithParams = useCallback(() => {
-    if (!pages || isFetchingMore) return
-    const currentPage = pages[pages.length - 1]
-    const { nextPageToken } = currentPage.data
-    fetchMore({ ...feedsParams, pageToken: nextPageToken })
-  }, [pages, isFetchingMore, fetchMore, feedsParams])
-
-  const feeds = !pages
-    ? []
-    : pages
-      .map((res) => res.data.feeds)
-      .reduce((pageA, pageB) => [...pageA, ...pageB], [])
-      .map((feed) => feed.data)
-
-  return [feeds, isLoading, fetchModeWithParams] as [typeof feeds, boolean, typeof fetchMore]
-}
-
-function usePOIs() {
-  const mapContext = useMapContext()
-
-  const POIsParams = {
-    distance: 5,
-    latitude: mapContext.value.center.lat,
-    longitude: mapContext.value.center.lng,
-    categoryIds: '1,2,3,4,5,6,7',
-  }
-
-  const { data, isLoading } = useQuery(['POIs', POIsParams], (params) => api.request({
-    routeName: 'GET pois',
-    params,
-  }), {
-    staleTime: constants.QUERIES_CACHE_TTL,
-  })
-
-  return [data, isLoading] as [typeof data, boolean]
-}
 
 interface Props {}
 

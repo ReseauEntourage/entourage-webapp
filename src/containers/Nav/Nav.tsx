@@ -9,7 +9,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import { ModalTrigger } from 'src/components/Modal'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
-import { useMainContext } from 'src/containers/MainContext'
+import { useQueryMe } from 'src/queries'
 import { SignInModal } from './SignInModal'
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -30,7 +30,9 @@ const useStyles = makeStyles((theme) => createStyles({
 
 export function Nav() {
   const classes = useStyles()
-  const mainContext = useMainContext()
+  const { data: me } = useQueryMe()
+
+  const iAmLogged = me && !me.data.user.anonymous
 
   return (
     <div className={classes.grow}>
@@ -43,14 +45,10 @@ export function Nav() {
             <img src="/logo-entourage-orange.png" alt="Entourage" height="34" />
           </a>
           <div className={classes.grow} />
-          {!mainContext.me.anonymous ? (
+          {iAmLogged ? (
             <Avatar alt="John Doe" src="https://i.pravatar.cc/100" />
           ) : (
             <>
-              {/* <Button>
-                <PersonIcon className={classes.buttonIcon} />
-                Connexion
-              </Button> */}
               <ModalTrigger
                 modal={(<SignInModal />)}
               >

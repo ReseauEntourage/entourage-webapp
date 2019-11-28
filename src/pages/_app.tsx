@@ -2,7 +2,9 @@ import React from 'react'
 import { Reset } from 'styled-reset'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
 import Head from 'next/head'
+import { ReactQueryConfigProvider } from 'react-query'
 import { ThemeProvider } from '@material-ui/core/styles'
+import { config as queryConfig } from 'src/queries'
 import { theme } from 'src/styles/theme'
 import { Nav } from 'src/containers/Nav'
 import { Layout } from 'src/components/Layout'
@@ -43,20 +45,22 @@ export default class App extends NextApp {
         </Head>
         <Reset />
         <ThemeProvider theme={theme}>
-          <MainContextProvider me={me}>
-            <MapProvider>
-              <Layout>
-                <>
-                  <Layout.Nav>
-                    <Nav />
-                  </Layout.Nav>
-                  <Layout.Page>
-                    <Component {...pageProps} />
-                  </Layout.Page>
-                </>
-              </Layout>
-            </MapProvider>
-          </MainContextProvider>
+          <ReactQueryConfigProvider config={queryConfig}>
+            <MainContextProvider me={me}>
+              <MapProvider>
+                <Layout>
+                  <>
+                    <Layout.Nav>
+                      <Nav />
+                    </Layout.Nav>
+                    <Layout.Page>
+                      <Component {...pageProps} />
+                    </Layout.Page>
+                  </>
+                </Layout>
+              </MapProvider>
+            </MainContextProvider>
+          </ReactQueryConfigProvider>
         </ThemeProvider>
       </>
     )
