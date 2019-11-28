@@ -1,5 +1,3 @@
-export { api } from './api'
+export * from './api'
 export * from './schema'
-// @ts-ignore
-export { RequestResponse } from './utils'
-export * from './services/authToken'
+export * from './utils'

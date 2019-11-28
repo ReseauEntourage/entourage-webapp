@@ -2,9 +2,8 @@ import { AxiosInstance } from 'axios'
 import { NextPageContext } from 'next'
 import { createAxiosInstance } from 'request-schema'
 import { env } from 'src/core'
+import { createAnonymousUser, getTokenFromCookies } from 'src/network/services'
 import { schema } from './schema'
-import { getTokenFromCookies } from './services/authToken'
-import { createAnonymousUser } from './services/login'
 import { addAxiosInterceptors } from './interceptors'
 
 const axiosInstance = createAxiosInstance({ baseURL: env.API_V1_URL }, schema)

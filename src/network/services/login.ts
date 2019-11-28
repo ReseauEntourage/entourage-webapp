@@ -1,5 +1,5 @@
 import { NextPageContext } from 'next'
-import { api } from '../api'
+import { api } from 'src/network/api'
 import { setTokenIntoCookies } from './authToken'
 
 export async function createAnonymousUser(ctx?: NextPageContext): Promise<string> {

@@ -2,7 +2,7 @@ import { AxiosInstance } from 'axios'
 import humps from 'humps'
 import { env } from 'src/core'
 import { notifServerError } from 'src/utils'
-import { getTokenFromCookies } from './services/authToken'
+import { getTokenFromCookies } from 'src/network/services'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
   function getUserToken(): string | void {
