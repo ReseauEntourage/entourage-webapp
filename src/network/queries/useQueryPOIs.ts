@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
 import { api } from 'src/network/api'
 import { useMapContext } from 'src/components/Map'
+import { queryKeys } from './queryKeys'
 
 export function useQueryPOIs() {
   const mapContext = useMapContext()
@@ -12,7 +13,7 @@ export function useQueryPOIs() {
     categoryIds: '1,2,3,4,5,6,7',
   }
 
-  const { data, isLoading } = useQuery(['POIs', POIsParams], (params) => api.request({
+  const { data, isLoading } = useQuery([queryKeys.POIs, POIsParams], (params) => api.request({
     routeName: 'GET /pois',
     params,
   }))

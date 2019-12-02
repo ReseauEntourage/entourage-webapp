@@ -3,6 +3,7 @@ import { useQuery } from 'react-query'
 import { api } from 'src/network/api'
 import { AnyToFix } from 'src/types'
 import { useMapContext } from 'src/components/Map'
+import { queryKeys } from './queryKeys'
 
 export function useQueryFeeds() {
   const mapContext = useMapContext()
@@ -19,7 +20,7 @@ export function useQueryFeeds() {
     isLoading,
     fetchMore,
     isFetchingMore,
-  } = useQuery(['feeds', feedsParams], (params) => api.request({
+  } = useQuery([queryKeys.feeds, feedsParams], (params) => api.request({
     routeName: 'GET /feeds',
     params,
   }), {
