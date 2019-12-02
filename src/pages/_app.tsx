@@ -13,6 +13,7 @@ import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
 import { isSSR } from 'src/utils'
+import { Listeners } from 'src/events'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
@@ -51,6 +52,7 @@ export default class App extends NextApp {
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         </Head>
         <Reset />
+        <Listeners />
         <ThemeProvider theme={theme}>
           <ReactQueryConfigProvider config={queryConfig}>
             <MainContextProvider>

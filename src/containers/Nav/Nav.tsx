@@ -8,6 +8,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import { ModalTrigger } from 'src/components/Modal'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
+import { useOnLogin } from 'src/events'
 import { useQueryMe } from 'src/network/queries'
 import { SignInModal } from './SignInModal'
 import { LoggedChunk } from './LoggedChunk'
@@ -31,6 +32,10 @@ const useStyles = makeStyles((theme) => createStyles({
 export function Nav() {
   const classes = useStyles()
   const { data: me } = useQueryMe()
+
+  useOnLogin(() => {
+    // do what you want on login success
+  })
 
   const iAmLogged = me && !me.data.user.anonymous
 
