@@ -1,11 +1,9 @@
-import React from 'react'
-import {
-  makeStyles, createStyles,
-} from '@material-ui/core/styles'
+import React, { useCallback } from 'react'
+import { makeStyles, createStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
 import PersonIcon from '@material-ui/icons/Person'
 import Toolbar from '@material-ui/core/Toolbar'
-import { ModalTrigger, openModal } from 'src/components/Modal'
+import { openModal } from 'src/components/Modal'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
 import { useOnLogin } from 'src/events'
@@ -43,6 +41,10 @@ export function Nav() {
     }
   })
 
+  const onClickSignIn = useCallback(() => {
+    openModal(<SignInModal />)
+  }, [])
+
   const iAmLogged = me && !me.data.user.anonymous
 
   return (
@@ -59,16 +61,10 @@ export function Nav() {
           {iAmLogged ? (
             <LoggedChunk />
           ) : (
-            <>
-              <ModalTrigger
-                modal={(<SignInModal />)}
-              >
-                <Button className={classes.buttonMarginLeft}>
-                  <PersonIcon className={classes.buttonIcon} />
-                  Connexion / Inscription
-                </Button>
-              </ModalTrigger>
-            </>
+            <Button className={classes.buttonMarginLeft} onClick={onClickSignIn}>
+              <PersonIcon className={classes.buttonIcon} />
+              Connexion / Inscription
+            </Button>
           )}
         </Toolbar>
       </AppBar>

@@ -5,7 +5,7 @@ import { Button } from 'src/components/Button'
 import { ThemeProvider, theme } from 'src/styles'
 import { TextField, validators } from 'src/components/Form'
 import { Modal } from './Modal'
-import { ModalTrigger } from './ModalTrigger'
+import { openModal, ModalsListener } from './openModal'
 
 const useStyles = makeStyles(() => createStyles({
   margin: {
@@ -65,18 +65,23 @@ function FormModal() {
 export const Modals = () => {
   const classes = useStyles()
 
+  const onClickBasic = useCallback(() => {
+    openModal(<BasicModal />)
+  }, [])
+
+  const onClickForm = useCallback(() => {
+    openModal(<FormModal />)
+  }, [])
+
   return (
     <ThemeProvider>
+      <ModalsListener />
       <div>
         <div>
-          <ModalTrigger modal={<BasicModal />}>
-            <Button className={classes.margin}>Basic</Button>
-          </ModalTrigger>
+          <Button className={classes.margin} onClick={onClickBasic}>Basic</Button>
         </div>
         <div>
-          <ModalTrigger modal={<FormModal />}>
-            <Button variant="outlined" className={classes.margin}>Form</Button>
-          </ModalTrigger>
+          <Button variant="outlined" className={classes.margin} onClick={onClickForm}>Form</Button>
         </div>
       </div>
     </ThemeProvider>
