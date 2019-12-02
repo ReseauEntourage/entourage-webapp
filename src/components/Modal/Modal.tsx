@@ -7,13 +7,12 @@ import Box from '@material-ui/core/Box'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
 import { AnyToFix } from 'src/types'
-import { useModalTriggerContext } from './ModalTrigger'
+import { useModalContext } from './ModalContext'
 
 interface Props {
   cancel?: boolean;
   cancelLabel?: string;
   children: AnyToFix;
-  open?: boolean;
   onClose?: () => void;
   onValidate?: () => void | boolean | Promise<void | boolean>;
   title: string;
@@ -37,13 +36,11 @@ export function Modal(props: Props) {
     validateLabel,
     cancelLabel,
     onValidate: onValidateProp,
-    open: openProp,
     onClose: onCloseProp,
   } = { ...defaultProps, ...props }
 
-  const modalTriggerContext = useModalTriggerContext()
-  const onClose = modalTriggerContext ? modalTriggerContext.onClose : onCloseProp
-  const open = modalTriggerContext ? modalTriggerContext.open : openProp
+  const modalContext = useModalContext()
+  const onClose = modalContext ? modalContext.onClose : onCloseProp
 
   const onValidate = useCallback(async () => {
     if (onValidateProp) {
@@ -62,7 +59,7 @@ export function Modal(props: Props) {
 
   return (
     <Dialog
-      open={open || false}
+      open={true}
       onClose={onClose}
       aria-labelledby="form-dialog-title"
       disableBackdropClick={true}

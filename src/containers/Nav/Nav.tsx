@@ -5,12 +5,13 @@ import {
 import AppBar from '@material-ui/core/AppBar'
 import PersonIcon from '@material-ui/icons/Person'
 import Toolbar from '@material-ui/core/Toolbar'
-import { ModalTrigger } from 'src/components/Modal'
+import { ModalTrigger, openModal } from 'src/components/Modal'
 import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
 import { useOnLogin } from 'src/events'
 import { useQueryMe } from 'src/network/queries'
 import { SignInModal } from './SignInModal'
+import { ProfileModal } from './ProfileModal'
 import { LoggedChunk } from './LoggedChunk'
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -33,8 +34,13 @@ export function Nav() {
   const classes = useStyles()
   const { data: me } = useQueryMe()
 
-  useOnLogin(() => {
-    // do what you want on login success
+  useOnLogin((meResponse) => {
+    const { firstName, lastName, address } = meResponse.data.user
+    const userInfosIncompleted = !firstName || !lastName || address
+
+    if (userInfosIncompleted) {
+      openModal(<ProfileModal />)
+    }
   })
 
   const iAmLogged = me && !me.data.user.anonymous

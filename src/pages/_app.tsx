@@ -11,6 +11,7 @@ import { theme } from 'src/styles/theme'
 import { Nav } from 'src/containers/Nav'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
+import { ModalsListener } from 'src/components/Modal'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
 import { isSSR } from 'src/utils'
 import { Listeners } from 'src/events'
@@ -64,6 +65,7 @@ export default class App extends NextApp {
                     </Layout.Nav>
                     <Layout.Page>
                       <Component {...pageProps} />
+                      <ModalsListener />
                     </Layout.Page>
                   </>
                 </Layout>

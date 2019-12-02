@@ -5,26 +5,28 @@ import { useQueryMe } from 'src/network/queries'
 
 const loginSubject = new Subject()
 
-const publishOnLogin = () => loginSubject.next()
+function publish(me: NonNullable<ReturnType<typeof useQueryMe>['data']>) {
+  loginSubject.next(me)
+}
 
-export function useOnLogin(onLogin: () => void) {
+export function useOnLogin(onLogin: (me: Parameters<typeof publish>[0]) => void) {
   useMount(() => {
+    // @ts-ignore
     const subscription = loginSubject.subscribe(onLogin)
     return () => subscription.unsubscribe()
   })
 }
 
-// singleton
 export function useOnLoginDispatcher() {
-  const response = useQueryMe()
-  const prevResponse = usePrevious(response)
+  const { data: meResponse } = useQueryMe()
+  const prevMeReponse = usePrevious(meResponse)
 
   useEffect(() => {
-    const prevResponseIsNotLogged = !prevResponse || !prevResponse.data || prevResponse.data.data.user.anonymous
-    const prevResponseIsLogged = response.data && !response.data.data.user.anonymous
+    const prevMeReponseIsNotLogged = !prevMeReponse || !prevMeReponse.data || prevMeReponse.data.user.anonymous
+    const prevMeReponseIsLogged = meResponse && !meResponse.data.user.anonymous
 
-    if (prevResponseIsNotLogged && prevResponseIsLogged) {
-      publishOnLogin()
+    if (prevMeReponseIsNotLogged && prevMeReponseIsLogged) {
+      publish(meResponse as NonNullable<typeof meResponse>)
     }
-  }, [prevResponse, response])
+  }, [prevMeReponse, meResponse])
 }
