@@ -183,6 +183,11 @@ export const schema = {
     params: null,
     data: {} as {
       user: {
+        about?: string;
+        email?: string;
+        firstName?: string;
+        lastName?: string;
+        address?: string;
         password?: string;
       };
     },

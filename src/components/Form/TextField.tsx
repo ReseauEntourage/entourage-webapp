@@ -1,15 +1,14 @@
 import React from 'react'
-import TextFieldMUI, { TextFieldProps } from '@material-ui/core/TextField'
+import TextFieldMUI, { TextFieldProps as TextFieldPropsBase } from '@material-ui/core/TextField'
 import { helperTextError } from './helperTextErrors'
 
-type Props = {
+export type TextFieldProps = {
   formError?: Parameters<typeof helperTextError>[0];
-} & TextFieldProps
+} & TextFieldPropsBase
 
-export function TextField(props: Props) {
+export function TextField(props: TextFieldProps) {
   const {
     variant,
-    margin,
     error,
     helperText,
     formError,
