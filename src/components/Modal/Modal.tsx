@@ -3,9 +3,10 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import { Button } from 'src/components/Button'
-import { colors } from 'src/styles'
+import { colors, variants } from 'src/styles'
 import { AnyToFix } from 'src/types'
 import { useModalContext } from './ModalContext'
 
@@ -64,35 +65,37 @@ export function Modal(props: Props) {
       aria-labelledby="form-dialog-title"
       disableBackdropClick={true}
     >
-      <DialogTitle
-        style={{
-          backgroundColor: colors.main.primary,
-          color: '#fff',
-          textAlign: 'center',
-        }}
-        id="form-dialog-title"
-      >
-        {title}
-      </DialogTitle>
-      <Box m={2}>
-        <DialogContent>
-          {children}
-        </DialogContent>
-        {hasCTAButtons && (
-          <DialogActions>
-            {cancel && (
-              <Button onClick={onClose} color="primary" variant="outlined" tabIndex={-1}>
-                {cancelLabel}
-              </Button>
-            )}
-            {validate && (
-              <Button color="primary" onClick={onValidate}>
-                {validateLabel}
-              </Button>
-            )}
-          </DialogActions>
-        )}
-      </Box>
+      <Typography variant={variants.bodyRegular} component="div">
+        <DialogTitle
+          style={{
+            backgroundColor: colors.main.primary,
+            color: '#fff',
+            textAlign: 'center',
+          }}
+          id="form-dialog-title"
+        >
+          {title}
+        </DialogTitle>
+        <Box m={2}>
+          <DialogContent>
+            {children}
+          </DialogContent>
+          {hasCTAButtons && (
+            <DialogActions>
+              {cancel && (
+                <Button onClick={onClose} color="primary" variant="outlined" tabIndex={-1}>
+                  {cancelLabel}
+                </Button>
+              )}
+              {validate && (
+                <Button color="primary" onClick={onValidate}>
+                  {validateLabel}
+                </Button>
+              )}
+            </DialogActions>
+          )}
+        </Box>
+      </Typography>
     </Dialog>
   )
 }

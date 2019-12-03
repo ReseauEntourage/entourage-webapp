@@ -1,5 +1,7 @@
 import React from 'react'
 import { styled } from '@material-ui/core/styles'
+import { Typography } from '@material-ui/core'
+import { variants } from 'src/styles'
 
 const Main = styled('div')({
   height: '100vh',
@@ -23,6 +25,12 @@ export class Layout extends React.PureComponent<{children: JSX.Element;}> {
 
   render() {
     const { children } = this.props
-    return <Main>{children}</Main>
+    return (
+      <Typography variant={variants.bodyRegular} component="div">
+        <Main>
+          {children}
+        </Main>
+      </Typography>
+    )
   }
 }
