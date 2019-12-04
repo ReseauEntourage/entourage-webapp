@@ -2012,6 +2012,13 @@
     "@types/history" "*"
     "@types/react" "*"
 
+"@types/react-image-crop@^8.1.2":
+  version "8.1.2"
+  resolved "https://registry.yarnpkg.com/@types/react-image-crop/-/react-image-crop-8.1.2.tgz#9c16d6b0b577a63a854a1a895180cc76800e2988"
+  integrity sha512-K6mbw1Bj/CeePnRa78E3v3gIn/EeqlCof5IVU9IPLdzMjOsf+ccn3Qv/vagsH/6eANGgoDz4hG41eJ2kggiuuw==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-native@*":
   version "0.60.22"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.60.22.tgz#ba199a441cb0612514244ffb1d0fe6f04c878575"
@@ -3968,6 +3975,11 @@ core-js@^3.0.1, core-js@^3.0.4:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.4.1.tgz#76dd6828412900ab27c8ce0b22e6114d7ce21b18"
   integrity sha512-KX/dnuY/J8FtEwbnrzmAjUYgLqtk+cxM86hfG60LGiW3MmltIc2yAmDgBgEkfm0blZhUrdr1Zd84J2Y14mLxzg==
+
+core-js@^3.4.2:
+  version "3.4.7"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.4.7.tgz#57c35937da80fe494fbc3adcf9cf3dc00eb86b34"
+  integrity sha512-qaPVGw30J1wQ0GR3GvoPqlGf9GZfKKF4kFC7kiHlcsPTqH3txrs9crCp3ZiMAXuSenhz89Jnl4GZs/67S5VOSg==
 
 core-util-is@1.0.2, core-util-is@~1.0.0:
   version "1.0.2"
@@ -9660,6 +9672,15 @@ react-hotkeys@2.0.0-pre4:
   integrity sha512-oa+UncSWyOwMK3GExt+oELXaR7T3ItgcMolsupQFdKvwkEhVAluJd5rYczsRSQpQlVkdNoHG46De2NUeuS+88Q==
   dependencies:
     prop-types "^15.6.1"
+
+react-image-crop@^8.4.2:
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/react-image-crop/-/react-image-crop-8.4.2.tgz#93573d45160277661c192d6b483e349337b4e5bc"
+  integrity sha512-JSi/L7fxCeipW481rhWnXpvluIns9VCE6K+hImJK48rldge7l1/5eMyRuXa1W/BJLQh5Z3ynCEsUHHWYJ6NEnQ==
+  dependencies:
+    clsx "^1.0.4"
+    core-js "^3.4.2"
+    prop-types "^15.7.2"
 
 react-is@16.8.6:
   version "16.8.6"

@@ -8,6 +8,9 @@ export const texts = {
   },
   labels: {
     save: 'Enregister',
+    chooseImage: 'Choisir une image',
+    changeImage: 'Change d\'image',
+    validate: 'Valider',
   },
   content: {
     profilModal: {
