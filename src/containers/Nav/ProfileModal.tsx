@@ -93,9 +93,9 @@ export function ProfileModal() {
 
   return (
     <Modal
+      onValidate={onValidate}
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
-      onValidate={onValidate}
     >
       <Container>
         <Label>
@@ -103,57 +103,55 @@ export function ProfileModal() {
         </Label>
         <Names>
           <TextField
-            label={modalTexts.firstNameLabel}
-            type="text"
-            name={'firstName' as FormFieldKey}
+            formError={errors.firstName}
             fullWidth={true}
             inputRef={register({
               required: true,
             })}
-            formError={errors.firstName}
+            label={modalTexts.firstNameLabel}
+            name={'firstName' as FormFieldKey}
+            type="text"
           />
           <TextField
-            label={modalTexts.lastNameLabel}
-            type="text"
-            name={'lastName' as FormFieldKey}
+            formError={errors.lastName}
             fullWidth={true}
             inputRef={register({
               required: true,
             })}
-            formError={errors.lastName}
+            label={modalTexts.lastNameLabel}
+            name={'lastName' as FormFieldKey}
+            type="text"
           />
         </Names>
         <Label>
           {modalTexts.step2}
         </Label>
         <TextField
-          label={modalTexts.decriptionLabel}
-          type="text"
-          name={'about' as FormFieldKey}
-          multiline={true}
+          formError={errors.about}
           fullWidth={true}
           inputRef={register({
             required: true,
           })}
-          formError={errors.about}
+          label={modalTexts.decriptionLabel}
+          multiline={true}
+          name={'about' as FormFieldKey}
+          type="text"
         />
         <Label>
           {modalTexts.step3}
         </Label>
         <GoogleMapLocation
+          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
           textFieldProps={{
             label: modalTexts.locationLabel,
             formError: errors.ss,
           }}
-          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
         />
         <Label>
           {modalTexts.step4}
         </Label>
         <TextField
-          label={modalTexts.emailLabel}
-          type="email"
-          name={'email' as FormFieldKey}
+          formError={errors.email}
           fullWidth={true}
           inputRef={register({
             required: true,
@@ -161,7 +159,9 @@ export function ProfileModal() {
               email: validators.email,
             },
           })}
-          formError={errors.email}
+          label={modalTexts.emailLabel}
+          name={'email' as FormFieldKey}
+          type="email"
         />
       </Container>
     </Modal>

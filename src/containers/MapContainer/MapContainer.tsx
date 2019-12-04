@@ -37,8 +37,8 @@ export function MapContainer() {
         lng={location.longitude}
       >
         <Link
-          href="/actions/[actionId]"
           as={`/actions/${uuid}`}
+          href="/actions/[actionId]"
         >
           <a>
             <EventMarker
@@ -72,14 +72,14 @@ export function MapContainer() {
 
     return (
       <li key={feed.uuid}>
-        <Link href="/actions/[actionId]" as={`/actions/${feed.uuid}`}>
+        <Link as={`/actions/${feed.uuid}`} href="/actions/[actionId]">
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
               key={feed.uuid}
               isActive={feed.uuid === actionId}
               primaryText={feed.title}
-              secondText={secondText}
               profilePictureURL={feed.author.avatarUrl}
+              secondText={secondText}
             />
           </a>
         </Link>
@@ -88,7 +88,7 @@ export function MapContainer() {
   })
 
   const feedsContent = feedsLoading ? (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+    <Box alignItems="center" display="flex" height="100%" justifyContent="center">
       <CircularProgress variant="indeterminate" />
     </Box>
   ) : (
@@ -98,12 +98,12 @@ export function MapContainer() {
   return (
     <Box display="flex" height="100%">
       <Box
-        width={350}
-        overflow="scroll"
+        boxShadow={4}
         height="100%"
         onScroll={onScroll}
+        overflow="scroll"
+        width={350}
         zIndex={2}
-        boxShadow={4}
       >
         {feedsContent}
       </Box>

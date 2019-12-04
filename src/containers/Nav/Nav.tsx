@@ -50,12 +50,12 @@ export function Nav() {
   return (
     <div className={classes.grow}>
       <AppBar
-        position="static"
         className={classes.appBar}
+        position="static"
       >
         <Toolbar>
           <a href="/">
-            <img src="/logo-entourage-orange.png" alt="Entourage" height="34" />
+            <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
           </a>
           <div className={classes.grow} />
           {iAmLogged ? (

@@ -34,11 +34,11 @@ export function EventCard(props: Props) {
       <Box>
         <Typography variant={variants.footNote}>{address}</Typography>
       </Box>
-      <Box display="flex" marginY={1} alignItems="center" justifyContent="flex-start">
+      <Box alignItems="center" display="flex" justifyContent="flex-start" marginY={1}>
         <Box marginRight={1}>
           <Avatar alt="Organizer" src={organizerPictureURL} />
         </Box>
-        <Typography variant={variants.footNote} color={isAssociation ? 'primary' : undefined}>
+        <Typography color={isAssociation ? 'primary' : undefined} variant={variants.footNote}>
           {organizerLabel}
         </Typography>
       </Box>

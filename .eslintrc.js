@@ -53,6 +53,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 2,
     // with TypeScript strict mode, no issue
     'react/jsx-props-no-spreading': 0,
+    'react/jsx-sort-props': 1,
 
     // Plain JavaScript Rules
     'arrow-body-style': 0,

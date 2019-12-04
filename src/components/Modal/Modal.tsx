@@ -60,19 +60,19 @@ export function Modal(props: Props) {
 
   return (
     <Dialog
-      open={true}
-      onClose={onClose}
       aria-labelledby="form-dialog-title"
       disableBackdropClick={true}
+      onClose={onClose}
+      open={true}
     >
-      <Typography variant={variants.bodyRegular} component="div">
+      <Typography component="div" variant={variants.bodyRegular}>
         <DialogTitle
+          id="form-dialog-title"
           style={{
             backgroundColor: colors.main.primary,
             color: '#fff',
             textAlign: 'center',
           }}
-          id="form-dialog-title"
         >
           {title}
         </DialogTitle>
@@ -83,7 +83,7 @@ export function Modal(props: Props) {
           {hasCTAButtons && (
             <DialogActions>
               {cancel && (
-                <Button onClick={onClose} color="primary" variant="outlined" tabIndex={-1}>
+                <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
                   {cancelLabel}
                 </Button>
               )}

@@ -94,9 +94,8 @@ function PhoneField(props: PhoneFieldProps) {
   return (
     <TextField
       autoFocus={true}
-      label="Téléphone"
-      type="text"
-      name="phone"
+      disabled={step !== 'phone'}
+      formError={phoneForm.errors.phone}
       fullWidth={true}
       inputRef={phoneForm.register({
         required: true,
@@ -104,8 +103,9 @@ function PhoneField(props: PhoneFieldProps) {
           phone: validators.phone,
         },
       })}
-      formError={phoneForm.errors.phone}
-      disabled={step !== 'phone'}
+      label="Téléphone"
+      name="phone"
+      type="text"
     />
   )
 }
@@ -182,19 +182,19 @@ function SecretField(props: SecretFieldProps) {
   return (
     <TextField
       autoFocus={true}
+      disabled={secretTypeDone}
+      formError={secretForm.errors.secret}
+      fullWidth={true}
+      inputRef={secretForm.register({
+        required: true,
+      })}
       label={
         step === 'password'
           ? 'Entre votre mot de passe (au moins 8 caractères)'
           : 'Entrez le code d\'activation reçu'
       }
-      type="password"
       name="secret"
-      fullWidth={true}
-      inputRef={secretForm.register({
-        required: true,
-      })}
-      formError={secretForm.errors.secret}
-      disabled={secretTypeDone}
+      type="password"
     />
   )
 }
@@ -263,20 +263,19 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
     <>
       <TextField
         autoFocus={true}
-        label="Choisissez votre mot de passe"
-        type="password"
-        name="password"
+        disabled={stepPast}
+        formError={definePasswordForm.errors.password}
         fullWidth={true}
         inputRef={definePasswordForm.register({
           required: true,
         })}
-        formError={definePasswordForm.errors.password}
-        disabled={stepPast}
+        label="Choisissez votre mot de passe"
+        name="password"
+        type="password"
       />
       <TextField
-        label="Confirmez votre mot de passe"
-        type="password"
-        name="confirmationPassword"
+        disabled={stepPast}
+        formError={definePasswordForm.errors.confirmationPassword}
         fullWidth={true}
         inputRef={definePasswordForm.register({
           required: true,
@@ -288,8 +287,9 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
             },
           },
         })}
-        formError={definePasswordForm.errors.confirmationPassword}
-        disabled={stepPast}
+        label="Confirmez votre mot de passe"
+        name="confirmationPassword"
+        type="password"
       />
     </>
   )
@@ -330,24 +330,24 @@ export function SignInModal() {
 
   return (
     <Modal
-      title="Connexion / Inscription"
       onValidate={onValidate}
+      title="Connexion / Inscription"
       validateLabel={validateLabel}
     >
       <Box style={{ paddingLeft: 250 }}>
         <img
           alt="Personnage"
           src="/personnage-entourage-1.png"
-          width="200"
           style={{
             position: 'absolute',
             left: 20,
             bottom: 0,
           }}
+          width="200"
         />
-        <PhoneField step={step} phoneForm={phoneForm} />
-        <SecretField step={step} phoneForm={phoneForm} secretForm={secretForm} />
-        <DefinePasswordField step={step} definePasswordForm={definePasswordForm} />
+        <PhoneField phoneForm={phoneForm} step={step} />
+        <SecretField phoneForm={phoneForm} secretForm={secretForm} step={step} />
+        <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />
       </Box>
     </Modal>
   )

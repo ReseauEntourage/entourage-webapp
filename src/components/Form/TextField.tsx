@@ -17,10 +17,10 @@ export function TextField(props: TextFieldProps) {
 
   return (
     <TextFieldMUI
-      variant="outlined"
-      margin="normal"
       error={!!formError}
       helperText={helperTextError(formError)}
+      margin="normal"
+      variant="outlined"
       {...restProps}
     />
   )

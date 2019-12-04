@@ -5,9 +5,9 @@ export function Button(props: ButtonProps = {}) {
   const { style, ...restProps } = props
   return (
     <ButtonMUI
-      variant="contained"
-      size="medium"
       color="primary"
+      size="medium"
+      variant="contained"
       {...restProps}
       style={{
         borderRadius: 20,

@@ -26,7 +26,7 @@ export class Layout extends React.PureComponent<{children: JSX.Element;}> {
   render() {
     const { children } = this.props
     return (
-      <Typography variant={variants.bodyRegular} component="div">
+      <Typography component="div" variant={variants.bodyRegular}>
         <Main>
           {children}
         </Main>

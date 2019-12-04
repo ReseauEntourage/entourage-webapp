@@ -36,30 +36,30 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
     <>
       <div
         aria-controls="simple-menu"
-        role="button"
-        tabIndex={0}
         onClick={handleClick}
         onKeyUp={handleClick}
+        role="button"
         style={{
           outline: 'none',
           display: 'flex',
           alignItems: 'center',
           cursor: 'pointer',
         }}
+        tabIndex={0}
       >
         <AccountCircleIcon color="secondary" fontSize="large" />
       </div>
       <Menu
-        id="simple-menu"
         anchorEl={anchorEl}
-        getContentAnchorEl={null}
-        keepMounted={true}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',
         }}
+        getContentAnchorEl={null}
+        id="simple-menu"
+        keepMounted={true}
+        onClose={handleClose}
+        open={Boolean(anchorEl)}
         transformOrigin={{
           vertical: 'top',
           horizontal: 'center',

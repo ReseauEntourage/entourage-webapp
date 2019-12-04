@@ -10,8 +10,8 @@ export const Base = () => (
   <div style={{ border: `solid 1px ${colors.borderColor}` }}>
     <FeedItem
       primaryText=" Goearge recherche un télépone portable"
-      secondText="Créé ce mois-ci par Ines"
       profilePictureURL="https://i.pravatar.cc/100"
+      secondText="Créé ce mois-ci par Ines"
     />
   </div>
 )
@@ -19,10 +19,10 @@ export const Base = () => (
 export const Active = () => (
   <div style={{ border: `solid 1px ${colors.borderColor}` }}>
     <FeedItem
-      primaryText=" Goearge recherche un télépone portable"
-      secondText="Créé ce mois-ci par Ines"
-      profilePictureURL="https://i.pravatar.cc/100"
       isActive={true}
+      primaryText=" Goearge recherche un télépone portable"
+      profilePictureURL="https://i.pravatar.cc/100"
+      secondText="Créé ce mois-ci par Ines"
     />
   </div>
 )

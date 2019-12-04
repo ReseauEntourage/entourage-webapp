@@ -23,7 +23,7 @@ export const Buttons = () => {
           <Button className={classes.margin}>Participer</Button>
         </div>
         <div>
-          <Button variant="outlined" className={classes.margin}>Participer</Button>
+          <Button className={classes.margin} variant="outlined">Participer</Button>
         </div>
       </div>
     </ThemeProvider>

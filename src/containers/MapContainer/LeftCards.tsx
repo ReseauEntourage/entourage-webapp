@@ -52,12 +52,12 @@ export function LeftCards(props: Props) {
 
     card = (
       <ActionCard
-        title={title}
-        description={description}
         dateLabel={dataLabel}
+        description={description}
+        isAssociation={!!partner}
         organizerLabel={organizerLabel}
         organizerPictureURL={author.avatarUrl}
-        isAssociation={!!partner}
+        title={title}
       />
     )
   }
@@ -65,12 +65,12 @@ export function LeftCards(props: Props) {
   if (feedItem.groupType === 'outing') {
     card = (
       <EventCard
-        title={feedItem.title}
-        description={feedItem.description}
+        address={feedItem.metadata.displayAddress}
         dateLabel={new Date(feedItem.createdAt).toLocaleDateString()}
+        description={feedItem.description}
         organizerLabel={feedItem.author.displayName}
         organizerPictureURL={feedItem.author.avatarUrl}
-        address={feedItem.metadata.displayAddress}
+        title={feedItem.title}
       />
     )
   }
@@ -85,7 +85,7 @@ export function LeftCards(props: Props) {
         boxSizing: 'border-box',
       }}
     >
-      <Box marginRight={1} display="flex" justifyContent="flex-end">
+      <Box display="flex" justifyContent="flex-end" marginRight={1}>
         <Link href="/actions">
           <a>
             <CloseIcon color="primary" fontSize="large" />
@@ -95,7 +95,7 @@ export function LeftCards(props: Props) {
       <Box marginX={4}>
         {card}
       </Box>
-      <Box marginX={4} marginY={2} display="flex" justifyContent="space-around">
+      <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
         <Button>
           Participer
         </Button>
@@ -108,13 +108,13 @@ export function LeftCards(props: Props) {
       </Box>
       {/* <Box flexGrow="1" /> */}
       <Box
-        marginX={4}
-        marginTop={2}
         display="flex"
         flexDirection="column"
+        marginTop={2}
+        marginX={4}
         overflow="hidden"
       >
-        <Typography variant={variants.title1} style={{ textTransform: 'uppercase' }}>
+        <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
           Participants
         </Typography>
         <UsersList

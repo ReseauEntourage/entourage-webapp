@@ -49,8 +49,8 @@ export default class App extends NextApp {
       <>
         <Head>
           <title>Home</title>
-          <link rel="icon" href="/favicon.ico" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+          <link href="/favicon.ico" rel="icon" />
+          <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
         </Head>
         <Reset />
         <Listeners />

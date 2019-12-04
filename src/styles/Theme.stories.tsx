@@ -13,7 +13,7 @@ export const Colors = () => (
   <div>
     <TypographyMUI>
       {Object.entries(colors.main).map(([colorName, colorValue]) => (
-        <Box m={1} p={1} color="#fff" style={{ backgroundColor: colorValue }}>
+        <Box color="#fff" m={1} p={1} style={{ backgroundColor: colorValue }}>
           {colorName} - {colorValue}
         </Box>
       ))}
@@ -50,7 +50,7 @@ export const Typography = () => {
             )
 
             return (
-              <Box m={1} key={name}>
+              <Box key={name} m={1}>
                 {content}
               </Box>
             )

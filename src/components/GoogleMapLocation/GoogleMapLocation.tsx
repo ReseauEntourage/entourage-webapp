@@ -100,15 +100,15 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
 
   return (
     <Autocomplete
-      id="google-map-demo"
-      getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
-      filterOptions={(x) => x}
-      options={options}
       autoComplete={true}
-      onChange={onChangeAutocomplete}
-      includeInputInList={true}
-      freeSolo={true}
       disableOpenOnFocus={true}
+      filterOptions={(x) => x}
+      freeSolo={true}
+      getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
+      id="google-map-demo"
+      includeInputInList={true}
+      onChange={onChangeAutocomplete}
+      options={options}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -125,7 +125,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
         )
 
         return (
-          <Grid container={true} alignItems="center">
+          <Grid alignItems="center" container={true}>
             <Grid item={true}>
               <LocationOnIcon className={classes.icon} />
             </Grid>
@@ -136,7 +136,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
                   {part.text}
                 </span>
               ))}
-              <Typography variant="body2" color="textSecondary">
+              <Typography color="textSecondary" variant="body2">
                 {option.structured_formatting.secondary_text}
               </Typography>
             </Grid>

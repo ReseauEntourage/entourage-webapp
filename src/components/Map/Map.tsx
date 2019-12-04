@@ -32,8 +32,8 @@ export function Map(props: Props) {
       bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
       defaultCenter={defaultValues.center}
       defaultZoom={defaultValues.zoom}
-      yesIWantToUseGoogleMapApiInternals={true}
       onChange={onChange}
+      yesIWantToUseGoogleMapApiInternals={true}
     >
       {children}
     </GoogleMapReact>

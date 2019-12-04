@@ -35,18 +35,17 @@ function FormModal() {
   }, [getValues, triggerValidation])
 
   return (
-    <Modal title="Form Demo" onValidate={onValidate}>
+    <Modal onValidate={onValidate} title="Form Demo">
       <TextField
         autoFocus={true}
-        label="Prénom"
-        name="firstname"
+        formError={errors.firstname}
         fullWidth={true}
         inputRef={register({ required: true })}
-        formError={errors.firstname}
+        label="Prénom"
+        name="firstname"
       />
       <TextField
-        label="Nom"
-        name="lastname"
+        formError={errors.lastname}
         fullWidth={true}
         inputRef={
           register({
@@ -56,7 +55,8 @@ function FormModal() {
             },
           })
         }
-        formError={errors.lastname}
+        label="Nom"
+        name="lastname"
       />
     </Modal>
   )
@@ -81,7 +81,7 @@ export const Modals = () => {
           <Button className={classes.margin} onClick={onClickBasic}>Basic</Button>
         </div>
         <div>
-          <Button variant="outlined" className={classes.margin} onClick={onClickForm}>Form</Button>
+          <Button className={classes.margin} onClick={onClickForm} variant="outlined">Form</Button>
         </div>
       </div>
     </ThemeProvider>
