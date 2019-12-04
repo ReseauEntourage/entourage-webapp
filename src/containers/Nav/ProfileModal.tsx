@@ -6,8 +6,7 @@ import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/Google
 import { Modal } from 'src/components/Modal'
 import { theme } from 'src/styles'
 import { texts } from 'src/i18n'
-import { useQueryMe, useMutateMe } from 'src/network/queries'
-import { User, schema } from 'src/network/api'
+import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/network/queries'
 
 const Container = styled.div`
   width: 500px;
@@ -23,14 +22,18 @@ const Names = styled.div`
   grid-gap: ${theme.spacing(2)}px;
 `
 
-type SchemaUserUpdate = typeof schema['PATCH /users/me']['data']['user']
+type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
+
+// we can force user to NonNullable because useQueryMe() always return a user in ProfileModal
+// because ProfileModal is only open if user is not null
+type NonNullableUser = NonNullable<ReturnType<typeof useQueryMe>['data']>['data']['user']
 
 interface FormField {
-  about: SchemaUserUpdate['about'];
-  autocompletePlace: Parameters<GoogleMapLocationProps['onChange']>[0];
-  email: SchemaUserUpdate['email'];
-  firstName: SchemaUserUpdate['firstName'];
-  lastName: SchemaUserUpdate['lastName'];
+  about: UserUpdate['about'];
+  autocompletePlace?: Parameters<GoogleMapLocationProps['onChange']>[0];
+  email: UserUpdate['email'];
+  firstName: UserUpdate['firstName'];
+  lastName: UserUpdate['lastName'];
 }
 
 type FormFieldKey = keyof FormField
@@ -38,8 +41,9 @@ type FormFieldKey = keyof FormField
 export function ProfileModal() {
   const { data: me } = useQueryMe()
   const [mutateMe] = useMutateMe()
+  const [mutateMeAddress] = useMutateMeAddress(false)
 
-  const user = (me && me.data && me.data.user) || {} as Partial<User>
+  const user = (me && me.data && me.data.user) || {} as NonNullableUser
 
   const { register, errors: plainErrors, triggerValidation, setValue, getValues } = useForm<FormField>({
     defaultValues: {
@@ -67,25 +71,26 @@ export function ProfileModal() {
       email,
     } = getValues()
 
-    const address = autocompletePlace
-      ? {
-        googleSessionToken: autocompletePlace.googleSessionToken,
-        googlePlaceId: autocompletePlace.place.place_id,
-      } : undefined
-
     try {
+      if (autocompletePlace && autocompletePlace.place) {
+        await mutateMeAddress({
+          googleSessionToken: autocompletePlace.googleSessionToken,
+          googlePlaceId: autocompletePlace.place.place_id,
+        })
+      }
+
       await mutateMe({
         firstName,
         lastName,
         about,
-        address,
         email,
       })
+
       return true
     } catch (e) {
       return false
     }
-  }, [getValues, mutateMe, triggerValidation])
+  }, [getValues, mutateMe, mutateMeAddress, triggerValidation])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -141,10 +146,10 @@ export function ProfileModal() {
           {modalTexts.step3}
         </Label>
         <GoogleMapLocation
+          defaultValue={user.address ? user.address.displayAddress : ''}
           onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
           textFieldProps={{
             label: modalTexts.locationLabel,
-            formError: errors.ss,
           }}
         />
         <Label>

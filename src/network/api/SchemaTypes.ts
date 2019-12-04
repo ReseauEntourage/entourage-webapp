@@ -96,7 +96,11 @@ export interface UserPartner {
 
 export interface User {
   about: string | null;
-  address: string | null;
+  address: null | {
+    displayAddress: string;
+    latitude: number;
+    longitude: number;
+  };
   anonymous: boolean;
   avatarUrl: string | null;
   conversation: {

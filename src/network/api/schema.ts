@@ -184,10 +184,6 @@ export const schema = {
     data: {} as {
       user: {
         about?: string;
-        address?: {
-          googlePlaceId: string;
-          googleSessionToken: string;
-        };
         email?: string;
         firstName?: string;
         lastName?: string;
@@ -197,6 +193,18 @@ export const schema = {
     response: {} as {
       user: User;
     },
+  },
+  'POST /users/me/address': {
+    url: 'users/me/address',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      address: {
+        googlePlaceId: string;
+        googleSessionToken: string;
+      };
+    },
+    response: {} as {},
   },
   'GET /pois': {
     url: 'pois',

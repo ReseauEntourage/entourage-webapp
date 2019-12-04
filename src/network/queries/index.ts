@@ -10,3 +10,4 @@ export * from './useQueryEntourageUsers'
 
 // mutation
 export * from './useMutateMe'
+export * from './useMutateMeAddress'

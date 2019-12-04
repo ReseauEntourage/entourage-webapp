@@ -34,7 +34,7 @@ export function Nav() {
 
   useOnLogin((meResponse) => {
     const { firstName, lastName, address } = meResponse.data.user
-    const userInfosIncompleted = !firstName || !lastName || address
+    const userInfosIncompleted = !firstName || !lastName || !address
 
     if (userInfosIncompleted) {
       openModal(<ProfileModal />)

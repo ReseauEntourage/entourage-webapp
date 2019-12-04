@@ -38,6 +38,7 @@ interface OnChangeValue {
 }
 
 export interface GoogleMapLocationProps {
+  defaultValue?: string;
   onChange: (value: OnChangeValue) => void;
   textFieldProps: TextFieldProps;
 }
@@ -45,7 +46,7 @@ export interface GoogleMapLocationProps {
 const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
 
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
-  const { textFieldProps, onChange } = props
+  const { textFieldProps, onChange, defaultValue } = props
 
   const autocompleteSessionToken = useRef<{ Qf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
 
@@ -101,6 +102,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
   return (
     <Autocomplete
       autoComplete={true}
+      defaultValue={defaultValue}
       disableOpenOnFocus={true}
       filterOptions={(x) => x}
       freeSolo={true}
