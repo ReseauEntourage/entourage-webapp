@@ -26,11 +26,11 @@ const Names = styled.div`
 type SchemaUserUpdate = typeof schema['PATCH /users/me']['data']['user']
 
 interface FormField {
-  firstName: SchemaUserUpdate['firstName'];
-  lastName: SchemaUserUpdate['lastName'];
   about: SchemaUserUpdate['about'];
   autocompletePlace: Parameters<GoogleMapLocationProps['onChange']>[0];
   email: SchemaUserUpdate['email'];
+  firstName: SchemaUserUpdate['firstName'];
+  lastName: SchemaUserUpdate['lastName'];
 }
 
 type FormFieldKey = keyof FormField
@@ -88,7 +88,7 @@ export function ProfileModal() {
   }, [getValues, mutateMe, triggerValidation])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' })
+    register({ name: 'autocompletePlace' as FormFieldKey })
   }, [register])
 
   return (

@@ -84,8 +84,8 @@ function usePhoneStep(setNextStep: SetNextStep) {
 }
 
 interface PhoneFieldProps {
-  step: Step;
   phoneForm: PhoneForm;
+  step: Step;
 }
 
 function PhoneField(props: PhoneFieldProps) {
@@ -158,9 +158,9 @@ function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
 }
 
 interface SecretFieldProps {
-  step: Step;
   phoneForm: PhoneForm;
   secretForm: SecretForm;
+  step: Step;
 }
 
 function SecretField(props: SecretFieldProps) {
@@ -200,7 +200,7 @@ function SecretField(props: SecretFieldProps) {
 }
 
 function useDefinePasswordStep() {
-  const definePasswordForm = useForm<{password: string; confirmationPassword: string; }>()
+  const definePasswordForm = useForm<{confirmationPassword: string; password: string; }>()
 
   const onValidate = useCallback(async () => {
     if (!await definePasswordForm.triggerValidation()) {

@@ -5,10 +5,10 @@ import Avatar from '@material-ui/core/Avatar'
 import { Container /* , AvatarNumber */ } from './FeedItem.styles'
 
 interface Props {
-  primaryText: string;
-  secondText: string;
   isActive?: boolean;
+  primaryText: string;
   profilePictureURL?: string;
+  secondText: string;
 }
 
 export function FeedItem(props: Props) {

@@ -6,12 +6,12 @@ import { variants } from 'src/styles'
 import { Container, OwnerContainer, StarBadge, ParnerContainer } from './UsersItem.styles'
 
 export interface UserItemProps {
-  userId: string;
-  profilePictureURL: string;
-  userName: string;
+  isOwner: boolean;
   isPartner: boolean;
   partnerName?: string;
-  isOwner: boolean;
+  profilePictureURL: string;
+  userId: string;
+  userName: string;
 }
 
 export function UserItem(props: UserItemProps) {

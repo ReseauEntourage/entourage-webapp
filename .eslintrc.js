@@ -15,7 +15,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking'
   ],
-  plugins: ['@typescript-eslint', 'react', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'react', 'react-hooks', 'typescript-sort-keys'],
   rules: {
     // TypeScript Rules
     '@typescript-eslint/no-unused-vars': [1, { ignoreRestSiblings: true }],
@@ -34,6 +34,8 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/ban-ts-ignore': 0,
     '@typescript-eslint/indent': ['error', 2],
+    'typescript-sort-keys/interface': 1,
+    'typescript-sort-keys/string-enum': 1,
 
     // Import Rules
     'import/no-default-export': 2,

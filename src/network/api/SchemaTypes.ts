@@ -105,8 +105,8 @@ export interface User {
   displayName: string | null;
   email: string | null;
   firebaseProperties: {
-    ActionZoneDep: string;
     ActionZoneCP: string;
+    ActionZoneDep: string;
   };
   firstName: string | null;
   hasPassword: boolean;
@@ -117,9 +117,9 @@ export interface User {
   partner: null;
   roles: unknown[];
   stats: {
-    tourCount: number;
     encounterCount: number;
     entourageCount: number;
+    tourCount: number;
   };
   token: string;
   userType: UserType;

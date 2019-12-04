@@ -5,12 +5,12 @@ import Avatar from '@material-ui/core/Avatar'
 import { variants } from 'src/styles'
 
 interface Props {
-  title: string;
   dateLabel: string | JSX.Element;
-  organizerPictureURL?: string;
-  organizerLabel: string | JSX.Element;
   description: string;
   isAssociation?: boolean;
+  organizerLabel: string | JSX.Element;
+  organizerPictureURL?: string;
+  title: string;
 }
 
 export function ActionCard(props: Props) {

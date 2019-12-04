@@ -5,13 +5,13 @@ import Avatar from '@material-ui/core/Avatar'
 import { variants } from 'src/styles'
 
 interface Props {
-  title: string;
-  dateLabel: string;
   address: string;
-  organizerPictureURL?: string;
-  organizerLabel: string | JSX.Element;
+  dateLabel: string;
   description: string;
   isAssociation?: boolean;
+  organizerLabel: string | JSX.Element;
+  organizerPictureURL?: string;
+  title: string;
 }
 
 export function EventCard(props: Props) {

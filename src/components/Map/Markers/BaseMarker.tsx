@@ -1,8 +1,8 @@
 import React from 'react'
 
 interface Props {
-  size: number;
   children: JSX.Element;
+  size: number;
 }
 
 export function BaseMarker(props: Props) {

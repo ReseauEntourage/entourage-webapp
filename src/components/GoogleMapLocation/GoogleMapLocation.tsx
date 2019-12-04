@@ -20,16 +20,16 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 interface PlaceType {
+  place_id: string;
   structured_formatting: {
-    secondary_text: string;
     main_text_matched_substrings: [
       {
-        offset: number;
         length: number;
+        offset: number;
       }
     ];
+    secondary_text: string;
   };
-  place_id: string;
 }
 
 interface OnChangeValue {
@@ -38,8 +38,8 @@ interface OnChangeValue {
 }
 
 export interface GoogleMapLocationProps {
-  textFieldProps: TextFieldProps;
   onChange: (value: OnChangeValue) => void;
+  textFieldProps: TextFieldProps;
 }
 
 const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null

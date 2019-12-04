@@ -11,7 +11,7 @@ import { POICategory } from 'src/network/api'
 import { BaseMarker } from './BaseMarker'
 import { useMapContext } from '../context'
 
-function getSize(zoom: number): { size: number; iconSize: number; } {
+function getSize(zoom: number): { iconSize: number; size: number; } {
   return zoom < 15
     ? { size: 15, iconSize: 10 }
     : { size: 32, iconSize: 16 }

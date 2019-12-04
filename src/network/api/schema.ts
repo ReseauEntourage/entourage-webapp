@@ -32,27 +32,27 @@ export const schema = {
     method: 'GET',
     params: {} as {
       announcements?: 'v1';
-      types?: FeedTypesFilter;
+      /**
+       * Show past events (defaults to false)
+       */
+      latitude: number;
+      longitude: number;
+      pageToken?: string;
+      showPastEvents?: boolean;
       /**
        * Number of hours to filter
        */
       timeRange?: number;
-      /**
-       * Show past events (defaults to false)
-       */
-      longitude: number;
-      latitude: number;
-      showPastEvents?: boolean;
-      pageToken?: string;
+      types?: FeedTypesFilter;
     },
     data: null,
     response: {} as {
       feeds: {
         data: {
           author: {
-            id: number;
-            displayName: string;
             avatarUrl?: string;
+            displayName: string;
+            id: number;
             partner: UserPartner | null;
           };
           createdAt: DateISO;
@@ -73,8 +73,8 @@ export const schema = {
           updatedAt: DateISO;
           uuid: string;
         };
-        type: FeedType;
         heatmapSize: number;
+        type: FeedType;
       }[];
       nextPageToken?: string;
     },
@@ -119,9 +119,9 @@ export const schema = {
       feeds: {
         data: {
           author: {
-            id: number;
-            displayName: string;
             avatarUrl: string;
+            displayName: string;
+            id: number;
             partner: null; // TO DEFINED
           };
           createdAt: DateISO;
@@ -132,11 +132,11 @@ export const schema = {
           id: string;
           joinStatus: FeedJoinStatus;
           lastMessage: {
-            text: string;
             author: {
               firstName: string;
               lastName: string;
             };
+            text: string;
           };
           location: Location;
           metadata: {
@@ -152,8 +152,8 @@ export const schema = {
           updatedAt: DateISO;
           uuid: string;
         };
-        type: FeedType;
         heatmapSize: number;
+        type: FeedType;
       }[];
     },
   },
@@ -184,13 +184,13 @@ export const schema = {
     data: {} as {
       user: {
         about?: string;
-        email?: string;
-        firstName?: string;
-        lastName?: string;
         address?: {
           googlePlaceId: string;
           googleSessionToken: string;
         };
+        email?: string;
+        firstName?: string;
+        lastName?: string;
         password?: string;
       };
     },
@@ -202,10 +202,10 @@ export const schema = {
     url: 'pois',
     method: 'GET',
     params: {} as {
+      categoryIds: POICategoriesIds;
+      distance: number;
       latitude: number;
       longitude: number;
-      distance: number;
-      categoryIds: POICategoriesIds;
     },
     data: null,
     response: {} as {
@@ -258,10 +258,10 @@ export const schema = {
       phone: string;
     },
     response: {} as {
+      secretType: 'password' | 'code';
       status: 'not_found' | 'unavailable' | 'found';
       // présent uniquement si status = found
       // entre 8 et 256 caracters
-      secretType: 'password' | 'code';
     },
   },
   'POST /login': {
