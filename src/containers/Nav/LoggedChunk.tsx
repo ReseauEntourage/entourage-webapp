@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { refetchQuery } from 'react-query'
-import Avatar from '@material-ui/core/Avatar'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import { queryKeys } from 'src/network/queries'
@@ -23,6 +23,7 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
 
   const openProfileModal = useCallback(() => {
     openModal(<ProfileModal />)
+    setAnchorEl(null)
   }, [])
 
   const logout = useCallback(async () => {
@@ -41,16 +42,28 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
         onKeyUp={handleClick}
         style={{
           outline: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
         }}
       >
-        <Avatar alt="John Doe" src="https://i.pravatar.cc/100" />
+        <AccountCircleIcon color="secondary" fontSize="large" />
       </div>
       <Menu
         id="simple-menu"
         anchorEl={anchorEl}
+        getContentAnchorEl={null}
         keepMounted={true}
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
       >
         <MenuItem onClick={openProfileModal}>
           Mon Profil
