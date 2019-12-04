@@ -187,7 +187,10 @@ export const schema = {
         email?: string;
         firstName?: string;
         lastName?: string;
-        address?: string;
+        address?: {
+          googlePlaceId: string;
+          googleSessionToken: string;
+        };
         password?: string;
       };
     },

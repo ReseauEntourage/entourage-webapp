@@ -1,11 +1,13 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import useForm from 'react-hook-form'
 import { TextField, validators, useCatchUnreadFormErrors } from 'src/components/Form'
+import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { theme } from 'src/styles'
 import { texts } from 'src/i18n'
 import { useQueryMe, useMutateMe } from 'src/network/queries'
+import { User, schema } from 'src/network/api'
 
 const Container = styled.div`
   width: 500px;
@@ -21,31 +23,30 @@ const Names = styled.div`
   grid-gap: ${theme.spacing(2)}px;
 `
 
-const formField = {
-  firstName: 'firstName' as string,
-  lastName: 'lastName' as string,
-  about: 'about' as string,
-  address: 'address' as string,
-  email: 'email' as string,
+type SchemaUserUpdate = typeof schema['PATCH /users/me']['data']['user']
+
+interface FormField {
+  firstName: SchemaUserUpdate['firstName'];
+  lastName: SchemaUserUpdate['lastName'];
+  about: SchemaUserUpdate['about'];
+  autocompletePlace: Parameters<GoogleMapLocationProps['onChange']>[0];
+  email: SchemaUserUpdate['email'];
 }
+
+type FormFieldKey = keyof FormField
 
 export function ProfileModal() {
   const { data: me } = useQueryMe()
   const [mutateMe] = useMutateMe()
 
-  const user = (me && me.data && me.data.user) || {}
+  const user = (me && me.data && me.data.user) || {} as Partial<User>
 
-  const { register, errors: plainErrors, triggerValidation, getValues } = useForm<typeof formField>({
+  const { register, errors: plainErrors, triggerValidation, setValue, getValues } = useForm<FormField>({
     defaultValues: {
-      // @ts-ignore
-      firstName: user.firstName,
-      // @ts-ignore
-      lastName: user.lastName,
-      // @ts-ignore
-      about: user.about,
-      // @ts-ignore
-      email: user.email,
-      // address: user.address,
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      about: user.about || '',
+      email: user.email || '',
     },
   })
 
@@ -62,16 +63,22 @@ export function ProfileModal() {
       firstName,
       lastName,
       about,
-      // address,
+      autocompletePlace,
       email,
     } = getValues()
+
+    const address = autocompletePlace
+      ? {
+        googleSessionToken: autocompletePlace.googleSessionToken,
+        googlePlaceId: autocompletePlace.place.place_id,
+      } : undefined
 
     try {
       await mutateMe({
         firstName,
         lastName,
         about,
-        // address,
+        address,
         email,
       })
       return true
@@ -79,6 +86,10 @@ export function ProfileModal() {
       return false
     }
   }, [getValues, mutateMe, triggerValidation])
+
+  useEffect(() => {
+    register({ name: 'autocompletePlace' })
+  }, [register])
 
   return (
     <Modal
@@ -94,7 +105,7 @@ export function ProfileModal() {
           <TextField
             label={modalTexts.firstNameLabel}
             type="text"
-            name={formField.firstName}
+            name={'firstName' as FormFieldKey}
             fullWidth={true}
             inputRef={register({
               required: true,
@@ -104,7 +115,7 @@ export function ProfileModal() {
           <TextField
             label={modalTexts.lastNameLabel}
             type="text"
-            name={formField.lastName}
+            name={'lastName' as FormFieldKey}
             fullWidth={true}
             inputRef={register({
               required: true,
@@ -118,7 +129,7 @@ export function ProfileModal() {
         <TextField
           label={modalTexts.decriptionLabel}
           type="text"
-          name={formField.about}
+          name={'about' as FormFieldKey}
           multiline={true}
           fullWidth={true}
           inputRef={register({
@@ -129,21 +140,20 @@ export function ProfileModal() {
         <Label>
           {modalTexts.step3}
         </Label>
-        {/* <GoogleMapLocation
+        <GoogleMapLocation
           textFieldProps={{
             label: modalTexts.locationLabel,
-            name: formField.address,
-            inputRef: register({ required: true }),
             formError: errors.ss,
           }}
-        /> */}
+          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+        />
         <Label>
           {modalTexts.step4}
         </Label>
         <TextField
           label={modalTexts.emailLabel}
           type="email"
-          name="email"
+          name={'email' as FormFieldKey}
           fullWidth={true}
           inputRef={register({
             required: true,

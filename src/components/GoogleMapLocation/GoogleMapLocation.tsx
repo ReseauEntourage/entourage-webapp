@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import LocationOnIcon from '@material-ui/icons/LocationOn'
 import Grid from '@material-ui/core/Grid'
@@ -7,20 +7,8 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
-import { env } from 'src/core'
 import { AnyToFix } from 'src/types'
-
-function loadScript(src: string, position: HTMLElement | null, id: string) {
-  if (!position) {
-    return
-  }
-
-  const script = document.createElement('script')
-  script.setAttribute('async', '')
-  script.setAttribute('id', id)
-  script.src = src
-  position.appendChild(script)
-}
+import { isSSR } from 'src/utils'
 
 const autocompleteService = { current: null }
 
@@ -41,39 +29,50 @@ interface PlaceType {
       }
     ];
   };
+  place_id: string;
 }
 
-interface GoogleMapLocation {
+interface OnChangeValue {
+  googleSessionToken: string;
+  place: PlaceType;
+}
+
+export interface GoogleMapLocationProps {
   textFieldProps: TextFieldProps;
+  onChange: (value: OnChangeValue) => void;
 }
 
-export function GoogleMapLocation(props: GoogleMapLocation) {
-  const { textFieldProps } = props
+const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
+
+export function GoogleMapLocation(props: GoogleMapLocationProps) {
+  const { textFieldProps, onChange } = props
+
+  const autocompleteSessionToken = useRef<{ Qf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
 
   const classes = useStyles()
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
-  const loaded = useRef(false)
 
-  if (typeof window !== 'undefined' && !loaded.current) {
-    if (!document.querySelector('#google-maps')) {
-      loadScript(
-        `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`,
-        document.querySelector('head'),
-        'google-maps',
-      )
-    }
-
-    loaded.current = true
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
-  }
+  }, [])
+
+  const onChangeAutocomplete = useCallback((event, place: PlaceType) => {
+    if (onChange) {
+      onChange({
+        googleSessionToken: autocompleteSessionToken.current.Qf,
+        place,
+      })
+    }
+  }, [onChange])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {
-      (autocompleteService.current as AnyToFix).getPlacePredictions(input, callback)
+      const data = {
+        input: input.input,
+        sessionToken: autocompleteSessionToken.current,
+      };
+      (autocompleteService.current as AnyToFix).getPlacePredictions(data, callback)
     }, 200),
     [],
   )
@@ -81,17 +80,7 @@ export function GoogleMapLocation(props: GoogleMapLocation) {
   useEffect(() => {
     let active = true
 
-    if (
-      !autocompleteService.current
-      && (window as AnyToFix).google
-      && (window as AnyToFix).google.maps
-      && (window as AnyToFix).google.maps.places
-    ) {
-      autocompleteService.current = new (window as AnyToFix).google.maps.places.AutocompleteService()
-    }
-    if (!autocompleteService.current) {
-      return undefined
-    }
+    autocompleteService.current = new googleMapsInst.places.AutocompleteService()
 
     if (inputValue === '') {
       setOptions([])
@@ -100,7 +89,6 @@ export function GoogleMapLocation(props: GoogleMapLocation) {
 
     fetch({ input: inputValue }, (results?: PlaceType[]) => {
       if (active) {
-        // console.log('results', results)
         setOptions(results || [])
       }
     })
@@ -117,6 +105,7 @@ export function GoogleMapLocation(props: GoogleMapLocation) {
       filterOptions={(x) => x}
       options={options}
       autoComplete={true}
+      onChange={onChangeAutocomplete}
       includeInputInList={true}
       freeSolo={true}
       disableOpenOnFocus={true}

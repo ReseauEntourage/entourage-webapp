@@ -1,7 +1,8 @@
 import React from 'react'
-import NextDocument, { DocumentContext } from 'next/document'
+import NextDocument, { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheet as StyledComponentSheets } from 'styled-components'
 import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/styles'
+import { env } from 'src/core'
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext) {
@@ -31,5 +32,22 @@ export default class Document extends NextDocument {
     } finally {
       styledComponentSheet.seal()
     }
+  }
+
+  render() {
+    return (
+      <Html>
+        <Head />
+        <body>
+          <Main />
+          <NextScript />
+          <script
+            async={true}
+            defer={true}
+            src={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`}
+          />
+        </body>
+      </Html>
+    )
   }
 }
