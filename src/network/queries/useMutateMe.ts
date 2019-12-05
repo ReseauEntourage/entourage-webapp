@@ -7,7 +7,7 @@ type Data = typeof schema['PATCH /users/me']['data']['user']
 export function useMutateMe() {
   return useMutation((data: Data) => {
     return api.request({
-      routeName: 'PATCH /users/me',
+      name: 'PATCH /users/me',
       data: {
         user: data,
       },

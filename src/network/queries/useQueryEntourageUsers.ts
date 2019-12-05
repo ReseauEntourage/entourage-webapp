@@ -3,11 +3,11 @@ import { api } from 'src/network/api'
 import { queryKeys } from './queryKeys'
 
 export function useQueryEntourageUsers(entourageId: string) {
-  const { data, isLoading } = useQuery([queryKeys.entourageUsers, { entourageId }], (urlParams) => {
+  const { data, isLoading } = useQuery([queryKeys.entourageUsers, { entourageId }], (pathParams) => {
     return api.request({
-      routeName: 'GET /entourages/:entourageId/users',
-      urlParams: {
-        entourageId: urlParams.entourageId,
+      name: 'GET /entourages/:entourageId/users',
+      pathParams: {
+        entourageId: pathParams.entourageId,
       },
     })
   })

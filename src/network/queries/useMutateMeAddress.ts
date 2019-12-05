@@ -7,7 +7,7 @@ type Data = typeof schema['POST /users/me/address']['data']['address']
 export function useMutateMeAddress(refetchQueryMe = true) {
   return useMutation((data: Data) => {
     return api.request({
-      routeName: 'POST /users/me/address',
+      name: 'POST /users/me/address',
       data: {
         address: data,
       },

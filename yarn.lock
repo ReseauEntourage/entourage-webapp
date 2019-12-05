@@ -10178,11 +10178,6 @@ request-promise-native@^1.0.5:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request-schema@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/request-schema/-/request-schema-0.1.1.tgz#58a65c66ca32ad2b9448bb582e6d730dc12689ba"
-  integrity sha512-DkrXyZGIG8viH2f44KK26EkaSY5AL5Smx6DpL/jC6yh3Yf65m5XUJaqn8NW2lJX4qhtkmhez7CcIpu5O0gvbpQ==
-
 request@^2.87.0:
   version "2.88.0"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.0.tgz#9c2fca4f7d35b592efe57c7f0a55e81052124fef"
@@ -11514,6 +11509,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typescript-object-schema@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/typescript-object-schema/-/typescript-object-schema-1.0.0.tgz#fa510bce9c0c0fac3ef268b6ae489ce1368f8ee4"
+  integrity sha512-JVhL69jtcmBcA5xXRWT6DkVc5QIDEK7ZBReoh/VfGQcy67Qd6fzGDNEmYk6DnXEm+Z+X1cjzyhgGRLhsSpGfcA==
 
 typescript@^3.7.2:
   version "3.7.2"

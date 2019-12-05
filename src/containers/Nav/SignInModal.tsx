@@ -34,7 +34,7 @@ function usePhoneStep(setNextStep: SetNextStep) {
 
     try {
       const lookupResponse = await api.request({
-        routeName: 'POST /users/lookup',
+        name: 'POST /users/lookup',
         data: {
           phone,
         },
@@ -45,7 +45,7 @@ function usePhoneStep(setNextStep: SetNextStep) {
 
       if (lookupStatus === 'not_found') {
         await api.request({
-          routeName: 'POST /users',
+          name: 'POST /users',
           data: {
             user: {
               phone,
@@ -120,7 +120,7 @@ function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
 
     try {
       const loginResponse = await api.request({
-        routeName: 'POST /login',
+        name: 'POST /login',
         data: {
           user: {
             phone: phoneForm.getValues().phone,
@@ -209,7 +209,7 @@ function useDefinePasswordStep() {
 
     try {
       await api.request({
-        routeName: 'PATCH /users/me',
+        name: 'PATCH /users/me',
         data: {
           user: {
             password: definePasswordForm.getValues().password,

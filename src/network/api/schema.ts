@@ -249,7 +249,7 @@ export const schema = {
   'GET /entourages/:entourageId/users': {
     url: (params: { entourageId: string; }) => `entourages/${params.entourageId}/users`,
     method: 'GET',
-    params: {} as null | {
+    params: {} as void | {
       page?: number;
       per?: number;
     },

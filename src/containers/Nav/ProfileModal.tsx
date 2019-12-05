@@ -47,7 +47,7 @@ function useUploadImageProfile() {
     if (!imageCropperValue) return
 
     const presignedURLResponse = await api.request({
-      routeName: 'POST /users/me/presigned_avatar_upload/',
+      name: 'POST /users/me/presigned_avatar_upload/',
       data: {
         contentType: 'image/jpeg',
       },

@@ -1,22 +1,61 @@
-import { AxiosInstance } from 'axios'
+import axios, { AxiosRequestConfig, AxiosPromise } from 'axios'
 import { NextPageContext } from 'next'
-import { createAxiosInstance } from 'request-schema'
+import { ObjectParams, FnParams, Extends } from 'typescript-object-schema'
 import { env } from 'src/core'
 import { createAnonymousUser, getTokenFromCookies } from 'src/network/services'
+import { AnyToFix } from 'src/types'
 import { schema } from './schema'
 import { addAxiosInterceptors } from './interceptors'
 
-const axiosInstance = createAxiosInstance({ baseURL: env.API_V1_URL }, schema)
-addAxiosInterceptors(axiosInstance as AxiosInstance)
+type Schema = typeof schema
+type SchemaKeys = keyof Schema
 
-type InstanceWithSSR = typeof axiosInstance & {
+type Config<T extends SchemaKeys> =
+  { name: T; }
+  & FnParams<Schema[T], 'url', 'pathParams'>
+  & ObjectParams<Schema[T], 'params'>
+  & ObjectParams<Schema[T], 'data'>
+  & Extends<Schema[T], AxiosRequestConfig>
+
+type Request = <T extends SchemaKeys>(config: Config<T>) => AxiosPromise<Schema[T]['response']>
+
+const axiosInstance = axios.create({ baseURL: env.API_V1_URL })
+
+const request: Request = (config) => {
+  const {
+    name,
+    pathParams,
+    data,
+    params,
+    ...restConfig
+  } = config
+
+  const { url, method } = schema[name]
+
+  const urlWithPathParams = typeof url === 'function'
+    ? url(pathParams as AnyToFix)
+    : url
+
+  return axiosInstance.request({
+    url: urlWithPathParams,
+    method,
+    data,
+    params,
+    ...restConfig,
+  })
+}
+
+addAxiosInterceptors(axiosInstance)
+
+type APIInstanceWithSSR = {
+  request: typeof request;
   ssr: (ctx: NextPageContext) => {
-    request: typeof axiosInstance['request'];
+    request: typeof request;
   };
 }
 
-export const api: InstanceWithSSR = {
-  ...axiosInstance,
+export const api: APIInstanceWithSSR = {
+  request,
   ssr: (ctx) => ({
     request: async (config) => {
       const token = getTokenFromCookies(ctx) || await createAnonymousUser(ctx)
@@ -24,12 +63,13 @@ export const api: InstanceWithSSR = {
       const configWithToken = {
         ...config,
         params: {
+          // @ts-ignore
           ...(config.params || {}),
           token,
         },
       }
 
-      return axiosInstance.request(configWithToken)
+      return request(configWithToken)
     },
   }),
 }

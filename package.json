@@ -40,11 +40,11 @@
     "react-hook-form": "^3.28.4",
     "react-image-crop": "^8.4.2",
     "react-query": "^0.3.15",
-    "request-schema": "^0.1.1",
     "rxjs": "^6.5.3",
     "stop-runaway-react-effects": "^1.2.1",
     "styled-components": "^4.4.1",
     "styled-reset": "^4.0.7",
+    "typescript-object-schema": "^1.0.0",
     "uniqid": "^5.2.0",
     "validator": "^12.1.0"
   },

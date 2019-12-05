@@ -44,15 +44,15 @@ Entourage Web App
 
 # API
 
-Le schéma de l'api est défini dans [src/api/schema](src/api/schema.ts) et utilise le format [request-schema](https://github.com/GuillaumeJasmin/request-schema).
+Le schéma de l'api est défini dans [src/api/schema](src/api/schema.ts) et utilise le format [typescript-object-schema](https://github.com/GuillaumeJasmin/typescript-object-schema).
 
 Utilisation de l'API:
 ```js
 import { api } from 'src/network/api'
 
 const users = await api.request({
-  routeName: 'GET users',
-  urlParams: {
+  name: 'GET users',
+  pathParams: {
     ...
   },
   params: {
