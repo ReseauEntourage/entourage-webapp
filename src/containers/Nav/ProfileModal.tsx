@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect /* , useState */ } from 'react'
 import styled from 'styled-components'
 import useForm from 'react-hook-form'
 import { TextField, validators, useCatchUnreadFormErrors } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
-import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
-import { api } from 'src/network/api'
+// import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
+// import { api } from 'src/network/api'
 import { theme } from 'src/styles'
 import { texts } from 'src/i18n'
 import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/network/queries'
@@ -40,42 +40,42 @@ interface FormField {
 
 type FormFieldKey = keyof FormField
 
-function useUploadImageProfile() {
-  const [imageCropperValue, setImageCropperValue] = useState<ImageCropperValue>()
+// function useUploadImageProfile() {
+//   const [imageCropperValue, setImageCropperValue] = useState<ImageCropperValue>()
 
-  const uploadIfNeeded = useCallback(async () => {
-    if (!imageCropperValue) return
+//   const uploadIfNeeded = useCallback(async () => {
+//     if (!imageCropperValue) return
 
-    const presignedURLResponse = await api.request({
-      name: 'POST /users/me/presigned_avatar_upload/',
-      data: {
-        contentType: 'image/jpeg',
-      },
-    })
+//     const presignedURLResponse = await api.request({
+//       name: 'POST /users/me/presigned_avatar_upload/',
+//       data: {
+//         contentType: 'image/jpeg',
+//       },
+//     })
 
-    await fetch(presignedURLResponse.data.presignedUrl, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'image/jpeg',
-      },
-      body: imageCropperValue.blob,
-    })
-  }, [imageCropperValue])
+//     await fetch(presignedURLResponse.data.presignedUrl, {
+//       method: 'PUT',
+//       headers: {
+//         'Content-Type': 'image/jpeg',
+//       },
+//       body: imageCropperValue.blob,
+//     })
+//   }, [imageCropperValue])
 
-  return [
-    setImageCropperValue,
-    uploadIfNeeded,
-  ] as [
-    typeof setImageCropperValue,
-    typeof uploadIfNeeded
-  ]
-}
+//   return [
+//     setImageCropperValue,
+//     uploadIfNeeded,
+//   ] as [
+//     typeof setImageCropperValue,
+//     typeof uploadIfNeeded
+//   ]
+// }
 
 export function ProfileModal() {
   const { data: me } = useQueryMe()
   const [mutateMe] = useMutateMe()
   const [mutateMeAddress] = useMutateMeAddress(false)
-  const [onValidateImageProfile, upload] = useUploadImageProfile()
+  // const [onValidateImageProfile, upload] = useUploadImageProfile()
 
   const user = (me && me.data && me.data.user) || {} as NonNullableUser
 
@@ -113,7 +113,7 @@ export function ProfileModal() {
         })
       }
 
-      upload()
+      // upload()
 
       await mutateMe({
         firstName,
@@ -126,7 +126,7 @@ export function ProfileModal() {
     } catch (e) {
       return false
     }
-  }, [getValues, mutateMe, mutateMeAddress, triggerValidation, upload])
+  }, [getValues, mutateMe, mutateMeAddress, triggerValidation])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -204,10 +204,10 @@ export function ProfileModal() {
           name={'email' as FormFieldKey}
           type="email"
         />
-        <Label>
+        {/* <Label>
           {modalTexts.step5}
           <ImageCropper onValidate={onValidateImageProfile} />
-        </Label>
+        </Label> */}
       </Container>
     </Modal>
   )
