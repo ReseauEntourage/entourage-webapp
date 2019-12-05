@@ -20,6 +20,7 @@ export const texts = {
       step2: '2. Présentez-vous en quelques mots à la communauté',
       step3: '3. Autour de quel point géographique souhaitez-vous passer à l\'action ?',
       step4: '4. Nous avons besoin de votre email afin de pouvoir vous contacter',
+      step5: '5. Pour finir, téléchargez une photo de vous afin de mettre un visage sur vos actions',
       firstNameLabel: 'Votre prénom',
       lastNameLabel: 'Votre nom (ne sera pas affiché)',
       decriptionLabel: 'Pourquoi avez-vous rejoins entourage ?',

@@ -206,6 +206,17 @@ export const schema = {
     },
     response: {} as {},
   },
+  'POST /users/me/presigned_avatar_upload/': {
+    url: '/users/me/presigned_avatar_upload/',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      contentType: 'image/jpeg';
+    },
+    response: {} as {
+      presignedUrl: string;
+    },
+  },
   'GET /pois': {
     url: 'pois',
     method: 'GET',

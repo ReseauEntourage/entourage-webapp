@@ -1,7 +1,12 @@
 // eslint-disable-next-line
 require('dotenv').config()
 
-module.exports = {
+const withCSS = require('@zeit/next-css')
+
+module.exports = withCSS({
+  cssLoaderOptions: {
+    url: false
+  },
   webpack(config) {
     config.resolve.modules.push(__dirname)
     return config
@@ -11,4 +16,4 @@ module.exports = {
     API_KEY: process.env.API_KEY,
     GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
   },
-}
+})

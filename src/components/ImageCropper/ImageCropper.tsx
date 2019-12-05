@@ -12,15 +12,21 @@ const defaultCrop: ReactCropProps['crop'] = {
   aspect: 1,
 }
 
-interface ImageCropperProps {
-  onChange?: (src: string) => void;
-  onValidate?: (src: string) => void;
+export interface ImageCropperValue {
+  blob: Blob;
+  src: string;
+}
+
+export interface ImageCropperProps {
+  onChange?: (value: ImageCropperValue) => void;
+  onValidate?: (value: ImageCropperValue) => void;
 }
 
 export function ImageCropper(props: ImageCropperProps) {
   const { onChange, onValidate } = props
-
+  const [editing, setEditing] = useState(false)
   const [src, setSrc] = useState()
+  const [value, setValue] = useState()
   const [crop, setCrop] = useState(defaultCrop)
   const imageRef = useRef()
   const fileUrl = useRef<string>('')
@@ -30,7 +36,7 @@ export function ImageCropper(props: ImageCropperProps) {
     imageRef.current = image
   }, [])
 
-  const getCroppedImg = useCallback((image, cropParams, fileName): Promise<string> => {
+  const getCroppedImg = useCallback((image, cropParams, fileName): Promise<ImageCropperValue> => {
     const canvas = document.createElement('canvas')
     const scaleX = image.naturalWidth / image.width
     const scaleY = image.naturalHeight / image.height
@@ -67,24 +73,29 @@ export function ImageCropper(props: ImageCropperProps) {
         blob.name = fileName
         window.URL.revokeObjectURL(fileUrl.current)
         fileUrl.current = window.URL.createObjectURL(blob)
-        resolve(fileUrl.current)
+        resolve({
+          src: fileUrl.current,
+          blob,
+        })
       }, 'image/jpeg')
     })
   }, [])
 
   const makeClientCrop = useCallback(async (cropParams) => {
     if (imageRef.current && cropParams.width && cropParams.height) {
-      const url = await getCroppedImg(
+      const internalValue = await getCroppedImg(
         imageRef.current,
         crop,
         'newFile.jpeg',
       )
 
+      setValue(internalValue)
+
       if (onChange) {
-        onChange(url)
+        onChange(value)
       }
     }
-  }, [crop, getCroppedImg, onChange])
+  }, [crop, getCroppedImg, onChange, value])
 
   const onCropComplete = useCallback((cropParams) => {
     makeClientCrop(cropParams)
@@ -96,6 +107,7 @@ export function ImageCropper(props: ImageCropperProps) {
 
   const onSelectFile = useCallback((e) => {
     if (e.target.files && e.target.files.length > 0) {
+      setEditing(true)
       const reader = new FileReader()
       reader.addEventListener('load', () => setSrc(reader.result))
       reader.readAsDataURL(e.target.files[0])
@@ -106,10 +118,18 @@ export function ImageCropper(props: ImageCropperProps) {
     if (onValidate) {
       onValidate(src)
     }
+
+    setEditing(false)
   }, [onValidate, src])
 
   return (
-    <div style={{ minWidth: 300, minHeight: 300, width: 'fit-content' }}>
+    <div
+      style={{
+        // inWidth: 300,
+        // minHeight: 300,
+        width: 'fit-content', // TODO: not compatible with all browsers
+      }}
+    >
       <input
         ref={inputRef}
         accept="image/*"
@@ -119,15 +139,17 @@ export function ImageCropper(props: ImageCropperProps) {
         }}
         type="file"
       />
-      <ReactCrop
-        circularCrop={true}
-        crop={crop}
-        onChange={onCropChange}
-        onComplete={onCropComplete}
-        onImageLoaded={onImageLoaded}
-        ruleOfThirds={true}
-        src={src}
-      />
+      {editing && (
+        <ReactCrop
+          circularCrop={true}
+          crop={crop}
+          onChange={onCropChange}
+          onComplete={onCropComplete}
+          onImageLoaded={onImageLoaded}
+          ruleOfThirds={true}
+          src={src}
+        />
+      )}
       <Box
         display="flex"
         justifyContent="space-around"
@@ -140,6 +162,11 @@ export function ImageCropper(props: ImageCropperProps) {
           <Button onClick={internalOnValidate}>{texts.labels.validate}</Button>
         )}
       </Box>
+      {!editing && value && (
+        <div>
+          <img alt="Copper preview" src={value.src} />
+        </div>
+      )}
     </div>
   )
 }
