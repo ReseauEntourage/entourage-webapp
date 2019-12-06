@@ -11,11 +11,13 @@ import { useQueryMe } from 'src/network/queries'
 import { SignInModal } from './SignInModal'
 import { ProfileModal } from './ProfileModal'
 import { LoggedChunk } from './LoggedChunk'
+import { NavTakeAction } from './NavTakeAction'
 
 const useStyles = makeStyles((theme) => createStyles({
   appBar: {
     backgroundColor: '#fff',
     borderBottom: `solid 1px ${colors.main.borderColorNav}`,
+    color: colors.main.text,
   },
   grow: {
     flexGrow: 1,
@@ -25,6 +27,10 @@ const useStyles = makeStyles((theme) => createStyles({
   },
   buttonMarginLeft: {
     marginLeft: theme.spacing(2),
+  },
+  navItem: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
 }))
 
@@ -58,6 +64,19 @@ export function Nav() {
             <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
           </a>
           <div className={classes.grow} />
+          {/* <Link href="/actions">
+            <a>
+              {texts.nav.actions}
+            </a>
+          </Link>
+          <Link href="/messages">
+            <a>
+              {texts.nav.messages}
+            </a>
+          </Link> */}
+          <div className={classes.navItem}>
+            <NavTakeAction />
+          </div>
           {iAmLogged ? (
             <LoggedChunk />
           ) : (

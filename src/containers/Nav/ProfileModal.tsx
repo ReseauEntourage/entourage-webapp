@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect /* , useState */ } from 'react'
-import useForm from 'react-hook-form'
-import { TextField, Label, RowFields, validators, useCatchUnreadFormErrors } from 'src/components/Form'
+import { FormContext } from 'react-hook-form'
+import { TextField, Label, RowFields, validators, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 // import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
@@ -63,7 +63,7 @@ export function ProfileModal() {
 
   const user = (me && me.data && me.data.user) || {} as NonNullableUser
 
-  const { register, errors: plainErrors, triggerValidation, setValue, getValues } = useForm<FormField>({
+  const form = useForm<FormField>({
     defaultValues: {
       firstName: user.firstName || '',
       lastName: user.lastName || '',
@@ -72,7 +72,7 @@ export function ProfileModal() {
     },
   })
 
-  const errors = useCatchUnreadFormErrors(plainErrors)
+  const { register, triggerValidation, setValue, getValues } = form
 
   const modalTexts = texts.content.profilModal
 
@@ -122,75 +122,73 @@ export function ProfileModal() {
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
     >
-      <Label>
-        {modalTexts.step1}
-      </Label>
-      <RowFields>
+      <FormContext {...form}>
+        <Label>
+          {modalTexts.step1}
+        </Label>
+        <RowFields>
+          <TextField
+            fullWidth={true}
+            inputRef={register({
+              required: true,
+            })}
+            label={modalTexts.firstNameLabel}
+            name={'firstName' as FormFieldKey}
+            type="text"
+          />
+          <TextField
+            fullWidth={true}
+            inputRef={register({
+              required: true,
+            })}
+            label={modalTexts.lastNameLabel}
+            name={'lastName' as FormFieldKey}
+            type="text"
+          />
+        </RowFields>
+        <Label>
+          {modalTexts.step2}
+        </Label>
         <TextField
-          formError={errors.firstName}
           fullWidth={true}
           inputRef={register({
             required: true,
           })}
-          label={modalTexts.firstNameLabel}
-          name={'firstName' as FormFieldKey}
+          label={modalTexts.decriptionLabel}
+          multiline={true}
+          name={'about' as FormFieldKey}
           type="text"
         />
+        <Label>
+          {modalTexts.step3}
+        </Label>
+        <GoogleMapLocation
+          defaultValue={user.address ? user.address.displayAddress : ''}
+          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+          textFieldProps={{
+            label: modalTexts.locationLabel,
+          }}
+        />
+        <Label>
+          {modalTexts.step4}
+        </Label>
         <TextField
-          formError={errors.lastName}
           fullWidth={true}
           inputRef={register({
             required: true,
+            validate: {
+              email: validators.email,
+            },
           })}
-          label={modalTexts.lastNameLabel}
-          name={'lastName' as FormFieldKey}
-          type="text"
+          label={modalTexts.emailLabel}
+          name={'email' as FormFieldKey}
+          type="email"
         />
-      </RowFields>
-      <Label>
-        {modalTexts.step2}
-      </Label>
-      <TextField
-        formError={errors.about}
-        fullWidth={true}
-        inputRef={register({
-          required: true,
-        })}
-        label={modalTexts.decriptionLabel}
-        multiline={true}
-        name={'about' as FormFieldKey}
-        type="text"
-      />
-      <Label>
-        {modalTexts.step3}
-      </Label>
-      <GoogleMapLocation
-        defaultValue={user.address ? user.address.displayAddress : ''}
-        onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
-        textFieldProps={{
-          label: modalTexts.locationLabel,
-        }}
-      />
-      <Label>
-        {modalTexts.step4}
-      </Label>
-      <TextField
-        formError={errors.email}
-        fullWidth={true}
-        inputRef={register({
-          required: true,
-          validate: {
-            email: validators.email,
-          },
-        })}
-        label={modalTexts.emailLabel}
-        name={'email' as FormFieldKey}
-        type="email"
-      />
-      {/* <Label>
-        {modalTexts.step5}
-        <ImageCropper onValidate={onValidateImageProfile} />
-      </Label> */}
+        {/* <Label>
+          {modalTexts.step5}
+          <ImageCropper onValidate={onValidateImageProfile} />
+        </Label> */}
+      </FormContext>
     </Modal>
   )
 }

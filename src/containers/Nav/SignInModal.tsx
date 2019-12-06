@@ -95,7 +95,7 @@ function PhoneField(props: PhoneFieldProps) {
     <TextField
       autoFocus={true}
       disabled={step !== 'phone'}
-      formError={phoneForm.errors.phone}
+      formErrors={phoneForm.errors}
       fullWidth={true}
       inputRef={phoneForm.register({
         required: true,
@@ -183,7 +183,7 @@ function SecretField(props: SecretFieldProps) {
     <TextField
       autoFocus={true}
       disabled={secretTypeDone}
-      formError={secretForm.errors.secret}
+      formErrors={secretForm.errors}
       fullWidth={true}
       inputRef={secretForm.register({
         required: true,
@@ -264,7 +264,7 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
       <TextField
         autoFocus={true}
         disabled={stepPast}
-        formError={definePasswordForm.errors.password}
+        formErrors={definePasswordForm.errors}
         fullWidth={true}
         inputRef={definePasswordForm.register({
           required: true,
@@ -275,7 +275,7 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
       />
       <TextField
         disabled={stepPast}
-        formError={definePasswordForm.errors.confirmationPassword}
+        formErrors={definePasswordForm.errors}
         fullWidth={true}
         inputRef={definePasswordForm.register({
           required: true,

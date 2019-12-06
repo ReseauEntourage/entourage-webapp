@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 export const texts = {
   form: {
     FIELD_REQUIRED: 'Champs requis',
@@ -5,6 +7,11 @@ export const texts = {
     PHONE_EXIST: 'Votre numéro exist déjà',
     BAD_FORMAT: 'Format incorrect',
     INCORRECT_VALUE: 'Valeur incorrecte',
+  },
+  nav: {
+    actions: 'Actions',
+    messages: 'Messages',
+    takeAction: 'Passer à l\'action',
   },
   labels: {
     save: 'Enregister',
@@ -26,6 +33,39 @@ export const texts = {
       decriptionLabel: 'Pourquoi avez-vous rejoins entourage ?',
       locationLabel: 'Entrez un adresse, un lieu, une ville...',
       emailLabel: 'Votre email',
+    },
+    modalCharte: {
+      title: 'Je respecte la charte d\'Entourage',
+      validateLabel: 'J\'ai lu et j\'accepte',
+    },
+    modalCreateAction: {
+      title: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
+      step1: '1. Choisissez une catégorie et précisez une zone géographique',
+      step2: '2. Donnez un titre clair à votre initiative',
+      step3: '3. Racontez simplement votre histoire. Les actions avec une description claire attirent plus de membres et ont plus de chances d\'aboutir :',
+      fieldLabelCategory: 'Catégorie',
+      fieldLabelAddress: 'Adresse',
+      fieldLabelTitle: 'Je suis disponible pour... / Je recherche...',
+      fieldLabelDescription: 'Description',
+      fieldCategoryHelpLabel: 'Je crée une action parce que...',
+      fieldCategoryHelpList: {
+        neighbours: 'Des voisins pour entourer une personne',
+        material: 'Un don matériel',
+        resource: 'Une resource mise à disposition',
+        info: 'Poser une question au réseau',
+        skill: 'Une compétence',
+        other: 'Autre chose',
+      },
+      fieldCategoryContributionLabel: 'Je me propose de...',
+      fieldCategoryContributionList: {
+        neighbours: 'Passer du temps avec une personne',
+        material: 'Faire un don matériel',
+        resource: 'Mettre à disposition une ressource',
+        info: 'Diffuser une information',
+        skill: 'Offir une compétence',
+        other: 'Aider à ma façon',
+      },
+      validateLabel: 'Créer mon action',
     },
   },
 }
