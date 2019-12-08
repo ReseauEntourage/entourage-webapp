@@ -63,6 +63,9 @@ module.exports = {
     'semi': [1, 'never'],
     // max-len is enought
     'object-curly-newline': 0,
+
+    // Windows
+    'linebreak-style': ['error', 'windows']
   },
   'overrides': [
     {
