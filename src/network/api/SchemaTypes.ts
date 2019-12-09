@@ -11,13 +11,13 @@ export type FeedGroupType = 'action' | 'outing' | 'conversation'
 export type FeedEntourageType = 'contribution' | 'ask_for_help'
 
 export type FeedDisplayCategory =
-  | 'info'
-  | 'social'
-  | 'resource'
-  | 'other'
-  | 'mat_help'
   | 'event'
+  | 'info'
+  | 'mat_help'
+  | 'other'
+  | 'resource'
   | 'skill'
+  | 'social'
 
 export type FeedJoinStatus =
   | 'accepted'

@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
-import { AnyToFix } from 'src/types'
+import { AnyToFix, AnyCantFix } from 'src/types'
 import { isSSR } from 'src/utils'
 
 const autocompleteService = { current: null }
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-interface PlaceType {
+export interface PlaceType {
   place_id: string;
   structured_formatting: {
     main_text_matched_substrings: [
@@ -32,23 +32,43 @@ interface PlaceType {
   };
 }
 
-interface OnChangeValue {
+export interface GoogleMapLocationValue {
   googleSessionToken: string;
+  location: null | {
+    lat: number;
+    lng: number;
+  };
   place: PlaceType;
 }
 
 export interface GoogleMapLocationProps {
   defaultValue?: string;
-  onChange: (value: OnChangeValue) => void;
+  includeLatLng?: boolean;
+  onChange: (value: GoogleMapLocationValue) => void;
   textFieldProps: TextFieldProps;
 }
 
 const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
 
-export function GoogleMapLocation(props: GoogleMapLocationProps) {
-  const { textFieldProps, onChange, defaultValue } = props
+async function getLocationFromPlaceId(placeId: string): Promise<{ lat: number; lng: number; }> {
+  // @ts-ignore
+  const geocoder = new google.maps.Geocoder()
+  const loc: AnyCantFix = await new Promise((resolve: AnyCantFix) => geocoder.geocode({ placeId }, resolve))
 
-  const autocompleteSessionToken = useRef<{ Qf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
+  if (!loc[0]) {
+    throw new Error('getLocationFromPlaceId error')
+  }
+
+  return {
+    lat: loc[0].geometry.location.lat(),
+    lng: loc[0].geometry.location.lng(),
+  }
+}
+
+export function GoogleMapLocation(props: GoogleMapLocationProps) {
+  const { textFieldProps, onChange, defaultValue, includeLatLng } = props
+
+  const autocompleteSessionToken = useRef<{ Rf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
 
   const classes = useStyles()
   const [inputValue, setInputValue] = useState('')
@@ -58,14 +78,21 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
     setInputValue(event.target.value)
   }, [])
 
-  const onChangeAutocomplete = useCallback((event, place: PlaceType) => {
+  const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
+    let location: GoogleMapLocationValue['location'] = null
+
+    if (includeLatLng) {
+      location = await getLocationFromPlaceId(place.place_id)
+    }
+
     if (onChange) {
       onChange({
-        googleSessionToken: autocompleteSessionToken.current.Qf,
+        googleSessionToken: autocompleteSessionToken.current.Rf,
         place,
+        location,
       })
     }
-  }, [onChange])
+  }, [includeLatLng, onChange])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {

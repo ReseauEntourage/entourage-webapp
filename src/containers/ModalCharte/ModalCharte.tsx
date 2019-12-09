@@ -15,7 +15,7 @@ export function ModalCharte(props: ModalCharteProps) {
       title={texts.content.modalCharte.title}
       validateLabel={texts.content.modalCharte.validateLabel}
     >
-      ModalCharte
+      Charte...
     </Modal>
   )
 }

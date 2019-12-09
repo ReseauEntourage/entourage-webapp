@@ -1,4 +1,5 @@
-/* eslint-disable max-len */
+/* eslint-disable max-len  */
+/* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
   form: {
@@ -49,21 +50,23 @@ export const texts = {
       fieldLabelDescription: 'Description',
       fieldCategoryHelpLabel: 'Je crée une action parce que...',
       fieldCategoryHelpList: {
-        neighbours: 'Des voisins pour entourer une personne',
-        material: 'Un don matériel',
-        resource: 'Une resource mise à disposition',
+        event: '',
         info: 'Poser une question au réseau',
-        skill: 'Une compétence',
+        mat_help: 'Un don matériel',
         other: 'Autre chose',
+        resource: 'Une resource mise à disposition',
+        skill: 'Une compétence',
+        social: 'Des voisins pour entourer une personne',
       },
       fieldCategoryContributionLabel: 'Je me propose de...',
       fieldCategoryContributionList: {
-        neighbours: 'Passer du temps avec une personne',
-        material: 'Faire un don matériel',
-        resource: 'Mettre à disposition une ressource',
+        event: '',
         info: 'Diffuser une information',
-        skill: 'Offir une compétence',
+        mat_help: 'Faire un don matériel',
         other: 'Aider à ma façon',
+        resource: 'Mettre à disposition une ressource',
+        skill: 'Offir une compétence',
+        social: 'Passer du temps avec une personne',
       },
       validateLabel: 'Créer mon action',
     },

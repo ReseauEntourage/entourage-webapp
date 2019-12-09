@@ -269,6 +269,51 @@ export const schema = {
       }[];
     },
   },
+  'POST /entourages': {
+    url: 'entourages',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      entourage: {
+        description: string;
+        displayCategory: FeedDisplayCategory;
+        entourageType: FeedEntourageType;
+        location: {
+          latitude: number;
+          longitude: number;
+        };
+        title: string;
+      };
+    },
+    response: {} as {
+      entourage: {
+        author: User;
+        createdAt: DateISO;
+        description: string;
+        displayCategory: FeedDisplayCategory;
+        entourageType: FeedEntourageType;
+        groupType: FeedGroupType;
+        id: number;
+        joinStatus: FeedJoinStatus;
+        location: {
+          latitude: number;
+          longitude: number;
+        };
+        metadata: {
+          city: string;
+          display_address: string;
+        };
+        number_of_people: number;
+        number_of_unread_messages: number;
+        public: boolean;
+        shareUrl: string;
+        status: FeedStatus;
+        title: string;
+        updated_at: DateISO;
+        uuid: string;
+      };
+    },
+  },
   'POST /users/lookup': {
     url: 'users/lookup',
     method: 'POST',

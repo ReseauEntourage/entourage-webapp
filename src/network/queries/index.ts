@@ -9,5 +9,6 @@ export * from './useQueryFeeds'
 export * from './useQueryEntourageUsers'
 
 // mutation
+export * from './useMutateEntourage'
 export * from './useMutateMe'
 export * from './useMutateMeAddress'
