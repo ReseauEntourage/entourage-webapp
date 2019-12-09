@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect } from 'react'
 import { FormContext } from 'react-hook-form'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import LoyaltyIcon from '@material-ui/icons/Loyalty'
+import DescriptionIcon from '@material-ui/icons/Description'
+import ListIcon from '@material-ui/icons/List'
 import { Modal } from 'src/components/Modal'
 import { texts } from 'src/i18n'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/network/api'
@@ -115,6 +119,11 @@ export function ModalCreateAction() {
             label={modalTexts.fieldLabelCategory}
             name={'category' as FormFieldKey}
             options={options}
+            startAdornment={(
+              <InputAdornment position="start">
+                <ListIcon />
+              </InputAdornment>
+            )}
           />
           <GoogleMapLocation
             includeLatLng={true}
@@ -129,21 +138,38 @@ export function ModalCreateAction() {
         <Label>{modalTexts.step2}</Label>
         <TextField
           fullWidth={true}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LoyaltyIcon />
+              </InputAdornment>
+            ),
+          }}
           inputRef={register({
             required: true,
           })}
           label={modalTexts.fieldLabelTitle}
           name={'title' as FormFieldKey}
           type="text"
+
         />
         <Label>{modalTexts.step3}</Label>
         <TextField
           fullWidth={true}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <DescriptionIcon />
+              </InputAdornment>
+            ),
+          }}
           inputRef={register({
             required: true,
           })}
           label={modalTexts.fieldLabelDescription}
+          multiline={true}
           name={'description' as FormFieldKey}
+          rows="4"
           type="text"
         />
       </FormContext>

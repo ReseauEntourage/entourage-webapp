@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Autocomplete from '@material-ui/lab/Autocomplete'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import LocationOnIcon from '@material-ui/icons/LocationOn'
+import GpsFixedIcon from '@material-ui/icons/GpsFixed'
 import Grid from '@material-ui/core/Grid'
 import { TextField, TextFieldProps } from 'src/components/Form'
 import Typography from '@material-ui/core/Typography'
@@ -143,6 +145,13 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
           {...params}
           {...textFieldProps}
           fullWidth={true}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <GpsFixedIcon />
+              </InputAdornment>
+            ),
+          }}
           onChange={handleChange}
         />
       )}

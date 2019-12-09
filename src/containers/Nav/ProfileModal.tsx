@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect /* , useState */ } from 'react'
 import { FormContext } from 'react-hook-form'
+import EmailIcon from '@material-ui/icons/Email'
+import InputAdornment from '@material-ui/core/InputAdornment'
 import { TextField, Label, RowFields, validators, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
@@ -174,6 +176,13 @@ export function ProfileModal() {
         </Label>
         <TextField
           fullWidth={true}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon />
+              </InputAdornment>
+            ),
+          }}
           inputRef={register({
             required: true,
             validate: {
