@@ -48,7 +48,7 @@ export const texts = {
       fieldLabelAddress: 'Adresse',
       fieldLabelTitle: 'Je suis disponible pour... / Je recherche...',
       fieldLabelDescription: 'Description',
-      fieldCategoryHelpLabel: 'Je crée une action parce que...',
+      fieldCategoryHelpLabel: 'Je recherche...',
       fieldCategoryHelpList: {
         event: '',
         info: 'Poser une question au réseau',

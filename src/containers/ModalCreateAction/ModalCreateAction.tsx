@@ -7,6 +7,21 @@ import { TextField, Label, RowFields, useForm, Select } from 'src/components/For
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { useMutateEntourages } from 'src/network/queries'
 
+const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
+
+function createCategoryValue(entourageType: FeedEntourageType, displayCategory: FeedDisplayCategory) {
+  return `${entourageType}:${displayCategory}`
+}
+
+function parseCategoryValue(value: string) {
+  const [entourageType, displayCategory] = value.split(':') as [FeedEntourageType, FeedDisplayCategory]
+
+  return {
+    entourageType,
+    displayCategory,
+  }
+}
+
 interface FormField {
   autocompletePlace: GoogleMapLocationValue;
   category: string;
@@ -23,21 +38,6 @@ type Options = {
     value: string;
   }[];
 }[]
-
-const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
-
-function createCategoryValue(entourageType: FeedEntourageType, displayCategory: FeedDisplayCategory) {
-  return `${entourageType}:${displayCategory}`
-}
-
-function parseCategoryValue(value: string) {
-  const [entourageType, displayCategory] = value.split(':') as [FeedEntourageType, FeedDisplayCategory]
-
-  return {
-    entourageType,
-    displayCategory,
-  }
-}
 
 export function ModalCreateAction() {
   const form = useForm<FormField>()
@@ -56,10 +56,7 @@ export function ModalCreateAction() {
       description,
     } = getValues()
 
-    const {
-      displayCategory,
-      entourageType,
-    } = parseCategoryValue(plainCategory)
+    const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
     const locationNotNull = autocompletePlace.location as NonNullable<typeof autocompletePlace.location>
 
@@ -89,14 +86,14 @@ export function ModalCreateAction() {
 
   const options: Options = [
     {
-      label: 'Je cherche...',
+      label: modalTexts.fieldCategoryHelpLabel,
       options: categories.map((category) => ({
         label: modalTexts.fieldCategoryHelpList[category],
         value: createCategoryValue('ask_for_help', category),
       })),
     },
     {
-      label: 'Je me propose de...',
+      label: modalTexts.fieldCategoryContributionLabel,
       options: categories.map((category) => ({
         label: modalTexts.fieldCategoryContributionList[category],
         value: createCategoryValue('contribution', category),
