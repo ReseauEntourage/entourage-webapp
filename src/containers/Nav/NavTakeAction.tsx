@@ -1,12 +1,67 @@
 import React, { useCallback } from 'react'
+import styled from 'styled-components'
 import Typography from '@material-ui/core/Typography'
+import Divider from '@material-ui/core/Divider'
 import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
+import MicIcon from '@material-ui/icons/Mic'
+import EventIcon from '@material-ui/icons/Event'
+import ForumIcon from '@material-ui/icons/Forum'
+import GroupIcon from '@material-ui/icons/Group'
+import FavoriteIcon from '@material-ui/icons/Favorite'
 import { openModal } from 'src/components/Modal'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import { ModalCreateAction } from 'src/containers/ModalCreateAction'
 import { ModalCharte } from 'src/containers/ModalCharte'
+
+const MenuContainer = styled.div`
+  a {
+    text-decoration: none !important;
+  }
+`
+
+interface IconActionProps {
+  icon: JSX.Element;
+  label: string;
+  onClick: MenuItemProps['onClick'];
+}
+
+function IconAction(props: IconActionProps) {
+  const { icon, label, onClick } = props
+
+  return (
+    <MenuItem onClick={onClick}>
+      <ListItemIcon style={{ minWidth: 40 }}>
+        {icon}
+      </ListItemIcon>
+      {label}
+    </MenuItem>
+  )
+}
+
+interface IconExternalLinkProps {
+  icon: JSX.Element;
+  label: string;
+  link: string;
+}
+
+function IconExternalLink(props: IconExternalLinkProps) {
+  const { icon, label, link } = props
+  return (
+    <a href={link} rel="noopener noreferrer" target="_blank">
+      <MenuItem>
+        <ListItemIcon style={{ minWidth: 40 }}>
+          {icon}
+        </ListItemIcon>
+        {label}
+      </MenuItem>
+    </a>
+  )
+}
 
 export function NavTakeAction() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -50,6 +105,7 @@ export function NavTakeAction() {
         }}
         tabIndex={0}
       >
+        <AddCircleIcon color="primary" style={{ fontSize: 30, marginRight: 10 }} />
         {texts.nav.takeAction}
       </div>
       <Menu
@@ -68,14 +124,42 @@ export function NavTakeAction() {
           horizontal: 'center',
         }}
       >
-        <Typography variant={variants.bodyRegular}>
-          <MenuItem onClick={openActionModal}>
-            Créer une action solidaire
-          </MenuItem>
-          <MenuItem onClick={openEventModal}>
-            Créer un évènement
-          </MenuItem>
-        </Typography>
+        <MenuContainer>
+          <Typography variant={variants.bodyRegular}>
+            <IconAction
+              icon={<RecordVoiceOverIcon />}
+              label="Créer une action solidaire"
+              onClick={openActionModal}
+            />
+            <IconAction
+              icon={<EventIcon />}
+              label="Créer un évènement"
+              onClick={openEventModal}
+            />
+            <Divider />
+            <IconExternalLink
+              icon={<MicIcon />}
+              label="Devenir ambassadeur entourage"
+              link="https://www.entourage.social/devenir-ambassadeur/"
+            />
+            <IconExternalLink
+              icon={<ForumIcon />}
+              label="Se former à la rencontre"
+              link="http://www.simplecommebonjour.org/"
+            />
+            <IconExternalLink
+              icon={<GroupIcon />}
+              label="Participer à nos évènements"
+              link="https://www.facebook.com/pg/EntourageReseauCivique/events/?ref=page_internal"
+            />
+            <IconExternalLink
+              icon={<FavoriteIcon />}
+              label="Soutenir entourage"
+              // eslint-disable-next-line
+              link="https://entourage.iraiser.eu/effet-entourage/~mon-don?_ga=2.11026804.1529967740.1575371021-1827432881.1572366327"
+            />
+          </Typography>
+        </MenuContainer>
       </Menu>
     </>
   )
