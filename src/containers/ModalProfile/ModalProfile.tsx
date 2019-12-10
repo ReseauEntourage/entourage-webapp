@@ -63,7 +63,7 @@ export function ModalProfile() {
   const [mutateMeAddress] = useMutateMeAddress(false)
   // const [onValidateImageProfile, upload] = useUploadImageProfile()
 
-  const user = (me && me.data && me.data.user) || {} as NonNullableUser
+  const user = me?.data?.user || {} as NonNullableUser
 
   const form = useForm<FormField>({
     defaultValues: {
