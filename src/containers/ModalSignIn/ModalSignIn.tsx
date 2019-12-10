@@ -295,7 +295,7 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
   )
 }
 
-export function SignInModal() {
+export function ModalSignIn() {
   const [step, setStep] = useState<Step>('phone')
   const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
   const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)

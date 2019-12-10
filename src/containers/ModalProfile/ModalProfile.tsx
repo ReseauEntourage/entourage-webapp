@@ -57,7 +57,7 @@ type FormFieldKey = keyof FormField
 //   ]
 // }
 
-export function ProfileModal() {
+export function ModalProfile() {
   const { data: me } = useQueryMe()
   const [mutateMe] = useMutateMe()
   const [mutateMeAddress] = useMutateMeAddress(false)

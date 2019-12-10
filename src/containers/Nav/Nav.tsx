@@ -8,8 +8,8 @@ import { Button } from 'src/components/Button'
 import { colors } from 'src/styles'
 import { useOnLogin } from 'src/events'
 import { useQueryMe } from 'src/network/queries'
-import { SignInModal } from './SignInModal'
-import { ProfileModal } from './ProfileModal'
+import { ModalSignIn } from 'src/containers/ModalSignIn'
+import { ModalProfile } from 'src/containers/ModalProfile'
 import { LoggedChunk } from './LoggedChunk'
 import { NavTakeAction } from './NavTakeAction'
 
@@ -43,12 +43,12 @@ export function Nav() {
     const userInfosIncompleted = !firstName || !lastName || !address
 
     if (userInfosIncompleted) {
-      openModal(<ProfileModal />)
+      openModal(<ModalProfile />)
     }
   })
 
   const onClickSignIn = useCallback(() => {
-    openModal(<SignInModal />)
+    openModal(<ModalSignIn />)
   }, [])
 
   const iAmLogged = me && !me.data.user.anonymous

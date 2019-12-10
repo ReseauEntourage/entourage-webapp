@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import { queryKeys } from 'src/network/queries'
 import { openModal } from 'src/components/Modal'
 import { setTokenIntoCookies, createAnonymousUser } from 'src/network/services'
-import { ProfileModal } from './ProfileModal'
+import { ModalProfile } from 'src/containers/ModalProfile'
 
 interface LoggedChunkProps {}
 
@@ -21,8 +21,8 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
     setAnchorEl(null)
   }
 
-  const openProfileModal = useCallback(() => {
-    openModal(<ProfileModal />)
+  const openModalProfile = useCallback(() => {
+    openModal(<ModalProfile />)
     setAnchorEl(null)
   }, [])
 
@@ -65,7 +65,7 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
           horizontal: 'center',
         }}
       >
-        <MenuItem onClick={openProfileModal}>
+        <MenuItem onClick={openModalProfile}>
           Mon Profil
         </MenuItem>
         <MenuItem onClick={logout}>
