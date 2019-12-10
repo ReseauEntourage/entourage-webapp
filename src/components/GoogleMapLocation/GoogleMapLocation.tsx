@@ -146,6 +146,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
           {...textFieldProps}
           fullWidth={true}
           InputProps={{
+            ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
                 <GpsFixedIcon />
