@@ -72,15 +72,11 @@ L'objet `api` est une instance axios.
 
 # Storybook
 
-## Lancer le styleguide
+La version en ligne du storybook d'entourage est ici: [reseauentourage.github.io/entourage-webapp](https://reseauentourage.github.io/entourage-webapp)
+
+## Lancer le styleguide en local
 ```
 yarn storybook
-```
-
-:warning: Next écrase la configuration du fichier tsconfig.json de storybook. Il faut changer la variable suivante:
-```diff
-- "jsx": "preserve",
-+ "jsx": "react",
 ```
 
 ## Créer une story
@@ -103,6 +99,12 @@ export default {
 export const BasicButton = () => <Button />
 ```
 
+## Publier le styleguide sur Github Pages
+```
+yarn deploy-storybook
+```
+
+*Note*: d'ici quelques temps le déploiement de storybook sera automatisé avec Travis
 
 # Tests
 
