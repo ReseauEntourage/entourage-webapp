@@ -1,7 +1,7 @@
 import React from 'react'
 import { colors, ThemeProvider } from 'src/styles'
-import { EventCard } from './EventCard'
 import { ActionCard } from './ActionCard'
+import { EventCard } from './EventCard'
 
 export default {
   title: 'LeftCards',

@@ -1,6 +1,6 @@
-import React from 'react'
-import { styled } from '@material-ui/core/styles'
 import { Typography } from '@material-ui/core'
+import { styled } from '@material-ui/core/styles'
+import React from 'react'
 import { variants } from 'src/styles'
 
 const Main = styled('div')({

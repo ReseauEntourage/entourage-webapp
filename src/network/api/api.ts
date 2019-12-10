@@ -4,8 +4,8 @@ import { ObjectParams, FnParams, Extends } from 'typescript-object-schema'
 import { env } from 'src/core'
 import { createAnonymousUser, getTokenFromCookies } from 'src/network/services'
 import { AnyToFix } from 'src/types'
-import { schema } from './schema'
 import { addAxiosInterceptors } from './interceptors'
+import { schema } from './schema'
 
 type Schema = typeof schema
 type SchemaKeys = keyof Schema

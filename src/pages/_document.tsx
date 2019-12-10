@@ -1,7 +1,7 @@
-import React from 'react'
-import NextDocument, { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
-import { ServerStyleSheet as StyledComponentSheets } from 'styled-components'
 import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/styles'
+import NextDocument, { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
+import React from 'react'
+import { ServerStyleSheet as StyledComponentSheets } from 'styled-components'
 import { env } from 'src/core'
 
 export default class Document extends NextDocument {

@@ -1,8 +1,8 @@
-import React from 'react'
-import cogoToast from 'cogo-toast'
 import Typography from '@material-ui/core/Typography'
-import { AnyToFix } from 'src/types'
+import cogoToast from 'cogo-toast'
+import React from 'react'
 import { variants } from 'src/styles'
+import { AnyToFix } from 'src/types'
 import { isSSR } from 'src/utils'
 
 export function notifServerError(error: AnyToFix) {

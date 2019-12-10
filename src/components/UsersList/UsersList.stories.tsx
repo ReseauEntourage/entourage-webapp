@@ -1,5 +1,5 @@
-import React from 'react'
 import ThemeProvider from '@material-ui/styles/ThemeProvider'
+import React from 'react'
 import { theme } from 'src/styles/theme'
 import { UsersList as UsersListCpmt } from './UsersList'
 

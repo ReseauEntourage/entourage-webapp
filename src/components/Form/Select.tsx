@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
 import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
 import FormHelperText from '@material-ui/core/FormHelperText'
-import { FieldError } from 'react-hook-form/dist/types'
+import InputLabel from '@material-ui/core/InputLabel'
 import SelectBase, { SelectProps as SelectBaseProps } from '@material-ui/core/Select'
 import { useFormContext } from 'react-hook-form'
+import { FieldError } from 'react-hook-form/dist/types'
+import React, { useEffect } from 'react'
 import { helperTextError } from './helperTextErrors'
 
 interface OptionWithoutGroup {

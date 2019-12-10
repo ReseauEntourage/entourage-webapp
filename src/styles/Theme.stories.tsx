@@ -1,7 +1,7 @@
-import React from 'react'
-import ThemeProvider from '@material-ui/styles/ThemeProvider'
 import Box from '@material-ui/core/Box'
 import TypographyMUI from '@material-ui/core/Typography'
+import ThemeProvider from '@material-ui/styles/ThemeProvider'
+import React from 'react'
 import { colors } from './colors'
 import { theme } from './theme'
 

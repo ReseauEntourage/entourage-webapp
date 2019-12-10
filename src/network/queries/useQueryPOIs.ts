@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
-import { api } from 'src/network/api'
 import { useMapContext } from 'src/components/Map'
+import { api } from 'src/network/api'
 import { queryKeys } from './queryKeys'
 
 export function useQueryPOIs() {

@@ -1,5 +1,5 @@
-import React from 'react'
 import ButtonMUI, { ButtonProps } from '@material-ui/core/Button'
+import React from 'react'
 
 export function Button(props: ButtonProps = {}) {
   const { style, ...restProps } = props

@@ -1,5 +1,5 @@
-import { useEffect } from 'react'
 import { Subject } from 'rxjs'
+import { useEffect } from 'react'
 import { useMount, usePrevious } from 'src/hooks'
 import { useQueryMe } from 'src/network/queries'
 

@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react'
 import GoogleMapReact from 'google-map-react'
+import React, { useState, useCallback } from 'react'
 import { env } from 'src/core'
 import { AnyToFix } from 'src/types'
 import { MapContextValue, MapContext, useMapContext } from './context'

@@ -1,5 +1,5 @@
-import React from 'react'
 import ThemeProviderMUI from '@material-ui/styles/ThemeProvider'
+import React from 'react'
 import { theme } from './theme'
 
 interface Props {

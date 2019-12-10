@@ -1,7 +1,7 @@
-import React, { useState, useCallback, useRef } from 'react'
 import Box from '@material-ui/core/Box'
-import { Button } from 'src/components/Button'
+import React, { useState, useCallback, useRef } from 'react'
 import ReactCrop, { ReactCropProps } from 'react-image-crop'
+import { Button } from 'src/components/Button'
 import 'react-image-crop/dist/ReactCrop.css'
 import { texts } from 'src/i18n'
 

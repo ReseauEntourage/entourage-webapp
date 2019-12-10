@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react'
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 import useForm from 'react-hook-form'
+import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
-import { ThemeProvider, theme } from 'src/styles'
 import { TextField, validators } from 'src/components/Form'
+import { ThemeProvider, theme } from 'src/styles'
 import { Modal } from './Modal'
 import { openModal, ModalsListener } from './openModal'
 

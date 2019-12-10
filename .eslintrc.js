@@ -38,8 +38,22 @@ module.exports = {
     'typescript-sort-keys/string-enum': 1,
 
     // Import Rules
+    'import/extensions': [2, 'always', { 'ts': 'never', 'tsx': 'never', 'js': 'never' }],
     'import/no-default-export': 2,
     'import/prefer-default-export': 0,
+    // 'sort-imports': 2,
+    'import/order': [1, {
+      'groups': ["builtin", "external", "internal", "parent", "sibling", "index"],
+      'alphabetize': {
+        order: 'asc'
+      },
+      "pathGroups": [
+        {
+          "pattern": "src/**",
+          "group": "parent"
+        },
+      ]
+    }],
 
     // Accessibility Rules
     // disable anchor-is-valid due to NextJS <a> wrapper

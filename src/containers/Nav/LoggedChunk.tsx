@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react'
-import { refetchQuery } from 'react-query'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import { queryKeys } from 'src/network/queries'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle'
+import React, { useCallback } from 'react'
+import { refetchQuery } from 'react-query'
 import { openModal } from 'src/components/Modal'
-import { setTokenIntoCookies, createAnonymousUser } from 'src/network/services'
 import { ModalProfile } from 'src/containers/ModalProfile'
+import { queryKeys } from 'src/network/queries'
+import { createAnonymousUser, setTokenIntoCookies } from 'src/network/services'
 
 interface LoggedChunkProps {}
 

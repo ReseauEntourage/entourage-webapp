@@ -1,6 +1,6 @@
+import Star from '@material-ui/icons/Star'
 import React from 'react'
 import styled from 'styled-components'
-import Star from '@material-ui/icons/Star'
 import { colors } from 'src/styles'
 
 const Container = styled.div`

@@ -1,15 +1,15 @@
-import React from 'react'
-import RestaurantIcon from '@material-ui/icons/Restaurant'
 import AddBoxIcon from '@material-ui/icons/AddBox'
-import HomeIcon from '@material-ui/icons/Home'
-import PeopleIcon from '@material-ui/icons/People'
 import ExploreIcon from '@material-ui/icons/Explore'
+import HomeIcon from '@material-ui/icons/Home'
 import LocalDrinkIcon from '@material-ui/icons/LocalDrink'
+import PeopleIcon from '@material-ui/icons/People'
+import RestaurantIcon from '@material-ui/icons/Restaurant'
 import SpaIcon from '@material-ui/icons/Spa'
-import { colors } from 'src/styles'
-import { POICategory } from 'src/network/api'
-import { BaseMarker } from './BaseMarker'
+import React from 'react'
 import { useMapContext } from '../context'
+import { POICategory } from 'src/network/api'
+import { colors } from 'src/styles'
+import { BaseMarker } from './BaseMarker'
 
 function getSize(zoom: number): { iconSize: number; size: number; } {
   return zoom < 15

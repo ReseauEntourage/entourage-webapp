@@ -1,7 +1,7 @@
-import styled from 'styled-components'
 import Typography from '@material-ui/core/Typography'
-import { colors, variants } from 'src/styles'
+import styled from 'styled-components'
 import { StarBadge as StarBadgeBase } from 'src/components/StarBadge'
+import { colors, variants } from 'src/styles'
 
 export const Container = styled.div`
   display: flex;

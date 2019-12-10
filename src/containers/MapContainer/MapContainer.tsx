@@ -1,12 +1,12 @@
-import React from 'react'
-import Link from 'next/link'
 import Box from '@material-ui/core/Box'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import CircularProgress from '@material-ui/core/CircularProgress'
-import { useMainContext } from 'src/containers/MainContext'
-import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
+import Link from 'next/link'
+import React from 'react'
 import { FeedItem } from 'src/components/FeedItem'
+import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
+import { useMainContext } from 'src/containers/MainContext'
 import { useOnScroll } from 'src/hooks'
 import { useQueryPOIs, useQueryFeeds } from 'src/network/queries'
 import { LeftCards } from './LeftCards'

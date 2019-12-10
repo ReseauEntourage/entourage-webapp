@@ -1,7 +1,7 @@
-import React from 'react'
+import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import Avatar from '@material-ui/core/Avatar'
+import React from 'react'
 import { variants } from 'src/styles'
 
 interface Props {

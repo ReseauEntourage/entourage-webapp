@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react'
-import { FieldError } from 'react-hook-form/dist/types'
-import cogoToast from 'cogo-toast'
 import Typography from '@material-ui/core/Typography'
-import { variants } from 'src/styles'
+import cogoToast from 'cogo-toast'
+import { FieldError } from 'react-hook-form/dist/types'
+import React, { useEffect, useRef } from 'react'
 import { texts } from 'src/i18n'
+import { variants } from 'src/styles'
 
 type Errors = Partial<Record<string, FieldError>>
 

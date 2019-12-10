@@ -1,17 +1,17 @@
-import React from 'react'
-import Link from 'next/link'
+import { Typography } from '@material-ui/core'
 import Box from '@material-ui/core/Box'
 import CloseIcon from '@material-ui/icons/Close'
+import Link from 'next/link'
+import React from 'react'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import { Typography } from '@material-ui/core'
+import { Button } from 'src/components/Button'
+import { ActionCard, EventCard } from 'src/components/LeftCards'
+import { UsersList } from 'src/components/UsersList'
+import { useMainContext } from 'src/containers/MainContext'
 import { useMount } from 'src/hooks'
 import { FeedItem } from 'src/network/api'
 import { useQueryEntourageUsers } from 'src/network/queries'
-import { Button } from 'src/components/Button'
-import { useMainContext } from 'src/containers/MainContext'
-import { ActionCard, EventCard } from 'src/components/LeftCards'
-import { UsersList } from 'src/components/UsersList'
 import { variants } from 'src/styles'
 
 interface Props {
