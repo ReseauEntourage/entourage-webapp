@@ -38,14 +38,14 @@ function FormModal() {
     <Modal onValidate={onValidate} title="Form Demo">
       <TextField
         autoFocus={true}
-        formError={errors.firstname}
+        formErrors={errors}
         fullWidth={true}
         inputRef={register({ required: true })}
         label="Prénom"
         name="firstname"
       />
       <TextField
-        formError={errors.lastname}
+        formErrors={errors}
         fullWidth={true}
         inputRef={
           register({
