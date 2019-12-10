@@ -125,7 +125,7 @@ export function NavTakeAction() {
         }}
       >
         <MenuContainer>
-          <Typography variant={variants.bodyRegular}>
+          <Typography component="div" variant={variants.bodyRegular}>
             <IconAction
               icon={<RecordVoiceOverIcon />}
               label="Créer une action solidaire"
