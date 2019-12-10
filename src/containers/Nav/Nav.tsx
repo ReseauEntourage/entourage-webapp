@@ -1,6 +1,9 @@
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import { makeStyles, createStyles } from '@material-ui/core/styles'
+import AddCircleIcon from '@material-ui/icons/AddCircle'
+import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
+import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
@@ -8,9 +11,11 @@ import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useOnLogin } from 'src/events'
+import { texts } from 'src/i18n'
 import { useQueryMe } from 'src/network/queries'
 import { colors } from 'src/styles'
 import { LoggedChunk } from './LoggedChunk'
+import { NavItem } from './NavItem'
 import { NavTakeAction } from './NavTakeAction'
 
 const useStyles = makeStyles((theme) => createStyles({
@@ -64,19 +69,22 @@ export function Nav() {
             <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
           </a>
           <div className={classes.grow} />
-          {/* <Link href="/actions">
-            <a>
-              {texts.nav.actions}
-            </a>
-          </Link>
-          <Link href="/messages">
-            <a>
-              {texts.nav.messages}
-            </a>
-          </Link> */}
-          <div className={classes.navItem}>
-            <NavTakeAction />
-          </div>
+          <NavItem
+            href="/actions"
+            icon={<MapIcon />}
+            label={texts.nav.actions}
+          />
+          <NavItem
+            href="/messages"
+            icon={<ChatBubbleOutlineIcon />}
+            label={texts.nav.messages}
+          />
+          <NavTakeAction>
+            <NavItem
+              icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
+              label={texts.nav.takeAction}
+            />
+          </NavTakeAction>
           {iAmLogged ? (
             <LoggedChunk />
           ) : (

@@ -3,7 +3,6 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import Menu from '@material-ui/core/Menu'
 import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem'
 import Typography from '@material-ui/core/Typography'
-import AddCircleIcon from '@material-ui/icons/AddCircle'
 import EventIcon from '@material-ui/icons/Event'
 import FavoriteIcon from '@material-ui/icons/Favorite'
 import ForumIcon from '@material-ui/icons/Forum'
@@ -15,7 +14,6 @@ import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
 import { ModalCharte } from 'src/containers/ModalCharte'
 import { ModalCreateAction } from 'src/containers/ModalCreateAction'
-import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 
 const MenuContainer = styled.div`
@@ -63,7 +61,12 @@ function IconExternalLink(props: IconExternalLinkProps) {
   )
 }
 
-export function NavTakeAction() {
+interface NavTakeActionProps {
+  children: JSX.Element;
+}
+
+export function NavTakeAction(props: NavTakeActionProps) {
+  const { children } = props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
@@ -105,8 +108,7 @@ export function NavTakeAction() {
         }}
         tabIndex={0}
       >
-        <AddCircleIcon color="primary" style={{ fontSize: 30, marginRight: 10 }} />
-        {texts.nav.takeAction}
+        {children}
       </div>
       <Menu
         anchorEl={anchorEl}
