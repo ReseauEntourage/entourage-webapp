@@ -50,8 +50,6 @@ export interface GoogleMapLocationProps {
   textFieldProps: TextFieldProps;
 }
 
-const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
-
 async function getLocationFromPlaceId(placeId: string): Promise<{ lat: number; lng: number; }> {
   // @ts-ignore
   const geocoder = new google.maps.Geocoder()
@@ -69,6 +67,8 @@ async function getLocationFromPlaceId(placeId: string): Promise<{ lat: number; l
 
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, defaultValue, includeLatLng } = props
+
+  const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
 
   const autocompleteSessionToken = useRef<{ Rf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
 
@@ -126,7 +126,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
     return () => {
       active = false
     }
-  }, [inputValue, fetch])
+  }, [inputValue, fetch, googleMapsInst.places.AutocompleteService])
 
   return (
     <Autocomplete
