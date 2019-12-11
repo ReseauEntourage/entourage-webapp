@@ -7,6 +7,7 @@ export * from './useQueryMe'
 export * from './useQueryPOIs'
 export * from './useQueryFeeds'
 export * from './useQueryEntourageUsers'
+export * from './useQueryMyFeeds'
 
 // mutation
 export * from './useMutateEntourage'
