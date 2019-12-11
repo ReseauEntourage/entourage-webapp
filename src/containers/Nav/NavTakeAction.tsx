@@ -14,7 +14,7 @@ import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
 import { ModalCharte } from 'src/containers/ModalCharte'
 import { ModalCreateAction } from 'src/containers/ModalCreateAction'
-import { variants } from 'src/styles'
+import { variants, colors } from 'src/styles'
 
 const MenuContainer = styled.div`
   a {
@@ -23,20 +23,35 @@ const MenuContainer = styled.div`
 `
 
 interface IconActionProps {
+  description?: string;
   icon: JSX.Element;
   label: string;
+  labelColor?: string;
   onClick: MenuItemProps['onClick'];
 }
 
 function IconAction(props: IconActionProps) {
-  const { icon, label, onClick } = props
+  const { icon, label, labelColor, description, onClick } = props
 
   return (
-    <MenuItem onClick={onClick}>
+    <MenuItem onClick={onClick} style={{ whiteSpace: 'normal' }}>
       <ListItemIcon style={{ minWidth: 40 }}>
         {icon}
       </ListItemIcon>
-      {label}
+      <div>
+        <div style={{ color: labelColor }}>
+          {label}
+        </div>
+        {description && (
+          <Typography
+            component="div"
+            style={{ maxWidth: 220 }}
+            variant={variants.footNote}
+          >
+            {description}
+          </Typography>
+        )}
+      </div>
     </MenuItem>
   )
 }
@@ -129,13 +144,17 @@ export function NavTakeAction(props: NavTakeActionProps) {
         <MenuContainer>
           <Typography component="div" variant={variants.bodyRegular}>
             <IconAction
+              description="Demander de l'aide ou proposer un don"
               icon={<RecordVoiceOverIcon />}
               label="Créer une action solidaire"
+              labelColor={colors.main.primary}
               onClick={openActionModal}
             />
             <IconAction
+              description="Évènement à une date précise: atelier, café de quartier, tournoi sportif..."
               icon={<EventIcon />}
               label="Créer un évènement"
+              labelColor={colors.main.primary}
               onClick={openEventModal}
             />
             <Divider />
