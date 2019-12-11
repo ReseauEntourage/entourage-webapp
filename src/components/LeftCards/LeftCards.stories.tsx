@@ -1,4 +1,6 @@
+import Box from '@material-ui/core/Box'
 import React from 'react'
+import { Button } from 'src/components/Button'
 import { colors, ThemeProvider } from 'src/styles'
 import { ActionCard } from './ActionCard'
 import { EventCard } from './EventCard'
@@ -22,6 +24,19 @@ export const Action = () => (
   <>
     <Wrapper>
       <ActionCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <Button>
+              Participer
+            </Button>
+            <Button variant="outlined">
+              Partager
+            </Button>
+            <Button variant="outlined">
+              Signaler
+            </Button>
+          </Box>
+        )}
         dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
         description={`
           Je donne quelques vêtements en très bon état
@@ -35,6 +50,19 @@ export const Action = () => (
     </Wrapper>
     <Wrapper>
       <ActionCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <Button>
+              Participer
+            </Button>
+            <Button variant="outlined">
+              Partager
+            </Button>
+            <Button variant="outlined">
+              Signaler
+            </Button>
+          </Box>
+        )}
         dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
         description={`
           Je donne quelques vêtements en très bon état

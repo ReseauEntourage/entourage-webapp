@@ -1,27 +1,132 @@
-import { Typography } from '@material-ui/core'
 import Box from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
+import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import CloseIcon from '@material-ui/icons/Close'
+import DoneIcon from '@material-ui/icons/Done'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import Link from 'next/link'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import { Button } from 'src/components/Button'
 import { ActionCard, EventCard } from 'src/components/LeftCards'
+import { Modal, openModal } from 'src/components/Modal'
 import { UsersList } from 'src/components/UsersList'
 import { useMainContext } from 'src/containers/MainContext'
-import { useMount } from 'src/hooks'
+import { useMount, useDelayLoading } from 'src/hooks'
 import { FeedItem } from 'src/network/api'
-import { useQueryEntourageUsers } from 'src/network/queries'
-import { variants } from 'src/styles'
+import {
+  useQueryEntourageUsers,
+  useMutateEntourageUsers,
+  useMutateDeleteEntourageUser,
+  useQueryMe,
+} from 'src/network/queries'
+import { variants, colors } from 'src/styles'
 
-interface Props {
+interface ModalLeaveEntourageProps {
+  entourageId: number;
+}
+
+function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
+  const { entourageId } = props
+  const [deleteEntourageUser] = useMutateDeleteEntourageUser()
+
+  const onValidate = useCallback(async () => {
+    try {
+      await deleteEntourageUser({ entourageId }, { waitForRefetchQueries: true })
+      return true
+    } catch (e) {
+      return false
+    }
+  }, [deleteEntourageUser, entourageId])
+
+  return (
+    <Modal
+      onValidate={onValidate}
+      validateLabel="Oui, quitter"
+    >
+      <Typography variant={variants.title1}>
+        Souhaitez vous vraiment quitter cette action ?
+      </Typography>
+    </Modal>
+  )
+}
+
+interface ParticipateButtonProps extends LeftCardsProps {}
+
+function ParticipateButton(props: ParticipateButtonProps) {
+  const { feedItem } = props
+  const [isHover, setIsHover] = useState(false)
+  const [requestEntourageUser] = useMutateEntourageUsers()
+  const { data: dataMe } = useQueryMe()
+  const [participateLoading, setParticipateLoading] = useDelayLoading()
+
+  const iAmCreator = dataMe?.data.user.id === feedItem.author.id
+
+  const onClickParticipate = useCallback(async () => {
+    setParticipateLoading(true)
+    await requestEntourageUser({ entourageId: feedItem.id }, { waitForRefetchQueries: true })
+    setParticipateLoading(false)
+  }, [feedItem.id, requestEntourageUser, setParticipateLoading])
+
+  const onClickPending = useCallback(() => {
+    openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)
+  }, [feedItem.id])
+
+  if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled') {
+    return <Button loading={participateLoading} onClick={onClickParticipate}>Participer</Button>
+  }
+
+  if (iAmCreator) {
+    return (
+      <Button disabled={true} startIcon={<DoneIcon />}>
+        Créateur
+      </Button>
+    )
+  }
+
+  if (feedItem.joinStatus === 'pending') {
+    return (
+      <Button
+        onClick={onClickPending}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        startIcon={isHover ? <ExitToAppIcon /> : <AccessTimeIcon />}
+        style={{
+          backgroundColor: isHover ? colors.main.red : undefined,
+        }}
+      >
+        {isHover ? 'Quitter' : 'En attente'}
+      </Button>
+    )
+  }
+
+  if (feedItem.joinStatus === 'accepted') {
+    return (
+      <Button
+        onClick={onClickPending}
+        onMouseEnter={() => setIsHover(true)}
+        onMouseLeave={() => setIsHover(false)}
+        startIcon={isHover ? <ExitToAppIcon /> : <DoneIcon />}
+        style={{
+          backgroundColor: isHover ? colors.main.red : undefined,
+        }}
+      >
+        {isHover ? 'Quitter' : 'Membre'}
+      </Button>
+    )
+  }
+
+  return null
+}
+
+interface LeftCardsProps {
   feedItem: FeedItem;
 }
 
-export function LeftCards(props: Props) {
+export function LeftCards(props: LeftCardsProps) {
   const { feedItem } = props
   const mainContext = useMainContext()
-
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
 
   useMount(() => {
@@ -52,6 +157,13 @@ export function LeftCards(props: Props) {
 
     card = (
       <ActionCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <ParticipateButton feedItem={feedItem} />
+            <Button variant="outlined">Partager</Button>
+            <Button variant="outlined">Signaler</Button>
+          </Box>
+        )}
         dateLabel={dataLabel}
         description={description}
         isAssociation={!!partner}
@@ -95,17 +207,6 @@ export function LeftCards(props: Props) {
       <Box marginX={4}>
         {card}
       </Box>
-      <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
-        <Button>
-          Participer
-        </Button>
-        <Button variant="outlined">
-          Partager
-        </Button>
-        <Button variant="outlined">
-          Signaler
-        </Button>
-      </Box>
       {/* <Box flexGrow="1" /> */}
       <Box
         display="flex"
@@ -131,3 +232,6 @@ export function LeftCards(props: Props) {
     </Box>
   )
 }
+
+// DO NOT COMMIT THIS
+// eudqg_PfiOXU

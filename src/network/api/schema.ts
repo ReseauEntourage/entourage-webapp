@@ -246,6 +246,13 @@ export const schema = {
       }[];
     },
   },
+  'POST /entourages/:entourageId/users': {
+    url: (params: { entourageId: number; }) => `entourages/${params.entourageId}/users`,
+    method: 'POST',
+    params: null,
+    data: null,
+    response: {} as {},
+  },
   'GET /entourages/:entourageId/users': {
     url: (params: { entourageId: string; }) => `entourages/${params.entourageId}/users`,
     method: 'GET',
@@ -268,6 +275,15 @@ export const schema = {
         status: FeedJoinStatus;
       }[];
     },
+  },
+  'DELETE /entourages/:entourageId/users/:userId': {
+    url: (params: { entourageId: number; userId: number; }) => {
+      return `entourages/${params.entourageId}/users/${params.userId}`
+    },
+    method: 'DELETE',
+    params: null,
+    data: null,
+    response: null,
   },
   'POST /entourages': {
     url: 'entourages',

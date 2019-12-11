@@ -5,6 +5,7 @@ import React from 'react'
 import { variants } from 'src/styles'
 
 interface Props {
+  actions: JSX.Element;
   dateLabel: string | JSX.Element;
   description: string;
   isAssociation?: boolean;
@@ -15,6 +16,7 @@ interface Props {
 
 export function ActionCard(props: Props) {
   const {
+    actions,
     title,
     dateLabel,
     organizerLabel,
@@ -35,6 +37,9 @@ export function ActionCard(props: Props) {
             {organizerLabel}
           </Typography>
         </Box>
+      </Box>
+      <Box marginY={2}>
+        {actions}
       </Box>
       <Typography variant={variants.bodyRegular}>{description}</Typography>
       <Box marginY={1}>

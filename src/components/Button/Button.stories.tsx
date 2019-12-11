@@ -25,6 +25,12 @@ export const Buttons = () => {
         <div>
           <Button className={classes.margin} variant="outlined">Participer</Button>
         </div>
+        <div>
+          <Button className={classes.margin} loading={true}>Loading</Button>
+        </div>
+        <div>
+          <Button className={classes.margin} loading={true} variant="outlined">Loading</Button>
+        </div>
       </div>
     </ThemeProvider>
   )

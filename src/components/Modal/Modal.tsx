@@ -6,6 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
+import { useDelayLoading } from 'src/hooks'
 import { colors, variants } from 'src/styles'
 import { AnyToFix } from 'src/types'
 import { useModalContext } from './ModalContext'
@@ -13,10 +14,10 @@ import { useModalContext } from './ModalContext'
 interface Props {
   cancel?: boolean;
   cancelLabel?: string;
-  children: AnyToFix;
+  children?: AnyToFix;
   onClose?: () => void;
   onValidate?: () => void | boolean | Promise<void | boolean>;
-  title: string;
+  title?: string;
   validate?: boolean;
   validateLabel?: string;
 }
@@ -42,10 +43,13 @@ export function Modal(props: Props) {
 
   const modalContext = useModalContext()
   const onClose = modalContext ? modalContext.onClose : onCloseProp
+  const [loading, setLoading] = useDelayLoading(false)
 
   const onValidate = useCallback(async () => {
     if (onValidateProp) {
+      setLoading(true)
       const onValidateRes = await onValidateProp()
+      await setLoading(false)
       if (onValidateRes === false) {
         return
       }
@@ -54,7 +58,7 @@ export function Modal(props: Props) {
     if (onClose) {
       onClose()
     }
-  }, [onClose, onValidateProp])
+  }, [onClose, onValidateProp, setLoading])
 
   const hasCTAButtons = validate || cancel
 
@@ -66,16 +70,18 @@ export function Modal(props: Props) {
       open={true}
     >
       <Typography component="div" variant={variants.bodyRegular}>
-        <DialogTitle
-          id="form-dialog-title"
-          style={{
-            backgroundColor: colors.main.primary,
-            color: '#fff',
-            textAlign: 'center',
-          }}
-        >
-          {title}
-        </DialogTitle>
+        {title && (
+          <DialogTitle
+            id="form-dialog-title"
+            style={{
+              backgroundColor: colors.main.primary,
+              color: '#fff',
+              textAlign: 'center',
+            }}
+          >
+            {title}
+          </DialogTitle>
+        )}
         <Box m={2}>
           <DialogContent>
             {children}
@@ -88,7 +94,7 @@ export function Modal(props: Props) {
                 </Button>
               )}
               {validate && (
-                <Button color="primary" onClick={onValidate}>
+                <Button color="primary" loading={loading} onClick={onValidate}>
                   {validateLabel}
                 </Button>
               )}
