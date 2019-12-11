@@ -96,7 +96,7 @@ function ParticipateButton(props: ParticipateButtonProps) {
           backgroundColor: isHover ? colors.main.red : undefined,
         }}
       >
-        {isHover ? 'Quitter' : 'En attente'}
+        {isHover ? 'Annuler' : 'En attente'}
       </Button>
     )
   }

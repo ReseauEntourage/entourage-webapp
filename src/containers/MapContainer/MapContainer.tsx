@@ -1,18 +1,39 @@
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import LocalMallIcon from '@material-ui/icons/LocalMall'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
-import { FeedItem } from 'src/components/FeedItem'
+import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { useMainContext } from 'src/containers/MainContext'
 import { useOnScroll } from 'src/hooks'
+import { schema } from 'src/network/api'
 import { useQueryPOIs, useQueryFeeds } from 'src/network/queries'
+import { colors } from 'src/styles'
 import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
 
-interface Props {}
+function getFeedItemIcon(feedItem: typeof schema['GET /feeds']['response']['feeds'][0]['data']) {
+  const { entourageType, displayCategory } = feedItem
+  if (entourageType === 'contribution') {
+    const backgroundColor = colors.main.primary
+    if (displayCategory === 'mat_help') {
+      return <LocalMallIcon style={{ ...iconStyle, color: '#fff', backgroundColor }} />
+    } if (displayCategory === 'info') {
+      // TODO
+    }
+  }
+
+  if (entourageType === 'ask_for_help') {
+    // TODO
+  }
+
+  return undefined
+}
+
+interface MapContainer {}
 
 export function MapContainer() {
   const actionId = useActionId()
@@ -76,6 +97,7 @@ export function MapContainer() {
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
               key={feed.uuid}
+              icon={getFeedItemIcon(feed)}
               isActive={feed.uuid === actionId}
               primaryText={feed.title}
               profilePictureURL={feed.author.avatarUrl}

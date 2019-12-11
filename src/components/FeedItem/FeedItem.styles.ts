@@ -24,3 +24,17 @@ export const AvatarNumber = styled.div`
   line-height: 38;
   text-align: center;
 `
+
+export const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+  & > *:not(:first-child) {
+    margin-left: ${theme.spacing(1)}px;
+  }
+`
+
+export const iconStyle = {
+  padding: 4,
+  borderRadius: 20,
+  fontSize: 14,
+}
