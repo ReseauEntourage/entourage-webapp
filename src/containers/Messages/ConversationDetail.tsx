@@ -19,6 +19,7 @@ import {
   MessageWrapper,
   BottomBar,
   TopBar,
+  Pending,
 } from './ConversationDetail.styles'
 
 interface FormFields {
@@ -36,8 +37,14 @@ export function ConversationDetail(props: ConversationDetail) {
 
   const { data: myFeedsData } = useQueryMyFeeds()
   const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
+  const { joinStatus } = entourage?.data || {}
+  const userIsAccepted = joinStatus === 'accepted'
 
-  const { data: chatMessages } = useQueryEntourageChatMessages(entourageId)
+  if (joinStatus !== 'accepted' && joinStatus !== 'pending') {
+    throw new Error(`Entourage with joins status ${joinStatus} shouldn't be in /myfeeds`)
+  }
+
+  const { data: chatMessages } = useQueryEntourageChatMessages(userIsAccepted ? entourageId : null)
   const [createcChatMessage] = useMutateCreateEntourageChatMessage(entourageId)
   const { data: meData } = useQueryMe()
 
@@ -61,42 +68,52 @@ export function ConversationDetail(props: ConversationDetail) {
       <TopBar>
         {entourage?.data.title}
       </TopBar>
-      <MessagesContainer>
-        <ScrollToBottom className="ScrollToBottom" followButtonClassName="ScrollToBottomButton">
-          {reversedMessages.map((message) => {
-            const isMe = message.user.id === meData?.data.user.id
-            return (
-              <MessageContainer key={message.id} style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
-                <MessageWrapper>
-                  <Message
-                    author={message.user.displayName || undefined}
-                    content={message.content}
-                    date={message.createdAt}
-                    isMe={isMe}
-                  />
-                </MessageWrapper>
-              </MessageContainer>
-            )
-          })}
-        </ScrollToBottom>
-      </MessagesContainer>
-      <BottomBar>
-        <TextField
-          inputRef={register({ required: true })}
-          multiline={true}
-          name="content"
-          style={{
-            flex: 1,
-          }}
-        />
-        <Button
-          onClick={onClickSend}
-          startIcon={<SendIcon />}
-          style={{ marginLeft: theme.spacing(2) }}
-        >
-          Envoyer
-        </Button>
-      </BottomBar>
+      {!userIsAccepted ? (
+        <Pending>
+          Votre demande est en attente. Lorsque vous serez accepté.e,
+          vous verrez ici la conversation des participants à cette action/cet évènement.
+        </Pending>
+      ) : (
+        <>
+          <MessagesContainer>
+            <ScrollToBottom className="ScrollToBottom" followButtonClassName="ScrollToBottomButton">
+              {reversedMessages.map((message) => {
+                const isMe = message.user.id === meData?.data.user.id
+                return (
+                  <MessageContainer key={message.id} style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+                    <MessageWrapper>
+                      <Message
+                        author={message.user.displayName || undefined}
+                        content={message.content}
+                        date={message.createdAt}
+                        isMe={isMe}
+                      />
+                    </MessageWrapper>
+                  </MessageContainer>
+                )
+              })}
+            </ScrollToBottom>
+          </MessagesContainer>
+          <BottomBar>
+            <TextField
+              inputRef={register({ required: true })}
+              margin="none"
+              multiline={true}
+              name="content"
+              style={{
+                flex: 1,
+              }}
+            />
+            <Button
+              onClick={onClickSend}
+              startIcon={<SendIcon />}
+              style={{ marginLeft: theme.spacing(2) }}
+            >
+            Envoyer
+            </Button>
+          </BottomBar>
+        </>
+      )}
     </Container>
   )
 }

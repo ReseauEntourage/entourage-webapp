@@ -29,7 +29,7 @@ export function Messages() {
   return (
     <Container>
       <ConversationsList entourageId={entourageId} />
-      {entourageId && <ConversationDetail entourageId={entourageId} />}
+      {entourageId ? <ConversationDetail entourageId={entourageId} /> : null}
     </Container>
   )
 }

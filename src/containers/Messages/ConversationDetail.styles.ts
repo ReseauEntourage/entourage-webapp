@@ -38,7 +38,7 @@ export const BottomBar = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  padding: ${theme.spacing(2)}px;
+  padding: 0 ${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(2)}px;
   box-sizing: border-box;
 `
 
@@ -49,4 +49,16 @@ export const TopBar = styled(Typography).attrs(() => ({
 }))`
   padding: ${theme.spacing(3)}px;
   border-bottom: solid 1px ${colors.borderColor};
+`
+
+export const Pending = styled(Typography).attrs(() => ({
+  variant: variants.bodyRegular,
+  component: 'div',
+}))`
+  padding: ${theme.spacing(3)}px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
