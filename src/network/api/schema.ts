@@ -129,7 +129,7 @@ export const schema = {
           displayCategory: FeedDisplayCategory;
           entourageType: FeedEntourageType;
           groupType: FeedGroupType;
-          id: string;
+          id: number;
           joinStatus: FeedJoinStatus;
           lastMessage: {
             author: {
@@ -284,6 +284,37 @@ export const schema = {
     params: null,
     data: null,
     response: null,
+  },
+  'GET /entourages/:entourageId/chat_messages': {
+    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    method: 'GET',
+    params: null,
+    data: null,
+    response: {} as {
+      chatMessages: {
+        content: string;
+        createdAt: DateISO;
+        id: number;
+        messageType: 'text';
+        user: {
+          avatarUrl: User['avatarUrl'];
+          displayName: User['displayName'];
+          id: User['id'];
+          partner: User['partner'];
+        };
+      }[];
+    },
+  },
+  'POST /entourages/:entourageId/chat_messages': {
+    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    method: 'POST',
+    params: null,
+    data: {} as {
+      chatMessage: {
+        content: string;
+      };
+    },
+    response: {} as {},
   },
   'POST /entourages': {
     url: 'entourages',

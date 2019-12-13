@@ -8,6 +8,7 @@ export * from './useQueryPOIs'
 export * from './useQueryFeeds'
 export * from './useQueryEntourageUsers'
 export * from './useQueryMyFeeds'
+export * from './useQueryEntourageChatMessages'
 
 // mutation
 export * from './useMutateEntourage'
@@ -15,3 +16,4 @@ export * from './useMutateMe'
 export * from './useMutateMeAddress'
 export * from './useMutateEntourageUsers'
 export * from './useMutateDeleteEntourageUser'
+export * from './useMutateCreateEntourageChatMessage'
