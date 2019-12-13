@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
-import { ConversationItem } from 'src/components/ConversationsList'
+import { ConversationItem } from 'src/components/Conversations'
 import { useQueryMyFeeds } from 'src/network/queries'
 
 const Container = styled.div`

@@ -3,7 +3,7 @@ import SendIcon from '@material-ui/icons/Send'
 import ScrollToBottom from 'react-scroll-to-bottom'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
-import { Message } from 'src/components/ConversationsList'
+import { Message } from 'src/components/Conversations'
 import { TextField, useForm } from 'src/components/Form'
 import {
   useQueryMe,
