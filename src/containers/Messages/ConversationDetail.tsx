@@ -2,7 +2,6 @@ import SendIcon from '@material-ui/icons/Send'
 // @ts-ignore
 import ScrollToBottom from 'react-scroll-to-bottom'
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
 import { Button } from 'src/components/Button'
 import { Message } from 'src/components/ConversationsList'
 import { TextField, useForm } from 'src/components/Form'
@@ -12,45 +11,7 @@ import {
   useMutateCreateEntourageChatMessage,
 } from 'src/network/queries'
 import { theme } from 'src/styles'
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  padding: ${theme.spacing(2)}px;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-`
-
-const MessagesContainer = styled.div`
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-  .ScrollToBottom {
-    height: 100%;
-
-    .ScrollToBottomButton {
-      display: none;
-    }
-  }
-`
-
-const MessageContainer = styled.div`
-  display: flex;
-  margin: ${theme.spacing(2)}px 0;
-`
-
-const MessageWrapper = styled.div`
-  max-width: 70%;
-`
-
-const BottomBar = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-`
+import { Container, MessagesContainer, MessageContainer, MessageWrapper, BottomBar } from './ConversationDetail.styles'
 
 interface FormFields {
   content: string;
