@@ -23,6 +23,7 @@ const Picture = styled.div`
   border-radius: 100%;
   background-color: ${colors.main.primary};
   align-self: end;
+  margin-right: ${theme.spacing(1)}px;
 `
 
 const AuthorAndDate = styled(Typography).attrs(() => ({

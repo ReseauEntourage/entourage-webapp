@@ -9,9 +9,17 @@ import {
   useQueryMe,
   useQueryEntourageChatMessages,
   useMutateCreateEntourageChatMessage,
+  useQueryMyFeeds,
 } from 'src/network/queries'
 import { theme } from 'src/styles'
-import { Container, MessagesContainer, MessageContainer, MessageWrapper, BottomBar } from './ConversationDetail.styles'
+import {
+  Container,
+  MessagesContainer,
+  MessageContainer,
+  MessageWrapper,
+  BottomBar,
+  TopBar,
+} from './ConversationDetail.styles'
 
 interface FormFields {
   content: string;
@@ -25,6 +33,9 @@ export function ConversationDetail(props: ConversationDetail) {
   const { entourageId } = props
 
   const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()
+
+  const { data: myFeedsData } = useQueryMyFeeds()
+  const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
 
   const { data: chatMessages } = useQueryEntourageChatMessages(entourageId)
   const [createcChatMessage] = useMutateCreateEntourageChatMessage(entourageId)
@@ -47,6 +58,9 @@ export function ConversationDetail(props: ConversationDetail) {
 
   return (
     <Container>
+      <TopBar>
+        {entourage?.data.title}
+      </TopBar>
       <MessagesContainer>
         <ScrollToBottom className="ScrollToBottom" followButtonClassName="ScrollToBottomButton">
           {reversedMessages.map((message) => {
