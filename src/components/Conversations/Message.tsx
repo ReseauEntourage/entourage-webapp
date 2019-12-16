@@ -8,26 +8,28 @@ import { theme, colors, variants } from 'src/styles'
 import { DateISO } from 'src/types'
 
 const Container = styled.div`
+  max-width: 70%;
   display: grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: 40px auto;
   grid-template-areas:
     '. author'
     'picture content'
     '. date';
-  width: 100%;
+  grid-gap: ${theme.spacing(1)}px;
+  min-width: 200px;
 `
 
 const AvatarContainer = styled.div`
   grid-area: picture;
   align-self: end;
-  margin-right: ${theme.spacing(1)}px;
 `
 
 const AuthorAndDate = styled(Typography).attrs(() => ({
   variant: variants.footNote,
   component: 'div',
 }))`
-  padding: ${theme.spacing(1)}px;
+  padding-left: ${theme.spacing(1)}px;
+  padding-right: ${theme.spacing(1)}px;
 `
 
 const Author = styled(AuthorAndDate)`
@@ -46,6 +48,16 @@ const Content = styled(Typography).attrs(() => ({
   border-radius: ${theme.spacing(2)}px;
   padding: ${theme.spacing(2)}px;
   background-color: ${colors.main.greyLight};
+  /* min-width: 200px; */
+`
+
+export const MessageContainer = styled.div`
+  display: flex;
+  margin: ${theme.spacing(2)}px 0;
+`
+
+export const MessageWrapper = styled.div`
+  max-width: 70%;
 `
 
 interface MessageProps {
@@ -64,15 +76,17 @@ export function Message(props: MessageProps) {
   const dateLabel = formatRelative(new Date(date), new Date(), { locale: fr })
 
   return (
-    <Container>
-      {!isMe && (
-        <AvatarContainer>
-          <Avatar />
-        </AvatarContainer>
-      )}
-      {!isMe && <Author>{author}</Author>}
-      <Content>{formatedContent}</Content>
-      <DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</DateContainer>
-    </Container>
+    <MessageContainer style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+      <Container>
+        {!isMe && (
+          <AvatarContainer>
+            <Avatar />
+          </AvatarContainer>
+        )}
+        {!isMe && <Author>{author}</Author>}
+        <Content>{formatedContent}</Content>
+        <DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</DateContainer>
+      </Container>
+    </MessageContainer>
   )
 }

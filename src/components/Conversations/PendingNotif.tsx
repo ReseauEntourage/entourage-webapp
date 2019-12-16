@@ -5,18 +5,18 @@ import { Avatar } from 'src/components/Avatar'
 import { theme, colors, variants } from 'src/styles'
 
 const Container = styled.div`
-  margin: ${theme.spacing(2)}px;
   background-color: ${colors.main.second};
   display: flex;
+  align-items: center;
   padding: ${theme.spacing(1)}px;
   border-radius: 5px;
 `
 
 const Label = styled(Typography).attrs(() => ({
-  component: 'div',
+  color: 'textSecondary',
   variant: variants.bodyRegular,
 }))`
-  color: #fff !important;
+  margin-left: ${theme.spacing(1)}px !important;
 `
 
 interface PendingNotifProps {

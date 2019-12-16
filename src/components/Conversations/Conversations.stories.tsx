@@ -9,51 +9,56 @@ export default {
   title: 'Conversations',
 }
 
-export const ConversationsItemExample = () => (
-  <TransparentWrapper style={{ width: 300 }}>
-    <ConversationItem
-      excerpt={loremIpsum(10)}
-      isActive={false}
-      profilePictureURL="https://i.pravatar.cc/100"
-      title={loremIpsum(10)}
-    />
-  </TransparentWrapper>
-)
-
-export const MessageExample = () => (
-  <TransparentWrapper style={{ maxWidth: 500 }}>
-    <Message
-      author="Jeanne B. Association pour l'amitié"
-      content={`
-        Bonjour Mathieu,
-        Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
-        Y a-t-il quelque chose que je peux apporter ?
-      `}
-      date={new Date().toISOString()}
-      isMe={false}
-      picture="https://i.pravatar.cc/100"
-    />
-  </TransparentWrapper>
-)
-
-export const MessageMeExample = () => (
-  <TransparentWrapper style={{ maxWidth: 500 }}>
-    <Message
-      content={`
-        Bonjour Mathieu,
-        Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
-        Y a-t-il quelque chose que je peux apporter ?
-      `}
-      date={new Date().toISOString()}
-      isMe={true}
-    />
-  </TransparentWrapper>
-)
-
-export const PendingNotifExample = () => (
-  <TransparentWrapper>
-    <PendingNotif
-      label="Louise souhaite participer"
-    />
-  </TransparentWrapper>
+export const Conversations = () => (
+  <>
+    <TransparentWrapper style={{ width: 300 }}>
+      <ConversationItem
+        excerpt={loremIpsum(10)}
+        isActive={false}
+        profilePictureURL="https://i.pravatar.cc/100"
+        title={loremIpsum(10)}
+      />
+      <ConversationItem
+        excerpt={loremIpsum(10)}
+        isActive={false}
+        profilePictureURL="https://i.pravatar.cc/100"
+        title={loremIpsum(10)}
+      />
+      <ConversationItem
+        excerpt={loremIpsum(10)}
+        isActive={false}
+        profilePictureURL="https://i.pravatar.cc/100"
+        title={loremIpsum(10)}
+      />
+    </TransparentWrapper>
+    <TransparentWrapper>
+      <Message
+        author="Jeanne B. Association pour l'amitié"
+        content={`
+          Bonjour Mathieu,
+          Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
+          Y a-t-il quelque chose que je peux apporter ?
+        `}
+        date={new Date().toISOString()}
+        isMe={false}
+        picture="https://i.pravatar.cc/100"
+      />
+    </TransparentWrapper>
+    <TransparentWrapper>
+      <Message
+        content={`
+          Bonjour Mathieu,
+          Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
+          Y a-t-il quelque chose que je peux apporter ?
+        `}
+        date={new Date().toISOString()}
+        isMe={true}
+      />
+    </TransparentWrapper>
+    <TransparentWrapper>
+      <PendingNotif
+        label={<div><b>Louise</b> souhaite participer</div>}
+      />
+    </TransparentWrapper>
+  </>
 )

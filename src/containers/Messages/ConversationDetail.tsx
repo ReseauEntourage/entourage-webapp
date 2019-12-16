@@ -15,8 +15,6 @@ import { theme } from 'src/styles'
 import {
   Container,
   MessagesContainer,
-  MessageContainer,
-  MessageWrapper,
   BottomBar,
   TopBar,
   Pending,
@@ -80,16 +78,13 @@ export function ConversationDetail(props: ConversationDetail) {
               {reversedMessages.map((message) => {
                 const isMe = message.user.id === meData?.data.user.id
                 return (
-                  <MessageContainer key={message.id} style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
-                    <MessageWrapper>
-                      <Message
-                        author={message.user.displayName || undefined}
-                        content={message.content}
-                        date={message.createdAt}
-                        isMe={isMe}
-                      />
-                    </MessageWrapper>
-                  </MessageContainer>
+                  <Message
+                    key={message.id}
+                    author={message.user.displayName || undefined}
+                    content={message.content}
+                    date={message.createdAt}
+                    isMe={isMe}
+                  />
                 )
               })}
             </ScrollToBottom>

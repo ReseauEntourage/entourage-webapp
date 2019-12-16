@@ -15,6 +15,10 @@ export const theme = createMuiTheme({
     background: {
       default: '#fff',
     },
+    text: {
+      primary: colors.main.greyishBrown,
+      secondary: '#fff',
+    },
   },
   typography: {
     // header

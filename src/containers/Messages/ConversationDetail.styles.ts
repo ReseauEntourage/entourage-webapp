@@ -25,15 +25,6 @@ export const MessagesContainer = styled.div`
   }
 `
 
-export const MessageContainer = styled.div`
-  display: flex;
-  margin: ${theme.spacing(2)}px 0;
-`
-
-export const MessageWrapper = styled.div`
-  max-width: 70%;
-`
-
 export const BottomBar = styled.div`
   width: 100%;
   display: flex;
