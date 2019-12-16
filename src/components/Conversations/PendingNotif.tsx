@@ -27,9 +27,19 @@ interface PendingNotifProps {
 export function PendingNotif(props: PendingNotifProps) {
   const { label, pictureURL } = props
 
+  const avatarMultipleStyles: React.CSSProperties = {
+    position: 'absolute',
+    width: 24,
+    height: 24,
+  }
+
   const avatar = Array.isArray(pictureURL)
-    ? null
-    : <Avatar src={pictureURL} />
+    ? (
+      <div style={{ width: 36, height: 36, position: 'relative' }}>
+        <Avatar borderColor="white" src={pictureURL[0]} style={{ ...avatarMultipleStyles, top: 0, right: 0 }} />
+        <Avatar borderColor="white" src={pictureURL[1]} style={{ ...avatarMultipleStyles, left: 0, bottom: 0 }} />
+      </div>
+    ) : <Avatar borderColor="white" src={pictureURL} />
 
   return (
     <Container>

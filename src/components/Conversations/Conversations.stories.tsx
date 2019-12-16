@@ -60,5 +60,17 @@ export const Conversations = () => (
         label={<div><b>Louise</b> souhaite participer</div>}
       />
     </TransparentWrapper>
+    <TransparentWrapper>
+      <PendingNotif
+        label={<div><b>Louise</b> souhaite participer</div>}
+        pictureURL="https://i.pravatar.cc/100"
+      />
+    </TransparentWrapper>
+    <TransparentWrapper>
+      <PendingNotif
+        label={<div>Plusieurs demandes en attentes</div>}
+        pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
+      />
+    </TransparentWrapper>
   </>
 )

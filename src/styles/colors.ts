@@ -12,6 +12,7 @@ export const colors = {
     greyLight: '#e9e9e9',
     greyishBrown: '#4a4a4a',
     borderColorNav: '#979797',
+    white: '#fff',
   },
   pois: {
     1: '#27bb5b',
