@@ -1,24 +1,27 @@
 import React from 'react'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { loremIpsum } from 'src/utils'
 import { ConversationItem } from './ConversationItem'
 import { Message } from './Message'
+import { PendingNotif } from './PendingNotif'
 
 export default {
   title: 'Conversations',
 }
 
 export const ConversationsItemExample = () => (
-  <div style={{ border: 'solid 1px #ccc', width: 300 }}>
+  <TransparentWrapper style={{ width: 300 }}>
     <ConversationItem
       excerpt={loremIpsum(10)}
       isActive={false}
+      profilePictureURL="https://i.pravatar.cc/100"
       title={loremIpsum(10)}
     />
-  </div>
+  </TransparentWrapper>
 )
 
 export const MessageExample = () => (
-  <div style={{ margin: 20, maxWidth: 500 }}>
+  <TransparentWrapper style={{ maxWidth: 500 }}>
     <Message
       author="Jeanne B. Association pour l'amitié"
       content={`
@@ -28,12 +31,13 @@ export const MessageExample = () => (
       `}
       date={new Date().toISOString()}
       isMe={false}
+      picture="https://i.pravatar.cc/100"
     />
-  </div>
+  </TransparentWrapper>
 )
 
 export const MessageMeExample = () => (
-  <div style={{ margin: 20, maxWidth: 500 }}>
+  <TransparentWrapper style={{ maxWidth: 500 }}>
     <Message
       content={`
         Bonjour Mathieu,
@@ -43,5 +47,13 @@ export const MessageMeExample = () => (
       date={new Date().toISOString()}
       isMe={true}
     />
-  </div>
+  </TransparentWrapper>
+)
+
+export const PendingNotifExample = () => (
+  <TransparentWrapper>
+    <PendingNotif
+      label="Louise souhaite participer"
+    />
+  </TransparentWrapper>
 )

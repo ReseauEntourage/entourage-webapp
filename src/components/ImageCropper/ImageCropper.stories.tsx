@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ThemeProvider } from 'src/styles'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { ImageCropper as ImageCropperBase, ImageCropperValue } from './ImageCropper'
 
 export default {
@@ -7,22 +7,20 @@ export default {
 }
 
 export const Base = () => (
-  <ThemeProvider>
+  <TransparentWrapper>
     <ImageCropperBase onChange={() => {}} />
-  </ThemeProvider>
+  </TransparentWrapper>
 )
 
 export const Preview = () => {
   const [value, setValue] = useState<ImageCropperValue>()
 
   return (
-    <ThemeProvider>
-      <div>
-        <ImageCropperBase onChange={setValue} />
-        {value?.src && (
-          <img alt="Copper demo" src={value.src} />
-        )}
-      </div>
-    </ThemeProvider>
+    <TransparentWrapper>
+      <ImageCropperBase onChange={setValue} />
+      {value?.src && (
+        <img alt="Copper demo" src={value.src} />
+      )}
+    </TransparentWrapper>
   )
 }

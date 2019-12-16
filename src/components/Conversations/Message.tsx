@@ -3,6 +3,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { formatRelative } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
+import { Avatar } from 'src/components/Avatar'
 import { theme, colors, variants } from 'src/styles'
 import { DateISO } from 'src/types'
 
@@ -16,12 +17,8 @@ const Container = styled.div`
   width: 100%;
 `
 
-const Picture = styled.div`
+const AvatarContainer = styled.div`
   grid-area: picture;
-  width: 40px;
-  height: 40px;
-  border-radius: 100%;
-  background-color: ${colors.main.primary};
   align-self: end;
   margin-right: ${theme.spacing(1)}px;
 `
@@ -68,8 +65,12 @@ export function Message(props: MessageProps) {
 
   return (
     <Container>
-      {!isMe && <Picture key="picture" />}
-      {!isMe && <Author key="author">{author}</Author>}
+      {!isMe && (
+        <AvatarContainer>
+          <Avatar />
+        </AvatarContainer>
+      )}
+      {!isMe && <Author>{author}</Author>}
       <Content>{formatedContent}</Content>
       <DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</DateContainer>
     </Container>

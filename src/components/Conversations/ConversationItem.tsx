@@ -1,8 +1,9 @@
 import React from 'react'
-import { Container, Picture, NoProfilePicture, Texts, Title, Excerpt } from './ConversationItem.styles'
+import { Avatar } from 'src/components/Avatar'
+import { Container, Picture, Texts, Title, Excerpt } from './ConversationItem.styles'
 
 interface ConversationItemProps {
-  excerpt: string;
+  excerpt: string | JSX.Element;
   isActive: boolean;
   profilePictureURL?: string;
   title: string;
@@ -14,11 +15,7 @@ export function ConversationItem(props: ConversationItemProps) {
   return (
     <Container isActive={isActive}>
       <Picture>
-        {profilePictureURL ? (
-          <img alt="Profile" src={profilePictureURL} />
-        ) : (
-          <NoProfilePicture />
-        )}
+        <Avatar alt="Profile" src={profilePictureURL || null} />
       </Picture>
       <Texts>
         <Title>{title}</Title>

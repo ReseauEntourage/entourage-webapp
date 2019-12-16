@@ -1,6 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 import React from 'react'
-import { ThemeProvider, theme } from 'src/styles'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
+import { theme } from 'src/styles'
 import { Button } from './Button'
 
 const useStyles = makeStyles(() => createStyles({
@@ -17,7 +18,7 @@ export const Buttons = () => {
   const classes = useStyles()
 
   return (
-    <ThemeProvider>
+    <TransparentWrapper>
       <div>
         <div>
           <Button className={classes.margin}>Participer</Button>
@@ -32,6 +33,6 @@ export const Buttons = () => {
           <Button className={classes.margin} loading={true} variant="outlined">Loading</Button>
         </div>
       </div>
-    </ThemeProvider>
+    </TransparentWrapper>
   )
 }

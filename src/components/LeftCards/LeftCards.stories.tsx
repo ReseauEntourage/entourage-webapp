@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box'
 import React from 'react'
 import { Button } from 'src/components/Button'
-import { colors, ThemeProvider } from 'src/styles'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { ActionCard } from './ActionCard'
 import { EventCard } from './EventCard'
 
@@ -9,14 +9,12 @@ export default {
   title: 'LeftCards',
 }
 
-function Wrapper(props: { children: React.ReactChild | React.ReactChild[]; }) {
+function Wrapper(props: { children: JSX.Element; }) {
   const { children } = props
   return (
-    <ThemeProvider>
-      <div style={{ border: `solid 1px ${colors.borderColor}`, maxWidth: 600, margin: 20 }}>
-        {children}
-      </div>
-    </ThemeProvider>
+    <TransparentWrapper style={{ maxWidth: 600 }}>
+      {children}
+    </TransparentWrapper>
   )
 }
 

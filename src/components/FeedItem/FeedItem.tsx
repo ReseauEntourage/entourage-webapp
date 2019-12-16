@@ -1,7 +1,7 @@
-import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
+import { Avatar } from 'src/components/Avatar'
 import { Container, TitleContainer /* , AvatarNumber */ } from './FeedItem.styles'
 
 export { iconStyle } from './FeedItem.styles'
@@ -42,7 +42,7 @@ export function FeedItem(props: FeedItemProps) {
       </div>
       <Box flexGrow="1" />
       <Box display="flex">
-        <Avatar alt="John Doe" src={profilePictureURL} />
+        <Avatar alt="Profile" src={profilePictureURL} />
         {/* <AvatarNumber /> */}
       </Box>
     </Container>

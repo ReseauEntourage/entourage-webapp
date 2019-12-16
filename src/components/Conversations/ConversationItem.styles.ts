@@ -35,10 +35,3 @@ export const Excerpt = styled(Typography).attrs(() => ({
   white-space: nowrap;
   overflow: hidden;
 `
-
-export const NoProfilePicture = styled.div`
-  height: 30px;
-  width: 30px;
-  border-radius: 30px;
-  background-color: ${colors.main.primary};
-`
