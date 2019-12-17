@@ -6,6 +6,7 @@ import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
+import styled from 'styled-components'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
@@ -13,12 +14,16 @@ import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useOnLogin } from 'src/events'
 import { texts } from 'src/i18n'
 import { useQueryMe } from 'src/network/queries'
-import { colors } from 'src/styles'
+import { colors, theme } from 'src/styles'
 import { LoggedChunk } from './LoggedChunk'
 import { NavItem } from './NavItem'
 import { NavTakeAction } from './NavTakeAction'
 
-const useStyles = makeStyles((theme) => createStyles({
+const AccountContainer = styled.div`
+  margin-left: ${theme.spacing(10)}px;
+`
+
+const useStyles = makeStyles(() => createStyles({
   appBar: {
     backgroundColor: '#fff',
     borderBottom: `solid 1px ${colors.main.borderColorNav}`,
@@ -85,14 +90,16 @@ export function Nav() {
               label={texts.nav.takeAction}
             />
           </NavTakeAction>
-          {iAmLogged ? (
-            <LoggedChunk />
-          ) : (
-            <Button className={classes.buttonMarginLeft} onClick={onClickSignIn}>
-              <PersonIcon className={classes.buttonIcon} />
-              Connexion / Inscription
-            </Button>
-          )}
+          <AccountContainer>
+            {iAmLogged ? (
+              <LoggedChunk />
+            ) : (
+              <Button className={classes.buttonMarginLeft} onClick={onClickSignIn}>
+                <PersonIcon className={classes.buttonIcon} />
+                Connexion / Inscription
+              </Button>
+            )}
+          </AccountContainer>
         </Toolbar>
       </AppBar>
     </div>

@@ -1,8 +1,8 @@
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import React, { useCallback } from 'react'
 import { refetchQuery } from 'react-query'
+import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { queryKeys } from 'src/network/queries'
@@ -47,7 +47,7 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
         }}
         tabIndex={0}
       >
-        <AccountCircleIcon color="secondary" fontSize="large" />
+        <Avatar />
       </div>
       <Menu
         anchorEl={anchorEl}
