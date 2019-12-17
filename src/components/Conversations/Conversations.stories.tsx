@@ -83,7 +83,7 @@ export const Conversations = () => (
             <Button startIcon={<CheckIcon />}>
               Accepter
             </Button>
-            <Button color="secondary" startIcon={<CloseIcon />}>
+            <Button startIcon={<CloseIcon />} style={{ backgroundColor: '#fff' }} variant="outlined">
               Refuser
             </Button>
           </ButtonsList>

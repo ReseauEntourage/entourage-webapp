@@ -5,8 +5,10 @@ import { theme } from 'src/styles'
 import { Button } from './Button'
 
 const useStyles = makeStyles(() => createStyles({
-  margin: {
-    margin: theme.spacing(1),
+  btns: {
+    '& > *': {
+      margin: theme.spacing(1),
+    },
   },
 }))
 
@@ -18,20 +20,18 @@ export const Buttons = () => {
   const classes = useStyles()
 
   return (
-    <TransparentWrapper>
-      <div>
-        <div>
-          <Button className={classes.margin}>Participer</Button>
-        </div>
-        <div>
-          <Button className={classes.margin} color="secondary">Participer</Button>
-        </div>
-        <div>
-          <Button className={classes.margin} loading={true}>Loading</Button>
-        </div>
-        <div>
-          <Button className={classes.margin} color="secondary" loading={true}>Loading</Button>
-        </div>
+    <TransparentWrapper transparentGB={true}>
+      <div className={classes.btns}>
+        <Button>Participer</Button>
+        <Button variant="outlined">Participer</Button>
+        <Button color="secondary">Participer</Button>
+        <Button loading={true}>Loading</Button>
+        <Button
+          loading={true}
+          variant="outlined"
+        >
+          Loading
+        </Button>
       </div>
     </TransparentWrapper>
   )

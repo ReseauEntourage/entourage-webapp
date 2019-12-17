@@ -25,12 +25,13 @@ const Content = styled.div`
 interface TransparentWrapperProps {
   children: React.ReactNode;
   style?: React.CSSProperties;
+  transparentGB?: boolean;
 }
 
 export function TransparentWrapper(props: TransparentWrapperProps) {
-  const { children, style } = props
+  const { children, style, transparentGB: transparentGBProps } = props
 
-  const [transparentGB, setTransparentGB] = useState(false)
+  const [transparentGB, setTransparentGB] = useState(transparentGBProps || false)
   const [hasPadding, setHasPadding] = useState(true)
 
   const onChangeTransparentBG = useCallback(() => {
