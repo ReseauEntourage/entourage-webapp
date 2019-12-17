@@ -3,29 +3,29 @@ import { useEffect } from 'react'
 import { useMount, usePrevious } from 'src/hooks'
 import { useQueryMe } from 'src/network/queries'
 
-const loginSubject = new Subject()
+const logoutSubject = new Subject()
 
 function publish(me: NonNullable<ReturnType<typeof useQueryMe>['data']>) {
-  loginSubject.next(me)
+  logoutSubject.next(me)
 }
 
-export function useOnLogin(onLogin: (me: Parameters<typeof publish>[0]) => void) {
+export function useOnLogout(onLogout: (me: Parameters<typeof publish>[0]) => void) {
   useMount(() => {
     // @ts-ignore
-    const subscription = loginSubject.subscribe(onLogin)
+    const subscription = logoutSubject.subscribe(onLogout)
     return () => subscription.unsubscribe()
   })
 }
 
-export function useOnLoginDispatcher() {
+export function useOnLogoutDispatcher() {
   const { data: meResponse } = useQueryMe()
   const prevMeReponse = usePrevious(meResponse)
 
   useEffect(() => {
-    const prevMeReponseIsNotLogged = !prevMeReponse || !prevMeReponse.data || prevMeReponse.data.user.anonymous
-    const meReponseIsLogged = meResponse && !meResponse.data.user.anonymous
+    const prevMeReponseIsLogged = prevMeReponse && prevMeReponse.data && !prevMeReponse.data.user.anonymous
+    const meReponseIsNotLogged = meResponse && meResponse.data && meResponse.data.user.anonymous
 
-    if (prevMeReponseIsNotLogged && meReponseIsLogged) {
+    if (prevMeReponseIsLogged && meReponseIsNotLogged) {
       publish(meResponse as NonNullable<typeof meResponse>)
     }
   }, [prevMeReponse, meResponse])

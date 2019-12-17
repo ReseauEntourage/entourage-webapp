@@ -10,7 +10,7 @@ import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
 import { Nav } from 'src/containers/Nav'
-import { Listeners } from 'src/events'
+import { Dispatchers } from 'src/events'
 import { api } from 'src/network/api'
 import { config as queryConfig } from 'src/network/queries'
 import { theme } from 'src/styles/theme'
@@ -53,7 +53,7 @@ export default class App extends NextApp {
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
         </Head>
         <Reset />
-        <Listeners />
+        <Dispatchers />
         <ThemeProvider theme={theme}>
           <ReactQueryConfigProvider config={queryConfig}>
             <MainContextProvider>

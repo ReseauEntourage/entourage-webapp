@@ -1,11 +1,14 @@
 import Head from 'next/head'
 import React from 'react'
 import { Messages } from 'src/containers/Messages'
+import { useRedirectOnLogout } from 'src/events'
 import { StatelessPage } from 'src/types'
 
 interface MessagesProps {}
 
 const MessagesPage: StatelessPage<MessagesProps> = () => {
+  useRedirectOnLogout()
+
   return (
     <>
       <Head>
