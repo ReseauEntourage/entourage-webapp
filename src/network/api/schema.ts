@@ -254,9 +254,10 @@ export const schema = {
     response: {} as {},
   },
   'GET /entourages/:entourageId/users': {
-    url: (params: { entourageId: string; }) => `entourages/${params.entourageId}/users`,
+    url: (params: { entourageId: string | number; }) => `entourages/${params.entourageId}/users`,
     method: 'GET',
     params: {} as void | {
+      context?: 'groupFeed';
       page?: number;
       per?: number;
     },

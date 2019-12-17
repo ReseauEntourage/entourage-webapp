@@ -7,3 +7,5 @@ export function useQueryMyFeeds() {
     name: 'GET /myfeeds',
   }))
 }
+
+export type DataQueryMyFeeds = ReturnType<typeof useQueryMyFeeds>['data']
