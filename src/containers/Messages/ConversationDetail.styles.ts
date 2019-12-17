@@ -50,6 +50,5 @@ export const Pending = styled(Typography).attrs(() => ({
   text-align: center;
   flex: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
 `

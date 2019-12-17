@@ -35,6 +35,11 @@ export function ConversationDetail(props: ConversationDetail) {
 
   const { data: myFeedsData } = useQueryMyFeeds()
   const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
+
+  if (!entourage) {
+    throw new Error(`Entourage "${entourageId}" is undefined`)
+  }
+
   const { joinStatus } = entourage?.data || {}
   const userIsAccepted = joinStatus === 'accepted'
 
