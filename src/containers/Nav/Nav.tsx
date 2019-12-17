@@ -79,17 +79,21 @@ export function Nav() {
             icon={<MapIcon />}
             label={texts.nav.actions}
           />
-          <NavItem
-            href="/messages"
-            icon={<ChatBubbleOutlineIcon />}
-            label={texts.nav.messages}
-          />
-          <NavTakeAction>
-            <NavItem
-              icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
-              label={texts.nav.takeAction}
-            />
-          </NavTakeAction>
+          {iAmLogged && (
+            <>
+              <NavItem
+                href="/messages"
+                icon={<ChatBubbleOutlineIcon />}
+                label={texts.nav.messages}
+              />
+              <NavTakeAction>
+                <NavItem
+                  icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
+                  label={texts.nav.takeAction}
+                />
+              </NavTakeAction>
+            </>
+          )}
           <AccountContainer>
             {iAmLogged ? (
               <LoggedChunk />
