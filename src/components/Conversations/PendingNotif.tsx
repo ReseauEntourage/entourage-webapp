@@ -19,13 +19,18 @@ const Label = styled(Typography).attrs(() => ({
   margin-left: ${theme.spacing(1)}px !important;
 `
 
+const FlexGrow = styled.div`
+  flex-grow: 1;
+`
+
 interface PendingNotifProps {
   label: string | JSX.Element;
+  leftContent?: JSX.Element;
   pictureURL?: string | [string, string];
 }
 
 export function PendingNotif(props: PendingNotifProps) {
-  const { label, pictureURL } = props
+  const { label, pictureURL, leftContent } = props
 
   const avatarMultipleStyles: React.CSSProperties = {
     position: 'absolute',
@@ -47,6 +52,8 @@ export function PendingNotif(props: PendingNotifProps) {
       <Label>
         {label}
       </Label>
+      <FlexGrow />
+      {leftContent}
     </Container>
   )
 }

@@ -27,10 +27,10 @@ export const Action = () => (
             <Button>
               Participer
             </Button>
-            <Button variant="outlined">
+            <Button color="secondary">
               Partager
             </Button>
-            <Button variant="outlined">
+            <Button color="secondary">
               Signaler
             </Button>
           </Box>
@@ -53,10 +53,10 @@ export const Action = () => (
             <Button>
               Participer
             </Button>
-            <Button variant="outlined">
+            <Button color="secondary">
               Partager
             </Button>
-            <Button variant="outlined">
+            <Button color="secondary">
               Signaler
             </Button>
           </Box>

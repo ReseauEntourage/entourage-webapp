@@ -160,8 +160,8 @@ export function LeftCards(props: LeftCardsProps) {
         actions={(
           <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
             <ParticipateButton feedItem={feedItem} />
-            <Button variant="outlined">Partager</Button>
-            <Button variant="outlined">Signaler</Button>
+            <Button color="secondary">Partager</Button>
+            <Button color="secondary">Signaler</Button>
           </Box>
         )}
         dateLabel={dataLabel}

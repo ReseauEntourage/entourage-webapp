@@ -1,4 +1,7 @@
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
+import { ButtonsList, Button } from 'src/components/Button'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { loremIpsum } from 'src/utils'
 import { ConversationItem } from './ConversationItem'
@@ -69,6 +72,22 @@ export const Conversations = () => (
     <TransparentWrapper>
       <PendingNotif
         label={<div>Plusieurs demandes en attentes</div>}
+        pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
+      />
+    </TransparentWrapper>
+    <TransparentWrapper>
+      <PendingNotif
+        label={<div>Plusieurs demandes en attentes</div>}
+        leftContent={(
+          <ButtonsList>
+            <Button startIcon={<CheckIcon />}>
+              Accepter
+            </Button>
+            <Button color="secondary" startIcon={<CloseIcon />}>
+              Refuser
+            </Button>
+          </ButtonsList>
+        )}
         pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
       />
     </TransparentWrapper>

@@ -7,17 +7,17 @@ export const theme = createMuiTheme({
       main: colors.main.primary,
     },
     secondary: {
-      main: colors.main.black,
+      main: colors.main.white,
     },
     error: {
       main: '#f00',
     },
     background: {
-      default: '#fff',
+      default: colors.main.white,
     },
     text: {
       primary: colors.main.greyishBrown,
-      secondary: '#fff',
+      secondary: colors.main.white,
     },
   },
   typography: {
