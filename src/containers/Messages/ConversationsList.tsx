@@ -1,9 +1,15 @@
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Link from 'next/link'
 import React from 'react'
 import styled from 'styled-components'
 import { ConversationItem } from 'src/components/Conversations'
-import { useQueryMyFeeds, useQueryEntourageUserRequestsList, DataQueryMyFeeds } from 'src/network/queries'
-import { AnyToFix } from 'src/types'
+import {
+  useQueryMyFeeds,
+  useQueryEntouragesWithMembers,
+  DataUseQueryEntouragesWithMembers,
+  DataQueryMyFeeds,
+} from 'src/network/queries'
+import { assertIsDefined } from 'src/utils'
 
 const Container = styled.div`
   border-right: solid 1px #ccc;
@@ -11,9 +17,11 @@ const Container = styled.div`
   max-width: 400px;
 `
 
-// eslint-disable-next-line
-function getExcerpt(feed: NonNullable<DataQueryMyFeeds>['data']['feeds'][0], membersData: AnyToFix): string {
-
+function getExcerpt(
+  feed: NonNullable<DataQueryMyFeeds>['data']['feeds'][0],
+  // eslint-disable-next-line
+  membersData: NonNullable<DataUseQueryEntouragesWithMembers>[0]['members'],
+): string {
   if (feed.data.joinStatus === 'accepted') {
     return feed.data.description
   }
@@ -34,16 +42,24 @@ export function ConversationsList(props: ConversationsList) {
   const { data: dataMyFeeds } = useQueryMyFeeds()
 
   const entourageIds = dataMyFeeds?.data.feeds.map((feed) => feed.data.id)
-  const [entourageUserRequests] = useQueryEntourageUserRequestsList(entourageIds)
+  const { entouragesWithMembers } = useQueryEntouragesWithMembers(entourageIds, 'pending')
 
   if (!dataMyFeeds) {
     throw new Error('ConversationsList: feed null')
   }
 
+  if (!entouragesWithMembers) {
+    return <CircularProgress variant="indeterminate" />
+  }
+
   return (
     <Container>
       {dataMyFeeds.data.feeds.map((feed) => {
-        const usersData = entourageUserRequests.find((data) => data.entourageId === feed.data.id)
+        const entourageWithMembers = entouragesWithMembers.find((entourage) => entourage.entourageId === feed.data.id)
+
+        assertIsDefined(entourageWithMembers)
+
+        const { members } = entourageWithMembers
         return (
           <Link
             key={feed.data.id}
@@ -52,7 +68,7 @@ export function ConversationsList(props: ConversationsList) {
           >
             <a>
               <ConversationItem
-                excerpt={getExcerpt(feed, usersData?.users)}
+                excerpt={getExcerpt(feed, members)}
                 isActive={entourageId === feed.data.id}
                 title={feed.data.title}
               />

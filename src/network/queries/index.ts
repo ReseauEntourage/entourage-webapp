@@ -9,7 +9,7 @@ export * from './useQueryFeeds'
 export * from './useQueryEntourageUsers'
 export * from './useQueryMyFeeds'
 export * from './useQueryEntourageChatMessages'
-export * from './useQueryEntourageUserRequests'
+export * from './useQueryEntouragesWithMembers'
 
 // mutation
 export * from './useMutateEntourage'
