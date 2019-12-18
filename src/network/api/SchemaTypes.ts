@@ -94,7 +94,39 @@ export interface UserPartner {
   smallLogoUrl: string;
 }
 
-export interface User {
+export interface AnonymousUser {
+  about: string | null;
+  address: null;
+  anonymous: boolean;
+  avatarUrl: string | null;
+  conversation: {
+    uuid: string;
+  };
+  displayName: null;
+  email: null;
+  firebaseProperties: {
+    ActionZoneCP: string;
+    ActionZoneDep: string;
+  };
+  firstName: null;
+  hasPassword: boolean;
+  id: null;
+  lastName: null;
+  memberships: unknown[];
+  organization: null;
+  partner: null;
+  roles: unknown[];
+  stats: {
+    encounterCount: number;
+    entourageCount: number;
+    tourCount: number;
+  };
+  token: string;
+  userType: UserType;
+  uuid: string;
+}
+
+export interface LoggedUser {
   about: string | null;
   address: null | {
     displayAddress: string;
@@ -114,7 +146,7 @@ export interface User {
   };
   firstName: string | null;
   hasPassword: boolean;
-  id: number | null;
+  id: number;
   lastName: string | null;
   memberships: unknown[];
   organization: null;
@@ -129,3 +161,5 @@ export interface User {
   userType: UserType;
   uuid: string;
 }
+
+export type User = AnonymousUser | LoggedUser;
