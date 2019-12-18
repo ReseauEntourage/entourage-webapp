@@ -1,21 +1,34 @@
 import { AnyCantFix } from 'src/types'
 
-export function assertIsString(val: AnyCantFix): val is string {
-  return typeof val === 'string'
+function throwAssertionError(val: AnyCantFix, type: string, additionnalMessage = '') {
+  throw new Error(
+    `
+      Assertion error: expected 'val' to be ${type}, but received ${val}
+      ${additionnalMessage && `\n\n${additionnalMessage}`}
+    `,
+  )
 }
 
-export function assertIsNumber(val: AnyCantFix): val is number {
-  return typeof val === 'number'
+export function assertIsString(val: AnyCantFix, message = ''): asserts val is string {
+  if (typeof val !== 'string') {
+    throwAssertionError(val, 'string', message)
+  }
 }
 
-export function assertIsBoolean(val: AnyCantFix): val is boolean {
-  return typeof val === 'boolean'
+export function assertIsNumber(val: AnyCantFix, message = ''): asserts val is number {
+  if (typeof val !== 'number') {
+    throwAssertionError(val, 'number', message)
+  }
 }
 
-export function assertIsDefined<T>(val: T): asserts val is NonNullable<T> {
+export function assertIsBoolean(val: AnyCantFix, message = ''): asserts val is boolean {
+  if (typeof val !== 'boolean') {
+    throwAssertionError(val, 'boolean', message)
+  }
+}
+
+export function assertIsDefined<T>(val: T, message = ''): asserts val is NonNullable<T> {
   if (val === undefined || val === null) {
-    throw new Error(
-      `Expected 'val' to be defined, but received ${val}`,
-    )
+    throwAssertionError(val, 'defined', message)
   }
 }
