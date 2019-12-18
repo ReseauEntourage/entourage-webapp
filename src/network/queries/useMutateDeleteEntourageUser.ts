@@ -1,5 +1,6 @@
 import { useMutation } from 'react-query'
 import { api, schema } from 'src/network/api'
+import { assertIsDefined } from 'src/utils'
 import { queryKeys } from './queryKeys'
 import { useQueryMe } from './useQueryMe'
 
@@ -12,9 +13,7 @@ export function useMutateDeleteEntourageUser() {
   return useMutation((pathParams: PathParams) => {
     const userId = me?.data.user.id
 
-    if (!userId) {
-      throw new Error('useMutateDeleteEntourageUser must have userId')
-    }
+    assertIsDefined(userId, 'useMutateDeleteEntourageUser must have userId')
 
     return api.request({
       name: 'DELETE /entourages/:entourageId/users/:userId',

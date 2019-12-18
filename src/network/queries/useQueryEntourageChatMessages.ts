@@ -1,12 +1,11 @@
 import { useQuery } from 'react-query'
 import { api } from 'src/network/api'
+import { assertIsDefined } from 'src/utils'
 import { queryKeys } from './queryKeys'
 
 export function useQueryEntourageChatMessages(entourageId: number | null) {
   return useQuery(!entourageId ? null : [queryKeys.chatMessage(entourageId), { entourageId }], () => {
-    if (!entourageId) {
-      throw new Error('entourageId can\'t be null')
-    }
+    assertIsDefined(entourageId, 'useQueryEntourageChatMessages required entourageId')
 
     return api.request({
       name: 'GET /entourages/:entourageId/chat_messages',

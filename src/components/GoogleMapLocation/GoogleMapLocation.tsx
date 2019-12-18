@@ -10,7 +10,7 @@ import throttle from 'lodash/throttle'
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
 import { AnyToFix, AnyCantFix } from 'src/types'
-import { isSSR } from 'src/utils'
+import { isSSR, assertIsDefined } from 'src/utils'
 
 const autocompleteService = { current: null }
 
@@ -55,9 +55,7 @@ async function getLocationFromPlaceId(placeId: string): Promise<{ lat: number; l
   const geocoder = new google.maps.Geocoder()
   const loc: AnyCantFix = await new Promise((resolve: AnyCantFix) => geocoder.geocode({ placeId }, resolve))
 
-  if (!loc[0]) {
-    throw new Error('getLocationFromPlaceId error')
-  }
+  assertIsDefined(loc[0], 'getLocationFromPlaceId error')
 
   return {
     lat: loc[0].geometry.location.lat(),

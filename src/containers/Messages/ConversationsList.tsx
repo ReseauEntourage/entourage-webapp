@@ -45,7 +45,7 @@ export function ConversationsList(props: ConversationsList) {
   const { entouragesWithMembers } = useQueryEntouragesWithMembers(entourageIds, 'pending')
 
   if (!dataMyFeeds) {
-    throw new Error('ConversationsList: feed null')
+    assertIsDefined(dataMyFeeds, 'ConversationsList: feed can\'t be null')
   }
 
   if (!entouragesWithMembers) {

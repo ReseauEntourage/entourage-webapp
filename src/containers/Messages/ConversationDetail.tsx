@@ -12,6 +12,7 @@ import {
   useQueryMyFeeds,
 } from 'src/network/queries'
 import { theme } from 'src/styles'
+import { assertIsDefined } from 'src/utils'
 import {
   Container,
   MessagesContainer,
@@ -37,7 +38,7 @@ export function ConversationDetail(props: ConversationDetail) {
   const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
 
   if (!entourage) {
-    throw new Error(`Entourage "${entourageId}" is undefined`)
+    assertIsDefined(entourage, 'ConversationDetail: entourage undefined')
   }
 
   const { joinStatus } = entourage?.data || {}
