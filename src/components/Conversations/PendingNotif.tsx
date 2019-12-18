@@ -8,13 +8,14 @@ const Container = styled.div`
   background-color: ${colors.main.second};
   display: flex;
   align-items: center;
-  padding: ${theme.spacing(1)}px;
+  padding: ${theme.spacing(2)}px;
   border-radius: 5px;
 `
 
 const Label = styled(Typography).attrs(() => ({
   color: 'textSecondary',
   variant: variants.bodyRegular,
+  component: 'div',
 }))`
   margin-left: ${theme.spacing(1)}px !important;
 `
@@ -24,13 +25,14 @@ const FlexGrow = styled.div`
 `
 
 interface PendingNotifProps {
-  label: string | JSX.Element;
+  label?: string | JSX.Element;
   leftContent?: JSX.Element;
   pictureURL?: string | [string, string];
+  style?: React.CSSProperties;
 }
 
 export function PendingNotif(props: PendingNotifProps) {
-  const { label, pictureURL, leftContent } = props
+  const { label, pictureURL, leftContent, style } = props
 
   const avatarMultipleStyles: React.CSSProperties = {
     position: 'absolute',
@@ -47,11 +49,13 @@ export function PendingNotif(props: PendingNotifProps) {
     ) : <Avatar borderColor="white" src={pictureURL} />
 
   return (
-    <Container>
+    <Container style={style}>
       {avatar}
-      <Label>
-        {label}
-      </Label>
+      {label && (
+        <Label>
+          {label}
+        </Label>
+      )}
       <FlexGrow />
       {leftContent}
     </Container>

@@ -1,25 +1,109 @@
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
 import SendIcon from '@material-ui/icons/Send'
 // @ts-ignore
 import ScrollToBottom from 'react-scroll-to-bottom'
 import React, { useCallback } from 'react'
-import { Button } from 'src/components/Button'
-import { Message } from 'src/components/Conversations'
+import { Button, ButtonsList } from 'src/components/Button'
+import { Message, PendingNotif } from 'src/components/Conversations'
 import { TextField, useForm } from 'src/components/Form'
+import { useDelayLoading } from 'src/hooks'
 import {
   useQueryMe,
   useQueryEntourageChatMessages,
   useMutateCreateEntourageChatMessage,
-  useQueryMyFeeds,
+  useQueryMembersPending,
+  useQueryMeNonNullable,
+  useQueryEntourageFromMyFeeds,
+  useMutateAcceptEntourageUser,
+  useMutateDeleteEntourageUser,
 } from 'src/network/queries'
 import { theme } from 'src/styles'
-import { assertIsDefined } from 'src/utils'
 import {
   Container,
   MessagesContainer,
   BottomBar,
   TopBar,
   Pending,
+  MemberPendingContainer,
 } from './ConversationDetail.styles'
+
+interface MembersPendingRequestProps {
+  entourageId: number;
+}
+
+function MembersPendingRequest(props: MembersPendingRequestProps) {
+  const { entourageId } = props
+
+  const [deleting, setDeleting] = useDelayLoading()
+  const [accepting, setAccepting] = useDelayLoading()
+  const { membersPending } = useQueryMembersPending(entourageId)
+  const me = useQueryMeNonNullable()
+  const entourage = useQueryEntourageFromMyFeeds(entourageId)
+  const iAmAuthor = me.id === entourage.author.id
+
+  const [accepteEntourageUser] = useMutateAcceptEntourageUser()
+  const [deleteEntourageUser] = useMutateDeleteEntourageUser()
+
+  const currentMemberPending = membersPending[0]
+  const nextMemberPending = membersPending[1]
+
+  const onValidateRequest = useCallback(async () => {
+    setAccepting(true)
+    await accepteEntourageUser({ entourageId, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
+    setAccepting(false)
+  }, [accepteEntourageUser, currentMemberPending, entourageId, setAccepting])
+
+  const onRejectRequest = useCallback(async () => {
+    setDeleting(true)
+    await deleteEntourageUser({ entourageId, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
+    setDeleting(false)
+  }, [deleteEntourageUser, currentMemberPending, entourageId, setDeleting])
+
+  if (!iAmAuthor || !currentMemberPending) {
+    return null
+  }
+
+  return (
+    <MemberPendingContainer>
+      <PendingNotif
+        key={currentMemberPending.id}
+        label={<div><b>{currentMemberPending.displayName} souhaite rejoindre votre action</b></div>}
+        leftContent={(
+          <ButtonsList>
+            <Button
+              loading={accepting}
+              onClick={onValidateRequest}
+              startIcon={<CheckIcon />}
+            >
+              Accepter
+            </Button>
+            <Button
+              loading={deleting}
+              onClick={onRejectRequest}
+              startIcon={<CloseIcon />}
+              style={{ backgroundColor: '#fff' }}
+              variant="outlined"
+            >
+              Refuser
+            </Button>
+          </ButtonsList>
+        )}
+        pictureURL={currentMemberPending.avatarUrl}
+      />
+      {nextMemberPending && (
+        <PendingNotif
+          pictureURL={nextMemberPending.avatarUrl}
+          style={{
+            borderRadius: 0,
+            borderTopLeftRadius: 5,
+            borderBottomLeftRadius: 5,
+          }}
+        />
+      )}
+    </MemberPendingContainer>
+  )
+}
 
 interface FormFields {
   content: string;
@@ -34,14 +118,9 @@ export function ConversationDetail(props: ConversationDetail) {
 
   const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()
 
-  const { data: myFeedsData } = useQueryMyFeeds()
-  const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
+  const entourage = useQueryEntourageFromMyFeeds(entourageId)
 
-  if (!entourage) {
-    assertIsDefined(entourage, 'ConversationDetail: entourage undefined')
-  }
-
-  const { joinStatus } = entourage?.data || {}
+  const { joinStatus } = entourage
   const userIsAccepted = joinStatus === 'accepted'
 
   if (joinStatus !== 'accepted' && joinStatus !== 'pending') {
@@ -70,8 +149,9 @@ export function ConversationDetail(props: ConversationDetail) {
   return (
     <Container>
       <TopBar>
-        {entourage?.data.title}
+        {entourage.title}
       </TopBar>
+      <MembersPendingRequest entourageId={entourageId} />
       {!userIsAccepted ? (
         <Pending>
           Votre demande est en attente. Lorsque vous serez accepté.e,

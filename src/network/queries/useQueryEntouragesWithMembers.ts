@@ -1,12 +1,16 @@
 import { useQuery } from 'react-query'
 import { api, FeedJoinStatus } from 'src/network/api'
 import { queryKeys } from './queryKeys'
+import { useQueryMyFeeds } from './useQueryMyFeeds'
 
-export function useQueryEntouragesWithMembers(entourageIdList: number[] | undefined, memberStatus?: FeedJoinStatus) {
+export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
+  const { data: dataMyFeeds } = useQueryMyFeeds()
+  const entourageIds = dataMyFeeds?.data.feeds.map((feed) => feed.data.id)
+
   const { data: entourageMembers } = useQuery(
-    entourageIdList ? [queryKeys.entourageUsers, { entourageIdList }] : null,
+    entourageIds ? [queryKeys.entourageUsers, { entourageIds }] : null,
     (params) => {
-      return Promise.all(params.entourageIdList.map(async (entourageId) => {
+      return Promise.all(params.entourageIds.map(async (entourageId) => {
         const members = await api.request({
           name: 'GET /entourages/:entourageId/users',
           pathParams: {
@@ -39,8 +43,10 @@ export function useQueryEntouragesWithMembers(entourageIdList: number[] | undefi
     }))
 
   if (memberStatus) {
-    entouragesWithMembers = entouragesWithMembers.filter((entourage) => ({
+    entouragesWithMembers = entouragesWithMembers.map((entourage) => ({
       entourageId: entourage.entourageId,
+      // strange bug from TypeScript as he know member type
+      // @ts-ignore
       members: entourage.members.filter((member) => member.status === memberStatus),
     }))
   }

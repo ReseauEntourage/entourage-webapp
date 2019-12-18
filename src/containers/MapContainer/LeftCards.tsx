@@ -20,8 +20,10 @@ import {
   useMutateEntourageUsers,
   useMutateDeleteEntourageUser,
   useQueryMe,
+  useQueryMeNonNullable,
 } from 'src/network/queries'
 import { variants, colors } from 'src/styles'
+import { assertIsDefined } from 'src/utils'
 
 interface ModalLeaveEntourageProps {
   entourageId: number;
@@ -30,15 +32,18 @@ interface ModalLeaveEntourageProps {
 function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
   const { entourageId } = props
   const [deleteEntourageUser] = useMutateDeleteEntourageUser()
+  const me = useQueryMeNonNullable()
+
+  assertIsDefined(me.id)
 
   const onValidate = useCallback(async () => {
     try {
-      await deleteEntourageUser({ entourageId }, { waitForRefetchQueries: true })
+      await deleteEntourageUser({ entourageId, userId: me.id }, { waitForRefetchQueries: true })
       return true
     } catch (e) {
       return false
     }
-  }, [deleteEntourageUser, entourageId])
+  }, [deleteEntourageUser, entourageId, me.id])
 
   return (
     <Modal

@@ -277,6 +277,19 @@ export const schema = {
       }[];
     },
   },
+  'PUT /entourages/:entourageId/users/:userId': {
+    url: (params: { entourageId: number; userId: number; }) => {
+      return `entourages/${params.entourageId}/users/${params.userId}`
+    },
+    method: 'PUT',
+    params: null,
+    data: {} as {
+      user: {
+        status: 'accepted';
+      };
+    },
+    response: null,
+  },
   'DELETE /entourages/:entourageId/users/:userId': {
     url: (params: { entourageId: number; userId: number; }) => {
       return `entourages/${params.entourageId}/users/${params.userId}`
@@ -349,15 +362,15 @@ export const schema = {
         };
         metadata: {
           city: string;
-          display_address: string;
+          displayAddress: string;
         };
-        number_of_people: number;
-        number_of_unread_messages: number;
+        numberOfPeople: number;
+        numberOfUnreadMessages: number;
         public: boolean;
         shareUrl: string;
         status: FeedStatus;
         title: string;
-        updated_at: DateISO;
+        updatedAt: DateISO;
         uuid: string;
       };
     },
