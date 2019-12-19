@@ -12,7 +12,7 @@ import { Provider as MainContextProvider } from 'src/containers/MainContext'
 import { Nav } from 'src/containers/Nav'
 import { api } from 'src/core/api'
 import { Dispatchers } from 'src/core/events'
-import { config as queryConfig } from 'src/core/queries'
+import { config as queryConfig } from 'src/core/store'
 import { theme } from 'src/styles'
 import { isSSR } from 'src/utils/misc'
 

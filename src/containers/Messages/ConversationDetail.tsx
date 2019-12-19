@@ -16,7 +16,7 @@ import {
   useQueryEntourageFromMyFeeds,
   useMutateAcceptEntourageUser,
   useMutateDeleteEntourageUser,
-} from 'src/core/queries'
+} from 'src/core/store'
 import { theme } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
 import {

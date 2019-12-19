@@ -10,7 +10,7 @@ import {
   DataUseQueryEntouragesWithMembers,
   DataQueryMyFeeds,
   DataUseQueryMeNonNullable,
-} from 'src/core/queries'
+} from 'src/core/store'
 import { assertIsDefined } from 'src/utils/misc'
 
 const Container = styled.div`

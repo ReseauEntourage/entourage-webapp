@@ -5,8 +5,8 @@ import { refetchQuery } from 'react-query'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
-import { queryKeys } from 'src/core/queries'
 import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
+import { queryKeys } from 'src/core/store'
 
 interface LoggedChunkProps {}
 

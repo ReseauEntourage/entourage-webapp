@@ -20,7 +20,7 @@ import {
   useMutateDeleteEntourageUser,
   useQueryMe,
   useQueryMeNonNullable,
-} from 'src/core/queries'
+} from 'src/core/store'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
 import { assertIsDefined } from 'src/utils/misc'

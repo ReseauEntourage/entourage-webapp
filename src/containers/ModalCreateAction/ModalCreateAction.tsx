@@ -8,7 +8,7 @@ import { TextField, Label, RowFields, useForm, Select } from 'src/components/For
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateEntourages } from 'src/core/queries'
+import { useMutateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 
 const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
