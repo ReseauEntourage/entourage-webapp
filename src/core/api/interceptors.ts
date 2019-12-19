@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios'
 import humps from 'humps'
-import { env } from 'src/core'
+import { env } from 'src/core/env'
 import { getTokenFromCookies } from 'src/core/services'
 import { notifServerError } from 'src/utils/misc'
 

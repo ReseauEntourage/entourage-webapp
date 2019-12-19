@@ -1,6 +1,6 @@
 import GoogleMapReact from 'google-map-react'
 import React, { useState, useCallback } from 'react'
-import { env } from 'src/core'
+import { env } from 'src/core/env'
 import { AnyToFix } from 'src/utils/types'
 import { MapContextValue, MapContext, useMapContext } from './context'
 

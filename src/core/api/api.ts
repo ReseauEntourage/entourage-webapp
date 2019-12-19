@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosPromise } from 'axios'
 import { NextPageContext } from 'next'
 import { ObjectParams, FnParams, Extends } from 'typescript-object-schema'
-import { env } from 'src/core'
+import { env } from 'src/core/env'
 import { createAnonymousUser, getTokenFromCookies } from 'src/core/services'
 import { AnyToFix } from 'src/utils/types'
 import { addAxiosInterceptors } from './interceptors'
