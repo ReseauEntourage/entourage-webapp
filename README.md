@@ -37,10 +37,86 @@ Entourage Web App
 * WebSocket client - [socket.io-client](https://github.com/socketio/socket.io-client)
 
 # Installation
-...
+
+Pour lancer le projet, vous devez installer [Yarn](#https://yarnpkg.com/en/docs/install). 
+
+## Install dependencies
+
+```
+yarn install
+```
+
+## build dependencies
+
+```
+yarn dev
+```
 
 # Architecture
-...
+
+* [`components`](#components)
+* [`containers`](#containers)
+* [`core`](#core)
+* [`events`](#events)
+* [`hooks`](#hooks)
+* [`i18n`](#i18n)
+* [`network`](#network)
+* [`pages`](#pages)
+* [`styles`](#styles)
+* [`types`](#types)
+* [`utils`](#utils)
+
+## components
+Composants React purement UI, sans manimulation de données. Ces composant sont visibles dans la documentation [Storybook](#storybook)  
+
+Dépendances: `components` `styles` `hooks` `utils`
+
+## containers
+Composant React qui manupule des données. Ils sont en charge fetcher les données et de les afficher. Un composant de type "container" peut inclure d'autres containers ainsi que des composants UI.  
+
+Dépendances: toutes.
+
+## core
+Core ne contient pour le moment qu'une référence aux variables d'environnement
+
+## events
+Il s'agit d'un système de listener / dispatch utilisant RxJS. On y trouvera des fonctions pour écouter l'évenement `onLogin`, `onLogout`, etc.  
+
+Dépendances: `network` `hooks`
+
+## hooks
+Liste pratique de hooks. Aucune dépendance.  
+
+Dépendances: aucune
+
+## i18n
+Contenu textuel  
+
+Dépendances: aucune
+
+## network
+Tout ce qui touche aux échanges client / serveur. `network/api` va permettre d'effectuer des requêtes serveurs avec Axios, selon un schéma de route.  
+
+Dépendances: `core` `network` `types`
+
+## pages
+Composant React servant de Page NextJS. [Plus d'infos](https://nextjs.org/docs#routing)
+
+Dépendances: toutes
+
+## styles
+Données relatives au style de l'application: thème Matérial UI, liste des couleurs utilisé, etc...  
+
+Dépendance: aucune
+
+## types
+Liste d'utilitaires TypeScript (Interface et Types)
+
+Dépendance: aucune
+
+## utils
+Liste d'utilitaires JavaScript
+Dépendance: aucune
 
 # API
 
