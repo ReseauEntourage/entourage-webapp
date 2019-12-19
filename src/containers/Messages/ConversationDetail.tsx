@@ -7,7 +7,6 @@ import React, { useCallback } from 'react'
 import { Button, ButtonsList } from 'src/components/Button'
 import { Message, PendingNotif } from 'src/components/Conversations'
 import { TextField, useForm } from 'src/components/Form'
-import { useDelayLoading } from 'src/hooks'
 import {
   useQueryMe,
   useQueryEntourageChatMessages,
@@ -19,6 +18,7 @@ import {
   useMutateDeleteEntourageUser,
 } from 'src/network/queries'
 import { theme } from 'src/styles'
+import { useDelayLoading } from 'src/utils/hooks'
 import {
   Container,
   MessagesContainer,

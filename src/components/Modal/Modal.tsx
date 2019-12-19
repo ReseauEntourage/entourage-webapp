@@ -6,9 +6,9 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
-import { useDelayLoading } from 'src/hooks'
 import { colors, variants } from 'src/styles'
 import { AnyToFix } from 'src/types'
+import { useDelayLoading } from 'src/utils/hooks'
 import { useModalContext } from './ModalContext'
 
 interface Props {

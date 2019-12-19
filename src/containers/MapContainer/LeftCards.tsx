@@ -4,16 +4,15 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import CloseIcon from '@material-ui/icons/Close'
 import DoneIcon from '@material-ui/icons/Done'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import Link from 'next/link'
-import React, { useCallback, useState } from 'react'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
+import Link from 'next/link'
+import React, { useCallback, useState } from 'react'
 import { Button } from 'src/components/Button'
 import { ActionCard, EventCard } from 'src/components/LeftCards'
 import { Modal, openModal } from 'src/components/Modal'
 import { UsersList } from 'src/components/UsersList'
 import { useMainContext } from 'src/containers/MainContext'
-import { useMount, useDelayLoading } from 'src/hooks'
 import { FeedItem } from 'src/network/api'
 import {
   useQueryEntourageUsers,
@@ -24,6 +23,7 @@ import {
 } from 'src/network/queries'
 import { variants, colors } from 'src/styles'
 import { assertIsDefined } from 'src/utils'
+import { useMount, useDelayLoading } from 'src/utils/hooks'
 
 interface ModalLeaveEntourageProps {
   entourageId: number;
