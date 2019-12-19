@@ -1,7 +1,6 @@
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
-import { colors, variants } from 'src/styles'
-import { theme } from 'src/styles/theme'
+import { colors, variants, theme } from 'src/styles'
 
 export const Container = styled.div<{ isActive: boolean; }>`
   display: flex;

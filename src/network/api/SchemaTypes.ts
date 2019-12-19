@@ -1,4 +1,4 @@
-import { DateISO } from 'src/types/utils'
+import { DateISO } from 'src/types'
 
 export type UserType = 'public'
 

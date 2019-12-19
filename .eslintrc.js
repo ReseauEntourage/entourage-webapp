@@ -73,6 +73,23 @@ module.exports = {
     'max-len': [1, { code: 120 }],
     'no-console': [1, { allow: ['warn', 'error'] }],
     'no-multiple-empty-lines': [2, { "max": 1 }], // prettier like
+    'no-restricted-imports': ['error', {
+      'patterns': [
+        'src/components/*/*',
+        'src/constants/*',
+        'src/containers/*/*',
+        'src/core/*',
+        'src/events/*',
+        'src/hooks/*',
+        'src/i18n/*',
+        'src/network/api/*',
+        'src/network/queries/*',
+        'src/pages',
+        'src/styles/*',
+        'src/types/*',
+        'src/utils/*',
+      ]
+    }],
     'semi': [1, 'never'],
     // max-len is enought
     'object-curly-newline': 0,

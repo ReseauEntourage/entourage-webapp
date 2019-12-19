@@ -13,7 +13,7 @@ import { Nav } from 'src/containers/Nav'
 import { Dispatchers } from 'src/events'
 import { api } from 'src/network/api'
 import { config as queryConfig } from 'src/network/queries'
-import { theme } from 'src/styles/theme'
+import { theme } from 'src/styles'
 import { isSSR } from 'src/utils'
 
 if (process.env.NODE_ENV !== 'production') {

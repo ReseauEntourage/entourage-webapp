@@ -1,6 +1,5 @@
 import styled from 'styled-components'
-import { colors } from 'src/styles'
-import { theme } from 'src/styles/theme'
+import { colors, theme } from 'src/styles'
 
 interface ContainerProps {
   isActive?: boolean;
