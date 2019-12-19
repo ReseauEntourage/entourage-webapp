@@ -1,4 +1,4 @@
-import { AnyCantFix } from 'src/types'
+import { AnyCantFix } from 'src/utils/types'
 
 function throwAssertionError(val: AnyCantFix, type: string, additionnalMessage = '') {
   throw new Error(

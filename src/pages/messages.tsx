@@ -2,7 +2,7 @@ import Head from 'next/head'
 import React from 'react'
 import { Messages } from 'src/containers/Messages'
 import { useRedirectOnLogout } from 'src/events'
-import { StatelessPage } from 'src/types'
+import { StatelessPage } from 'src/utils/types'
 
 interface MessagesProps {}
 

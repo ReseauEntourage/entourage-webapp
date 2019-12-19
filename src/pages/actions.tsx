@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import React from 'react'
 import { MapContainer } from 'src/containers/MapContainer'
-import { StatelessPage } from 'src/types'
+import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 

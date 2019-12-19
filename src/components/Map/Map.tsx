@@ -1,7 +1,7 @@
 import GoogleMapReact from 'google-map-react'
 import React, { useState, useCallback } from 'react'
 import { env } from 'src/core'
-import { AnyToFix } from 'src/types'
+import { AnyToFix } from 'src/utils/types'
 import { MapContextValue, MapContext, useMapContext } from './context'
 
 const Paris = {

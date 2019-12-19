@@ -9,8 +9,8 @@ import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { AnyToFix, AnyCantFix } from 'src/types'
 import { isSSR, assertIsDefined } from 'src/utils/misc'
+import { AnyToFix, AnyCantFix } from 'src/utils/types'
 
 const autocompleteService = { current: null }
 

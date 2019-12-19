@@ -9,8 +9,8 @@ import { texts } from 'src/i18n'
 import { api } from 'src/network/api'
 import { queryKeys } from 'src/network/queries'
 import { setTokenIntoCookies } from 'src/network/services'
-import { AnyToFix } from 'src/types'
 import { handleServerError } from 'src/utils/misc'
+import { AnyToFix } from 'src/utils/types'
 
 type Step =
   | 'phone'

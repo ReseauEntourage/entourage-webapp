@@ -7,8 +7,8 @@ import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
-import { AnyToFix } from 'src/types'
 import { useDelayLoading } from 'src/utils/hooks'
+import { AnyToFix } from 'src/utils/types'
 import { useModalContext } from './ModalContext'
 
 interface Props {

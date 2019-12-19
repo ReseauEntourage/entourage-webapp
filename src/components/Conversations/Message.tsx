@@ -5,7 +5,7 @@ import { formatRelative } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import { Avatar } from 'src/components/Avatar'
 import { theme, colors, variants } from 'src/styles'
-import { DateISO } from 'src/types'
+import { DateISO } from 'src/utils/types'
 
 const Container = styled.div`
   max-width: 70%;
