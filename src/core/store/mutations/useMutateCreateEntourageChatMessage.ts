@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query'
 import { api } from 'src/core/api'
-import { queryKeys } from './queryKeys'
+import { queryKeys } from 'src/core/store'
 
 interface Data {
   content: string;

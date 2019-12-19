@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query'
 import { api, schema } from 'src/core/api'
-import { queryKeys } from './queryKeys'
+import { queryKeys } from 'src/core/store'
 
 type Data = typeof schema['/users/me/address POST']['data']['address']
 

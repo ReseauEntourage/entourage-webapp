@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 import { api, FeedJoinStatus } from 'src/core/api'
-import { queryKeys } from './queryKeys'
+import { queryKeys } from 'src/core/store'
 import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {

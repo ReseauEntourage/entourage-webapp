@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query'
 import { api, LoggedUser } from 'src/core/api'
+import { queryKeys } from 'src/core/store'
 import { assertIsDefined } from 'src/utils/misc'
-import { queryKeys } from './queryKeys'
 
 export function useQueryMeNonNullable() {
   const { data } = useQuery(queryKeys.me, () => api.request({

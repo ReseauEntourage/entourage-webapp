@@ -2,8 +2,8 @@ import { useCallback, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { useMapContext } from 'src/components/Map'
 import { api } from 'src/core/api'
+import { queryKeys } from 'src/core/store'
 import { AnyToFix } from 'src/utils/types'
-import { queryKeys } from './queryKeys'
 
 export function useQueryFeeds() {
   const mapContext = useMapContext()

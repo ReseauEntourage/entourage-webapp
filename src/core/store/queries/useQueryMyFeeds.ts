@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 import { api } from 'src/core/api'
-import { queryKeys } from './queryKeys'
+import { queryKeys } from 'src/core/store'
 
 export function useQueryMyFeeds() {
   return useQuery(queryKeys.myFeeds, () => api.request({
