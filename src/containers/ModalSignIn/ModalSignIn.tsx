@@ -3,7 +3,8 @@ import useForm from 'react-hook-form'
 import React, { useCallback, useState, useRef, useEffect } from 'react'
 import { refetchQuery } from 'react-query'
 import { TextField, validators } from 'src/components/Form'
-import { Modal } from 'src/components/Modal'
+import { Modal, openModal } from 'src/components/Modal'
+import { ModalProfile } from 'src/containers/ModalProfile'
 import { texts } from 'src/i18n'
 import { api } from 'src/network/api'
 import { queryKeys } from 'src/network/queries'
@@ -217,7 +218,7 @@ function useDefinePasswordStep() {
         },
       })
 
-      // refetchQuery(queryKeys.me)
+      openModal(<ModalProfile />)
 
       return true
     } catch (error) {

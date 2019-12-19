@@ -49,10 +49,10 @@ export function Nav() {
   const { data: me } = useQueryMe()
 
   useOnLogin((meResponse) => {
-    const { firstName, lastName, address } = meResponse.data.user
+    const { firstName, lastName, address, hasPassword } = meResponse.data.user
     const userInfosIncompleted = !firstName || !lastName || !address
 
-    if (userInfosIncompleted) {
+    if (hasPassword && userInfosIncompleted) {
       openModal(<ModalProfile />)
     }
   })
