@@ -7,7 +7,7 @@ import RestaurantIcon from '@material-ui/icons/Restaurant'
 import SpaIcon from '@material-ui/icons/Spa'
 import React from 'react'
 import { useMapContext } from '../context'
-import { POICategory } from 'src/network/api'
+import { POICategory } from 'src/core/api'
 import { colors } from 'src/styles'
 import { BaseMarker } from './BaseMarker'
 

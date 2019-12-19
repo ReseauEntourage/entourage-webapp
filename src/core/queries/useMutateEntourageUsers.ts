@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query'
-import { api, schema } from 'src/network/api'
+import { api, schema } from 'src/core/api'
 import { queryKeys } from './queryKeys'
 
 type PathParams = Parameters<typeof schema['POST /entourages/:entourageId/users']['url']>[0]

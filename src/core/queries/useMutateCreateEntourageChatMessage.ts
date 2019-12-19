@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query'
-import { api } from 'src/network/api'
+import { api } from 'src/core/api'
 import { queryKeys } from './queryKeys'
 
 interface Data {

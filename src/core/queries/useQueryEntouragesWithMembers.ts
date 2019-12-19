@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { api, FeedJoinStatus } from 'src/network/api'
+import { api, FeedJoinStatus } from 'src/core/api'
 import { queryKeys } from './queryKeys'
 import { useQueryMyFeeds } from './useQueryMyFeeds'
 

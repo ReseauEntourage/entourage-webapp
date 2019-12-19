@@ -6,9 +6,9 @@ import { TextField, Label, RowFields, validators, useForm } from 'src/components
 import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 // import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
-// import { api } from 'src/network/api'
+// import { api } from 'src/core/api'
+import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/core/queries'
 import { texts } from 'src/i18n'
-import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/network/queries'
 
 type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
 

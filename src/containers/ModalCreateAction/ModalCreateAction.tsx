@@ -7,9 +7,9 @@ import React, { useCallback, useEffect } from 'react'
 import { TextField, Label, RowFields, useForm, Select } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
+import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
+import { useMutateEntourages } from 'src/core/queries'
 import { texts } from 'src/i18n'
-import { FeedDisplayCategory, FeedEntourageType } from 'src/network/api'
-import { useMutateEntourages } from 'src/network/queries'
 
 const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
 

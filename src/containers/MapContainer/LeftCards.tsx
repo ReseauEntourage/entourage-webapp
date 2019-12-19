@@ -13,14 +13,14 @@ import { ActionCard, EventCard } from 'src/components/LeftCards'
 import { Modal, openModal } from 'src/components/Modal'
 import { UsersList } from 'src/components/UsersList'
 import { useMainContext } from 'src/containers/MainContext'
-import { FeedItem } from 'src/network/api'
+import { FeedItem } from 'src/core/api'
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
   useMutateDeleteEntourageUser,
   useQueryMe,
   useQueryMeNonNullable,
-} from 'src/network/queries'
+} from 'src/core/queries'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
 import { assertIsDefined } from 'src/utils/misc'

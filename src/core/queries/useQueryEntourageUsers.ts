@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import { api } from 'src/network/api'
+import { api } from 'src/core/api'
 import { queryKeys } from './queryKeys'
 
 export function useQueryEntourageUsers(entourageId: string) {

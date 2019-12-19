@@ -1,6 +1,6 @@
 import { Subject } from 'rxjs'
 import { useEffect } from 'react'
-import { useQueryMe } from 'src/network/queries'
+import { useQueryMe } from 'src/core/queries'
 import { useMount, usePrevious } from 'src/utils/hooks'
 
 const loginSubject = new Subject()
