@@ -6,8 +6,6 @@ Entourage Web App
     * [Bibliothèques internes](#bibliothèques-internes)
 * [Installation](#installation)
 * [Architecture](#architecture)
-* [API](#api)
-* [Store data](#store-data)
 * [Storybook](#storybook)
 * [Tests](#tests)
   * [Jest](#jest)
@@ -57,69 +55,30 @@ yarn dev
 * [`components`](#components)
 * [`containers`](#containers)
 * [`core`](#core)
-* [`events`](#events)
-* [`hooks`](#hooks)
+  * [`api`](#api)
+  * [`events`](#events)
+  * [`store`](#store)
+  * [`services`](#services)
 * [`i18n`](#i18n)
-* [`network`](#network)
 * [`pages`](#pages)
 * [`styles`](#styles)
-* [`types`](#types)
 * [`utils`](#utils)
+  * [`hooks`](#hooks)
+  * [`types`](#types)
+  * [`misc`](#misc)
 
 ## components
 Composants React purement UI, sans manimulation de données. Ces composant sont visibles dans la documentation [Storybook](#storybook)  
 
-Dépendances: `components` `styles` `hooks` `utils`
+Dépendances: `components` `styles` `utils`
 
 ## containers
 Composant React qui manupule des données. Ils sont en charge fetcher les données et de les afficher. Un composant de type "container" peut inclure d'autres containers ainsi que des composants UI.  
 
-Dépendances: toutes.
-
 ## core
-Core ne contient pour le moment qu'une référence aux variables d'environnement
+Logique métier
 
-## events
-Il s'agit d'un système de listener / dispatch utilisant RxJS. On y trouvera des fonctions pour écouter l'évenement `onLogin`, `onLogout`, etc.  
-
-Dépendances: `network` `hooks`
-
-## hooks
-Liste pratique de hooks. Aucune dépendance.  
-
-Dépendances: aucune
-
-## i18n
-Contenu textuel  
-
-Dépendances: aucune
-
-## network
-Tout ce qui touche aux échanges client / serveur. `network/api` va permettre d'effectuer des requêtes serveurs avec Axios, selon un schéma de route.  
-
-Dépendances: `core` `network` `types`
-
-## pages
-Composant React servant de Page NextJS. [Plus d'infos](https://nextjs.org/docs#routing)
-
-Dépendances: toutes
-
-## styles
-Données relatives au style de l'application: thème Matérial UI, liste des couleurs utilisé, etc...  
-
-Dépendance: aucune
-
-## types
-Liste d'utilitaires TypeScript (Interface et Types)
-
-Dépendance: aucune
-
-## utils
-Liste d'utilitaires JavaScript
-Dépendance: aucune
-
-# API
-
+### api
 Le schéma de l'api est défini dans [src/api/schema](src/api/schema.ts) et utilise le format [typescript-object-schema](https://github.com/GuillaumeJasmin/typescript-object-schema).
 
 Utilisation de l'API:
@@ -140,11 +99,93 @@ const users = await api.request({
 })
 ```
 
-Les valeur de `routeName` seront autocompletées, ainsi que les valeurs requises pour `params`, `data`, etc.  
+Les valeur de `name` seront autocompletées, ainsi que les valeurs requises pour `params`, `data`, etc.  
 L'objet `api` est une instance axios.
 
-# Store data
-[react-query](https://github.com/tannerlinsley/react-query)
+#### routes
+* `/anonymous_users POST`
+* `/entourages POST`
+* `/entourages/:entourageId/users GET`
+* `/entourages/:entourageId/users POST`
+* `/entourages/:entourageId/chat_messages GET`
+* `/entourages/:entourageId/chat_messages POST`
+* `/entourages/:entourageId/users/:userId PUT`
+* `/entourages/:entourageId/users/:userId DELETE`
+* `/feeds GET`
+* `/login POST`
+* `/myfeeds GET`
+* `/pois GET`
+* `/users POST`
+* `/users/me GET`
+* `/users/me PATCH`
+* `/users/me/address POST`
+* `/users/me/presigned_avatar_upload/ POST`
+* `/users/lookup POST`
+
+### events
+Il s'agit d'un système de listener / dispatch utilisant RxJS. On y trouvera des hooks pour écouter l'évenement `onLogin`, `onLogout` par exemple.
+
+#### Liste des évènements
+
+* `onLogin`
+* `onLogout`
+
+#### Exemple
+
+```ts
+import { useOnLogin } from 'src/core/events'
+
+function MyComponent() {
+
+  useOnLogin((user) => {
+    // code
+  })
+
+  // ...
+}
+```
+
+### store
+Persistance des données via [react-query](https://github.com/tannerlinsley/react-query)
+
+#### Queries
+* `useQueryMe`
+* `useQueryPOIs`
+* `useQueryFeeds`
+* `useQueryEntourageUsers`
+* `useQueryMyFeeds`
+* `useQueryEntourageChatMessages`
+* `useQueryEntouragesWithMembers`
+* `useQueryMeNonNullable`
+* `useQueryMembersPending`
+* `useQueryEntourageFromMyFeeds`
+
+#### Mutations
+
+* `useMutateEntourage`
+* `useMutateMe`
+* `useMutateMeAddress`
+* `useMutateEntourageUsers`
+* `useMutateDeleteEntourageUser`
+* `useMutateAcceptEntourageUser`
+* `useMutateCreateEntourageChatMessage`
+
+## i18n
+Contenu textuel  
+
+Dépendances: aucune
+
+## pages
+Composant React servant de Page NextJS. [Plus d'infos](https://nextjs.org/docs#routing)
+
+Dépendances: toutes
+
+## styles
+Données relatives au style de l'application: thème Matérial UI, liste des couleurs utilisé, etc...  
+
+
+## utils
+Liste d'utilitaires JavaScript et TypeScript
 
 # Storybook
 
