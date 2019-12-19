@@ -33,7 +33,7 @@ export default class App extends NextApp {
     // use to get token, either anonyous token or authenticated token
     if (isSSR) {
       await api.ssr(appContext.ctx).request({
-        name: 'GET /users/me',
+        name: '/users/me GET',
       })
     }
 

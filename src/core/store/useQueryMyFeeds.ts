@@ -4,7 +4,7 @@ import { queryKeys } from './queryKeys'
 
 export function useQueryMyFeeds() {
   return useQuery(queryKeys.myFeeds, () => api.request({
-    name: 'GET /myfeeds',
+    name: '/myfeeds GET',
   }))
 }
 

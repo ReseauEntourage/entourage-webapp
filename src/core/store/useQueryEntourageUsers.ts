@@ -5,7 +5,7 @@ import { queryKeys } from './queryKeys'
 export function useQueryEntourageUsers(entourageId: string) {
   const { data, isLoading } = useQuery([queryKeys.entourageUsers, { entourageId }], (pathParams) => {
     return api.request({
-      name: 'GET /entourages/:entourageId/users',
+      name: '/entourages/:entourageId/users GET',
       pathParams: {
         entourageId: pathParams.entourageId,
       },

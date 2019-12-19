@@ -4,6 +4,6 @@ import { queryKeys } from './queryKeys'
 
 export function useQueryMe() {
   return useQuery(queryKeys.me, () => api.request({
-    name: 'GET /users/me',
+    name: '/users/me GET',
   }))
 }

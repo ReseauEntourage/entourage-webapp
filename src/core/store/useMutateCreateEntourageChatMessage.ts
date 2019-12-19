@@ -9,7 +9,7 @@ interface Data {
 export function useMutateCreateEntourageChatMessage(entourageId: number) {
   return useMutation((data: Data) => {
     return api.request({
-      name: 'POST /entourages/:entourageId/chat_messages',
+      name: '/entourages/:entourageId/chat_messages POST',
       pathParams: {
         entourageId,
       },

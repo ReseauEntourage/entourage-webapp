@@ -15,7 +15,7 @@ import { useOnScroll } from 'src/utils/hooks'
 import { LeftCards } from './LeftCards'
 import { useActionId } from './useActionId'
 
-function getFeedItemIcon(feedItem: typeof schema['GET /feeds']['response']['feeds'][0]['data']) {
+function getFeedItemIcon(feedItem: typeof schema['/feeds GET']['response']['feeds'][0]['data']) {
   const { entourageType, displayCategory } = feedItem
   if (entourageType === 'contribution') {
     const backgroundColor = colors.main.primary

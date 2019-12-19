@@ -12,7 +12,7 @@ export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
     (params) => {
       return Promise.all(params.entourageIds.map(async (entourageId) => {
         const members = await api.request({
-          name: 'GET /entourages/:entourageId/users',
+          name: '/entourages/:entourageId/users GET',
           pathParams: {
             entourageId,
           },

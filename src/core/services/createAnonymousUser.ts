@@ -4,7 +4,7 @@ import { setTokenIntoCookies } from './authToken'
 
 export async function createAnonymousUser(ctx?: NextPageContext): Promise<string> {
   const anonymousUsersRes = await api.request({
-    name: 'POST /anonymous_users',
+    name: '/anonymous_users POST',
   })
 
   const anonymousToken = anonymousUsersRes.data.user.token

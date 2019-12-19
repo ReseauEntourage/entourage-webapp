@@ -33,7 +33,7 @@ type FormFieldKey = keyof FormField
 //     if (!imageCropperValue) return
 
 //     const presignedURLResponse = await api.request({
-//       name: 'POST /users/me/presigned_avatar_upload/',
+//       name: '/users/me/presigned_avatar_upload/ POST',
 //       data: {
 //         contentType: 'image/jpeg',
 //       },

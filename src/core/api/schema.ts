@@ -18,7 +18,7 @@ import {
 } from './SchemaTypes'
 
 export const schema = {
-  'POST /anonymous_users': {
+  '/anonymous_users POST': {
     url: 'anonymous_users',
     method: 'POST',
     params: null,
@@ -27,7 +27,136 @@ export const schema = {
       user: User;
     },
   },
-  'GET /feeds': {
+  '/entourages POST': {
+    url: 'entourages',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      entourage: {
+        description: string;
+        displayCategory: FeedDisplayCategory;
+        entourageType: FeedEntourageType;
+        location: {
+          latitude: number;
+          longitude: number;
+        };
+        title: string;
+      };
+    },
+    response: {} as {
+      entourage: {
+        author: User;
+        createdAt: DateISO;
+        description: string;
+        displayCategory: FeedDisplayCategory;
+        entourageType: FeedEntourageType;
+        groupType: FeedGroupType;
+        id: number;
+        joinStatus: FeedJoinStatus;
+        location: {
+          latitude: number;
+          longitude: number;
+        };
+        metadata: {
+          city: string;
+          displayAddress: string;
+        };
+        numberOfPeople: number;
+        numberOfUnreadMessages: number;
+        public: boolean;
+        shareUrl: string;
+        status: FeedStatus;
+        title: string;
+        updatedAt: DateISO;
+        uuid: string;
+      };
+    },
+  },
+  '/entourages/:entourageId/chat_messages GET': {
+    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    method: 'GET',
+    params: null,
+    data: null,
+    response: {} as {
+      chatMessages: {
+        content: string;
+        createdAt: DateISO;
+        id: number;
+        messageType: 'text';
+        user: {
+          avatarUrl: User['avatarUrl'];
+          displayName: User['displayName'];
+          id: User['id'];
+          partner: User['partner'];
+        };
+      }[];
+    },
+  },
+  '/entourages/:entourageId/chat_messages POST': {
+    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    method: 'POST',
+    params: null,
+    data: {} as {
+      chatMessage: {
+        content: string;
+      };
+    },
+    response: {} as {},
+  },
+  '/entourages/:entourageId/users GET': {
+    url: (params: { entourageId: string | number; }) => `entourages/${params.entourageId}/users`,
+    method: 'GET',
+    params: {} as void | {
+      context?: 'groupFeed';
+      page?: number;
+      per?: number;
+    },
+    data: null,
+    response: {} as {
+      users: {
+        avatarUrl: string;
+        communityRoles: unknown[];
+        displayName: string;
+        groupRole: 'member';
+        id: number;
+        message: null;
+        partner: UserPartner;
+        requestedAt: DateISO;
+        role: 'member';
+        status: FeedJoinStatus;
+      }[];
+    },
+  },
+  '/entourages/:entourageId/users POST': {
+    url: (params: { entourageId: number; }) => `entourages/${params.entourageId}/users`,
+    method: 'POST',
+    params: null,
+    data: null,
+    response: {} as {},
+  },
+  '/entourages/:entourageId/users/:userId PUT': {
+    url: (params: { entourageId: number; userId: number; }) => {
+      return `entourages/${params.entourageId}/users/${params.userId}`
+    },
+    method: 'PUT',
+    params: null,
+    data: {} as {
+      user: {
+        status: 'accepted';
+      };
+    },
+    response: null,
+  },
+  '/entourages/:entourageId/users/:userId DELETE': {
+    url: (params: { entourageId: number; userId: number; }) => {
+      return `entourages/${params.entourageId}/users/${params.userId}`
+    },
+    method: 'DELETE',
+    params: null,
+    data: null,
+    response: null,
+  },
+  '/feeds GET': {
     url: 'feeds',
     method: 'GET',
     params: {} as {
@@ -79,7 +208,22 @@ export const schema = {
       nextPageToken?: string;
     },
   },
-  'GET /myfeeds': {
+  '/login POST': {
+    url: 'login',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      user: {
+        phone: string;
+        secret: string;
+      };
+    },
+    response: {} as {
+      firstSignIn: boolean;
+      user: User;
+    },
+  },
+  '/myfeeds GET': {
     url: 'myfeeds',
     method: 'GET',
     params: {} as void | {
@@ -157,67 +301,7 @@ export const schema = {
       }[];
     },
   },
-  'POST /users': {
-    url: 'users',
-    method: 'POST',
-    params: null,
-    data: {} as {
-      user: {
-        phone: string;
-      };
-    },
-    response: {} as {},
-  },
-  'GET /users/me': {
-    url: 'users/me',
-    method: 'GET',
-    params: null,
-    data: null,
-    response: {} as {
-      user: User;
-    },
-  },
-  'PATCH /users/me': {
-    url: 'users/me',
-    method: 'PATCH',
-    params: null,
-    data: {} as {
-      user: {
-        about?: string;
-        email?: string;
-        firstName?: string;
-        lastName?: string;
-        password?: string;
-      };
-    },
-    response: {} as {
-      user: User;
-    },
-  },
-  'POST /users/me/address': {
-    url: 'users/me/address',
-    method: 'POST',
-    params: null,
-    data: {} as {
-      address: {
-        googlePlaceId: string;
-        googleSessionToken: string;
-      };
-    },
-    response: {} as {},
-  },
-  'POST /users/me/presigned_avatar_upload/': {
-    url: '/users/me/presigned_avatar_upload/',
-    method: 'POST',
-    params: null,
-    data: {} as {
-      contentType: 'image/jpeg';
-    },
-    response: {} as {
-      presignedUrl: string;
-    },
-  },
-  'GET /pois': {
+  '/pois GET': {
     url: 'pois',
     method: 'GET',
     params: {} as {
@@ -246,136 +330,67 @@ export const schema = {
       }[];
     },
   },
-  'POST /entourages/:entourageId/users': {
-    url: (params: { entourageId: number; }) => `entourages/${params.entourageId}/users`,
+  '/users POST': {
+    url: 'users',
     method: 'POST',
-    params: null,
-    data: null,
-    response: {} as {},
-  },
-  'GET /entourages/:entourageId/users': {
-    url: (params: { entourageId: string | number; }) => `entourages/${params.entourageId}/users`,
-    method: 'GET',
-    params: {} as void | {
-      context?: 'groupFeed';
-      page?: number;
-      per?: number;
-    },
-    data: null,
-    response: {} as {
-      users: {
-        avatarUrl: string;
-        communityRoles: unknown[];
-        displayName: string;
-        groupRole: 'member';
-        id: number;
-        message: null;
-        partner: UserPartner;
-        requestedAt: DateISO;
-        role: 'member';
-        status: FeedJoinStatus;
-      }[];
-    },
-  },
-  'PUT /entourages/:entourageId/users/:userId': {
-    url: (params: { entourageId: number; userId: number; }) => {
-      return `entourages/${params.entourageId}/users/${params.userId}`
-    },
-    method: 'PUT',
     params: null,
     data: {} as {
       user: {
-        status: 'accepted';
-      };
-    },
-    response: null,
-  },
-  'DELETE /entourages/:entourageId/users/:userId': {
-    url: (params: { entourageId: number; userId: number; }) => {
-      return `entourages/${params.entourageId}/users/${params.userId}`
-    },
-    method: 'DELETE',
-    params: null,
-    data: null,
-    response: null,
-  },
-  'GET /entourages/:entourageId/chat_messages': {
-    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
-    method: 'GET',
-    params: null,
-    data: null,
-    response: {} as {
-      chatMessages: {
-        content: string;
-        createdAt: DateISO;
-        id: number;
-        messageType: 'text';
-        user: {
-          avatarUrl: User['avatarUrl'];
-          displayName: User['displayName'];
-          id: User['id'];
-          partner: User['partner'];
-        };
-      }[];
-    },
-  },
-  'POST /entourages/:entourageId/chat_messages': {
-    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
-    method: 'POST',
-    params: null,
-    data: {} as {
-      chatMessage: {
-        content: string;
+        phone: string;
       };
     },
     response: {} as {},
   },
-  'POST /entourages': {
-    url: 'entourages',
-    method: 'POST',
+  '/users/me GET': {
+    url: 'users/me',
+    method: 'GET',
+    params: null,
+    data: null,
+    response: {} as {
+      user: User;
+    },
+  },
+  '/users/me PATCH': {
+    url: 'users/me',
+    method: 'PATCH',
     params: null,
     data: {} as {
-      entourage: {
-        description: string;
-        displayCategory: FeedDisplayCategory;
-        entourageType: FeedEntourageType;
-        location: {
-          latitude: number;
-          longitude: number;
-        };
-        title: string;
+      user: {
+        about?: string;
+        email?: string;
+        firstName?: string;
+        lastName?: string;
+        password?: string;
       };
     },
     response: {} as {
-      entourage: {
-        author: User;
-        createdAt: DateISO;
-        description: string;
-        displayCategory: FeedDisplayCategory;
-        entourageType: FeedEntourageType;
-        groupType: FeedGroupType;
-        id: number;
-        joinStatus: FeedJoinStatus;
-        location: {
-          latitude: number;
-          longitude: number;
-        };
-        metadata: {
-          city: string;
-          displayAddress: string;
-        };
-        numberOfPeople: number;
-        numberOfUnreadMessages: number;
-        public: boolean;
-        shareUrl: string;
-        status: FeedStatus;
-        title: string;
-        updatedAt: DateISO;
-        uuid: string;
-      };
+      user: User;
     },
   },
-  'POST /users/lookup': {
+  '/users/me/address POST': {
+    url: 'users/me/address',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      address: {
+        googlePlaceId: string;
+        googleSessionToken: string;
+      };
+    },
+    response: {} as {},
+  },
+  '/users/me/presigned_avatar_upload/ POST': {
+    url: '/users/me/presigned_avatar_upload/',
+    method: 'POST',
+    params: null,
+    data: {} as {
+      contentType: 'image/jpeg';
+    },
+    response: {} as {
+      presignedUrl: string;
+    },
+  },
+  '/users/lookup POST': {
     url: 'users/lookup',
     method: 'POST',
     params: null,
@@ -389,21 +404,6 @@ export const schema = {
       // entre 8 et 256 caracters
     },
   },
-  'POST /login': {
-    url: 'login',
-    method: 'POST',
-    params: null,
-    data: {} as {
-      user: {
-        phone: string;
-        secret: string;
-      };
-    },
-    response: {} as {
-      firstSignIn: boolean;
-      user: User;
-    },
-  },
 }
 
-export type FeedItem = typeof schema['GET /feeds']['response']['feeds'][0]['data']
+export type FeedItem = typeof schema['/feeds GET']['response']['feeds'][0]['data']

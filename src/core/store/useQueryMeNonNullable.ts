@@ -5,7 +5,7 @@ import { queryKeys } from './queryKeys'
 
 export function useQueryMeNonNullable() {
   const { data } = useQuery(queryKeys.me, () => api.request({
-    name: 'GET /users/me',
+    name: '/users/me GET',
   }))
 
   assertIsDefined(data?.data.user, 'useQueryMeNonNullable error')

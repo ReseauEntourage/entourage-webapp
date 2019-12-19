@@ -8,7 +8,7 @@ export function useQueryEntourageChatMessages(entourageId: number | null) {
     assertIsDefined(entourageId, 'useQueryEntourageChatMessages required entourageId')
 
     return api.request({
-      name: 'GET /entourages/:entourageId/chat_messages',
+      name: '/entourages/:entourageId/chat_messages GET',
       pathParams: {
         entourageId,
       },
