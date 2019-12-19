@@ -10,7 +10,7 @@ import { api } from 'src/network/api'
 import { queryKeys } from 'src/network/queries'
 import { setTokenIntoCookies } from 'src/network/services'
 import { AnyToFix } from 'src/types'
-import { handleServerError } from 'src/utils'
+import { handleServerError } from 'src/utils/misc'
 
 type Step =
   | 'phone'

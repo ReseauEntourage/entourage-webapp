@@ -11,7 +11,7 @@ import {
   DataQueryMyFeeds,
   DataUseQueryMeNonNullable,
 } from 'src/network/queries'
-import { assertIsDefined } from 'src/utils'
+import { assertIsDefined } from 'src/utils/misc'
 
 const Container = styled.div`
   border-right: solid 1px #ccc;

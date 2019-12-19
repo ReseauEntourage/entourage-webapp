@@ -2,7 +2,7 @@ import React from 'react'
 import { useMapContext } from '../context'
 import { constants } from 'src/constants'
 import { colors } from 'src/styles'
-import { getPixelPerMeter } from 'src/utils'
+import { getPixelPerMeter } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
 
 function getMarkerSize(lat: number, zoom: number) {

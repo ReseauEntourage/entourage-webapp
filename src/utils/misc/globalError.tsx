@@ -3,7 +3,7 @@ import cogoToast from 'cogo-toast'
 import React from 'react'
 import { variants } from 'src/styles'
 import { AnyToFix } from 'src/types'
-import { isSSR } from 'src/utils'
+import { isSSR } from 'src/utils/misc'
 
 export function notifServerError(error: AnyToFix) {
   if (isSSR) {

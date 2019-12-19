@@ -14,7 +14,7 @@ import { Dispatchers } from 'src/events'
 import { api } from 'src/network/api'
 import { config as queryConfig } from 'src/network/queries'
 import { theme } from 'src/styles'
-import { isSSR } from 'src/utils'
+import { isSSR } from 'src/utils/misc'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()

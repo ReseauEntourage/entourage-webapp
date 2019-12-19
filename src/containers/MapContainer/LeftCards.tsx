@@ -22,8 +22,8 @@ import {
   useQueryMeNonNullable,
 } from 'src/network/queries'
 import { variants, colors } from 'src/styles'
-import { assertIsDefined } from 'src/utils'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
+import { assertIsDefined } from 'src/utils/misc'
 
 interface ModalLeaveEntourageProps {
   entourageId: number;

@@ -1,4 +1,4 @@
-import { assertIsDefined } from 'src/utils'
+import { assertIsDefined } from 'src/utils/misc'
 import { useQueryEntouragesWithMembers } from './useQueryEntouragesWithMembers'
 
 export function useQueryMembersPending(entourageId: number) {

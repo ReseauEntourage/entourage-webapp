@@ -1,4 +1,4 @@
-import { assertIsDefined } from 'src/utils'
+import { assertIsDefined } from 'src/utils/misc'
 import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntourageFromMyFeeds(entourageId: number) {
