@@ -10,6 +10,7 @@ import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
 import { Provider as MainContextProvider } from 'src/containers/MainContext'
 import { Nav } from 'src/containers/Nav'
+import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api } from 'src/core/api'
 import { Dispatchers } from 'src/core/events'
 import { config as queryConfig } from 'src/core/store'
@@ -30,20 +31,34 @@ export default class App extends NextApp {
     // calls page's `getInitialProps` and fills `appProps.pageProps`
     const appProps = await NextApp.getInitialProps(appContext)
 
+    let me
+
     // use to get token, either anonyous token or authenticated token
     if (isSSR) {
-      await api.ssr(appContext.ctx).request({
+      const meData = await api.ssr(appContext.ctx).request({
         name: '/users/me GET',
       })
+
+      // me = meData.data.user
+      me = {
+        data: {
+          user: meData.data.user,
+        },
+      }
     }
 
     return {
       ...appProps,
+      // @ts-ignore
+      me,
     }
   }
 
   render() {
-    const { Component, pageProps } = this.props
+    // @ts-ignore
+    const { Component, pageProps, me } = this.props
+
+    const SSRDataValue = { me }
 
     return (
       <>
@@ -53,26 +68,28 @@ export default class App extends NextApp {
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
         </Head>
         <Reset />
-        <Dispatchers />
-        <ThemeProvider theme={theme}>
-          <ReactQueryConfigProvider config={queryConfig}>
-            <MainContextProvider>
-              <MapProvider>
-                <Layout>
-                  <>
-                    <Layout.Nav>
-                      <Nav />
-                    </Layout.Nav>
-                    <Layout.Page>
-                      <Component {...pageProps} />
-                      <ModalsListener />
-                    </Layout.Page>
-                  </>
-                </Layout>
-              </MapProvider>
-            </MainContextProvider>
-          </ReactQueryConfigProvider>
-        </ThemeProvider>
+        <SSRDataContext.Provider value={SSRDataValue}>
+          <Dispatchers />
+          <ThemeProvider theme={theme}>
+            <ReactQueryConfigProvider config={queryConfig}>
+              <MainContextProvider>
+                <MapProvider>
+                  <Layout>
+                    <>
+                      <Layout.Nav>
+                        <Nav />
+                      </Layout.Nav>
+                      <Layout.Page>
+                        <Component {...pageProps} />
+                        <ModalsListener />
+                      </Layout.Page>
+                    </>
+                  </Layout>
+                </MapProvider>
+              </MainContextProvider>
+            </ReactQueryConfigProvider>
+          </ThemeProvider>
+        </SSRDataContext.Provider>
       </>
     )
   }
