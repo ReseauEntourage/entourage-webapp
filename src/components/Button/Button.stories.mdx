@@ -1,0 +1,32 @@
+import { Meta, Story, Preview } from '@storybook/addon-docs/blocks';
+import { Button } from './Button';
+import { createStyles, makeStyles } from '@material-ui/core/styles'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
+import { theme } from 'src/styles'
+
+
+<Meta title="Button with MDX" component={Button} />
+
+# Button
+
+With `MDX` we can define a story for `Button` right in the middle of our
+markdown documentation.
+
+<Preview>
+  <Story name="all buttons">
+    <TransparentWrapper transparentGB={true}>
+      <form>
+        <Button>Participer</Button>
+        <Button variant="outlined">Participer</Button>
+        <Button color="secondary">Participer</Button>
+        <Button loading={true}>Loading</Button>
+        <Button
+          loading={true}
+          variant="outlined"
+        >
+          Loading
+        </Button>
+      </form>
+    </TransparentWrapper>
+  </Story>
+</Preview>
