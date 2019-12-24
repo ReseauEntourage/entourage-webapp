@@ -16,6 +16,8 @@ module.exports = {
   ],
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'typescript-sort-keys'],
   rules: {
+    // Windows Rule
+    'linebreak-style': ['error', 'windows'],
     // TypeScript Rules
     '@typescript-eslint/no-unused-vars': [1, { ignoreRestSiblings: true }],
     '@typescript-eslint/member-delimiter-style': [1, {

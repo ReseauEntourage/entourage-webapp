@@ -2,5 +2,10 @@
   "extends": "../tsconfig",
   "compilerOptions": {
     "jsx": "react",
-  }
+  },
+  // "awesomeTypescriptLoaderOptions": {
+  //   "ignoreDiagnostics": [
+  //     7005
+  //   ]
+  // }
 }
