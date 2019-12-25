@@ -1,6 +1,8 @@
 import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
 import { Button } from './Button';
 import { TransparentWrapper } from 'src/components/StorybookUtils'
+import * as stories from './Button.stories.tsx';
+
 
 
 <Meta title="MDX|Button" component={Button} />
@@ -10,21 +12,9 @@ import { TransparentWrapper } from 'src/components/StorybookUtils'
 With `MDX` we can define a story for `Button` right in the middle of our
 markdown documentation.
 
+
 <Story name="all buttons">
-  <TransparentWrapper transparentGB={true}>
-    <form>
-      <Button>Participer</Button>
-      <Button variant="outlined">Participer</Button>
-      <Button color="secondary">Participer</Button>
-      <Button loading={true}>Loading</Button>
-      <Button
-        loading={true}
-        variant="outlined"
-      >
-        Loading
-      </Button>
-    </form>
-  </TransparentWrapper>
+  {stories.allButtons()}
 </Story>
 
 

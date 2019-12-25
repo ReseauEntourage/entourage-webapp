@@ -1,5 +1,6 @@
 import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
 import { Avatar } from './Avatar';
+import * as stories from './Avatar.stories.tsx';
 import { TransparentWrapper } from 'src/components/StorybookUtils'
 
 
@@ -12,19 +13,26 @@ markdown documentation.
 
 <Props of={Avatar}/>
 
+<Story name="avatars">
+  {stories.avatarExample()}
+</Story>
+
+## With source
+
 <Preview>
-  <Story name="avatars">
-    <div>
-      <TransparentWrapper>
-        <Avatar
-          src="https://i.pravatar.cc/100"
-        />
-      </TransparentWrapper>
-      <TransparentWrapper>
-        <Avatar
-          src={null}
-        />
-      </TransparentWrapper>
-    </div>
+  <Story name="with src">
+    <Avatar
+      src="https://i.pravatar.cc/100"
+    />
+  </Story>
+</Preview>
+
+## Without source
+
+<Preview>
+  <Story name="without src">
+    <Avatar
+      src={null}
+    />
   </Story>
 </Preview>

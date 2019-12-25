@@ -4,7 +4,7 @@ import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { theme } from 'src/styles'
 import { Button } from './Button'
 
-const useStyles = makeStyles(() => createStyles({
+const getStyles = makeStyles(() => createStyles({
   btns: {
     '& > *': {
       margin: theme.spacing(1),
@@ -14,10 +14,12 @@ const useStyles = makeStyles(() => createStyles({
 
 export default {
   title: 'Buttons',
+  component: Button,
+  includeStories: [],
 }
 
-export const Buttons = () => {
-  const classes = useStyles()
+export const allButtons = () => {
+  const classes = getStyles()
 
   return (
     <TransparentWrapper transparentGB={true}>

@@ -4,9 +4,11 @@ import { Avatar } from './Avatar'
 
 export default {
   title: 'Avatar',
+  component: Avatar,
+  includeStories: [],
 }
 
-export const AvatarExample = () => (
+export const avatarExample = () => (
   <>
     <TransparentWrapper>
       <Avatar
