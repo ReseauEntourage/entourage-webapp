@@ -12,7 +12,7 @@ import { schema } from 'src/core/api'
 import { useQueryPOIs, useQueryFeeds } from 'src/core/store'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
-import { LeftCards } from './LeftCards'
+import { RightCards } from './RightCards'
 import { useActionId } from './useActionId'
 
 function getFeedItemIcon(feedItem: typeof schema['/feeds GET']['response']['feeds'][0]['data']) {
@@ -145,7 +145,7 @@ export function MapContainer() {
           width={500}
           zIndex={2}
         >
-          <LeftCards
+          <RightCards
             key={actionId}
             feedItem={currentFeedItem}
           />

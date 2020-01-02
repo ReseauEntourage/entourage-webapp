@@ -69,7 +69,8 @@ function MembersPendingRequest(props: MembersPendingRequestProps) {
       <PendingNotif
         key={currentMemberPending.id}
         label={<div><b>{currentMemberPending.displayName} souhaite rejoindre votre action</b></div>}
-        leftContent={(
+        pictureURL={currentMemberPending.avatarUrl}
+        rightContent={(
           <ButtonsList>
             <Button
               loading={accepting}
@@ -89,7 +90,6 @@ function MembersPendingRequest(props: MembersPendingRequestProps) {
             </Button>
           </ButtonsList>
         )}
-        pictureURL={currentMemberPending.avatarUrl}
       />
       {nextMemberPending && (
         <PendingNotif

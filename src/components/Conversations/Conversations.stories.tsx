@@ -78,7 +78,8 @@ export const Conversations = () => (
     <TransparentWrapper>
       <PendingNotif
         label={<div>Plusieurs demandes en attentes</div>}
-        leftContent={(
+        pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
+        rightContent={(
           <ButtonsList>
             <Button startIcon={<CheckIcon />}>
               Accepter
@@ -88,7 +89,6 @@ export const Conversations = () => (
             </Button>
           </ButtonsList>
         )}
-        pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
       />
     </TransparentWrapper>
   </>

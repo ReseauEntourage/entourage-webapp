@@ -6,7 +6,7 @@ import { ActionCard } from './ActionCard'
 import { EventCard } from './EventCard'
 
 export default {
-  title: 'LeftCards',
+  title: 'RightCards',
 }
 
 function Wrapper(props: { children: JSX.Element; }) {
