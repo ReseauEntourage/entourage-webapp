@@ -88,6 +88,6 @@
     "react-test-renderer": "^16.11.0",
     "ts-jest": "^24.1.0",
     "ts-loader": "^6.2.1",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.4"
   }
 }
