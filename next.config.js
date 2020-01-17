@@ -15,5 +15,6 @@ module.exports = withCSS({
     API_V1_URL: process.env.API_V1_URL,
     API_KEY: process.env.API_KEY,
     GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
+    SENTRY_DSN: process.env.SENTRY_DSN
   },
 })
