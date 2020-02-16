@@ -13,13 +13,13 @@ import { Modal, openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { useMainContext } from 'src/containers/MainContext'
-import { FeedItem } from 'src/core/api'
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
   useMutateDeleteEntourageUser,
   useQueryMe,
   useQueryMeNonNullable,
+  UseQueryFeedItem,
 } from 'src/core/store'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
@@ -126,7 +126,7 @@ function ParticipateButton(props: ParticipateButtonProps) {
 }
 
 interface RightCardsProps {
-  feedItem: FeedItem;
+  feedItem: UseQueryFeedItem;
 }
 
 export function RightCards(props: RightCardsProps) {

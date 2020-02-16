@@ -1,20 +1,21 @@
 import { DateISO } from 'src/utils/types'
 
 import {
-  FeedTypesFilter,
-  UserPartner,
+  EntourageTypes,
   FeedDisplayCategory,
   FeedEntourageType,
   FeedGroupType,
+  FeedItemTour,
+  FeedItemEntourage,
   FeedJoinStatus,
-  FeedMetadata,
   FeedStatus,
-  EntourageTypes,
   FeedType,
-  POICategoriesIds,
-  POICategory,
-  User,
+  FeedTypesFilter,
   Location,
+  POICategory,
+  POICategoriesIds,
+  User,
+  UserPartner,
 } from './SchemaTypes'
 
 export const schema = {
@@ -164,6 +165,7 @@ export const schema = {
       /**
        * Show past events (defaults to false)
        */
+      entourageTypes?: string;
       latitude: number;
       longitude: number;
       pageToken?: string;
@@ -176,35 +178,7 @@ export const schema = {
     },
     data: null,
     response: {} as {
-      feeds: {
-        data: {
-          author: {
-            avatarUrl?: string;
-            displayName: string;
-            id: number;
-            partner: UserPartner | null;
-          };
-          createdAt: DateISO;
-          description: string;
-          displayCategory: FeedDisplayCategory;
-          entourageType: FeedEntourageType;
-          groupType: FeedGroupType;
-          id: number;
-          joinStatus: FeedJoinStatus;
-          location: Location;
-          metadata: FeedMetadata;
-          numberOfPeople: number;
-          numberOfUnreadMessages: number | null;
-          public: boolean;
-          shareUrl: string;
-          status: FeedStatus;
-          title: string;
-          updatedAt: DateISO;
-          uuid: string;
-        };
-        heatmapSize: number;
-        type: FeedType;
-      }[];
+      feeds: (FeedItemEntourage | FeedItemTour)[];
       nextPageToken?: string;
     },
   },

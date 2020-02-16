@@ -1,4 +1,4 @@
-import { DateISO } from 'src/utils/types'
+import { DateISO, AnyToFix } from 'src/utils/types'
 
 export type UserType = 'public'
 
@@ -163,3 +163,61 @@ export interface LoggedUser {
 }
 
 export type User = AnonymousUser | LoggedUser;
+
+export interface FeedItemEntourage {
+  data: {
+    author: {
+      avatarUrl?: string;
+      displayName: string;
+      id: number;
+      partner: UserPartner | null;
+    };
+    createdAt: DateISO;
+    description: string;
+    displayCategory: FeedDisplayCategory;
+    entourageType: FeedEntourageType;
+    groupType: FeedGroupType;
+    id: number;
+    joinStatus: FeedJoinStatus;
+    location: Location;
+    metadata: FeedMetadata;
+    numberOfPeople: number;
+    numberOfUnreadMessages: number | null;
+    public: boolean;
+    shareUrl: string;
+    status: FeedStatus;
+    title: string;
+    updatedAt: DateISO;
+    uuid: string;
+  };
+  heatmapSize: number;
+  type: 'Entourage';
+}
+
+export interface FeedItemTour {
+  data: {
+    author: {
+      avatarUrl?: string;
+      displayName: string;
+      id: number;
+      partner: UserPartner | null;
+    };
+    distance: number;
+    endTime: DateISO;
+    id: number;
+    joinStatus: FeedJoinStatus;
+    numberOfPeople: number;
+    numberOfUnreadMessages: number | null;
+    organizationDescription: string;
+    organizationName: string;
+    startTime: DateISO;
+    status: FeedStatus;
+    tourPoints: AnyToFix[];
+    tourType: string;
+    updatedAt: DateISO;
+    uuid: string;
+    vehicleType: 'feet';
+  };
+  heatmapSize: number;
+  type: 'Tour';
+}

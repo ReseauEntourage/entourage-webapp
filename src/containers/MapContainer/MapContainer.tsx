@@ -8,14 +8,13 @@ import React from 'react'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { useMainContext } from 'src/containers/MainContext'
-import { schema } from 'src/core/api'
-import { useQueryPOIs, useQueryFeeds } from 'src/core/store'
+import { useQueryPOIs, useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
 import { RightCards } from './RightCards'
 import { useActionId } from './useActionId'
 
-function getFeedItemIcon(feedItem: typeof schema['/feeds GET']['response']['feeds'][0]['data']) {
+function getFeedItemIcon(feedItem: UseQueryFeedItem) {
   const { entourageType, displayCategory } = feedItem
   if (entourageType === 'contribution') {
     const backgroundColor = colors.main.primary
