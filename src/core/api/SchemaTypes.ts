@@ -2,7 +2,7 @@ import { DateISO, AnyToFix } from 'src/utils/types'
 
 export type UserType = 'public'
 
-export type FeedType = 'Entourage'
+export type FeedType = 'Entourage' | 'Tour'
 
 export type FeedStatus = 'open' | 'closed' | 'suspended'
 

@@ -5,7 +5,7 @@ import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
   const { data: dataMyFeeds } = useQueryMyFeeds()
-  const entourageIds = dataMyFeeds?.data.feeds.map((feed) => feed.data.id)
+  const entourageIds = dataMyFeeds?.map((feed) => feed.data.id)
 
   const { data: entourageMembers } = useQuery(
     entourageIds ? [queryKeys.entourageUsers, { entourageIds }] : null,
