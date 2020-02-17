@@ -13,6 +13,7 @@ import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api } from 'src/core/api'
 import { Dispatchers } from 'src/core/events'
+import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { theme } from 'src/styles'
 import { isSSR } from 'src/utils/misc'
@@ -20,6 +21,8 @@ import { isSSR } from 'src/utils/misc'
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
 }
+
+initSentry()
 
 export default class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for

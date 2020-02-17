@@ -5,25 +5,38 @@ import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
   const { data: dataMyFeeds } = useQueryMyFeeds()
-  const entourageIds = dataMyFeeds?.data.feeds.map((feed) => feed.data.id)
+  const entourageIds = dataMyFeeds?.map((feed) => feed.data.id)
 
   const { data: entourageMembers } = useQuery(
     entourageIds ? [queryKeys.entourageUsers, { entourageIds }] : null,
     (params) => {
       return Promise.all(params.entourageIds.map(async (entourageId) => {
-        const members = await api.request({
-          name: '/entourages/:entourageId/users GET',
-          pathParams: {
-            entourageId,
-          },
-          params: {
-            context: 'groupFeed',
-          },
-        })
+        // try is use to prevent server ERROR.
+        // TODO: EN-1984
+        try {
+          const members = await api.request({
+            name: '/entourages/:entourageId/users GET',
+            pathParams: {
+              entourageId,
+            },
+            params: {
+              context: 'groupFeed',
+            },
+          })
 
-        return {
-          members,
-          entourageId,
+          return {
+            members,
+            entourageId,
+          }
+        } catch (e) {
+          return {
+            members: {
+              data: {
+                users: [],
+              },
+            },
+            entourageId,
+          }
         }
       }))
     },

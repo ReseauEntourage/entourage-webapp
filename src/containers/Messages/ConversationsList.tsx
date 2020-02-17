@@ -21,7 +21,7 @@ const Container = styled.div`
 
 function getExcerpt(
   me: DataUseQueryMeNonNullable,
-  feed: NonNullable<DataQueryMyFeeds>['data']['feeds'][0],
+  feed: NonNullable<DataQueryMyFeeds>[0],
   pendingMembers: NonNullable<DataUseQueryEntouragesWithMembers>[0]['members'],
 ): string | JSX.Element {
   const iAmAuthor = me.id === feed.data.author.id
@@ -75,7 +75,7 @@ export function ConversationsList(props: ConversationsList) {
 
   return (
     <Container>
-      {dataMyFeeds.data.feeds
+      {dataMyFeeds
         .filter((feed) => feed.data.joinStatus === 'accepted' || feed.data.joinStatus === 'pending')
         .map((feed) => {
           const entourageWithMembers = entouragesWithMembersPending.find((entourage) => {

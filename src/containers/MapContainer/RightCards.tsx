@@ -9,17 +9,17 @@ import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 import { Button } from 'src/components/Button'
-import { ActionCard, EventCard } from 'src/components/LeftCards'
 import { Modal, openModal } from 'src/components/Modal'
+import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { useMainContext } from 'src/containers/MainContext'
-import { FeedItem } from 'src/core/api'
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
   useMutateDeleteEntourageUser,
   useQueryMe,
   useQueryMeNonNullable,
+  UseQueryFeedItem,
 } from 'src/core/store'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
@@ -57,7 +57,7 @@ function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
   )
 }
 
-interface ParticipateButtonProps extends LeftCardsProps {}
+interface ParticipateButtonProps extends RightCardsProps {}
 
 function ParticipateButton(props: ParticipateButtonProps) {
   const { feedItem } = props
@@ -125,11 +125,11 @@ function ParticipateButton(props: ParticipateButtonProps) {
   return null
 }
 
-interface LeftCardsProps {
-  feedItem: FeedItem;
+interface RightCardsProps {
+  feedItem: UseQueryFeedItem;
 }
 
-export function LeftCards(props: LeftCardsProps) {
+export function RightCards(props: RightCardsProps) {
   const { feedItem } = props
   const mainContext = useMainContext()
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)

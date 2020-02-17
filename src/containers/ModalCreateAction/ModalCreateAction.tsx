@@ -130,7 +130,7 @@ export function ModalCreateAction() {
             onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
             textFieldProps={{
               label: modalTexts.fieldLabelAddress,
-              name: 'address',
+              name: 'action-address',
               inputRef: register({ required: true }),
             }}
           />

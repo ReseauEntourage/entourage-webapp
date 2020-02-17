@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { useMapContext } from 'src/components/Map'
-import { api } from 'src/core/api'
+import { api, FeedItemEntourage } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
 import { AnyToFix } from 'src/utils/types'
 
@@ -42,7 +42,10 @@ export function useQueryFeeds() {
     : pages
       .map((res) => res.data.feeds)
       .reduce((pageA, pageB) => [...pageA, ...pageB], [])
-      .map((feed) => feed.data)
+      .filter((feed) => feed.type === 'Entourage')
+      .map((feed) => feed.data as FeedItemEntourage['data'])
 
   return [feeds, isLoading, fetchModeWithParams] as [typeof feeds, boolean, typeof fetchMore]
 }
+
+export type UseQueryFeedItem = ReturnType<typeof useQueryFeeds>[0][0]

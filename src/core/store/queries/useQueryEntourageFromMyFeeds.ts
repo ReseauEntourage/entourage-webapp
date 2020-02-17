@@ -3,7 +3,7 @@ import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntourageFromMyFeeds(entourageId: number) {
   const { data: myFeedsData } = useQueryMyFeeds()
-  const entourage = myFeedsData?.data.feeds.find((feed) => feed.data.id === entourageId)
+  const entourage = myFeedsData?.find((feed) => feed.data.id === entourageId)
 
   assertIsDefined(entourage)
 

@@ -1,8 +1,8 @@
 import React, { useState, createContext, useMemo, useContext } from 'react'
-import { FeedItem } from 'src/core/api'
+import { UseQueryFeedItem } from 'src/core/store'
 
 interface MainContextValue {
-  feedItem: FeedItem | null;
+  feedItem: UseQueryFeedItem | null;
   onChangeFeedItem: (value: MainContextValue['feedItem']) => void;
 }
 

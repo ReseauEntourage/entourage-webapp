@@ -26,13 +26,13 @@ const FlexGrow = styled.div`
 
 interface PendingNotifProps {
   label?: string | JSX.Element;
-  leftContent?: JSX.Element;
   pictureURL?: string | [string, string];
+  rightContent?: JSX.Element;
   style?: React.CSSProperties;
 }
 
 export function PendingNotif(props: PendingNotifProps) {
-  const { label, pictureURL, leftContent, style } = props
+  const { label, pictureURL, rightContent, style } = props
 
   const avatarMultipleStyles: React.CSSProperties = {
     position: 'absolute',
@@ -57,7 +57,7 @@ export function PendingNotif(props: PendingNotifProps) {
         </Label>
       )}
       <FlexGrow />
-      {leftContent}
+      {rightContent}
     </Container>
   )
 }
