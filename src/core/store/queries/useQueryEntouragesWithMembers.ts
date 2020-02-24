@@ -11,32 +11,19 @@ export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
     entourageIds ? [queryKeys.entourageUsers, { entourageIds }] : null,
     (params) => {
       return Promise.all(params.entourageIds.map(async (entourageId) => {
-        // try is use to prevent server ERROR.
-        // TODO: EN-1984
-        try {
-          const members = await api.request({
-            name: '/entourages/:entourageId/users GET',
-            pathParams: {
-              entourageId,
-            },
-            params: {
-              context: 'groupFeed',
-            },
-          })
+        const members = await api.request({
+          name: '/entourages/:entourageId/users GET',
+          pathParams: {
+            entourageId,
+          },
+          params: {
+            context: 'groupFeed',
+          },
+        })
 
-          return {
-            members,
-            entourageId,
-          }
-        } catch (e) {
-          return {
-            members: {
-              data: {
-                users: [],
-              },
-            },
-            entourageId,
-          }
+        return {
+          members,
+          entourageId,
         }
       }))
     },
