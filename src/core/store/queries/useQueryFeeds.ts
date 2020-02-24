@@ -13,6 +13,8 @@ export function useQueryFeeds() {
     latitude: mapContext.value.center.lat,
     longitude: mapContext.value.center.lng,
     pageToken: undefined as string | undefined,
+    // temporary set feed types in order to include only Entourage type and exclude Tour type
+    types: 'as,ae,am,ar,ai,ak,ao,cs,ce,cm,cr,ci,ck,co,ou',
   }), [mapContext.value.center.lat, mapContext.value.center.lng])
 
   const {
@@ -42,7 +44,6 @@ export function useQueryFeeds() {
     : pages
       .map((res) => res.data.feeds)
       .reduce((pageA, pageB) => [...pageA, ...pageB], [])
-      .filter((feed) => feed.type === 'Entourage')
       .map((feed) => feed.data as FeedItemEntourage['data'])
 
   return [feeds, isLoading, fetchModeWithParams] as [typeof feeds, boolean, typeof fetchMore]
