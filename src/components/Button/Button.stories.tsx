@@ -2,6 +2,7 @@
 import { action } from '@storybook/addon-actions'
 import { withKnobs, select, boolean, text } from '@storybook/addon-knobs'
 import React from 'react'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { Button } from './Button'
 
 export default {
@@ -29,4 +30,9 @@ sizes.story = {
 
 export const color = () => <Button color="secondary">Participer</Button>
 export const loading = () => <Button loading={true}>Loading</Button>
-export const knobs = () => <Button color={select('Color', ['primary', 'secondary', 'default'], 'primary')} loading={boolean('Loading', false)} onClick={action('clicked on button')} size={select('Size', ['small', 'medium', 'large'], 'medium')}>{text('Label', 'Participer')}</Button>
+
+export const knobs = () => (
+  <TransparentWrapper transparentGB={true}>
+    <Button color={select('Color', ['primary', 'secondary', 'default'], 'primary')} loading={boolean('Loading', false)} onClick={action('clicked on button')} size={select('Size', ['small', 'medium', 'large'], 'medium')}>{text('Label', 'Participer')}</Button>
+  </TransparentWrapper>
+)
