@@ -1,38 +1,38 @@
-import { createStyles, makeStyles } from '@material-ui/core/styles'
+/* eslint-disable max-len */
+import { action } from '@storybook/addon-actions'
+import { withKnobs, select, boolean, text } from '@storybook/addon-knobs'
 import React from 'react'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
-import { theme } from 'src/styles'
 import { Button } from './Button'
 
-const useStyles = makeStyles(() => createStyles({
-  btns: {
-    '& > *': {
-      margin: theme.spacing(1),
-    },
-  },
-}))
-
 export default {
-  title: 'Buttons',
+  title: 'Button',
+  parameters: {
+    component: Button,
+    componentSubtitle: 'Our buttons',
+  },
+  decorators: [withKnobs],
 }
 
-export const Buttons = () => {
-  const classes = useStyles()
+export const standard = () => <Button>Participer</Button>
 
-  return (
-    <TransparentWrapper transparentGB={true}>
-      <div className={classes.btns}>
-        <Button>Participer</Button>
-        <Button variant="outlined">Participer</Button>
-        <Button color="secondary">Participer</Button>
-        <Button loading={true}>Loading</Button>
-        <Button
-          loading={true}
-          variant="outlined"
-        >
-          Loading
-        </Button>
-      </div>
-    </TransparentWrapper>
-  )
+export const variant = () => <Button variant="outlined">Participer</Button>
+export const sizes = () => (
+  <>
+    <Button size="large">Participer</Button>
+    <Button size="medium">Participer</Button>
+    <Button size="small">Participer</Button>
+  </>
+)
+sizes.story = {
+  parameters: { docs: { storyDescription: '3 sizes are supported.' } },
 }
+
+export const color = () => <Button color="secondary">Participer</Button>
+export const loading = () => <Button loading={true}>Loading</Button>
+
+export const knobs = () => (
+  <TransparentWrapper transparentGB={true}>
+    <Button color={select('Color', ['primary', 'secondary', 'default'], 'primary')} loading={boolean('Loading', false)} onClick={action('clicked on button')} size={select('Size', ['small', 'medium', 'large'], 'medium')}>{text('Label', 'Participer')}</Button>
+  </TransparentWrapper>
+)
