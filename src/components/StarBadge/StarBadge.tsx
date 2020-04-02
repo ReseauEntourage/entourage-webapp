@@ -1,23 +1,13 @@
 import Star from '@material-ui/icons/Star'
 import React from 'react'
-import styled from 'styled-components'
-import { colors } from 'src/styles'
+import { Container } from './StarBadge.styles'
 
-const Container = styled.div`
-  border-radius: 100%;
-  height: fit-content;
-  width: fit-content;
-  background-color: ${colors.main.primary};
-  padding: 2px;
-  border: solid 1px #ffff;
-`
-
-interface Props {
+interface StarBadgeProps {
   containerStyle?: React.CSSProperties;
   iconStyle?: React.CSSProperties;
 }
 
-export function StarBadge(props: Props) {
+export function StarBadge(props: StarBadgeProps) {
   const { containerStyle, iconStyle } = props
   return (
     <Container style={containerStyle}>
