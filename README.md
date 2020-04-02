@@ -183,6 +183,24 @@ Dépendances: toutes
 ## styles
 Données relatives au style de l'application: thème Matérial UI, liste des couleurs utilisé, etc...  
 
+### Breakpoints & Responsive design
+
+```js
+import React from 'react'
+import styled from 'styled-components'
+import { devices } from 'src/styles'
+
+export const Container = styled.div`
+  @media ${devices.mobile} {
+    // CSS for mobile
+  }
+
+  @media ${devices.desktop} {
+    // CSS for desktop
+  }
+`
+```
+
 
 ## utils
 Liste d'utilitaires JavaScript et TypeScript
