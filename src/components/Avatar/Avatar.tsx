@@ -1,18 +1,6 @@
-import AvatarMUI from '@material-ui/core/Avatar'
 import React from 'react'
-import styled from 'styled-components'
 import { colors } from 'src/styles'
-
-export const NoProfilePicture = styled.div`
-  height: 36px;
-  width: 36px;
-  border-radius: 100%;
-  background-color: ${colors.main.primary};
-`
-
-const Container = styled.div`
-  border-radius: 100%;
-`
+import { Container, AvatarPicture, NoProfilePicture } from './Avatar.styles'
 
 interface AvatarProps {
   alt?: string;
@@ -24,10 +12,6 @@ interface AvatarProps {
 export function Avatar(props: AvatarProps) {
   const { src, alt = 'Alt text', borderColor, style } = props
 
-  const content = src
-    ? <AvatarMUI alt={alt} src={src} style={{ width: 36, height: 36, maxWidth: '100%', maxHeight: '100%' }} />
-    : <NoProfilePicture />
-
   return (
     <Container
       style={{
@@ -35,7 +19,7 @@ export function Avatar(props: AvatarProps) {
         border: !borderColor ? undefined : `solid 1px ${borderColor}`,
       }}
     >
-      {content}
+      {src ? <AvatarPicture alt={alt} src={src} /> : <NoProfilePicture />}
     </Container>
   )
 }
