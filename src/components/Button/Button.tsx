@@ -1,14 +1,6 @@
 import ButtonMUI, { ButtonProps as ButtonPropsBase } from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import React from 'react'
-import styled from 'styled-components'
-import { theme } from 'src/styles'
-
-export const ButtonsList = styled.div`
-  & > *:not(:first-child) {
-    margin-left: ${theme.spacing(2)}px;
-  }
-`
 
 interface ButtonProps extends ButtonPropsBase {
   loaderStyle?: React.CSSProperties;
