@@ -10,13 +10,15 @@ export function openModal(modal: React.ReactNode) {
 }
 
 export function ModalsListener() {
-  const [modals, setModals] = useState<{ [key in symbol]: React.ReactNode; }>({})
+  const [modals, setModals] = useState<{ [key in string]: React.ReactNode; }>({})
 
   useEffect(() => {
-    const subscription = modalsSubject.subscribe((modal) => {
+    // @ts-ignore
+    const subscription = modalsSubject.subscribe((modal: React.ReactNode) => {
+      const modalKey = uniqid()
       setModals((prevModals) => ({
         ...prevModals,
-        [uniqid()]: modal,
+        [modalKey]: modal,
       }))
     })
 
@@ -39,7 +41,6 @@ export function ModalsListener() {
 
           return (
             <ModalContext.Provider key={key} value={modalContextValue}>
-              {/* strange things */}
               {modal}
             </ModalContext.Provider>
           )
