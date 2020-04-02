@@ -1,28 +1,6 @@
-import Typography from '@material-ui/core/Typography'
 import React from 'react'
-import styled from 'styled-components'
 import { Avatar } from 'src/components/Avatar'
-import { theme, colors, variants } from 'src/styles'
-
-const Container = styled.div`
-  background-color: ${colors.main.second};
-  display: flex;
-  align-items: center;
-  padding: ${theme.spacing(2)}px;
-  border-radius: 5px;
-`
-
-const Label = styled(Typography).attrs(() => ({
-  color: 'textSecondary',
-  variant: variants.bodyRegular,
-  component: 'div',
-}))`
-  margin-left: ${theme.spacing(1)}px !important;
-`
-
-const FlexGrow = styled.div`
-  flex-grow: 1;
-`
+import { Container, Label, FlexGrow } from './PendingNotif.styles'
 
 interface PendingNotifProps {
   label?: string | JSX.Element;

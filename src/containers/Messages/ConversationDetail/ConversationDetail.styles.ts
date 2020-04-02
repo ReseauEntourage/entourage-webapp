@@ -52,17 +52,3 @@ export const Pending = styled(Typography).attrs(() => ({
   display: flex;
   justify-content: center;
 `
-
-export const MemberPendingContainer = styled.div`
-  display: flex;
-  margin: ${theme.spacing(1)}px 0 ${theme.spacing(1)}px ${theme.spacing(1)}px;
-
-  & > *:first-child {
-    margin-right: ${theme.spacing(1)}px;
-    flex: 1;
-  }
-
-  & > *:nth-child(2) {
-    flex: 0;
-  }
-`
