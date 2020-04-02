@@ -1,9 +1,7 @@
 import Grid from '@material-ui/core/Grid'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
 import GpsFixedIcon from '@material-ui/icons/GpsFixed'
-import LocationOnIcon from '@material-ui/icons/LocationOn'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
@@ -11,15 +9,9 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
 import { isSSR, assertIsDefined } from 'src/utils/misc'
 import { AnyToFix, AnyCantFix } from 'src/utils/types'
+import { LocationIcon } from './GoogleMapLocation.styles'
 
 const autocompleteService = { current: null }
-
-const useStyles = makeStyles((theme) => ({
-  icon: {
-    color: theme.palette.text.secondary,
-    marginRight: theme.spacing(2),
-  },
-}))
 
 export interface PlaceType {
   place_id: string;
@@ -70,7 +62,6 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
 
   const autocompleteSessionToken = useRef<{ Rf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
 
-  const classes = useStyles()
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
 
@@ -164,7 +155,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
         return (
           <Grid alignItems="center" container={true}>
             <Grid item={true}>
-              <LocationOnIcon className={classes.icon} />
+              <LocationIcon />
             </Grid>
             <Grid item={true} xs={true}>
               {parts.map((part, index) => (
