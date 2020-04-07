@@ -66,6 +66,7 @@ yarn dev
   * [`hooks`](#hooks)
   * [`types`](#types)
   * [`misc`](#misc)
+    * [`plateform`](#plateformes)
 
 ## components
 Composants React purement UI, sans manimulation de données. Ces composant sont visibles dans la documentation [Storybook](#storybook)  
@@ -204,6 +205,36 @@ export const Container = styled.div`
 
 ## utils
 Liste d'utilitaires JavaScript et TypeScript
+
+### Plateformes
+
+Il arrive souvent d'avoir besoin de créer un composant spécique par plateforme (mobile / tablette / desktop). Exemple:
+
+`src/components/Header/index.ts`
+
+```js
+import { plateform } from 'src/utils/misc'
+import { Header as Desktop } from './Header.desktop'
+import { Header as Mobile } from './Header.mobile'
+
+export const Header = plateform({
+  Mobile,
+  Desktop,
+})
+```
+
+`App.tsx`
+
+```js
+import { Header } from 'src/components/Header'
+
+export function App() {
+  return (
+    <Header />
+    ...
+  )
+}
+```
 
 # Storybook
 
