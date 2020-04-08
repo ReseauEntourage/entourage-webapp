@@ -24,7 +24,14 @@ if (process.env.NODE_ENV !== 'production') {
 
 initSentry()
 
-export default class App extends NextApp {
+interface AppState {
+  open: boolean;
+}
+export default class App extends NextApp<{}, {}, AppState> {
+  state = {
+    open: false,
+  }
+
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to
   // perform automatic static optimization, causing every page in your app to
@@ -57,9 +64,14 @@ export default class App extends NextApp {
     }
   }
 
+  setOpen = (open: boolean) => {
+    this.setState({ open })
+  }
+
   render() {
     // @ts-ignore
     const { Component, pageProps, me } = this.props
+    const { open } = this.state
 
     const SSRDataValue = { me }
 
@@ -77,10 +89,10 @@ export default class App extends NextApp {
             <ReactQueryConfigProvider config={queryConfig}>
               <MainContextProvider>
                 <MapProvider>
-                  <Layout>
+                  <Layout open={open} setOpen={this.setOpen}>
                     <>
                       <Layout.Nav>
-                        <Nav />
+                        <Nav open={open} setOpen={this.setOpen} />
                       </Layout.Nav>
                       <Layout.Page>
                         <Component {...pageProps} />
