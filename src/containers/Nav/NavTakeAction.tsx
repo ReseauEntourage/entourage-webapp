@@ -12,6 +12,7 @@ import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver'
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
+import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalCharte } from 'src/containers/ModalCharte'
 import { ModalCreateAction } from 'src/containers/ModalCreateAction'
 import { variants, colors } from 'src/styles'
@@ -83,10 +84,17 @@ interface NavTakeActionProps {
 export function NavTakeAction(props: NavTakeActionProps) {
   const { children } = props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const { drawerIsOpen, setDrawerIsOpen } = useLayoutContext()
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
   }
+
+  const closeDrawerIfOpen = useCallback(() => {
+    if (drawerIsOpen) {
+      setDrawerIsOpen(false)
+    }
+  }, [drawerIsOpen, setDrawerIsOpen])
 
   const handleClose = () => {
     setAnchorEl(null)
@@ -101,12 +109,14 @@ export function NavTakeAction(props: NavTakeActionProps) {
       />,
     )
     setAnchorEl(null)
-  }, [])
+    closeDrawerIfOpen()
+  }, [closeDrawerIfOpen])
 
   const openEventModal = useCallback(() => {
     // openModal(<ProfileModal />)
     setAnchorEl(null)
-  }, [])
+    closeDrawerIfOpen()
+  }, [closeDrawerIfOpen])
 
   return (
     <>

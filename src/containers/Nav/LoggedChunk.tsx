@@ -7,6 +7,7 @@ import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
 import { queryKeys } from 'src/core/store'
+import { texts } from 'src/i18n'
 
 interface LoggedChunkProps {}
 
@@ -66,10 +67,10 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
         }}
       >
         <MenuItem onClick={openModalProfile}>
-          Mon Profil
+          {texts.nav.profile}
         </MenuItem>
         <MenuItem onClick={logout}>
-          Se déconnecter
+          {texts.nav.logout}
         </MenuItem>
       </Menu>
     </>

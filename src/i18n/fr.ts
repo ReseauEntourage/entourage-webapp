@@ -13,6 +13,9 @@ export const texts = {
     actions: 'Actions',
     messages: 'Messages',
     takeAction: 'Passer à l\'action',
+    profile: 'Mon Profil',
+    signIn: 'Connexion / Inscription',
+    logout: 'Déconnexion',
   },
   labels: {
     save: 'Enregister',

@@ -3,71 +3,31 @@ import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import { makeStyles, createStyles } from '@material-ui/core/styles'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
-import { Button } from 'src/components/Button'
+import { refetchQuery } from 'react-query'
 import { openModal } from 'src/components/Modal'
+import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useOnLogin } from 'src/core/events'
-import { useQueryMe } from 'src/core/store'
+import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
+import { useQueryMe, queryKeys } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
-import { LoggedChunk } from './LoggedChunk'
+import { DrawerHeader } from './Nav.styles'
 import { NavItem } from './NavItem'
 import { NavTakeAction } from './NavTakeAction'
 
-const AccountContainer = styled.div`
-  margin-left: ${theme.spacing(10)}px;
-`
-const drawerWidth = 240
-
-const useStyles = makeStyles(() => createStyles({
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-start',
-  },
-  drawerFooter: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(0, 3),
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-start',
-  },
-  buttonIcon: {
-    marginRight: theme.spacing(1),
-  },
-  buttonMarginLeft: {
-    marginLeft: theme.spacing(2),
-  },
-}))
-
-interface DrawerProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-}
-
-export function DrawerNav(props: DrawerProps) {
-  const classes = useStyles()
+export function DrawerNav() {
   const { data: me } = useQueryMe()
-  const { open, setOpen } = props
+  const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
   useOnLogin((meResponse) => {
     const { firstName, lastName, address, hasPassword } = meResponse.data.user
@@ -79,41 +39,39 @@ export function DrawerNav(props: DrawerProps) {
   })
 
   const onClickDrawerClose = useCallback(() => {
-    setOpen(!open)
-  }, [open, setOpen])
+    setOpen(false)
+  }, [setOpen])
 
   const onClickSignIn = useCallback(() => {
     openModal(<ModalSignIn />)
+  }, [])
+
+  const openModalProfile = useCallback(() => {
+    openModal(<ModalProfile />)
+  }, [])
+
+  const onClickLogout = useCallback(async () => {
+    setTokenIntoCookies('')
+    await createAnonymousUser()
+    refetchQuery(queryKeys.me, { force: true })
   }, [])
 
   const iAmLogged = me && !me.data.user.anonymous
 
   return (
     <Drawer
-      anchor="right"
-      classes={{
-        paper: classes.drawerPaper,
+      anchor="left"
+      ModalProps={{
+        keepMounted: true, // Better open performance on mobile.
       }}
-      className={classes.drawer}
       open={open}
       variant="persistent"
     >
-      <div className={classes.drawerHeader}>
+      <DrawerHeader>
         <IconButton onClick={onClickDrawerClose}>
-          {theme.direction === 'rtl' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+          {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
-      </div>
-      <Divider />
-      <AccountContainer>
-        {iAmLogged ? (
-          <LoggedChunk />
-        ) : (
-          <Button className={classes.buttonMarginLeft} onClick={onClickSignIn}>
-            <PersonIcon className={classes.buttonIcon} />
-                 Connexion / Inscription
-          </Button>
-        )}
-      </AccountContainer>
+      </DrawerHeader>
       <Divider />
       <List>
         <ListItem key="actions" button={true}>
@@ -121,24 +79,25 @@ export function DrawerNav(props: DrawerProps) {
             href="/actions"
             icon={<MapIcon />}
             label={texts.nav.actions}
+            onClick={onClickDrawerClose}
           />
         </ListItem>
         {iAmLogged && (
           <>
-            <ListItem key="actions" button={true}>
+            <ListItem key="messages" button={true}>
 
               <NavItem
                 href="/messages"
                 icon={<ChatBubbleOutlineIcon />}
                 label={texts.nav.messages}
+                onClick={onClickDrawerClose}
               />
             </ListItem>
 
-            <ListItem key="actions" button={true}>
-
+            <ListItem key="take_action" button={true}>
               <NavTakeAction>
                 <NavItem
-                  icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
+                  icon={<AddCircleIcon color="primary" />}
                   label={texts.nav.takeAction}
                 />
               </NavTakeAction>
@@ -147,6 +106,29 @@ export function DrawerNav(props: DrawerProps) {
           </>
         )}
       </List>
+      <Divider />
+      <List>
+        {iAmLogged && (
+          <ListItem key="profil" button={true} onClick={openModalProfile}>
+            <NavItem
+              icon={<PersonIcon />}
+              label={texts.nav.profile}
+              onClick={onClickDrawerClose}
+            />
+          </ListItem>
+
+        )}
+
+        <ListItem key="connect" button={true} onClick={iAmLogged ? onClickLogout : onClickSignIn}>
+          <NavItem
+            icon={iAmLogged ? <ExitToAppIcon /> : <PersonIcon />}
+            label={iAmLogged ? texts.nav.logout : texts.nav.signIn}
+            onClick={onClickDrawerClose}
+          />
+        </ListItem>
+
+      </List>
+
     </Drawer>
   )
 }
