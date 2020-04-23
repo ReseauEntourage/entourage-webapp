@@ -49,7 +49,6 @@
     "react-hook-form": "^3.28.4",
     "react-image-crop": "^8.4.2",
     "react-query": "^0.3.23",
-    "react-scroll-to-bottom": "2.0.0-master.f19b14d",
     "rxjs": "^6.5.3",
     "stop-runaway-react-effects": "^1.2.1",
     "styled-components": "^4.4.1",
