@@ -126,7 +126,6 @@ export function ConversationDetail(props: ConversationDetail) {
                 />
               )
             })}
-            {/* </ScrollToBottom> */}
           </MessagesContainer>
           <BottomBar>
             <TextField

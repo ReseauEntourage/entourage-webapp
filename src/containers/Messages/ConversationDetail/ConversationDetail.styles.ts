@@ -14,16 +14,8 @@ export const Container = styled.div`
 export const MessagesContainer = styled.div`
   flex: 1;
   position: relative;
-  /* overflow: hidden; */
   overflow: auto;
   margin: ${theme.spacing(2)}px;
-  .ScrollToBottom {
-    height: 100%;
-
-    .ScrollToBottomButton {
-      display: none;
-    }
-  }
 `
 
 export const BottomBar = styled.div`
