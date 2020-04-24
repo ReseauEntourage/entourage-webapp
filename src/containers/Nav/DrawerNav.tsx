@@ -21,11 +21,12 @@ import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
 import { useQueryMe, queryKeys } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
+import { plateform } from 'src/utils/misc'
 import { DrawerHeader } from './Nav.styles'
 import { NavItem } from './NavItem'
 import { NavTakeAction } from './NavTakeAction'
 
-export function DrawerNav() {
+function InternalDrawerNav() {
   const { data: me } = useQueryMe()
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
@@ -132,3 +133,7 @@ export function DrawerNav() {
     </Drawer>
   )
 }
+
+export const DrawerNav = plateform({
+  Mobile: InternalDrawerNav,
+})

@@ -1,8 +1,8 @@
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import React, { useCallback } from 'react'
+import { Grow } from '../Nav.styles'
 import { useLayoutContext } from 'src/containers/LayoutContext'
-import { Grow } from './Nav.styles'
 
 export function NavItemsMobile() {
   const { setDrawerIsOpen: setOpen } = useLayoutContext()

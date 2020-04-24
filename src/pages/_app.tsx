@@ -57,10 +57,6 @@ export default class App extends NextApp {
     }
   }
 
-  setOpen = (open: boolean) => {
-    this.setState({ open })
-  }
-
   render() {
     // @ts-ignore
     const { Component, pageProps, me } = this.props

@@ -1,6 +1,6 @@
 import { plateform } from 'src/utils/misc'
-import { NavItemsDeskTop } from './NavItemsDesktop'
-import { NavItemsMobile } from './NavItemsMobile'
+import { NavItemsDeskTop } from './NavItems.desktop'
+import { NavItemsMobile } from './NavItems.mobile'
 
 export const NavItems = plateform({
   Desktop: NavItemsDeskTop,

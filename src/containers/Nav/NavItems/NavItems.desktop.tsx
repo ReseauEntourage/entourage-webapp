@@ -3,15 +3,15 @@ import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
+import { LoggedChunk } from '../LoggedChunk'
+import { ConnectButton, NavItem, Grow, AccountContainer } from '../Nav.styles'
+import { NavTakeAction } from '../NavTakeAction'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useOnLogin } from 'src/core/events'
 import { useQueryMe } from 'src/core/store'
 import { texts } from 'src/i18n'
-import { LoggedChunk } from './LoggedChunk'
-import { ConnectButton, NavItem, Grow, AccountContainer } from './Nav.styles'
-import { NavTakeAction } from './NavTakeAction'
 
 export function NavItemsDeskTop() {
   const { data: me } = useQueryMe()

@@ -17,7 +17,7 @@ export const ConnectButton = styled(Button)`
 
 export const NavItem = styled(NotStyledNavItem)`
   margin-left: ${theme.spacing(2)}px;
-  margin-reft: ${theme.spacing(2)}px;
+  margin-right: ${theme.spacing(2)}px;
 `
 
 export const AppBar = styled(AppBarMUI)`
@@ -39,7 +39,7 @@ export const Grow = styled.div`
 export const DrawerHeader = styled.div`
   display: flex;
   align-items: center;
-  padding: ${theme.spacing(0, 1)}px;
+  padding: ${theme.spacing(0, 1)};
   min-height: ${theme.mixins.toolbar.minHeight}px;
   justify-content: flex-start;
 `
