@@ -11,33 +11,24 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
-import { refetchQuery } from 'react-query'
+import { DrawerHeader } from '../Nav.styles'
+import { NavItem } from '../NavItem'
+import { NavTakeAction } from '../NavTakeAction'
+import { useOnClickLogout } from '../useOnClickLogout'
+import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import { useOnLogin } from 'src/core/events'
-import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
-import { useQueryMe, queryKeys } from 'src/core/store'
+import { useQueryMe } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
-import { plateform } from 'src/utils/misc'
-import { DrawerHeader } from './Nav.styles'
-import { NavItem } from './NavItem'
-import { NavTakeAction } from './NavTakeAction'
 
-function InternalDrawerNav() {
+export function DrawerNavMobile() {
   const { data: me } = useQueryMe()
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
-  useOnLogin((meResponse) => {
-    const { firstName, lastName, address, hasPassword } = meResponse.data.user
-    const userInfosIncompleted = !firstName || !lastName || !address
-
-    if (hasPassword && userInfosIncompleted) {
-      openModal(<ModalProfile />)
-    }
-  })
+  useOpenModalProfileOnLogin()
 
   const onClickDrawerClose = useCallback(() => {
     setOpen(false)
@@ -51,11 +42,7 @@ function InternalDrawerNav() {
     openModal(<ModalProfile />)
   }, [])
 
-  const onClickLogout = useCallback(async () => {
-    setTokenIntoCookies('')
-    await createAnonymousUser()
-    refetchQuery(queryKeys.me, { force: true })
-  }, [])
+  const onClickLogout = useOnClickLogout()
 
   const iAmLogged = me && !me.data.user.anonymous
 
@@ -133,7 +120,3 @@ function InternalDrawerNav() {
     </Drawer>
   )
 }
-
-export const DrawerNav = plateform({
-  Mobile: InternalDrawerNav,
-})
