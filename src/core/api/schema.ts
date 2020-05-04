@@ -76,7 +76,9 @@ export const schema = {
   '/entourages/:entourageId/chat_messages GET': {
     url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
     method: 'GET',
-    params: null,
+    params: {} as void | {
+      before?: DateISO;
+    },
     data: null,
     response: {} as {
       chatMessages: {

@@ -40,7 +40,7 @@ export function MapContainer() {
   const [feeds, feedsLoading, fetchMore] = useQueryFeeds()
   const [POIs] = useQueryPOIs()
 
-  const { onScroll } = useOnScroll(fetchMore)
+  const { onScroll } = useOnScroll({ onScrollBottomEnd: fetchMore })
 
   const selectedFeedItemFromFeed = feeds.find((feedItem) => feedItem.uuid === actionId)
   const prevFeedItem = mainContext.feedItem
