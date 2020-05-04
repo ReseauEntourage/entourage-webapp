@@ -22,6 +22,7 @@ export function NavItemsDeskTop() {
   }, [])
 
   const iAmLogged = me && !me.data.user.anonymous
+
   return (
     <>
       <a href="/">
@@ -33,7 +34,7 @@ export function NavItemsDeskTop() {
         icon={<MapIcon />}
         label={texts.nav.actions}
       />
-      { iAmLogged && (
+      {iAmLogged && (
         <>
           <NavItem
             href="/messages"
@@ -47,7 +48,7 @@ export function NavItemsDeskTop() {
             />
           </NavTakeAction>
         </>
-      ) }
+      )}
       <AccountContainer>
         {iAmLogged ? (
           <LoggedChunk />

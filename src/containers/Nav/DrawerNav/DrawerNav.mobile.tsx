@@ -81,7 +81,6 @@ export function DrawerNavMobile() {
                 onClick={onClickDrawerClose}
               />
             </ListItem>
-
             <ListItem key="take_action" button={true}>
               <NavTakeAction>
                 <NavItem
@@ -90,7 +89,6 @@ export function DrawerNavMobile() {
                 />
               </NavTakeAction>
             </ListItem>
-
           </>
         )}
       </List>
@@ -106,7 +104,6 @@ export function DrawerNavMobile() {
           </ListItem>
 
         )}
-
         <ListItem key="connect" button={true} onClick={iAmLogged ? onClickLogout : onClickSignIn}>
           <NavItem
             icon={iAmLogged ? <ExitToAppIcon /> : <PersonIcon />}
@@ -114,9 +111,7 @@ export function DrawerNavMobile() {
             onClick={onClickDrawerClose}
           />
         </ListItem>
-
       </List>
-
     </Drawer>
   )
 }
