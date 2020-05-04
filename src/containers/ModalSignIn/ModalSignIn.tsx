@@ -9,6 +9,7 @@ import { api } from 'src/core/api'
 import { setTokenIntoCookies } from 'src/core/services'
 import { queryKeys } from 'src/core/store'
 import { texts } from 'src/i18n'
+import { useIsDesktop } from 'src/styles'
 import { handleServerError } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
@@ -301,6 +302,7 @@ export function ModalSignIn() {
   const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
   const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)
   const [definePasswordForm, onValidateDefinePasswordStep] = useDefinePasswordStep()
+  const isDesktop = useIsDesktop()
 
   const onValidate = useCallback(() => {
     if (step === 'phone') {
@@ -335,17 +337,19 @@ export function ModalSignIn() {
       title="Connexion / Inscription"
       validateLabel={validateLabel}
     >
-      <Box style={{ paddingLeft: 250 }}>
-        <img
-          alt="Personnage"
-          src="/personnage-entourage-1.png"
-          style={{
-            position: 'absolute',
-            left: 20,
-            bottom: 0,
-          }}
-          width="200"
-        />
+      <Box style={{ paddingLeft: isDesktop ? 250 : 0 }}>
+        {isDesktop && (
+          <img
+            alt="Personnage"
+            src="/personnage-entourage-1.png"
+            style={{
+              position: 'absolute',
+              left: 20,
+              bottom: 0,
+            }}
+            width="200"
+          />
+        )}
         <PhoneField phoneForm={phoneForm} step={step} />
         <SecretField phoneForm={phoneForm} secretForm={secretForm} step={step} />
         <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />

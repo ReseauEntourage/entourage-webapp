@@ -1,6 +1,5 @@
-import { useWindowWidth } from '@react-hook/window-size'
 import React from 'react'
-import { breakpoints } from 'src/styles'
+import { useIsDesktop } from 'src/styles'
 import { isSSR } from 'src/utils/misc'
 import { AnyCantFix } from 'src/utils/types'
 
@@ -15,9 +14,7 @@ export function plateform<T extends React.ComponentType<AnyCantFix>>(data: Plate
   // ignore type error because return statement is already typed
   // @ts-ignore
   return (props: React.ComponentProps<typeof T>) => {
-    const windowWidth = useWindowWidth()
-
-    const isDesktop = windowWidth >= breakpoints.mobile
+    const isDesktop = useIsDesktop()
 
     // TODO: manage SSR mode
     if (isSSR) {

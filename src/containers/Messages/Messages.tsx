@@ -17,7 +17,7 @@ export function Messages() {
   const { data: dataMyFeeds } = useQueryMyFeeds()
   const entourageId = useEntourageId()
   const router = useRouter()
-  const firstConversationId = dataMyFeeds?.[0].data.id
+  const firstConversationId = dataMyFeeds?.[0]?.data.id
 
   useEffect(() => {
     if (!entourageId && firstConversationId) {
