@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useIsDesktop } from 'src/styles'
-import { isSSR } from 'src/utils/misc'
+import { useMount } from 'src/utils/hooks'
 import { AnyCantFix } from 'src/utils/types'
 
 interface PlateformParams<T> {
@@ -15,18 +15,20 @@ export function plateform<T extends React.ComponentType<AnyCantFix>>(data: Plate
   // @ts-ignore
   return (props: React.ComponentProps<typeof T>) => {
     const isDesktop = useIsDesktop()
+    const [key, setKey] = useState<number>(0)
 
-    // TODO: manage SSR mode
-    if (isSSR) {
-      return null
-    }
+    // force refresh on client side after first render
+    // because of lack of SSR screen width info
+    useMount(() => {
+      setKey(new Date().getTime())
+    })
 
     if (Desktop && isDesktop) {
-      return <Desktop {...props} />
+      return <Desktop key={key} {...props} />
     }
 
     if (Mobile) {
-      return <Mobile {...props} />
+      return <Mobile key={key} {...props} />
     }
 
     throw new Error('plateform error')
