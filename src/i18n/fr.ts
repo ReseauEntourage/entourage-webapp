@@ -18,7 +18,7 @@ export const texts = {
     logout: 'Déconnexion',
   },
   labels: {
-    save: 'Enregister',
+    save: 'Enregistrer',
     chooseImage: 'Choisir une image',
     changeImage: 'Change d\'image',
     validate: 'Valider',
