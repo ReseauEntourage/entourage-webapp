@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { useMapContext } from 'src/components/Map'
+import { constants } from 'src/constants'
 import { api, FeedItemEntourage } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
 import { AnyToFix } from 'src/utils/types'
@@ -9,7 +10,7 @@ export function useQueryFeeds() {
   const mapContext = useMapContext()
 
   const feedsParams = useMemo(() => ({
-    timeRange: 36000,
+    timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
     latitude: mapContext.value.center.lat,
     longitude: mapContext.value.center.lng,
     pageToken: undefined as string | undefined,
