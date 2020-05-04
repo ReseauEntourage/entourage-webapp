@@ -2,11 +2,11 @@ import React from 'react'
 import { UserItem, UserItemProps } from './UserItem'
 import { Container } from './UsersList.styles'
 
-interface Props {
+interface UsersListProps {
   users: UserItemProps[];
 }
 
-export function UsersList(props: Props) {
+export function UsersList(props: UsersListProps) {
   const { users } = props
   return (
     <Container>

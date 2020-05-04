@@ -4,7 +4,7 @@ import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { variants } from 'src/styles'
 
-interface Props {
+interface EventCardProps {
   address: string;
   dateLabel: string;
   description: string;
@@ -14,7 +14,7 @@ interface Props {
   title: string;
 }
 
-export function EventCard(props: Props) {
+export function EventCard(props: EventCardProps) {
   const {
     title,
     dateLabel,

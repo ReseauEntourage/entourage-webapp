@@ -8,7 +8,7 @@ import { ReactQueryConfigProvider } from 'react-query'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
-import { Provider as MainContextProvider } from 'src/containers/MainContext'
+import { MainStoreProvider } from 'src/containers/MainStore'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api } from 'src/core/api'
@@ -75,7 +75,7 @@ export default class App extends NextApp {
           <Dispatchers />
           <ThemeProvider theme={theme}>
             <ReactQueryConfigProvider config={queryConfig}>
-              <MainContextProvider>
+              <MainStoreProvider>
                 <MapProvider>
                   <Layout>
                     <>
@@ -89,7 +89,7 @@ export default class App extends NextApp {
                     </>
                   </Layout>
                 </MapProvider>
-              </MainContextProvider>
+              </MainStoreProvider>
             </ReactQueryConfigProvider>
           </ThemeProvider>
         </SSRDataContext.Provider>

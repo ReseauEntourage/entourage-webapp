@@ -11,11 +11,11 @@ import { assertIsDefined } from 'src/utils/misc'
 import { ConversationItemExcerpt } from './ConversationItemExcerpt'
 import { Container } from './ConversationsList.styles'
 
-interface ConversationsList {
+interface ConversationsListProps {
   entourageId?: number;
 }
 
-export function ConversationsList(props: ConversationsList) {
+export function ConversationsList(props: ConversationsListProps) {
   const { entourageId } = props
   const { data: dataMyFeeds } = useQueryMyFeeds()
   const me = useQueryMeNonNullable()

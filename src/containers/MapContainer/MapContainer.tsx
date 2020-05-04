@@ -7,7 +7,7 @@ import Link from 'next/link'
 import React from 'react'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
-import { useMainContext } from 'src/containers/MainContext'
+import { useMainStore } from 'src/containers/MainStore'
 import { useQueryPOIs, useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
@@ -36,7 +36,7 @@ interface MapContainer {}
 
 export function MapContainer() {
   const actionId = useActionId()
-  const mainContext = useMainContext()
+  const mainContext = useMainStore()
   const [feeds, feedsLoading, fetchMore] = useQueryFeeds()
   const [POIs] = useQueryPOIs()
 

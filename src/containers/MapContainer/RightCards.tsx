@@ -12,7 +12,7 @@ import { Button } from 'src/components/Button'
 import { Modal, openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
-import { useMainContext } from 'src/containers/MainContext'
+import { useMainStore } from 'src/containers/MainStore'
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
@@ -131,7 +131,7 @@ interface RightCardsProps {
 
 export function RightCards(props: RightCardsProps) {
   const { feedItem } = props
-  const mainContext = useMainContext()
+  const mainContext = useMainStore()
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
 
   useMount(() => {

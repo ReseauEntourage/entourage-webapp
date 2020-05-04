@@ -1,22 +1,6 @@
-import { styled } from '@material-ui/core/styles'
 import Link from 'next/link'
 import React from 'react'
-
-const Container = styled('div')(({ theme }) => ({
-  margin: theme.spacing(2),
-  textDecoration: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer',
-}))
-
-const Label = styled('div')(({ theme }) => ({
-  marginLeft: theme.spacing(1),
-}))
-
-const InternalLink = styled('a')(() => ({
-  textDecoration: 'none',
-}))
+import { Container, Label, InternalLink } from './NavItem.styles'
 
 interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
   href?: string;

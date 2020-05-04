@@ -11,7 +11,7 @@ import { useDelayLoading } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
 import { useModalContext } from './ModalContext'
 
-interface Props {
+interface ModalProps {
   cancel?: boolean;
   cancelLabel?: string;
   children?: AnyToFix;
@@ -29,7 +29,7 @@ const defaultProps = {
   cancel: true,
 }
 
-export function Modal(props: Props) {
+export function Modal(props: ModalProps) {
   const {
     title,
     children,

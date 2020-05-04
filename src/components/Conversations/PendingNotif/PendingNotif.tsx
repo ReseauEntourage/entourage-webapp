@@ -1,6 +1,6 @@
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import { Container, Label, FlexGrow } from './PendingNotif.styles'
+import { Container, Label, FlexGrow, FirstAvatar, SecondAvatar, AvatarContainer } from './PendingNotif.styles'
 
 interface PendingNotifProps {
   label?: string | JSX.Element;
@@ -12,18 +12,12 @@ interface PendingNotifProps {
 export function PendingNotif(props: PendingNotifProps) {
   const { label, pictureURL, rightContent, style } = props
 
-  const avatarMultipleStyles: React.CSSProperties = {
-    position: 'absolute',
-    width: 24,
-    height: 24,
-  }
-
   const avatar = Array.isArray(pictureURL)
     ? (
-      <div style={{ width: 36, height: 36, position: 'relative' }}>
-        <Avatar borderColor="white" src={pictureURL[0]} style={{ ...avatarMultipleStyles, top: 0, right: 0 }} />
-        <Avatar borderColor="white" src={pictureURL[1]} style={{ ...avatarMultipleStyles, left: 0, bottom: 0 }} />
-      </div>
+      <AvatarContainer>
+        <FirstAvatar borderColor="white" src={pictureURL[0]} />
+        <SecondAvatar borderColor="white" src={pictureURL[1]} />
+      </AvatarContainer>
     ) : <Avatar borderColor="white" src={pictureURL} />
 
   return (

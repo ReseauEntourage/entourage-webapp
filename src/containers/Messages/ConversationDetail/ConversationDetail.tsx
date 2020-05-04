@@ -24,11 +24,11 @@ interface FormFields {
   content: string;
 }
 
-interface ConversationDetail {
+interface ConversationDetailProps {
   entourageId: number;
 }
 
-export function ConversationDetail(props: ConversationDetail) {
+export function ConversationDetail(props: ConversationDetailProps) {
   const { entourageId } = props
 
   const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()

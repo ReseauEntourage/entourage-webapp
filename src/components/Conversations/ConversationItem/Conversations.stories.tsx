@@ -1,12 +1,12 @@
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import React from 'react'
+import { Message } from '../Message'
+import { PendingNotif } from '../PendingNotif'
 import { ButtonsList, Button } from 'src/components/Button'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { loremIpsum } from 'src/utils/misc'
-import { ConversationItem } from './ConversationItem'
-import { Message } from './Message'
-import { PendingNotif } from './PendingNotif'
+import { ConversationItem } from '.'
 
 export default {
   title: 'Conversations',

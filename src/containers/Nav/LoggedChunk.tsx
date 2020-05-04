@@ -7,9 +7,7 @@ import { ModalProfile } from 'src/containers/ModalProfile'
 import { texts } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
-interface LoggedChunkProps {}
-
-export function LoggedChunk(/* props: LoggedChunkProps */) {
+export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {

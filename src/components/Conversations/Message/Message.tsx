@@ -31,11 +31,13 @@ export function Message(props: MessageProps) {
     <MessageContainer style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
       <Container>
         {!isMe && (
-          <AvatarContainer>
-            <Avatar />
-          </AvatarContainer>
+          <>
+            <AvatarContainer>
+              <Avatar />
+            </AvatarContainer>
+            <Author>{author}</Author>
+          </>
         )}
-        {!isMe && <Author>{author}</Author>}
         <Content>{formatedContent}</Content>
         <DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</DateContainer>
       </Container>
