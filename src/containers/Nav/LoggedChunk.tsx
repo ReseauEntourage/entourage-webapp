@@ -1,12 +1,11 @@
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import React, { useCallback } from 'react'
-import { refetchQuery } from 'react-query'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
-import { createAnonymousUser, setTokenIntoCookies } from 'src/core/services'
-import { queryKeys } from 'src/core/store'
+import { texts } from 'src/i18n'
+import { useOnClickLogout } from './useOnClickLogout'
 
 interface LoggedChunkProps {}
 
@@ -26,12 +25,7 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
     setAnchorEl(null)
   }, [])
 
-  const logout = useCallback(async () => {
-    setTokenIntoCookies('')
-    await createAnonymousUser()
-    refetchQuery(queryKeys.me, { force: true })
-  }, [])
-
+  const onClickLogout = useOnClickLogout()
   return (
     <>
       <div
@@ -66,10 +60,10 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
         }}
       >
         <MenuItem onClick={openModalProfile}>
-          Mon Profil
+          {texts.nav.profile}
         </MenuItem>
-        <MenuItem onClick={logout}>
-          Se déconnecter
+        <MenuItem onClick={onClickLogout}>
+          {texts.nav.logout}
         </MenuItem>
       </Menu>
     </>

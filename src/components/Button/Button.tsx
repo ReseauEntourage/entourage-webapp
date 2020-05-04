@@ -7,7 +7,7 @@ interface ButtonProps extends ButtonPropsBase {
   loading?: boolean;
 }
 
-export function Button(props: ButtonProps = {}) {
+export function Button(props: ButtonProps) {
   const { style, loading, startIcon, loaderStyle, ...restProps } = props
 
   const finalStartIcon = loading ? (
