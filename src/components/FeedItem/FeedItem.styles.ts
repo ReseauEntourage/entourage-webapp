@@ -6,7 +6,7 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
-  padding: ${theme.spacing(2)}px;
+  padding: ${theme.spacing(3, 2)};
   display: flex;
   border-left: solid 5px transparent;
   border-left-color: ${({ isActive }) => isActive && colors.main.primary};
