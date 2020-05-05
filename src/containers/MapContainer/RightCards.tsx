@@ -13,6 +13,7 @@ import { Modal, openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { useMainStore } from 'src/containers/MainStore'
+import { ModalSignIn } from 'src/containers/ModalSignIn'
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
@@ -20,6 +21,7 @@ import {
   useQueryMe,
   useQueryMeNonNullable,
   UseQueryFeedItem,
+  useQueryIAmLogged,
 } from 'src/core/store'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
@@ -64,15 +66,24 @@ function ParticipateButton(props: ParticipateButtonProps) {
   const [isHover, setIsHover] = useState(false)
   const [requestEntourageUser] = useMutateEntourageUsers()
   const { data: dataMe } = useQueryMe()
+  const iAmLogged = useQueryIAmLogged()
   const [participateLoading, setParticipateLoading] = useDelayLoading()
 
   const iAmCreator = dataMe?.data.user.id === feedItem.author.id
 
-  const onClickParticipate = useCallback(async () => {
+  const onRequestEntourageUser = useCallback(async () => {
     setParticipateLoading(true)
     await requestEntourageUser({ entourageId: feedItem.id }, { waitForRefetchQueries: true })
     setParticipateLoading(false)
-  }, [feedItem.id, requestEntourageUser, setParticipateLoading])
+  }, [setParticipateLoading, feedItem, requestEntourageUser])
+
+  const onClickParticipate = useCallback(() => {
+    if (!iAmLogged) {
+      openModal(<ModalSignIn onSuccess={onRequestEntourageUser} />)
+    } else {
+      onRequestEntourageUser()
+    }
+  }, [iAmLogged, onRequestEntourageUser])
 
   const onClickPending = useCallback(() => {
     openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)

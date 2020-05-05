@@ -297,24 +297,40 @@ function DefinePasswordField(props: DefinePasswordFieldProps) {
   )
 }
 
-export function ModalSignIn() {
+interface ModalSignInProps {
+  onSuccess?: () => void;
+}
+
+export function ModalSignIn(props: ModalSignInProps) {
+  const { onSuccess } = props
   const [step, setStep] = useState<Step>('phone')
   const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
   const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)
   const [definePasswordForm, onValidateDefinePasswordStep] = useDefinePasswordStep()
   const isDesktop = useIsDesktop()
 
-  const onValidate = useCallback(() => {
+  const onValidate = useCallback(async () => {
     if (step === 'phone') {
       return onValidatePhoneStep()
     } if (step === 'password' || step === 'code-SMS') {
-      return onValidateSecretStep()
+      const isValid = await onValidateSecretStep()
+      if (onSuccess && isValid) {
+        onSuccess()
+      }
+
+      return isValid
     } if (step === 'define-password') {
       return onValidateDefinePasswordStep()
     }
 
     return false
-  }, [onValidateDefinePasswordStep, onValidatePhoneStep, onValidateSecretStep, step])
+  }, [
+    onValidateDefinePasswordStep,
+    onValidatePhoneStep,
+    onValidateSecretStep,
+    step,
+    onSuccess,
+  ])
 
   const validateLabel = (() => {
     switch (step) {
