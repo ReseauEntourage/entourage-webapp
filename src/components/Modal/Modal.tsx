@@ -1,4 +1,3 @@
-import Box from '@material-ui/core/Box'
 import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -9,6 +8,7 @@ import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
+import { GlobalStyle } from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
 interface ModalProps {
@@ -69,39 +69,36 @@ export function Modal(props: ModalProps) {
       onClose={onClose}
       open={true}
     >
-      <Typography component="div" variant={variants.bodyRegular}>
-        {title && (
-          <DialogTitle
-            id="form-dialog-title"
-            style={{
-              backgroundColor: colors.main.primary,
-              color: '#fff',
-              textAlign: 'center',
-            }}
-          >
-            {title}
-          </DialogTitle>
-        )}
-        <Box m={2}>
-          <DialogContent>
-            {children}
-          </DialogContent>
-          {hasCTAButtons && (
-            <DialogActions>
-              {cancel && (
-                <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
-                  {cancelLabel}
-                </Button>
-              )}
-              {validate && (
-                <Button color="primary" loading={loading} onClick={onValidate}>
-                  {validateLabel}
-                </Button>
-              )}
-            </DialogActions>
-          )}
-        </Box>
+      <GlobalStyle />
+      {title && (
+        <DialogTitle
+          id="form-dialog-title"
+          style={{
+            backgroundColor: colors.main.primary,
+            color: '#fff',
+            textAlign: 'center',
+          }}
+        >
+          {title}
+        </DialogTitle>
+      )}
+      <Typography component={DialogContent} variant={variants.bodyRegular}>
+        {children}
       </Typography>
+      {hasCTAButtons && (
+        <DialogActions>
+          {cancel && (
+            <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+              {cancelLabel}
+            </Button>
+          )}
+          {validate && (
+            <Button color="primary" loading={loading} onClick={onValidate}>
+              {validateLabel}
+            </Button>
+          )}
+        </DialogActions>
+      )}
     </Dialog>
   )
 }
