@@ -150,26 +150,26 @@ function MyComponent() {
 Persistance des données via [react-query](https://github.com/tannerlinsley/react-query)
 
 #### Queries
-* `useQueryMe`
-* `useQueryPOIs`
-* `useQueryFeeds`
-* `useQueryEntourageUsers`
-* `useQueryMyFeeds`
 * `useQueryEntourageChatMessages`
-* `useQueryEntouragesWithMembers`
-* `useQueryMeNonNullable`
-* `useQueryMembersPending`
 * `useQueryEntourageFromMyFeeds`
+* `useQueryEntouragesWithMembers`
+* `useQueryEntourageUsers`
+* `useQueryFeeds`
+* `useQueryIAmLogged`
+* `useQueryMe`
+* `useQueryMembersPending`
+* `useQueryMeNonNullable`
+* `useQueryMyFeeds`
+* `useQueryPOIs`
 
 #### Mutations
-
-* `useMutateEntourage`
-* `useMutateMe`
-* `useMutateMeAddress`
-* `useMutateEntourageUsers`
-* `useMutateDeleteEntourageUser`
 * `useMutateAcceptEntourageUser`
 * `useMutateCreateEntourageChatMessage`
+* `useMutateDeleteEntourageUser`
+* `useMutateEntourage`
+* `useMutateEntourageUsers`
+* `useMutateMe`
+* `useMutateMeAddress`
 
 ## i18n
 Contenu textuel  
