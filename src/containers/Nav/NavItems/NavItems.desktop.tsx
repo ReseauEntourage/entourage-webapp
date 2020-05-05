@@ -9,19 +9,17 @@ import { NavTakeAction } from '../NavTakeAction'
 import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import { useQueryMe } from 'src/core/store'
+import { useQueryIAmLogged } from 'src/core/store'
 import { texts } from 'src/i18n'
 
 export function NavItemsDeskTop() {
-  const { data: me } = useQueryMe()
+  const iAmLogged = useQueryIAmLogged()
 
   useOpenModalProfileOnLogin()
 
   const onClickSignIn = useCallback(() => {
     openModal(<ModalSignIn />)
   }, [])
-
-  const iAmLogged = me && !me.data.user.anonymous
 
   return (
     <>
