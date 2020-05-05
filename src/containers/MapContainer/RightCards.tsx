@@ -12,6 +12,7 @@ import { Button } from 'src/components/Button'
 import { Modal, openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
+import { constants } from 'src/constants'
 import { useMainStore } from 'src/containers/MainStore'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import {
@@ -151,6 +152,11 @@ export function RightCards(props: RightCardsProps) {
     }
   })
 
+  const onClickReport = useCallback(() => {
+    // eslint-disable-next-line no-useless-escape
+    window.open(`mailto:${constants.MAIL_TO_REPORT}?subject=Je signale un problème concernant \"${feedItem.title}\"`)
+  }, [feedItem.title])
+
   if (!feedItem) {
     return null
   }
@@ -177,7 +183,7 @@ export function RightCards(props: RightCardsProps) {
           <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
             <ParticipateButton feedItem={feedItem} />
             <Button variant="outlined">Partager</Button>
-            <Button variant="outlined">Signaler</Button>
+            <Button onClick={onClickReport} variant="outlined">Signaler</Button>
           </Box>
         )}
         dateLabel={dataLabel}
