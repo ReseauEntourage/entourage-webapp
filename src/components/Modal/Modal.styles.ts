@@ -1,5 +1,6 @@
 
-import { createGlobalStyle } from 'styled-components'
+import IconButton from '@material-ui/core/IconButton'
+import styled, { createGlobalStyle } from 'styled-components'
 import { devices, theme } from 'src/styles'
 
 export const GlobalStyle = createGlobalStyle`
@@ -30,4 +31,10 @@ export const GlobalStyle = createGlobalStyle`
       padding: ${theme.spacing(1, 2)} !important;
     }
   }
+`
+
+export const CloseIconContainer = styled(IconButton)`
+  position: absolute !important;
+  right: ${theme.spacing(1)}px !important;
+  top: ${theme.spacing(1)}px !important;
 `

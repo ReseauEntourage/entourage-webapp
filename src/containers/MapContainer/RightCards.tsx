@@ -10,11 +10,13 @@ import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 import { Button } from 'src/components/Button'
 import { Modal, openModal } from 'src/components/Modal'
+import { ModalShare } from 'src/components/ModalShare'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { constants } from 'src/constants'
 import { useMainStore } from 'src/containers/MainStore'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
+
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
@@ -157,6 +159,16 @@ export function RightCards(props: RightCardsProps) {
     window.open(`mailto:${constants.MAIL_TO_REPORT}?subject=Je signale un problème concernant \"${feedItem.title}\"`)
   }, [feedItem.title])
 
+  const onClickShare = useCallback(() => {
+    openModal(
+      <ModalShare
+        content={feedItem.description}
+        entourageUuid={feedItem.uuid}
+        title={feedItem.title}
+      />,
+    )
+  }, [feedItem.description, feedItem.title, feedItem.uuid])
+
   if (!feedItem) {
     return null
   }
@@ -182,7 +194,7 @@ export function RightCards(props: RightCardsProps) {
         actions={(
           <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
             <ParticipateButton feedItem={feedItem} />
-            <Button variant="outlined">Partager</Button>
+            <Button onClick={onClickShare} variant="outlined">Partager</Button>
             <Button onClick={onClickReport} variant="outlined">Signaler</Button>
           </Box>
         )}

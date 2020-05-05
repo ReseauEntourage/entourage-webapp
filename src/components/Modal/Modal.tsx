@@ -3,12 +3,13 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Typography from '@material-ui/core/Typography'
+import CloseIcon from '@material-ui/icons/Close'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
-import { GlobalStyle } from './Modal.styles'
+import { GlobalStyle, CloseIconContainer } from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
 interface ModalProps {
@@ -17,6 +18,7 @@ interface ModalProps {
   children?: AnyToFix;
   onClose?: () => void;
   onValidate?: () => void | boolean | Promise<void | boolean>;
+  showCloseButton?: boolean;
   title?: string;
   validate?: boolean;
   validateLabel?: string;
@@ -39,6 +41,7 @@ export function Modal(props: ModalProps) {
     cancelLabel,
     onValidate: onValidateProp,
     onClose: onCloseProp,
+    showCloseButton,
   } = { ...defaultProps, ...props }
 
   const modalContext = useModalContext()
@@ -77,9 +80,15 @@ export function Modal(props: ModalProps) {
             backgroundColor: colors.main.primary,
             color: '#fff',
             textAlign: 'center',
+            paddingRight: showCloseButton ? 60 : 0,
           }}
         >
           {title}
+          {showCloseButton && (
+            <CloseIconContainer aria-label="close" onClick={onClose}>
+              <CloseIcon style={{ color: 'white' }} />
+            </CloseIconContainer>
+          )}
         </DialogTitle>
       )}
       <Typography component={DialogContent} variant={variants.bodyRegular}>
