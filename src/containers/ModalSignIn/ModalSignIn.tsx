@@ -347,8 +347,11 @@ export function ModalSignIn(props: ModalSignInProps) {
     }
   })()
 
+  const allowCancel = step !== 'define-password'
+
   return (
     <Modal
+      cancel={allowCancel}
       onValidate={onValidate}
       title="Connexion / Inscription"
       validateLabel={validateLabel}

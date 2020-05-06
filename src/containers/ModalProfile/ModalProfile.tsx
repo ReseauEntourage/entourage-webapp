@@ -126,8 +126,11 @@ export function ModalProfile() {
     register({ name: 'autocompletePlace' as FormFieldKey })
   }, [register])
 
+  const requiredInfoAreCompleted = !!(user.firstName && user.lastName && user.address?.displayAddress)
+
   return (
     <Modal
+      cancel={requiredInfoAreCompleted}
       onValidate={onValidate}
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
@@ -161,9 +164,7 @@ export function ModalProfile() {
         </Label>
         <TextField
           fullWidth={true}
-          inputRef={register({
-            required: true,
-          })}
+          inputRef={register}
           label={modalTexts.decriptionLabel}
           multiline={true}
           name={'about' as FormFieldKey}
