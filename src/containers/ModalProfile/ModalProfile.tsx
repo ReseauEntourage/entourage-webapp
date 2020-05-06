@@ -10,6 +10,7 @@ import { Modal } from 'src/components/Modal'
 import { api } from 'src/core/api'
 import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/core/store'
 import { texts } from 'src/i18n'
+import { notifServerError } from 'src/utils/misc'
 
 type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
 
@@ -40,13 +41,18 @@ function useUploadImageProfile() {
       },
     })
 
-    await axios.put(presignedURLResponse.data.presignedUrl, imageCropperValue.blob, {
-      headers: {
-        'Content-Type': imageCropperValue.blob.type,
-      },
-    })
+    try {
+      await axios.put(presignedURLResponse.data.presignedUrl, imageCropperValue.blob, {
+        headers: {
+          'Content-Type': imageCropperValue.blob.type,
+        },
+      })
 
-    return presignedURLResponse.data.avatarKey
+      return presignedURLResponse.data.avatarKey
+    } catch (error) {
+      notifServerError(error)
+      return null
+    }
   }, [imageCropperValue])
 
   return [
