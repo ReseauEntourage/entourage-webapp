@@ -4,11 +4,13 @@ import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
+import { useQueryMeNonNullable } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
 export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const me = useQueryMeNonNullable()
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -39,7 +41,7 @@ export function LoggedChunk() {
         }}
         tabIndex={0}
       >
-        <Avatar />
+        <Avatar src={me.avatarUrl} />
       </div>
       <Menu
         anchorEl={anchorEl}

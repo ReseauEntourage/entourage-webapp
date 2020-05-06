@@ -1,4 +1,5 @@
 import Box from '@material-ui/core/Box'
+import debounce from 'lodash/debounce'
 import React, { useState, useCallback, useRef } from 'react'
 import ReactCrop, { ReactCropProps } from 'react-image-crop'
 import { Button } from 'src/components/Button'
@@ -20,10 +21,11 @@ export interface ImageCropperValue {
 export interface ImageCropperProps {
   onChange?: (value: ImageCropperValue) => void;
   onValidate?: (value: ImageCropperValue) => void;
+  src?: string;
 }
 
 export function ImageCropper(props: ImageCropperProps) {
-  const { onChange, onValidate } = props
+  const { onChange, onValidate, src: defaultSrc } = props
   const [editing, setEditing] = useState(false)
   const [src, setSrc] = useState()
   const [value, setValue] = useState()
@@ -81,34 +83,37 @@ export function ImageCropper(props: ImageCropperProps) {
     })
   }, [])
 
-  const makeClientCrop = useCallback(async (cropParams) => {
+  const onCropComplete = useCallback(async (cropParams) => {
     if (imageRef.current && cropParams.width && cropParams.height) {
       const internalValue = await getCroppedImg(
         imageRef.current,
-        crop,
+        cropParams,
         'newFile.jpeg',
       )
 
       setValue(internalValue)
 
       if (onChange) {
-        onChange(value)
+        onChange(internalValue)
       }
     }
-  }, [crop, getCroppedImg, onChange, value])
+  }, [getCroppedImg, onChange])
 
-  const onCropComplete = useCallback((cropParams) => {
-    makeClientCrop(cropParams)
-  }, [makeClientCrop])
-
-  const onCropChange = useCallback((nextCrop) => {
-    setCrop(nextCrop)
-  }, [])
+  const onCropChange = useCallback(
+    debounce(
+      (nextCrop: ReactCropProps['crop']) => {
+        setCrop(nextCrop)
+      },
+      10,
+    ),
+    [],
+  )
 
   const onSelectFile = useCallback((e) => {
     if (e.target.files && e.target.files.length > 0) {
       setEditing(true)
       const reader = new FileReader()
+      // @ts-ignore
       reader.addEventListener('load', () => setSrc(reader.result))
       reader.readAsDataURL(e.target.files[0])
     }
@@ -116,20 +121,14 @@ export function ImageCropper(props: ImageCropperProps) {
 
   const internalOnValidate = useCallback(() => {
     if (onValidate) {
-      onValidate(src)
+      onValidate(value)
     }
 
     setEditing(false)
-  }, [onValidate, src])
+  }, [onValidate, value])
 
   return (
-    <div
-      style={{
-        // inWidth: 300,
-        // minHeight: 300,
-        width: 'fit-content', // TODO: not compatible with all browsers
-      }}
-    >
+    <div style={{ width: 'fit-content' }}>
       <input
         ref={inputRef}
         accept="image/*"
@@ -158,13 +157,13 @@ export function ImageCropper(props: ImageCropperProps) {
         <Button onClick={() => inputRef.current && inputRef.current.click()}>
           {src ? texts.labels.changeImage : texts.labels.chooseImage}
         </Button>
-        {src && (
-          <Button onClick={internalOnValidate}>{texts.labels.validate}</Button>
+        {editing && (
+          <Button onClick={internalOnValidate}>{texts.labels.validateImage}</Button>
         )}
       </Box>
-      {!editing && value && (
+      {!editing && (value || defaultSrc) && (
         <div>
-          <img alt="Copper preview" src={value.src} />
+          <img alt="Copper preview" src={value?.src || defaultSrc} />
         </div>
       )}
     </div>
