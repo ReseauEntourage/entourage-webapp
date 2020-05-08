@@ -5,6 +5,8 @@ import React from 'react'
 interface ButtonProps extends ButtonPropsBase {
   loaderStyle?: React.CSSProperties;
   loading?: boolean;
+  // target is missing in Material ButtonPropsBase def, but it works
+  target?: string;
 }
 
 export function Button(props: ButtonProps) {

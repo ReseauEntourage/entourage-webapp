@@ -4,9 +4,8 @@ import { colors, variants, theme } from 'src/styles'
 
 export const Container = styled.div<{ isActive: boolean; }>`
   display: flex;
-  padding: ${theme.spacing(1)}px;
+  padding: ${theme.spacing(3, 2)};
   align-items: center;
-  border-bottom: solid 1px ${colors.borderColor};
   background-color: ${(props) => props.isActive && colors.main.greyLight};
 `
 

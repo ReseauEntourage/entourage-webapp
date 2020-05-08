@@ -6,10 +6,10 @@ import { MapContextValue, MapContext, useMapContext } from './context'
 
 const Paris = {
   center: {
-    lat: 48.8564918,
-    lng: 2.3348084,
+    lat: 48.856491799999986,
+    lng: 2.334808400000014,
   },
-  zoom: 12.85,
+  zoom: 13,
 }
 
 interface Props {
@@ -21,7 +21,7 @@ interface Props {
   onChange?: (value: MapContextValue) => void;
 }
 
-const defaultValues = Paris
+const defaultValues = Paris as MapContextValue['value']
 
 export function Map(props: Props) {
   const { children } = props
@@ -42,9 +42,7 @@ export function Map(props: Props) {
 
 export function MapProvider(props: { children: JSX.Element; }) {
   const { children } = props
-  const [mapContextValue, setMapContextValue] = useState<MapContextValue['value']>(
-    defaultValues as MapContextValue['value'],
-  )
+  const [mapContextValue, setMapContextValue] = useState<MapContextValue['value']>(defaultValues)
 
   const onChange = useCallback(setMapContextValue, [])
 

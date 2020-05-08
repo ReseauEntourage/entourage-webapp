@@ -4,13 +4,13 @@ import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
+import { useQueryMe } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
-interface LoggedChunkProps {}
-
-export function LoggedChunk(/* props: LoggedChunkProps */) {
+export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+  const me = useQueryMe()
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -41,7 +41,7 @@ export function LoggedChunk(/* props: LoggedChunkProps */) {
         }}
         tabIndex={0}
       >
-        <Avatar />
+        <Avatar src={me.data?.data.user.avatarUrl} />
       </div>
       <Menu
         anchorEl={anchorEl}

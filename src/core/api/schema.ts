@@ -333,6 +333,7 @@ export const schema = {
     data: {} as {
       user: {
         about?: string;
+        avatarKey?: string;
         email?: string;
         firstName?: string;
         lastName?: string;
@@ -360,9 +361,10 @@ export const schema = {
     method: 'POST',
     params: null,
     data: {} as {
-      contentType: 'image/jpeg';
+      contentType: string;
     },
     response: {} as {
+      avatarKey: string;
       presignedUrl: string;
     },
   },

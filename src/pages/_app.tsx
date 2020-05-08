@@ -8,7 +8,7 @@ import { ReactQueryConfigProvider } from 'react-query'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
-import { Provider as MainContextProvider } from 'src/containers/MainContext'
+import { MainStoreProvider } from 'src/containers/MainStore'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api } from 'src/core/api'
@@ -16,13 +16,14 @@ import { Dispatchers } from 'src/core/events'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { theme } from 'src/styles'
-import { isSSR } from 'src/utils/misc'
+import { isSSR, initFacebookApp } from 'src/utils/misc'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
 }
 
 initSentry()
+initFacebookApp()
 
 export default class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
@@ -75,7 +76,7 @@ export default class App extends NextApp {
           <Dispatchers />
           <ThemeProvider theme={theme}>
             <ReactQueryConfigProvider config={queryConfig}>
-              <MainContextProvider>
+              <MainStoreProvider>
                 <MapProvider>
                   <Layout>
                     <>
@@ -89,7 +90,7 @@ export default class App extends NextApp {
                     </>
                   </Layout>
                 </MapProvider>
-              </MainContextProvider>
+              </MainStoreProvider>
             </ReactQueryConfigProvider>
           </ThemeProvider>
         </SSRDataContext.Provider>

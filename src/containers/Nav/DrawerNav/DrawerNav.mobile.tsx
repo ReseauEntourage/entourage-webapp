@@ -20,12 +20,12 @@ import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import { useQueryMe } from 'src/core/store'
+import { useQueryIAmLogged } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
 
 export function DrawerNavMobile() {
-  const { data: me } = useQueryMe()
+  const iAmLogged = useQueryIAmLogged()
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
   useOpenModalProfileOnLogin()
@@ -43,8 +43,6 @@ export function DrawerNavMobile() {
   }, [])
 
   const onClickLogout = useOnClickLogout()
-
-  const iAmLogged = me && !me.data.user.anonymous
 
   return (
     <Drawer
@@ -81,7 +79,6 @@ export function DrawerNavMobile() {
                 onClick={onClickDrawerClose}
               />
             </ListItem>
-
             <ListItem key="take_action" button={true}>
               <NavTakeAction>
                 <NavItem
@@ -90,7 +87,6 @@ export function DrawerNavMobile() {
                 />
               </NavTakeAction>
             </ListItem>
-
           </>
         )}
       </List>
@@ -106,7 +102,6 @@ export function DrawerNavMobile() {
           </ListItem>
 
         )}
-
         <ListItem key="connect" button={true} onClick={iAmLogged ? onClickLogout : onClickSignIn}>
           <NavItem
             icon={iAmLogged ? <ExitToAppIcon /> : <PersonIcon />}
@@ -114,9 +109,7 @@ export function DrawerNavMobile() {
             onClick={onClickDrawerClose}
           />
         </ListItem>
-
       </List>
-
     </Drawer>
   )
 }

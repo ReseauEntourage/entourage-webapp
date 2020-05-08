@@ -10,9 +10,13 @@ import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
 import { Button } from 'src/components/Button'
 import { Modal, openModal } from 'src/components/Modal'
+import { ModalShare } from 'src/components/ModalShare'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
-import { useMainContext } from 'src/containers/MainContext'
+import { constants } from 'src/constants'
+import { useMainStore } from 'src/containers/MainStore'
+import { ModalSignIn } from 'src/containers/ModalSignIn'
+
 import {
   useQueryEntourageUsers,
   useMutateEntourageUsers,
@@ -20,6 +24,7 @@ import {
   useQueryMe,
   useQueryMeNonNullable,
   UseQueryFeedItem,
+  useQueryIAmLogged,
 } from 'src/core/store'
 import { variants, colors } from 'src/styles'
 import { useMount, useDelayLoading } from 'src/utils/hooks'
@@ -64,15 +69,24 @@ function ParticipateButton(props: ParticipateButtonProps) {
   const [isHover, setIsHover] = useState(false)
   const [requestEntourageUser] = useMutateEntourageUsers()
   const { data: dataMe } = useQueryMe()
+  const iAmLogged = useQueryIAmLogged()
   const [participateLoading, setParticipateLoading] = useDelayLoading()
 
   const iAmCreator = dataMe?.data.user.id === feedItem.author.id
 
-  const onClickParticipate = useCallback(async () => {
+  const onRequestEntourageUser = useCallback(async () => {
     setParticipateLoading(true)
     await requestEntourageUser({ entourageId: feedItem.id }, { waitForRefetchQueries: true })
     setParticipateLoading(false)
-  }, [feedItem.id, requestEntourageUser, setParticipateLoading])
+  }, [setParticipateLoading, feedItem, requestEntourageUser])
+
+  const onClickParticipate = useCallback(() => {
+    if (!iAmLogged) {
+      openModal(<ModalSignIn onSuccess={onRequestEntourageUser} />)
+    } else {
+      onRequestEntourageUser()
+    }
+  }, [iAmLogged, onRequestEntourageUser])
 
   const onClickPending = useCallback(() => {
     openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)
@@ -131,7 +145,7 @@ interface RightCardsProps {
 
 export function RightCards(props: RightCardsProps) {
   const { feedItem } = props
-  const mainContext = useMainContext()
+  const mainContext = useMainStore()
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
 
   useMount(() => {
@@ -139,6 +153,21 @@ export function RightCards(props: RightCardsProps) {
       mainContext.onChangeFeedItem(feedItem)
     }
   })
+
+  const onClickReport = useCallback(() => {
+    // eslint-disable-next-line no-useless-escape
+    window.open(`mailto:${constants.MAIL_TO_REPORT}?subject=Je signale un problème concernant \"${feedItem.title}\"`)
+  }, [feedItem.title])
+
+  const onClickShare = useCallback(() => {
+    openModal(
+      <ModalShare
+        content={feedItem.description}
+        entourageUuid={feedItem.uuid}
+        title={feedItem.title}
+      />,
+    )
+  }, [feedItem.description, feedItem.title, feedItem.uuid])
 
   if (!feedItem) {
     return null
@@ -165,8 +194,8 @@ export function RightCards(props: RightCardsProps) {
         actions={(
           <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
             <ParticipateButton feedItem={feedItem} />
-            <Button variant="outlined">Partager</Button>
-            <Button variant="outlined">Signaler</Button>
+            <Button onClick={onClickShare} variant="outlined">Partager</Button>
+            <Button onClick={onClickReport} variant="outlined">Signaler</Button>
           </Box>
         )}
         dateLabel={dataLabel}

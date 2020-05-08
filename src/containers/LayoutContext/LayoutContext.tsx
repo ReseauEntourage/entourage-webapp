@@ -15,7 +15,7 @@ interface ProviderProps {
   children: React.ReactChild;
 }
 
-export function Provider(props: ProviderProps) {
+export function LayoutProvider(props: ProviderProps) {
   const { children } = props
   const [drawerIsOpen, setDrawerIsOpen] = useState<LayoutContextValue['drawerIsOpen']>(false)
 

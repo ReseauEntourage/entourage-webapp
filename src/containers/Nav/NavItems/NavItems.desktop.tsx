@@ -9,11 +9,11 @@ import { NavTakeAction } from '../NavTakeAction'
 import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import { useQueryMe } from 'src/core/store'
+import { useQueryIAmLogged } from 'src/core/store'
 import { texts } from 'src/i18n'
 
 export function NavItemsDeskTop() {
-  const { data: me } = useQueryMe()
+  const iAmLogged = useQueryIAmLogged()
 
   useOpenModalProfileOnLogin()
 
@@ -21,7 +21,6 @@ export function NavItemsDeskTop() {
     openModal(<ModalSignIn />)
   }, [])
 
-  const iAmLogged = me && !me.data.user.anonymous
   return (
     <>
       <a href="/">
@@ -33,7 +32,7 @@ export function NavItemsDeskTop() {
         icon={<MapIcon />}
         label={texts.nav.actions}
       />
-      { iAmLogged && (
+      {iAmLogged && (
         <>
           <NavItem
             href="/messages"
@@ -47,7 +46,7 @@ export function NavItemsDeskTop() {
             />
           </NavTakeAction>
         </>
-      ) }
+      )}
       <AccountContainer>
         {iAmLogged ? (
           <LoggedChunk />

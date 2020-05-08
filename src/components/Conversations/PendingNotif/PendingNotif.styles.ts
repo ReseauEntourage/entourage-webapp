@@ -1,5 +1,6 @@
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
+import { Avatar as AvatarBase } from 'src/components/Avatar'
 import { theme, colors, variants } from 'src/styles'
 
 export const Container = styled.div`
@@ -20,4 +21,26 @@ export const Label = styled(Typography).attrs(() => ({
 
 export const FlexGrow = styled.div`
   flex-grow: 1;
+`
+
+const Avatar = styled(AvatarBase)`
+  position: absolute;
+  width: 24px;
+  height: 24px;
+`
+
+export const FirstAvatar = styled(Avatar)`
+  top: 0;
+  right: 0;
+`
+
+export const SecondAvatar = styled(Avatar)`
+  left: 0;
+  bottom: 0;
+`
+
+export const AvatarContainer = styled.div`
+  position: relative;
+  width: 36px;
+  height: 36px;
 `

@@ -1,6 +1,7 @@
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
@@ -12,13 +13,25 @@ const Container = styled.div`
   display: flex;
 `
 
-interface MessagesProps {}
-
 export function Messages() {
   const { data: dataMyFeeds } = useQueryMyFeeds()
   const entourageId = useEntourageId()
+  const router = useRouter()
+  const firstConversationId = dataMyFeeds?.[0]?.data.id
 
-  if (!dataMyFeeds) {
+  useEffect(() => {
+    if (!entourageId && firstConversationId) {
+      router.push(`/messages/${firstConversationId}`)
+    }
+  }, [entourageId, firstConversationId, router])
+
+  useEffect(() => {
+
+  }, [firstConversationId])
+
+  const isReady = dataMyFeeds && (dataMyFeeds.length === 0 || entourageId)
+
+  if (!isReady) {
     return (
       <Box alignItems="center" display="flex" height="100%" justifyContent="center">
         <CircularProgress variant="indeterminate" />
@@ -29,7 +42,7 @@ export function Messages() {
   return (
     <Container>
       <ConversationsList entourageId={entourageId} />
-      {entourageId ? <ConversationDetail entourageId={entourageId} /> : null}
+      {entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : null}
     </Container>
   )
 }
