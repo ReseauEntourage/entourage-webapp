@@ -221,3 +221,30 @@ export interface FeedItemTour {
   heatmapSize: number;
   type: 'Tour';
 }
+
+export interface DTOEntourageAsAction {
+  description: string;
+  displayCategory: FeedDisplayCategory;
+  entourageType: FeedEntourageType;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  title: string;
+}
+
+export interface DTOEntourageAsEvent {
+  description: string;
+  groupType: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  metadata: {
+    googlePlaceId: string;
+    placeName: string;
+    startsAt: string;
+    streetAddress: string;
+  };
+  title: string;
+}

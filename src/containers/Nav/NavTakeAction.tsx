@@ -15,6 +15,7 @@ import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalCharte } from 'src/containers/ModalCharte'
 import { ModalCreateAction } from 'src/containers/ModalCreateAction'
+import { ModalCreateEvent } from 'src/containers/ModalCreateEvent'
 import { variants, colors } from 'src/styles'
 
 const MenuContainer = styled.div`
@@ -113,7 +114,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
   }, [closeDrawerIfOpen])
 
   const openEventModal = useCallback(() => {
-    // openModal(<ProfileModal />)
+    openModal(<ModalCreateEvent />)
     setAnchorEl(null)
     closeDrawerIfOpen()
   }, [closeDrawerIfOpen])
