@@ -1,6 +1,4 @@
-import SendIcon from '@material-ui/icons/Send'
 import React, { useCallback, useEffect, useRef } from 'react'
-import { Button } from 'src/components/Button'
 import { Message } from 'src/components/Conversations'
 import { TextField, useForm } from 'src/components/Form'
 import {
@@ -9,7 +7,6 @@ import {
   useMutateCreateEntourageChatMessage,
   useQueryEntourageFromMyFeeds,
 } from 'src/core/store'
-import { theme, useIsDesktop } from 'src/styles'
 import { useOnScroll, usePrevious } from 'src/utils/hooks'
 import {
   Container,
@@ -18,6 +15,7 @@ import {
   Pending,
 } from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
+import { SendButton } from './SendButton'
 import { TopBar } from './TopBar'
 
 interface FormFields {
@@ -30,8 +28,6 @@ interface ConversationDetailProps {
 
 export function ConversationDetail(props: ConversationDetailProps) {
   const { entourageId } = props
-
-  const isDesktop = useIsDesktop()
 
   const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
@@ -137,22 +133,9 @@ export function ConversationDetail(props: ConversationDetailProps) {
                 flex: 1,
               }}
             />
-            {isDesktop ? (
-              <Button
-                onClick={onClickSend}
-                startIcon={<SendIcon />}
-                style={{ marginLeft: theme.spacing(2) }}
-              >
-              Envoyer
-              </Button>
-            ) : (
-              <Button
-                onClick={onClickSend}
-                style={{ marginLeft: theme.spacing(2) }}
-              >
-                <SendIcon />
-              </Button>
-            )}
+            <SendButton
+              onClick={onClickSend}
+            />
           </BottomBar>
         </>
       )}
