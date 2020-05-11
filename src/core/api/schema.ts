@@ -16,6 +16,8 @@ import {
   POICategoriesIds,
   User,
   UserPartner,
+  DTOEntourageAsEvent,
+  DTOEntourageAsAction,
 } from './SchemaTypes'
 
 export const schema = {
@@ -33,16 +35,7 @@ export const schema = {
     method: 'POST',
     params: null,
     data: {} as {
-      entourage: {
-        description: string;
-        displayCategory: FeedDisplayCategory;
-        entourageType: FeedEntourageType;
-        location: {
-          latitude: number;
-          longitude: number;
-        };
-        title: string;
-      };
+      entourage: DTOEntourageAsAction | DTOEntourageAsEvent;
     },
     response: {} as {
       entourage: {

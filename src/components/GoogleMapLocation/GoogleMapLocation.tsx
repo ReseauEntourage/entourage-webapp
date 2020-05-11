@@ -100,6 +100,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
     let active = true
 
     autocompleteService.current = new googleMapsInst.places.AutocompleteService()
+    // placesService.current = new googleMapsInst.places.PlacesService()
 
     if (inputValue === '') {
       setOptions([])
@@ -115,7 +116,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
     return () => {
       active = false
     }
-  }, [inputValue, fetch, googleMapsInst.places.AutocompleteService])
+  }, [inputValue, fetch, googleMapsInst.places.AutocompleteService, googleMapsInst])
 
   return (
     <Autocomplete
@@ -164,7 +165,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
                   {part.text}
                 </span>
               ))}
-              <Typography color="textSecondary" variant="body2">
+              <Typography color="textPrimary" variant="body2">
                 {option.structured_formatting.secondary_text}
               </Typography>
             </Grid>

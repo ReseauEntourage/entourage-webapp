@@ -91,6 +91,7 @@ export function ImageCropper(props: ImageCropperProps) {
         'newFile.jpeg',
       )
 
+      // @ts-ignore to fix because of TS 3.8
       setValue(internalValue)
 
       if (onChange) {
@@ -121,6 +122,7 @@ export function ImageCropper(props: ImageCropperProps) {
 
   const internalOnValidate = useCallback(() => {
     if (onValidate) {
+      // @ts-ignore to fix because of TS 3.8
       onValidate(value)
     }
 
@@ -146,6 +148,7 @@ export function ImageCropper(props: ImageCropperProps) {
           onComplete={onCropComplete}
           onImageLoaded={onImageLoaded}
           ruleOfThirds={true}
+          // @ts-ignore to fix because of TS 3.8
           src={src}
         />
       )}
@@ -163,7 +166,11 @@ export function ImageCropper(props: ImageCropperProps) {
       </Box>
       {!editing && (value || defaultSrc) && (
         <div>
-          <img alt="Copper preview" src={value?.src || defaultSrc} />
+          <img
+            alt="Copper preview"
+            // @ts-ignore to fix because of TS 3.8
+            src={value?.src || defaultSrc}
+          />
         </div>
       )}
     </div>

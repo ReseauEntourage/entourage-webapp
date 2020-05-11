@@ -74,5 +74,17 @@ export const texts = {
       },
       validateLabel: 'Créer mon action',
     },
+    modalCreateEvent: {
+      title: 'Vous souhaitez créer un événement solidaire ? C\'est parti !',
+      step1: '1. Donnez un titre à votre événement',
+      step2: '2. Où se déroulera-t-il ?',
+      step3: '3. Indiquez la date et l\'heure de rendez-vous',
+      step4: '4. Quel est le but de cet événement ?',
+      fieldTitlePlaceholder: 'Ex: Apéro entre voisins',
+      fieldAddressPlaceholder: 'Adresse précise',
+      fieldLabelDate: 'Selectionnez une date',
+      fieldDescriptionPlaceholder: 'Je crée cet événement pour...',
+      validateLabel: 'Créer mon événement',
+    },
   },
 }
