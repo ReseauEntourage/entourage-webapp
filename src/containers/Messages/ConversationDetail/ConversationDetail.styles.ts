@@ -1,6 +1,6 @@
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
-import { theme, variants, colors } from 'src/styles'
+import { theme, variants } from 'src/styles'
 
 export const Container = styled.div`
   width: 100%;
@@ -24,15 +24,6 @@ export const BottomBar = styled.div`
   align-items: center;
   padding: 0 ${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(2)}px;
   box-sizing: border-box;
-`
-
-export const TopBar = styled(Typography).attrs(() => ({
-  variant: variants.bodyRegular,
-  color: 'primary',
-  component: 'div',
-}))`
-  padding: ${theme.spacing(3)}px;
-  border-bottom: solid 1px ${colors.borderColor};
 `
 
 export const Pending = styled(Typography).attrs(() => ({

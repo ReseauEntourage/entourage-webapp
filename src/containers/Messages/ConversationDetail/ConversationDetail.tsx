@@ -9,16 +9,16 @@ import {
   useMutateCreateEntourageChatMessage,
   useQueryEntourageFromMyFeeds,
 } from 'src/core/store'
-import { theme } from 'src/styles'
+import { theme, useIsDesktop } from 'src/styles'
 import { useOnScroll, usePrevious } from 'src/utils/hooks'
 import {
   Container,
   MessagesContainer,
   BottomBar,
-  TopBar,
   Pending,
 } from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
+import { TopBar } from './TopBar'
 
 interface FormFields {
   content: string;
@@ -30,6 +30,8 @@ interface ConversationDetailProps {
 
 export function ConversationDetail(props: ConversationDetailProps) {
   const { entourageId } = props
+
+  const isDesktop = useIsDesktop()
 
   const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
@@ -102,9 +104,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   return (
     <Container>
-      <TopBar>
-        {entourage.title}
-      </TopBar>
+      <TopBar title={entourage.title} />
       <MembersPendingRequest entourageId={entourageId} />
       {!userIsAccepted ? (
         <Pending>
@@ -137,13 +137,22 @@ export function ConversationDetail(props: ConversationDetailProps) {
                 flex: 1,
               }}
             />
-            <Button
-              onClick={onClickSend}
-              startIcon={<SendIcon />}
-              style={{ marginLeft: theme.spacing(2) }}
-            >
-            Envoyer
-            </Button>
+            {isDesktop ? (
+              <Button
+                onClick={onClickSend}
+                startIcon={<SendIcon />}
+                style={{ marginLeft: theme.spacing(2) }}
+              >
+              Envoyer
+              </Button>
+            ) : (
+              <Button
+                onClick={onClickSend}
+                style={{ marginLeft: theme.spacing(2) }}
+              >
+                <SendIcon />
+              </Button>
+            )}
           </BottomBar>
         </>
       )}

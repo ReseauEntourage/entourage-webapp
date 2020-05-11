@@ -13,7 +13,7 @@ const Container = styled.div`
   display: flex;
 `
 
-export function Messages() {
+export function MessagesDesktop() {
   const { data: dataMyFeeds } = useQueryMyFeeds()
   const entourageId = useEntourageId()
   const router = useRouter()
@@ -24,10 +24,6 @@ export function Messages() {
       router.push(`/messages/${firstConversationId}`)
     }
   }, [entourageId, firstConversationId, router])
-
-  useEffect(() => {
-
-  }, [firstConversationId])
 
   const isReady = dataMyFeeds && (dataMyFeeds.length === 0 || entourageId)
 
