@@ -26,7 +26,7 @@ export function ConversationsList(props: ConversationsListProps) {
     assertIsDefined(dataMyFeeds, 'ConversationsList: feed can\'t be null')
   }
 
-  if (!dataMyFeeds || !entouragesWithMembersPending) {
+  if (!entouragesWithMembersPending) {
     return <CircularProgress variant="indeterminate" />
   }
 
