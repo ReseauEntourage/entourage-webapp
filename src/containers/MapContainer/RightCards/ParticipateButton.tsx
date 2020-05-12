@@ -4,7 +4,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import React, { useCallback, useState } from 'react'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
-import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import {
   useMutateEntourageUsers,
@@ -48,34 +47,14 @@ export function ParticipateButton(props: ParticipateButtonProps) {
     openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)
   }, [feedItem.id])
 
-  const onClickUpdate = useCallback(() => {
-    openModal(
-      <ModalEditAction
-        action={{
-          id: feedItem.id,
-          title: feedItem.title,
-          description: feedItem.description,
-          displayCategory: feedItem.displayCategory,
-          entourageType: feedItem.entourageType,
-        }}
-      />,
-    )
-  }, [
-    feedItem.description,
-    feedItem.displayCategory,
-    feedItem.entourageType,
-    feedItem.id,
-    feedItem.title,
-  ])
-
   if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled') {
     return <Button loading={participateLoading} onClick={onClickParticipate}>Participer</Button>
   }
 
   if (iAmCreator) {
     return (
-      <Button onClick={onClickUpdate}>
-        Modifier
+      <Button disabled={true} startIcon={<DoneIcon />}>
+        Créateur
       </Button>
     )
   }

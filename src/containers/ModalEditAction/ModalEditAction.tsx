@@ -155,7 +155,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
   return (
     <Modal
       onValidate={onValidate}
-      title={modalTexts.title}
+      title={isCreation ? modalTexts.titleCreate : modalTexts.titleUpdate}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
       <FormContext {...form}>
@@ -177,9 +177,9 @@ export function ModalEditAction(props: ModalEditActionProps) {
               includeLatLng={true}
               onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
               textFieldProps={{
-                label: modalTexts.fieldLabelAddress,
                 name: 'action-address',
                 inputRef: register({ required: true }),
+                placeholder: modalTexts.fieldLabelAddress,
               }}
             />
           )}
@@ -197,8 +197,8 @@ export function ModalEditAction(props: ModalEditActionProps) {
           inputRef={register({
             required: true,
           })}
-          label={modalTexts.fieldLabelTitle}
           name={'title' as FormFieldKey}
+          placeholder={modalTexts.fieldLabelTitle}
           type="text"
 
         />
@@ -215,9 +215,9 @@ export function ModalEditAction(props: ModalEditActionProps) {
           inputRef={register({
             required: true,
           })}
-          label={modalTexts.fieldLabelDescription}
           multiline={true}
           name={'description' as FormFieldKey}
+          placeholder={modalTexts.fieldLabelDescription}
           rows="4"
           type="text"
         />

@@ -12,7 +12,8 @@ import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { constants } from 'src/constants'
 import { useMainStore } from 'src/containers/MainStore'
-import { useQueryEntourageUsers, UseQueryFeedItem } from 'src/core/store'
+import { ModalEditAction } from 'src/containers/ModalEditAction'
+import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/store'
 import { variants } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
 import { ParticipateButton } from './ParticipateButton'
@@ -25,6 +26,9 @@ export function RightCards(props: RightCardsProps) {
   const { feedItem } = props
   const mainContext = useMainStore()
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
+  const { data: dataMe } = useQueryMe()
+
+  const iAmCreator = dataMe?.data.user.id === feedItem.author.id
 
   useMount(() => {
     if (feedItem) {
@@ -46,6 +50,26 @@ export function RightCards(props: RightCardsProps) {
       />,
     )
   }, [feedItem.description, feedItem.title, feedItem.uuid])
+
+  const onClickUpdate = useCallback(() => {
+    openModal(
+      <ModalEditAction
+        action={{
+          id: feedItem.id,
+          title: feedItem.title,
+          description: feedItem.description,
+          displayCategory: feedItem.displayCategory,
+          entourageType: feedItem.entourageType,
+        }}
+      />,
+    )
+  }, [
+    feedItem.description,
+    feedItem.displayCategory,
+    feedItem.entourageType,
+    feedItem.id,
+    feedItem.title,
+  ])
 
   if (!feedItem) {
     return null
@@ -78,7 +102,11 @@ export function RightCards(props: RightCardsProps) {
           <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
-            <Button onClick={onClickReport} variant="outlined">Signaler</Button>
+            {iAmCreator ? (
+              <Button onClick={onClickUpdate} variant="outlined">Modifier</Button>
+            ) : (
+              <Button onClick={onClickReport} variant="outlined">Signaler</Button>
+            )}
           </Box>
         )}
         dateLabel={dataLabel}

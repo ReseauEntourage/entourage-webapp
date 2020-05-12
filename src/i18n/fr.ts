@@ -44,7 +44,8 @@ export const texts = {
       validateLabel: 'J\'ai lu et j\'accepte',
     },
     modalEditAction: {
-      title: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
+      titleCreate: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
+      titleUpdate: 'Mise à jour de votre action',
       step1: '1. Choisissez une catégorie et précisez une zone géographique',
       step2: '2. Donnez un titre clair à votre initiative',
       step3: '3. Racontez simplement votre histoire. Les actions avec une description claire attirent plus de membres et ont plus de chances d\'aboutir :',
