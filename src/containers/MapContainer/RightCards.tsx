@@ -176,7 +176,7 @@ export function RightCards(props: RightCardsProps) {
   let card: React.ReactNode
 
   if (feedItem.groupType === 'action') {
-    const { author, title, description, entourageType } = feedItem
+    const { author, title, description, entourageType, metadata } = feedItem
     const { partner } = author
 
     const organizerName = partner ? partner.name : author.displayName
@@ -187,7 +187,12 @@ export function RightCards(props: RightCardsProps) {
       ? 'Contribution'
       : 'Demande'
 
-    const organizerLabel = <div>{organizerLabelActionType} par <b>{organizerName}</b></div>
+    const organizerLabel = (
+      <div>
+        <div>{organizerLabelActionType} par <b>{organizerName}</b></div>
+        <div>à {metadata.displayAddress}</div>
+      </div>
+    )
 
     card = (
       <ActionCard
