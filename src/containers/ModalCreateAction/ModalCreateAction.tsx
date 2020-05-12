@@ -10,6 +10,7 @@ import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { useMutateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
+import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
 const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
 
@@ -62,7 +63,18 @@ export function ModalCreateAction() {
 
     const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
-    const locationNotNull = autocompletePlace.location as NonNullable<typeof autocompletePlace.location>
+    // const locationNotNull = autocompletePlace.location as NonNullable<typeof autocompletePlace.location>
+
+    const placeDetail = await getDetailPlacesService(
+      autocompletePlace.place.place_id,
+      autocompletePlace.googleSessionToken,
+    )
+
+    const latitude = placeDetail.geometry?.location.lat()
+    const longitude = placeDetail.geometry?.location.lng()
+
+    assertIsNumber(latitude)
+    assertIsNumber(longitude)
 
     const action = {
       title,
@@ -70,8 +82,8 @@ export function ModalCreateAction() {
       displayCategory,
       entourageType,
       location: {
-        latitude: locationNotNull.lat,
-        longitude: locationNotNull.lng,
+        latitude,
+        longitude,
       },
     }
 

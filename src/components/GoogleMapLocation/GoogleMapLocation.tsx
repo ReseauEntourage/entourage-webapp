@@ -7,8 +7,8 @@ import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { isSSR, assertIsDefined } from 'src/utils/misc'
-import { AnyToFix, AnyCantFix } from 'src/utils/types'
+import { isSSR, createAutocompleteSessionToken } from 'src/utils/misc'
+import { AnyToFix } from 'src/utils/types'
 import { LocationIcon } from './GoogleMapLocation.styles'
 
 const autocompleteService = { current: null }
@@ -28,10 +28,6 @@ export interface PlaceType {
 
 export interface GoogleMapLocationValue {
   googleSessionToken: string;
-  location: null | {
-    lat: number;
-    lng: number;
-  };
   place: PlaceType;
 }
 
@@ -42,25 +38,12 @@ export interface GoogleMapLocationProps {
   textFieldProps: TextFieldProps;
 }
 
-async function getLocationFromPlaceId(placeId: string): Promise<{ lat: number; lng: number; }> {
-  // @ts-ignore
-  const geocoder = new google.maps.Geocoder()
-  const loc: AnyCantFix = await new Promise((resolve: AnyCantFix) => geocoder.geocode({ placeId }, resolve))
-
-  assertIsDefined(loc[0], 'getLocationFromPlaceId error')
-
-  return {
-    lat: loc[0].geometry.location.lat(),
-    lng: loc[0].geometry.location.lng(),
-  }
-}
-
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
-  const { textFieldProps, onChange, defaultValue, includeLatLng } = props
+  const { textFieldProps, onChange, defaultValue } = props
 
   const googleMapsInst = !isSSR ? (window as AnyToFix).google.maps : null
 
-  const autocompleteSessionToken = useRef<{ Rf: string; }>(new googleMapsInst.places.AutocompleteSessionToken())
+  const autocompleteSessionToken = useRef(createAutocompleteSessionToken())
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
@@ -70,20 +53,13 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
   }, [])
 
   const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
-    let location: GoogleMapLocationValue['location'] = null
-
-    if (includeLatLng) {
-      location = await getLocationFromPlaceId(place.place_id)
-    }
-
     if (onChange) {
       onChange({
         googleSessionToken: autocompleteSessionToken.current.Rf,
         place,
-        location,
       })
     }
-  }, [includeLatLng, onChange])
+  }, [onChange])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {
@@ -100,7 +76,6 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
     let active = true
 
     autocompleteService.current = new googleMapsInst.places.AutocompleteService()
-    // placesService.current = new googleMapsInst.places.PlacesService()
 
     if (inputValue === '') {
       setOptions([])
