@@ -4,6 +4,7 @@ import React from 'react'
 import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
+import { Container } from './Messages.styles'
 import { useEntourageId } from './useEntourageId'
 
 export function MessagesMobile() {
@@ -20,5 +21,9 @@ export function MessagesMobile() {
     )
   }
 
-  return entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : <ConversationsList />
+  return (
+    <Container>
+      {entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : <ConversationsList />}
+    </Container>
+  )
 }

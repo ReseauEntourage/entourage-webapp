@@ -2,16 +2,11 @@ import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import styled from 'styled-components'
 import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
+import { Container } from './Messages.styles'
 import { useEntourageId } from './useEntourageId'
-
-const Container = styled.div`
-  height: 100%;
-  display: flex;
-`
 
 export function MessagesDesktop() {
   const { data: dataMyFeeds } = useQueryMyFeeds()
