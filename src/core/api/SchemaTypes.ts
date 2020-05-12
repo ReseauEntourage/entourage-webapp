@@ -78,6 +78,7 @@ export type FeedTypesFilter = string
 
 export interface FeedOutingMetadata {
   displayAddress: string;
+  endsAt: DateISO;
   googlePlaceId: string;
   placeName: string;
   startsAt: DateISO;
@@ -254,4 +255,20 @@ export interface DTOCreateEntourageAsEvent {
     streetAddress: string;
   };
   title: string;
+}
+
+export interface DTOUpdateEntourageAsEvent {
+  description?: string;
+  groupType?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  metadata: {
+    googlePlaceId?: string;
+    placeName?: string;
+    startsAt?: string;
+    streetAddress?: string;
+  };
+  title?: string;
 }

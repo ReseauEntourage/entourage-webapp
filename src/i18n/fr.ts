@@ -76,7 +76,7 @@ export const texts = {
       validateLabelCreate: 'Créer mon action',
       validateLabelUpdate: 'metter à jour mon action',
     },
-    modalCreateEvent: {
+    modalEditEvent: {
       title: 'Vous souhaitez créer un événement solidaire ? C\'est parti !',
       step1: '1. Donnez un titre à votre événement',
       step2: '2. Où se déroulera-t-il ?',
@@ -87,7 +87,8 @@ export const texts = {
       fieldLabelDate: 'date',
       fieldLabelTime: 'heure',
       fieldDescriptionPlaceholder: 'Je crée cet événement pour...',
-      validateLabel: 'Créer mon événement',
+      validateLabelCreate: 'Créer mon événement',
+      validateLabelUpdate: 'Mettre à jour mon événement',
     },
   },
 }

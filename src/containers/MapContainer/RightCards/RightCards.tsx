@@ -13,6 +13,7 @@ import { UsersList } from 'src/components/UsersList'
 import { constants } from 'src/constants'
 import { useMainStore } from 'src/containers/MainStore'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
+import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/store'
 import { variants } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
@@ -51,7 +52,7 @@ export function RightCards(props: RightCardsProps) {
     )
   }, [feedItem.description, feedItem.title, feedItem.uuid])
 
-  const onClickUpdate = useCallback(() => {
+  const onClickUpdateAction = useCallback(() => {
     openModal(
       <ModalEditAction
         action={{
@@ -72,6 +73,20 @@ export function RightCards(props: RightCardsProps) {
     feedItem.metadata.displayAddress,
     feedItem.title,
   ])
+
+  const onClickUpdateEvent = useCallback(() => {
+    openModal(
+      <ModalEditEvent
+        event={{
+          id: feedItem.id,
+          title: feedItem.title,
+          description: feedItem.description,
+          dateISO: feedItem.metadata.startsAt,
+          displayAddress: feedItem.metadata.displayAddress,
+        }}
+      />,
+    )
+  }, [feedItem])
 
   if (!feedItem) {
     return null
@@ -105,7 +120,7 @@ export function RightCards(props: RightCardsProps) {
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
-              <Button onClick={onClickUpdate} variant="outlined">Modifier</Button>
+              <Button onClick={onClickUpdateAction} variant="outlined">Modifier</Button>
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
@@ -122,6 +137,12 @@ export function RightCards(props: RightCardsProps) {
   }
 
   if (feedItem.groupType === 'outing') {
+    const startDate = new Date(feedItem.metadata.startsAt)
+    const startHour = startDate.toLocaleTimeString().replace(/([0-9]*)?:([0-9]*)?:([0-9]*)?/g, '$1h$2')
+    const endDate = new Date(feedItem.metadata.endsAt)
+    const endHour = endDate.toLocaleTimeString().replace(/([0-9]*)?:([0-9]*)?:([0-9]*)?/g, '$1h$2')
+    const dateLabel = `${startDate.toDateString()} de ${startHour} à ${endHour}`
+
     card = (
       <EventCard
         actions={(
@@ -129,14 +150,14 @@ export function RightCards(props: RightCardsProps) {
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
-              <Button onClick={onClickUpdate} variant="outlined">Modifier</Button>
+              <Button onClick={onClickUpdateEvent} variant="outlined">Modifier</Button>
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
           </Box>
         )}
         address={feedItem.metadata.displayAddress}
-        dateLabel={new Date(feedItem.createdAt).toLocaleDateString()}
+        dateLabel={dateLabel}
         description={feedItem.description}
         organizerLabel={feedItem.author.displayName}
         organizerPictureURL={feedItem.author.avatarUrl}

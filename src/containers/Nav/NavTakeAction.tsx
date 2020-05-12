@@ -14,8 +14,8 @@ import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalCharte } from 'src/containers/ModalCharte'
-import { ModalCreateEvent } from 'src/containers/ModalCreateEvent'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
+import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { variants, colors } from 'src/styles'
 
 const MenuContainer = styled.div`
@@ -114,7 +114,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
   }, [closeDrawerIfOpen])
 
   const openEventModal = useCallback(() => {
-    openModal(<ModalCreateEvent />)
+    openModal(<ModalEditEvent />)
     setAnchorEl(null)
     closeDrawerIfOpen()
   }, [closeDrawerIfOpen])

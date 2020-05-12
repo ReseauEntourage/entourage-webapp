@@ -47,7 +47,7 @@ export function ParticipateButton(props: ParticipateButtonProps) {
     openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)
   }, [feedItem.id])
 
-  if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled') {
+  if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled' || participateLoading) {
     return <Button loading={participateLoading} onClick={onClickParticipate}>Participer</Button>
   }
 

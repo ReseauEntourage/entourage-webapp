@@ -17,6 +17,7 @@ import {
   User,
   UserPartner,
   DTOCreateEntourageAsEvent,
+  DTOUpdateEntourageAsEvent,
   DTOCreateEntourageAsAction,
   DTOUpdateEntourageAsAction,
 } from './SchemaTypes'
@@ -72,7 +73,7 @@ export const schema = {
     method: 'PATCH',
     params: null,
     data: {} as {
-      entourage: DTOUpdateEntourageAsAction;
+      entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent;
     },
     response: {} as {},
   },
