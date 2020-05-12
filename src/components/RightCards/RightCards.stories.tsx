@@ -80,6 +80,19 @@ export const Event = () => (
   <>
     <Wrapper>
       <EventCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <Button>
+              Participer
+            </Button>
+            <Button color="secondary">
+              Partager
+            </Button>
+            <Button color="secondary">
+              Signaler
+            </Button>
+          </Box>
+        )}
         address="35 avenue  des Batignolles 75017 Paris"
         dateLabel="Jeudi 12 décembre à de 17h"
         description={`
@@ -93,6 +106,19 @@ export const Event = () => (
     </Wrapper>
     <Wrapper>
       <EventCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <Button>
+              Participer
+            </Button>
+            <Button color="secondary">
+              Partager
+            </Button>
+            <Button color="secondary">
+              Signaler
+            </Button>
+          </Box>
+        )}
         address="35 avenue  des Batignolles 75017 Paris"
         dateLabel="Jeudi 12 décembre à de 17h"
         description={`

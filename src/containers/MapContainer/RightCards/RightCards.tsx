@@ -124,6 +124,17 @@ export function RightCards(props: RightCardsProps) {
   if (feedItem.groupType === 'outing') {
     card = (
       <EventCard
+        actions={(
+          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+            <ParticipateButton feedItem={feedItem} />
+            <Button onClick={onClickShare} variant="outlined">Partager</Button>
+            {iAmCreator ? (
+              <Button onClick={onClickUpdate} variant="outlined">Modifier</Button>
+            ) : (
+              <Button onClick={onClickReport} variant="outlined">Signaler</Button>
+            )}
+          </Box>
+        )}
         address={feedItem.metadata.displayAddress}
         dateLabel={new Date(feedItem.createdAt).toLocaleDateString()}
         description={feedItem.description}

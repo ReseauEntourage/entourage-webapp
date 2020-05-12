@@ -5,6 +5,7 @@ import { Avatar } from 'src/components/Avatar'
 import { variants } from 'src/styles'
 
 interface EventCardProps {
+  actions: JSX.Element;
   address: string;
   dateLabel: string;
   description: string;
@@ -16,6 +17,7 @@ interface EventCardProps {
 
 export function EventCard(props: EventCardProps) {
   const {
+    actions,
     title,
     dateLabel,
     address,
@@ -41,6 +43,9 @@ export function EventCard(props: EventCardProps) {
         <Typography color={isAssociation ? 'primary' : undefined} variant={variants.footNote}>
           {organizerLabel}
         </Typography>
+      </Box>
+      <Box marginY={2}>
+        {actions}
       </Box>
       <Typography variant={variants.bodyRegular}>{description}</Typography>
     </Box>
