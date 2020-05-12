@@ -19,6 +19,7 @@ export function useDelayLoading(defaultValue = false, options: Options = default
   const [loading, setLoading] = useState(defaultValue)
   const startTimeout = useRef(0)
   const stopTimeout = useRef(0)
+  const timeoutIsActiveRef = useRef(false)
   const isUnmountRef = useRef(false)
 
   const subjectStopLoading = useRef(new Subject())
@@ -33,22 +34,25 @@ export function useDelayLoading(defaultValue = false, options: Options = default
     startTimeout.current = setTimeout(() => {
       if (isUnmountRef.current) return
       setLoading(true)
+      timeoutIsActiveRef.current = true
       stopTimeout.current = setTimeout(() => {
         if (isUnmountRef.current) return
         subjectStopLoading.current.next()
         clearTimeout(stopTimeout.current)
+        timeoutIsActiveRef.current = false
       }, minDelayEndLoading)
     }, minDelayStartLoading)
   }, [minDelayEndLoading, minDelayStartLoading])
 
   const stopWithDelay = useCallback(() => {
     clearTimeout(startTimeout.current)
-    if (stopTimeout.current) {
+    if (timeoutIsActiveRef.current) {
       return new Promise((resolve) => {
         const sub = subjectStopLoading.current.subscribe(() => {
           if (isUnmountRef.current) return
           setLoading(false)
           clearTimeout(stopTimeout.current)
+          timeoutIsActiveRef.current = false
           sub.unsubscribe()
           resolve()
         })

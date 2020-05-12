@@ -1,16 +1,16 @@
 import Box from '@material-ui/core/Box'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import LocalMallIcon from '@material-ui/icons/LocalMall'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useMainStore } from 'src/containers/MainStore'
 import { useQueryPOIs, useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
 import { colors } from 'src/styles'
-import { useOnScroll } from 'src/utils/hooks'
+import { useOnScroll, useDelayLoading, usePrevious } from 'src/utils/hooks'
 import { RightCards } from './RightCards'
 import { useActionId } from './useActionId'
 
@@ -37,8 +37,25 @@ interface MapContainer {}
 export function MapContainer() {
   const actionId = useActionId()
   const mainContext = useMainStore()
-  const [feeds, feedsLoading, fetchMore] = useQueryFeeds()
+  const [plainFeeds, feedsLoading, fetchMore] = useQueryFeeds()
+  const prevFeedsLoading = usePrevious(feedsLoading)
   const [POIs] = useQueryPOIs()
+  const lastFeedsRef = useRef<typeof plainFeeds>()
+  const [isLoading, setIsLoading] = useDelayLoading()
+
+  if (!feedsLoading) {
+    lastFeedsRef.current = plainFeeds
+  }
+
+  useEffect(() => {
+    if (prevFeedsLoading && !feedsLoading) {
+      setIsLoading(false)
+    } else if (feedsLoading && !prevFeedsLoading) {
+      setIsLoading(true)
+    }
+  }, [feedsLoading, prevFeedsLoading, setIsLoading])
+
+  const feeds = feedsLoading ? (lastFeedsRef.current || []) : plainFeeds
 
   const { onScroll } = useOnScroll({ onScrollBottomEnd: fetchMore })
 
@@ -108,13 +125,15 @@ export function MapContainer() {
     )
   })
 
-  const feedsContent = feedsLoading ? (
-    <Box alignItems="center" display="flex" height="100%" justifyContent="center">
-      <CircularProgress variant="indeterminate" />
-    </Box>
-  ) : (
-    <ul>{feedsListContent}</ul>
-  )
+  // const feedsContent = feedsLoading ? (
+  //   <Box alignItems="center" display="flex" height="100%" justifyContent="center">
+  //     <CircularProgress variant="indeterminate" />
+  //   </Box>
+  // ) : (
+  //   <ul>{feedsListContent}</ul>
+  // )
+
+  const feedsContent = <ul>{feedsListContent}</ul>
 
   return (
     <Box display="flex" height="100%">
@@ -123,10 +142,12 @@ export function MapContainer() {
         height="100%"
         onScroll={onScroll}
         overflow="scroll"
+        position="relative"
         width={350}
         zIndex={2}
       >
         {feedsContent}
+        {isLoading && <OverlayLoader />}
       </Box>
       <Box
         flex="1"
@@ -137,6 +158,7 @@ export function MapContainer() {
           {POIsMarkersContent}
           {feedsMarkersContent}
         </Map>
+        {isLoading && <OverlayLoader />}
       </Box>
       {currentFeedItem && (
         <Box
