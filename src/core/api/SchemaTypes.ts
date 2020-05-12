@@ -222,7 +222,7 @@ export interface FeedItemTour {
   type: 'Tour';
 }
 
-export interface DTOEntourageAsAction {
+export interface DTOCreateEntourageAsAction {
   description: string;
   displayCategory: FeedDisplayCategory;
   entourageType: FeedEntourageType;
@@ -233,7 +233,14 @@ export interface DTOEntourageAsAction {
   title: string;
 }
 
-export interface DTOEntourageAsEvent {
+export interface DTOUpdateEntourageAsAction {
+  description: string;
+  displayCategory: FeedDisplayCategory;
+  entourageType: FeedEntourageType;
+  title: string;
+}
+
+export interface DTOCreateEntourageAsEvent {
   description: string;
   groupType: string;
   location: {

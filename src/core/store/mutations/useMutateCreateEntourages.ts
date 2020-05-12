@@ -4,7 +4,7 @@ import { queryKeys } from 'src/core/store'
 
 type Data = typeof schema['/entourages POST']['data']['entourage']
 
-export function useMutateEntourages() {
+export function useMutateCreateEntourages() {
   return useMutation((data: Data) => {
     return api.request({
       name: '/entourages POST',
@@ -13,6 +13,6 @@ export function useMutateEntourages() {
       },
     })
   }, {
-    refetchQueries: [queryKeys.entourageUsers],
+    refetchQueries: [queryKeys.feeds],
   })
 }

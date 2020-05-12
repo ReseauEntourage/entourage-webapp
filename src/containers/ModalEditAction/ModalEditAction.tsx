@@ -8,7 +8,7 @@ import { TextField, Label, RowFields, useForm, Select } from 'src/components/For
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateEntourages } from 'src/core/store'
+import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
@@ -44,12 +44,33 @@ type Options = {
   }[];
 }[]
 
-export function ModalCreateAction() {
-  const form = useForm<FormField>()
-  const { register, triggerValidation, getValues, setValue } = form
-  const modalTexts = texts.content.modalCreateAction
+interface ModalEditActionProps {
+  action?: {
+    description: string;
+    displayCategory: string;
+    entourageType: string;
+    id: number;
+    title: string;
+  };
+}
 
-  const [createEntourage] = useMutateEntourages()
+export function ModalEditAction(props: ModalEditActionProps) {
+  const { action: existedAction } = props
+
+  const isCreation = !existedAction
+
+  const defaultValues = {
+    category: existedAction ? `${existedAction.entourageType}:${existedAction.displayCategory}` : '',
+    description: existedAction?.description,
+    title: existedAction?.title,
+  }
+
+  const form = useForm<FormField>({ defaultValues })
+  const { register, triggerValidation, getValues, setValue } = form
+  const modalTexts = texts.content.modalEditAction
+
+  const [createEntourage] = useMutateCreateEntourages()
+  const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
     if (!await triggerValidation()) return false
@@ -63,38 +84,52 @@ export function ModalCreateAction() {
 
     const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
-    // const locationNotNull = autocompletePlace.location as NonNullable<typeof autocompletePlace.location>
+    if (existedAction) {
+      const action = {
+        id: existedAction.id,
+        title,
+        description,
+        displayCategory,
+        entourageType,
+      }
 
-    const placeDetail = await getDetailPlacesService(
-      autocompletePlace.place.place_id,
-      autocompletePlace.googleSessionToken,
-    )
+      try {
+        await updateEntourage(action)
+      } catch (error) {
+        return false
+      }
+    } else {
+      const placeDetail = await getDetailPlacesService(
+        autocompletePlace.place.place_id,
+        autocompletePlace.googleSessionToken,
+      )
 
-    const latitude = placeDetail.geometry?.location.lat()
-    const longitude = placeDetail.geometry?.location.lng()
+      const latitude = placeDetail.geometry?.location.lat()
+      const longitude = placeDetail.geometry?.location.lng()
 
-    assertIsNumber(latitude)
-    assertIsNumber(longitude)
+      assertIsNumber(latitude)
+      assertIsNumber(longitude)
 
-    const action = {
-      title,
-      description,
-      displayCategory,
-      entourageType,
-      location: {
-        latitude,
-        longitude,
-      },
-    }
+      const action = {
+        title,
+        description,
+        displayCategory,
+        entourageType,
+        location: {
+          latitude,
+          longitude,
+        },
+      }
 
-    try {
-      await createEntourage(action)
-    } catch (error) {
-      return false
+      try {
+        await createEntourage(action)
+      } catch (error) {
+        return false
+      }
     }
 
     return true
-  }, [createEntourage, getValues, triggerValidation])
+  }, [createEntourage, existedAction, getValues, triggerValidation, updateEntourage])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -121,7 +156,7 @@ export function ModalCreateAction() {
     <Modal
       onValidate={onValidate}
       title={modalTexts.title}
-      validateLabel={modalTexts.validateLabel}
+      validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
       <FormContext {...form}>
         <Label>{modalTexts.step1}</Label>
@@ -137,15 +172,17 @@ export function ModalCreateAction() {
               </InputAdornment>
             )}
           />
-          <GoogleMapLocation
-            includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
-            textFieldProps={{
-              label: modalTexts.fieldLabelAddress,
-              name: 'action-address',
-              inputRef: register({ required: true }),
-            }}
-          />
+          {isCreation && (
+            <GoogleMapLocation
+              includeLatLng={true}
+              onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+              textFieldProps={{
+                label: modalTexts.fieldLabelAddress,
+                name: 'action-address',
+                inputRef: register({ required: true }),
+              }}
+            />
+          )}
         </RowFields>
         <Label>{modalTexts.step2}</Label>
         <TextField

@@ -11,7 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
-import { useMutateEntourages } from 'src/core/store'
+import { useMutateCreateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { getDetailPlacesService, assertIsString, assertIsNumber } from 'src/utils/misc'
 
@@ -41,7 +41,7 @@ export function ModalCreateEvent() {
     setTime(value)
   }, [])
 
-  const [createEntourage] = useMutateEntourages()
+  const [createEntourage] = useMutateCreateEntourages()
 
   const onValidate = useCallback(async () => {
     if (!await triggerValidation()) return false

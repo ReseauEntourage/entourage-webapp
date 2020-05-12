@@ -43,7 +43,7 @@ export const texts = {
       title: 'Je respecte la charte d\'Entourage',
       validateLabel: 'J\'ai lu et j\'accepte',
     },
-    modalCreateAction: {
+    modalEditAction: {
       title: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
       step1: '1. Choisissez une catégorie et précisez une zone géographique',
       step2: '2. Donnez un titre clair à votre initiative',
@@ -72,7 +72,8 @@ export const texts = {
         skill: 'Offir une compétence',
         social: 'Passer du temps avec une personne',
       },
-      validateLabel: 'Créer mon action',
+      validateLabelCreate: 'Créer mon action',
+      validateLabelUpdate: 'metter à jour mon action',
     },
     modalCreateEvent: {
       title: 'Vous souhaitez créer un événement solidaire ? C\'est parti !',

@@ -16,8 +16,9 @@ import {
   POICategoriesIds,
   User,
   UserPartner,
-  DTOEntourageAsEvent,
-  DTOEntourageAsAction,
+  DTOCreateEntourageAsEvent,
+  DTOCreateEntourageAsAction,
+  DTOUpdateEntourageAsAction,
 } from './SchemaTypes'
 
 export const schema = {
@@ -35,7 +36,7 @@ export const schema = {
     method: 'POST',
     params: null,
     data: {} as {
-      entourage: DTOEntourageAsAction | DTOEntourageAsEvent;
+      entourage: DTOCreateEntourageAsAction | DTOCreateEntourageAsEvent;
     },
     response: {} as {
       entourage: {
@@ -65,6 +66,15 @@ export const schema = {
         uuid: string;
       };
     },
+  },
+  '/entourages PATCH': {
+    url: ({ entourageId }: { entourageId: number; }) => `entourages/${entourageId}`,
+    method: 'PATCH',
+    params: null,
+    data: {} as {
+      entourage: DTOUpdateEntourageAsAction;
+    },
+    response: {} as {},
   },
   '/entourages/:entourageId/chat_messages GET': {
     url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,

@@ -14,8 +14,8 @@ import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalCharte } from 'src/containers/ModalCharte'
-import { ModalCreateAction } from 'src/containers/ModalCreateAction'
 import { ModalCreateEvent } from 'src/containers/ModalCreateEvent'
+import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { variants, colors } from 'src/styles'
 
 const MenuContainer = styled.div`
@@ -105,7 +105,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
     openModal(
       <ModalCharte
         onValidate={() => {
-          openModal(<ModalCreateAction />)
+          openModal(<ModalEditAction />)
         }}
       />,
     )
