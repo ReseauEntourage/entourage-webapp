@@ -60,6 +60,7 @@ export function RightCards(props: RightCardsProps) {
           description: feedItem.description,
           displayCategory: feedItem.displayCategory,
           entourageType: feedItem.entourageType,
+          displayAddress: feedItem.metadata.displayAddress,
         }}
       />,
     )
@@ -68,6 +69,7 @@ export function RightCards(props: RightCardsProps) {
     feedItem.displayCategory,
     feedItem.entourageType,
     feedItem.id,
+    feedItem.metadata.displayAddress,
     feedItem.title,
   ])
 

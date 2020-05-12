@@ -47,6 +47,7 @@ type Options = {
 interface ModalEditActionProps {
   action?: {
     description: string;
+    displayAddress: string;
     displayCategory: string;
     entourageType: string;
     id: number;
@@ -84,21 +85,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
     const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
-    if (existedAction) {
-      const action = {
-        id: existedAction.id,
-        title,
-        description,
-        displayCategory,
-        entourageType,
-      }
-
-      try {
-        await updateEntourage(action)
-      } catch (error) {
-        return false
-      }
-    } else {
+    const getLocation = async () => {
       const placeDetail = await getDetailPlacesService(
         autocompletePlace.place.place_id,
         autocompletePlace.googleSessionToken,
@@ -110,15 +97,40 @@ export function ModalEditAction(props: ModalEditActionProps) {
       assertIsNumber(latitude)
       assertIsNumber(longitude)
 
+      return {
+        latitude,
+        longitude,
+      }
+    }
+
+    if (existedAction) {
+      const location = autocompletePlace
+        ? await getLocation()
+        : undefined
+
+      const action = {
+        id: existedAction.id,
+        title,
+        description,
+        displayCategory,
+        entourageType,
+        location,
+      }
+
+      try {
+        await updateEntourage(action)
+      } catch (error) {
+        return false
+      }
+    } else {
+      const location = await getLocation()
+
       const action = {
         title,
         description,
         displayCategory,
         entourageType,
-        location: {
-          latitude,
-          longitude,
-        },
+        location,
       }
 
       try {
@@ -172,17 +184,16 @@ export function ModalEditAction(props: ModalEditActionProps) {
               </InputAdornment>
             )}
           />
-          {isCreation && (
-            <GoogleMapLocation
-              includeLatLng={true}
-              onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
-              textFieldProps={{
-                name: 'action-address',
-                inputRef: register({ required: true }),
-                placeholder: modalTexts.fieldLabelAddress,
-              }}
-            />
-          )}
+          <GoogleMapLocation
+            defaultValue={existedAction?.displayAddress || ''}
+            includeLatLng={true}
+            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+            textFieldProps={{
+              name: 'action-address',
+              inputRef: register({ required: isCreation }),
+              placeholder: modalTexts.fieldLabelAddress,
+            }}
+          />
         </RowFields>
         <Label>{modalTexts.step2}</Label>
         <TextField
