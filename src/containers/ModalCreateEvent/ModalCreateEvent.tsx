@@ -141,12 +141,11 @@ export function ModalCreateEvent() {
           <RowFields>
             <KeyboardDatePicker
               disableToolbar={true}
-              format="MM/dd/yyyy"
-              id="date-picker-inline"
+              format="dd/MM/yyyy"
               KeyboardButtonProps={{
                 'aria-label': 'change date',
               }}
-              label="Date picker inline"
+              label={modalTexts.fieldLabelDate}
               margin="normal"
               onChange={onChangeDate}
               TextFieldComponent={(props) => (
@@ -163,7 +162,7 @@ export function ModalCreateEvent() {
               inputProps={{
                 step: 300, // 5 min
               }}
-              label="Alarm clock"
+              label={modalTexts.fieldLabelTime}
               onChange={onChangeTime}
               type="time"
               value={time}
