@@ -1,8 +1,8 @@
 import { ChangeEventValue } from 'google-map-react'
-import { createContext, useContext } from 'react'
+import { SetStateAction, createContext, useContext } from 'react'
 
 export interface MapContextValue {
-  onChange: (value: ChangeEventValue) => void;
+  onChange: (value: SetStateAction<ChangeEventValue>) => void;
   value: ChangeEventValue;
 }
 

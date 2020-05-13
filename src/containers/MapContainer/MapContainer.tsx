@@ -1,43 +1,21 @@
 import Box from '@material-ui/core/Box'
-import LocalMallIcon from '@material-ui/icons/LocalMall'
-import { formatDistance } from 'date-fns' // eslint-disable-line
-import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React, { useRef, useEffect } from 'react'
-import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { Map, EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useMainStore } from 'src/containers/MainStore'
-import { useQueryPOIs, useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
-import { colors } from 'src/styles'
-import { useOnScroll, useDelayLoading, usePrevious } from 'src/utils/hooks'
+import { useQueryPOIs, useQueryFeeds } from 'src/core/store'
+import { useDelayLoading, usePrevious } from 'src/utils/hooks'
+import { FeedList } from './FeedList'
 import { RightCards } from './RightCards'
 import { useActionId } from './useActionId'
-
-function getFeedItemIcon(feedItem: UseQueryFeedItem) {
-  const { entourageType, displayCategory } = feedItem
-  if (entourageType === 'contribution') {
-    const backgroundColor = colors.main.primary
-    if (displayCategory === 'mat_help') {
-      return <LocalMallIcon style={{ ...iconStyle, color: '#fff', backgroundColor }} />
-    } if (displayCategory === 'info') {
-      // TODO
-    }
-  }
-
-  if (entourageType === 'ask_for_help') {
-    // TODO
-  }
-
-  return undefined
-}
 
 interface MapContainer {}
 
 export function MapContainer() {
   const actionId = useActionId()
   const mainContext = useMainStore()
-  const [plainFeeds, feedsLoading, fetchMore] = useQueryFeeds()
+  const [plainFeeds, feedsLoading] = useQueryFeeds()
   const prevFeedsLoading = usePrevious(feedsLoading)
   const [POIs] = useQueryPOIs()
   const lastFeedsRef = useRef<typeof plainFeeds>()
@@ -56,8 +34,6 @@ export function MapContainer() {
   }, [feedsLoading, prevFeedsLoading, setIsLoading])
 
   const feeds = feedsLoading ? (lastFeedsRef.current || []) : plainFeeds
-
-  const { onScroll } = useOnScroll({ onScrollBottomEnd: fetchMore })
 
   const selectedFeedItemFromFeed = feeds.find((feedItem) => feedItem.uuid === actionId)
   const prevFeedItem = mainContext.feedItem
@@ -100,55 +76,9 @@ export function MapContainer() {
     </MarkerWrapper>
   ))
 
-  const feedsListContent = feeds.map((feed) => {
-    const createAtDistance = formatDistance(new Date(feed.createdAt), new Date(), { locale: fr })
-    const secondText = `
-      Créé il y a ${createAtDistance}
-      par ${feed.author.displayName}
-    `
-
-    return (
-      <li key={feed.uuid}>
-        <Link as={`/actions/${feed.uuid}`} href="/actions/[actionId]">
-          <a style={{ textDecoration: 'none' }}>
-            <FeedItem
-              key={feed.uuid}
-              icon={getFeedItemIcon(feed)}
-              isActive={feed.uuid === actionId}
-              primaryText={feed.title}
-              profilePictureURL={feed.author.avatarUrl}
-              secondText={secondText}
-            />
-          </a>
-        </Link>
-      </li>
-    )
-  })
-
-  // const feedsContent = feedsLoading ? (
-  //   <Box alignItems="center" display="flex" height="100%" justifyContent="center">
-  //     <CircularProgress variant="indeterminate" />
-  //   </Box>
-  // ) : (
-  //   <ul>{feedsListContent}</ul>
-  // )
-
-  const feedsContent = <ul>{feedsListContent}</ul>
-
   return (
     <Box display="flex" height="100%">
-      <Box
-        boxShadow={4}
-        height="100%"
-        onScroll={onScroll}
-        overflow="scroll"
-        position="relative"
-        width={350}
-        zIndex={2}
-      >
-        {feedsContent}
-        {isLoading && <OverlayLoader />}
-      </Box>
+      <FeedList />
       <Box
         flex="1"
         position="relative"
