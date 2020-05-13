@@ -18,7 +18,7 @@ export const Texts = styled.div`
 `
 
 export const Title = styled(Typography).attrs(() => ({
-  variant: variants.title2,
+  variant: variants.title1,
 }))`
   text-overflow: ellipsis;
   white-space: nowrap;
