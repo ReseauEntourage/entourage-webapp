@@ -23,6 +23,7 @@ export function useQueryFeeds() {
     isLoading,
     fetchMore,
     isFetchingMore,
+    canFetchMore,
   } = useQuery([queryKeys.feeds, feedsParams], (params) => api.request({
     name: '/feeds GET',
     params,
@@ -34,11 +35,11 @@ export function useQueryFeeds() {
   })
 
   const fetchModeWithParams = useCallback(() => {
-    if (!pages || isFetchingMore) return
+    if (!pages || isFetchingMore || !canFetchMore) return
     const currentPage = pages[pages.length - 1]
     const { nextPageToken } = currentPage.data
     fetchMore({ ...feedsParams, pageToken: nextPageToken })
-  }, [pages, isFetchingMore, fetchMore, feedsParams])
+  }, [pages, isFetchingMore, canFetchMore, fetchMore, feedsParams])
 
   const feeds = !pages
     ? []
