@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useIsDesktop } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
+import { isSSR } from 'src/utils/misc'
 import { AnyCantFix } from 'src/utils/types'
 
 interface PlateformParams<T> {
@@ -22,6 +23,10 @@ export function plateform<T extends React.ComponentType<AnyCantFix>>(data: Plate
     useMount(() => {
       setKey(new Date().getTime())
     })
+
+    if (isSSR) {
+      return null
+    }
 
     if (Desktop && isDesktop) {
       return <Desktop key={key} {...props} />

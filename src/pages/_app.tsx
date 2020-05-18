@@ -1,4 +1,4 @@
-import { ThemeProvider } from '@material-ui/core/styles'
+import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
 import Head from 'next/head'
 import { hijackEffects } from 'stop-runaway-react-effects'
@@ -58,6 +58,13 @@ export default class App extends NextApp {
     }
   }
 
+  // componentDidMount() {
+  //   const jssStyles = document.querySelector('#jss-server-side')
+  //   if (jssStyles && jssStyles.parentElement) {
+  //     jssStyles.parentElement.removeChild(jssStyles)
+  //   }
+  // }
+
   render() {
     // @ts-ignore
     const { Component, pageProps, me } = this.props
@@ -74,25 +81,27 @@ export default class App extends NextApp {
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
           <Dispatchers />
-          <ThemeProvider theme={theme}>
-            <ReactQueryConfigProvider config={queryConfig}>
-              <MainStoreProvider>
-                <MapProvider>
-                  <Layout>
-                    <>
-                      <Layout.Nav>
-                        <Nav />
-                      </Layout.Nav>
-                      <Layout.Page>
-                        <Component {...pageProps} />
-                        <ModalsListener />
-                      </Layout.Page>
-                    </>
-                  </Layout>
-                </MapProvider>
-              </MainStoreProvider>
-            </ReactQueryConfigProvider>
-          </ThemeProvider>
+          <StylesProvider injectFirst={true}>
+            <ThemeProvider theme={theme}>
+              <ReactQueryConfigProvider config={queryConfig}>
+                <MainStoreProvider>
+                  <MapProvider>
+                    <Layout>
+                      <>
+                        <Layout.Nav>
+                          <Nav />
+                        </Layout.Nav>
+                        <Layout.Page>
+                          <Component {...pageProps} />
+                          <ModalsListener />
+                        </Layout.Page>
+                      </>
+                    </Layout>
+                  </MapProvider>
+                </MainStoreProvider>
+              </ReactQueryConfigProvider>
+            </ThemeProvider>
+          </StylesProvider>
         </SSRDataContext.Provider>
       </>
     )
