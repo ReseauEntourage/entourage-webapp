@@ -11,10 +11,12 @@ export default {
   decorators: [withKnobs],
 }
 
-export const standard = () => <Avatar src="https://i.pravatar.cc/100" />
-export const withoutSource = () => <Avatar src={null} />
+export const Small = () => <Avatar size="small" src="https://i.pravatar.cc/100" />
+export const Large = () => <Avatar size="large" src="https://i.pravatar.cc/100" />
 
-export const knobs = () => (
+export const WithoutSource = () => <Avatar src={null} />
+
+export const Knobs = () => (
   <TransparentWrapper>
     <Avatar src={text('Url', 'https://i.pravatar.cc/100')} />
   </TransparentWrapper>
