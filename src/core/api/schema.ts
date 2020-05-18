@@ -321,6 +321,44 @@ export const schema = {
     },
     response: {} as {},
   },
+  '/users/:id GET': {
+    url: (params: { userId: number; }) => `users/${params.userId}`,
+    method: 'GET',
+    params: null,
+    response: {} as {
+      user: {
+        about: string;
+        avatarUrl: string;
+        conversation: { uuid: string; };
+        displayName: string;
+        firstName: string;
+        id: number;
+        lastName: string;
+        // memberships: [];
+        organization: {
+          address: string;
+          description: string;
+          logoUrl: string;
+          name: string;
+          phone: string;
+        };
+        partner?: {
+          address: string;
+          default: boolean;
+          description: string;
+          email: string;
+          id: number;
+          largeLogoUrl: string;
+          name: string;
+          phone: string;
+          smallLogoUrl: string;
+          userRoleTitle: string;
+          websiteUrl: string;
+        };
+        userType: 'pro';
+      };
+    },
+  },
   '/users/me GET': {
     url: 'users/me',
     method: 'GET',
