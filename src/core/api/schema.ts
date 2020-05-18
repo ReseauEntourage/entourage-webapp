@@ -355,6 +355,11 @@ export const schema = {
           userRoleTitle: string;
           websiteUrl: string;
         };
+        stats: {
+          encounterCount: number;
+          entourageCount: number;
+          tourCount: number;
+        };
         userType: 'pro';
       };
     },

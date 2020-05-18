@@ -33,7 +33,7 @@ export function ModalUserCard(props: ModalUserCardProps) {
       validate={false}
     >
       <UserCard
-        actionsCount={0}
+        actionsCount={user.stats.entourageCount}
         avatarURL={user.avatarUrl}
         description={user.about}
         name={user.displayName}

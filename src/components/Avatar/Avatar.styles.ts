@@ -1,14 +1,14 @@
 import AvatarMUI from '@material-ui/core/Avatar'
 import styled, { css } from 'styled-components'
-import { colors } from 'src/styles'
+import { colors, theme } from 'src/styles'
 
 export type Size = 'small' | 'large'
 
 function CSSGetSize() {
   return (props: { size: Size; }) => {
     const sizes = {
-      small: 36,
-      large: 56,
+      small: theme.spacing(5),
+      large: theme.spacing(10),
     }
 
     return css`
