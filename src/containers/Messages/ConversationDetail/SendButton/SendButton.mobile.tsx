@@ -10,7 +10,8 @@ export function SendButtonMobile(props: SendButtonProps) {
     <Button
       onClick={onClick}
       style={{ marginLeft: theme.spacing(2) }}
-    ><SendIcon />
+    >
+      <SendIcon />
     </Button>
   )
 }
