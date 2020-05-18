@@ -6,8 +6,14 @@ import { colors, variants } from 'src/styles'
 export const Container = styled.div`
   display: flex;
   align-items: center;
+  cursor: pointer;
+  transition: 0.2s;
   &:not(:last-child) {
     border-bottom: solid 1px ${colors.borderColor};
+  }
+
+  &:hover {
+    background-color: #eeeeee;
   }
 `
 

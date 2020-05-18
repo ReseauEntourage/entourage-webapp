@@ -9,6 +9,7 @@ interface ActionCardProps {
   dateLabel: string | JSX.Element;
   description: string;
   isAssociation?: boolean;
+  onClickAvatar?: React.ComponentProps<typeof Avatar>['onClick'];
   organizerLabel: string | JSX.Element;
   organizerPictureURL?: string;
   title: string;
@@ -23,6 +24,7 @@ export function ActionCard(props: ActionCardProps) {
     organizerPictureURL,
     description,
     isAssociation,
+    onClickAvatar,
   } = props
 
   return (
@@ -30,7 +32,7 @@ export function ActionCard(props: ActionCardProps) {
       <Typography variant={variants.title1}>{title}</Typography>
       <Box alignItems="center" display="flex" justifyContent="flex-start" marginY={1}>
         <Box marginRight={1}>
-          <Avatar alt="Organizer" src={organizerPictureURL} />
+          <Avatar alt="Organizer" onClick={onClickAvatar} src={organizerPictureURL} />
         </Box>
         <Box>
           <Typography color={isAssociation ? 'primary' : undefined} variant={variants.footNote}>

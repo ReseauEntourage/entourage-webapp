@@ -14,6 +14,7 @@ import { constants } from 'src/constants'
 import { useMainStore } from 'src/containers/MainStore'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
+import { ModalUserCard } from 'src/containers/ModalUserCard'
 import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/store'
 import { variants } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
@@ -88,6 +89,14 @@ export function RightCards(props: RightCardsProps) {
     )
   }, [feedItem])
 
+  const onClickUser = useCallback((userId) => {
+    openModal(<ModalUserCard userId={userId} />)
+  }, [])
+
+  const onClickAuthorAvatar = useCallback(() => {
+    onClickUser(feedItem.author.id)
+  }, [onClickUser, feedItem.author.id])
+
   if (!feedItem) {
     return null
   }
@@ -129,6 +138,7 @@ export function RightCards(props: RightCardsProps) {
         dateLabel={dataLabel}
         description={description}
         isAssociation={!!partner}
+        onClickAvatar={onClickAuthorAvatar}
         organizerLabel={organizerLabel}
         organizerPictureURL={author.avatarUrl}
         title={title}
@@ -197,6 +207,7 @@ export function RightCards(props: RightCardsProps) {
           Participants
         </Typography>
         <UsersList
+          onClickUser={onClickUser}
           users={entourageUsers.map((user) => ({
             userId: `${user.id}`,
             userName: user.displayName,
