@@ -1,6 +1,4 @@
-import SendIcon from '@material-ui/icons/Send'
 import React, { useCallback, useEffect, useRef } from 'react'
-import { Button } from 'src/components/Button'
 import { Message } from 'src/components/Conversations'
 import { TextField, useForm } from 'src/components/Form'
 import {
@@ -9,16 +7,16 @@ import {
   useMutateCreateEntourageChatMessage,
   useQueryEntourageFromMyFeeds,
 } from 'src/core/store'
-import { theme } from 'src/styles'
 import { useOnScroll, usePrevious } from 'src/utils/hooks'
 import {
   Container,
   MessagesContainer,
   BottomBar,
-  TopBar,
   Pending,
 } from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
+import { SendButton } from './SendButton'
+import { TopBar } from './TopBar'
 
 interface FormFields {
   content: string;
@@ -102,9 +100,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   return (
     <Container>
-      <TopBar>
-        {entourage.title}
-      </TopBar>
+      <TopBar title={entourage.title} />
       <MembersPendingRequest entourageId={entourageId} />
       {!userIsAccepted ? (
         <Pending>
@@ -137,13 +133,9 @@ export function ConversationDetail(props: ConversationDetailProps) {
                 flex: 1,
               }}
             />
-            <Button
+            <SendButton
               onClick={onClickSend}
-              startIcon={<SendIcon />}
-              style={{ marginLeft: theme.spacing(2) }}
-            >
-            Envoyer
-            </Button>
+            />
           </BottomBar>
         </>
       )}

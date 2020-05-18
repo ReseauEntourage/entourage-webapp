@@ -51,7 +51,7 @@ export function ConversationsList(props: ConversationsListProps) {
               <a>
                 <ConversationItem
                   excerpt={<ConversationItemExcerpt feed={feed} me={me} pendingMembers={members} />}
-                  isActive={entourageId === feed.data.id}
+                  isActive={feed.data.id === entourageId}
                   title={feed.data.title}
                 />
               </a>

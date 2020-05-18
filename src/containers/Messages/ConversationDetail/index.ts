@@ -1,1 +1,1 @@
-export * from './ConversationDetail'
+export { ConversationDetail } from './ConversationDetail'
