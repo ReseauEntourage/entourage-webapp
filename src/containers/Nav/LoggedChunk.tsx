@@ -41,7 +41,7 @@ export function LoggedChunk() {
         }}
         tabIndex={0}
       >
-        <Avatar src={me.data?.data.user.avatarUrl} />
+        <Avatar src={me.data?.data?.user.avatarUrl} />
       </div>
       <Menu
         anchorEl={anchorEl}

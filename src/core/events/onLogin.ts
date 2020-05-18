@@ -23,7 +23,7 @@ export function useOnLoginDispatcher() {
 
   useEffect(() => {
     const prevMeReponseIsNotLogged = !prevMeReponse || !prevMeReponse.data || prevMeReponse.data.user.anonymous
-    const meReponseIsLogged = meResponse && !meResponse.data.user.anonymous
+    const meReponseIsLogged = meResponse && !meResponse.data?.user.anonymous
 
     if (prevMeReponseIsNotLogged && meReponseIsLogged) {
       publish(meResponse as NonNullable<typeof meResponse>)
