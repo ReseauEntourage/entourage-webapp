@@ -255,7 +255,7 @@ export const schema = {
           groupType: FeedGroupType;
           id: number;
           joinStatus: FeedJoinStatus;
-          lastMessage: {
+          lastMessage?: {
             author: {
               firstName: string;
               lastName: string;

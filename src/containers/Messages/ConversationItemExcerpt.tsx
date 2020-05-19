@@ -1,20 +1,17 @@
 import React from 'react'
 import { PendingNotif } from 'src/components/Conversations'
-import {
-  DataUseQueryEntouragesWithMembers,
-  DataQueryMyFeeds,
-  DataUseQueryMeNonNullable,
-} from 'src/core/store'
+import { FeedJoinStatus } from 'src/core/api'
+import { DataUseQueryEntouragesWithMembers } from 'src/core/store'
 
 interface ConversationItemExcerptProps {
-  feed: NonNullable<DataQueryMyFeeds>[0];
-  me: DataUseQueryMeNonNullable;
+  feedJoinStatus: FeedJoinStatus;
+  iAmAuthor: boolean;
   pendingMembers: NonNullable<DataUseQueryEntouragesWithMembers>[0]['members'];
+  text: string;
 }
 
 export function ConversationItemExcerpt(props: ConversationItemExcerptProps) {
-  const { me, feed, pendingMembers } = props
-  const iAmAuthor = me.id === feed.data.author.id
+  const { iAmAuthor, feedJoinStatus, pendingMembers, text } = props
 
   if (iAmAuthor && pendingMembers.length) {
     const label = pendingMembers.length > 1
@@ -33,11 +30,11 @@ export function ConversationItemExcerpt(props: ConversationItemExcerptProps) {
     )
   }
 
-  if (feed.data.joinStatus === 'accepted') {
-    return <span>{feed.data.description}</span>
+  if (feedJoinStatus === 'accepted') {
+    return <span>{text}</span>
   }
 
-  if (feed.data.joinStatus === 'pending') {
+  if (feedJoinStatus === 'pending') {
     return <span>Votre demande est en attente</span>
   }
 

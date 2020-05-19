@@ -9,7 +9,7 @@ import {
 } from 'src/core/store'
 import { assertIsDefined } from 'src/utils/misc'
 import { ConversationItemExcerpt } from './ConversationItemExcerpt'
-import { Container } from './ConversationsList.styles'
+import * as S from './ConversationsList.styles'
 
 interface ConversationsListProps {
   entourageId?: number;
@@ -31,7 +31,7 @@ export function ConversationsList(props: ConversationsListProps) {
   }
 
   return (
-    <Container>
+    <S.Container>
       {dataMyFeeds
         .filter((feed) => feed.data.joinStatus === 'accepted' || feed.data.joinStatus === 'pending')
         .map((feed) => {
@@ -50,7 +50,14 @@ export function ConversationsList(props: ConversationsListProps) {
             >
               <a>
                 <ConversationItem
-                  excerpt={<ConversationItemExcerpt feed={feed} me={me} pendingMembers={members} />}
+                  excerpt={(
+                    <ConversationItemExcerpt
+                      feedJoinStatus={feed.data.joinStatus}
+                      iAmAuthor={feed.data.author.id === me.id}
+                      pendingMembers={members}
+                      text={feed.data.lastMessage?.text ?? ''}
+                    />
+                  )}
                   isActive={feed.data.id === entourageId}
                   title={feed.data.title}
                 />
@@ -58,6 +65,6 @@ export function ConversationsList(props: ConversationsListProps) {
             </Link>
           )
         })}
-    </Container>
+    </S.Container>
   )
 }
