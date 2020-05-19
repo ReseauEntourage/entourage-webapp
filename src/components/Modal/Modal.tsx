@@ -80,8 +80,8 @@ export function Modal(props: ModalProps) {
             backgroundColor: colors.main.primary,
             color: '#fff',
             textAlign: 'center',
-            paddingLeft: showCloseButton ? 60 : 0,
-            paddingRight: showCloseButton ? 60 : 0,
+            paddingLeft: showCloseButton ? 60 : 20,
+            paddingRight: showCloseButton ? 60 : 20,
           }}
         >
           {title}

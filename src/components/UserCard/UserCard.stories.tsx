@@ -13,6 +13,7 @@ export default {
 export const Demo = () => (
   <UserCard
     actionsCount={2}
+    conversationUuid="12"
     description={loremIpsum(150)}
     name="Name"
     organizationName="Cocoon"

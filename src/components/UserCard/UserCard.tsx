@@ -6,6 +6,7 @@ import * as S from './UserCard.styles'
 interface UserCardProps {
   actionsCount: number;
   avatarURL?: string;
+  conversationUuid: string;
   description: string;
   name: string;
   organizationAvatarURL?: string;
@@ -15,6 +16,7 @@ interface UserCardProps {
 export function UserCard(props: UserCardProps) {
   const {
     name,
+    conversationUuid,
     avatarURL,
     description,
     actionsCount,
@@ -47,7 +49,7 @@ export function UserCard(props: UserCardProps) {
         <Button color="secondary">Signaler</Button>
       </S.ReportBtn>
       <S.ContactBtn>
-        <Button>Contacter</Button>
+        <Button href={`/messages/${conversationUuid}`}>Contacter</Button>
       </S.ContactBtn>
     </S.Container>
   )

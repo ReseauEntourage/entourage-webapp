@@ -17,7 +17,7 @@ export function ModalUserCard(props: ModalUserCardProps) {
 
   if (isLoading || !user) {
     return (
-      <Modal cancel={false} title="User ..." validate={false}>
+      <Modal cancel={false} title="" validate={false}>
         <OverlayLoader />
       </Modal>
     )
@@ -35,6 +35,7 @@ export function ModalUserCard(props: ModalUserCardProps) {
       <UserCard
         actionsCount={user.stats.entourageCount}
         avatarURL={user.avatarUrl}
+        conversationUuid={user.conversation.uuid}
         description={user.about}
         name={user.displayName}
         organizationAvatarURL={user.organization?.logoUrl}
