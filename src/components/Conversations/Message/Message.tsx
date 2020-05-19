@@ -17,7 +17,7 @@ interface MessageProps {
   content: string;
   date: DateISO;
   isMe: boolean;
-  picture?: string;
+  picture?: string | null;
 }
 
 export function Message(props: MessageProps) {

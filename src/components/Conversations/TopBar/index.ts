@@ -3,6 +3,7 @@ import { TopBarDesktop } from './TopBar.desktop'
 import { TopBarMobile } from './TopBar.mobile'
 
 export interface TopBarProps {
+  onClickBackToMessages?: () => void;
   title: string;
 }
 

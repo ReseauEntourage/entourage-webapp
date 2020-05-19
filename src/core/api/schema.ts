@@ -92,8 +92,8 @@ export const schema = {
         messageType: 'text';
         user: {
           avatarUrl: User['avatarUrl'];
-          displayName: User['displayName'];
-          id: User['id'];
+          displayName: NonNullable<User['displayName']>;
+          id: NonNullable<User['id']>;
           partner: User['partner'];
         };
       }[];

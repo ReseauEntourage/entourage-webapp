@@ -11,21 +11,6 @@ export const Container = styled.div`
   width: 100%;
 `
 
-export const MessagesContainer = styled.div`
-  flex: 1;
-  position: relative;
-  overflow: auto;
-  margin: ${theme.spacing(2)}px;
-`
-
-export const BottomBar = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  padding: 0 ${theme.spacing(2)}px ${theme.spacing(2)}px ${theme.spacing(2)}px;
-  box-sizing: border-box;
-`
-
 export const Pending = styled(Typography).attrs(() => ({
   variant: variants.bodyRegular,
   component: 'div',

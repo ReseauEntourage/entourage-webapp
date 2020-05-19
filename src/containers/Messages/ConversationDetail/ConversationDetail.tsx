@@ -1,26 +1,13 @@
-import React, { useCallback, useEffect, useRef } from 'react'
-import { Message } from 'src/components/Conversations'
-import { TextField, useForm } from 'src/components/Form'
+import React, { useCallback } from 'react'
+import { Messages, TopBar } from 'src/components/Conversations'
 import {
   useQueryMe,
   useQueryEntourageChatMessages,
   useMutateCreateEntourageChatMessage,
   useQueryEntourageFromMyFeeds,
 } from 'src/core/store'
-import { useOnScroll, usePrevious } from 'src/utils/hooks'
-import {
-  Container,
-  MessagesContainer,
-  BottomBar,
-  Pending,
-} from './ConversationDetail.styles'
+import * as S from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
-import { SendButton } from './SendButton'
-import { TopBar } from './TopBar'
-
-interface FormFields {
-  content: string;
-}
 
 interface ConversationDetailProps {
   entourageId: number;
@@ -28,9 +15,6 @@ interface ConversationDetailProps {
 
 export function ConversationDetail(props: ConversationDetailProps) {
   const { entourageId } = props
-
-  const { register, triggerValidation, getValues, setValue } = useForm<FormFields>()
-  const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
   const entourage = useQueryEntourageFromMyFeeds(entourageId)
 
@@ -41,104 +25,42 @@ export function ConversationDetail(props: ConversationDetailProps) {
     throw new Error(`Entourage with joins status ${joinStatus} shouldn't be in /myfeeds`)
   }
 
-  const {
-    data: chatMessages,
-    isLoading,
-    fetchMore,
-  } = useQueryEntourageChatMessages(userIsAccepted ? entourageId : null)
+  const { data: messages, fetchMore } = useQueryEntourageChatMessages(userIsAccepted ? entourageId : null)
   const [createcChatMessage] = useMutateCreateEntourageChatMessage(entourageId)
   const { data: meData } = useQueryMe()
 
-  const onClickSend = useCallback(async () => {
-    if (!await triggerValidation()) {
-      return
-    }
+  const onClickSend = useCallback(async (messageContent) => {
+    await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })
+  }, [createcChatMessage])
 
-    await createcChatMessage({ content: getValues().content }, { waitForRefetchQueries: true })
-
-    setValue('content', '')
-  }, [createcChatMessage, getValues, setValue, triggerValidation])
-
-  const messages = chatMessages
   // must make a shallow copy because reverse() will mutate
-  // and chatMessages is cached
-  const reversedMessages = [...messages].reverse()
-
-  const { onScroll, isAtBottom, isAtTop } = useOnScroll()
-
-  const lastMessage = messages.length && messages[0]
-  const prevLastMessage = usePrevious(lastMessage)
-  const lastMessageHasChanged = lastMessage && prevLastMessage && lastMessage.id !== prevLastMessage.id
-
-  const scrollToBottom = useCallback(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
-    }
-  }, [messagesContainerRef])
-
-  useEffect(() => {
-    if (isAtBottom && lastMessageHasChanged) {
-      scrollToBottom()
-    }
-  }, [isAtBottom, lastMessageHasChanged, scrollToBottom])
-
-  const isAtTopPrev = usePrevious(isAtTop)
-  const fetchMoreIsNeeded = isAtTop && isAtTopPrev === false
-  const messagesListIsNotEmpty = !!messages.length
-
-  useEffect(() => {
-    if (!isLoading && messagesListIsNotEmpty) {
-      scrollToBottom()
-    }
-  }, [scrollToBottom, isLoading, messagesListIsNotEmpty])
-
-  useEffect(() => {
-    if (fetchMoreIsNeeded) {
-      fetchMore()
-    }
-  }, [fetchMoreIsNeeded, fetchMore])
+  // and messages is cached
+  const reversedMessages = [...messages].reverse().map((message) => ({
+    authorAvatarURL: message.user.avatarUrl,
+    authorName: message.user.displayName,
+    authorId: message.user.id,
+    content: message.content,
+    date: message.createdAt,
+    id: message.id,
+  }))
 
   return (
-    <Container>
+    <S.Container>
       <TopBar title={entourage.title} />
       <MembersPendingRequest entourageId={entourageId} />
       {!userIsAccepted ? (
-        <Pending>
+        <S.Pending>
           Votre demande est en attente. Lorsque vous serez accepté.e,
           vous verrez ici la conversation des participants à cette action/cet évènement.
-        </Pending>
+        </S.Pending>
       ) : (
-        <>
-          <MessagesContainer ref={messagesContainerRef} onScroll={onScroll}>
-            {reversedMessages.map((message) => {
-              const isMe = message.user.id === meData?.data.user.id
-              return (
-                <Message
-                  key={message.id}
-                  author={message.user.displayName || undefined}
-                  content={message.content}
-                  date={message.createdAt}
-                  isMe={isMe}
-                />
-              )
-            })}
-          </MessagesContainer>
-          <BottomBar>
-            <TextField
-              inputRef={register({ required: true })}
-              margin="none"
-              multiline={true}
-              name="content"
-              style={{
-                flex: 1,
-              }}
-            />
-            <SendButton
-              onClick={onClickSend}
-            />
-          </BottomBar>
-        </>
+        <Messages
+          fetchMore={fetchMore}
+          messages={reversedMessages}
+          meUserId={meData?.data.user.id}
+          onSendMessage={onClickSend}
+        />
       )}
-    </Container>
+    </S.Container>
   )
 }

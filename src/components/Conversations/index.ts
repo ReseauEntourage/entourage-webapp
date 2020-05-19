@@ -1,3 +1,5 @@
 export * from './ConversationItem'
 export * from './Message'
 export * from './PendingNotif'
+export * from './Messages'
+export * from './TopBar'
