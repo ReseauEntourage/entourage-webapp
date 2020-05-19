@@ -59,6 +59,7 @@ export function ConversationsList(props: ConversationsListProps) {
                     />
                   )}
                   isActive={feed.data.id === entourageId}
+                  profilePictureURL={feed.data.author.avatarUrl}
                   title={feed.data.title}
                 />
               </a>

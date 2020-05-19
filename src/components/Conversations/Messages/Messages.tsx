@@ -94,10 +94,10 @@ export function Messages(props: MessageProps) {
           <Message
             key={message.id}
             author={message.authorName}
+            authorAvatarURL={message.authorAvatarURL}
             content={message.content}
             date={message.date}
             isMe={message.authorId === meUserId}
-            picture={message.authorAvatarURL}
           />
         ))}
       </S.MessageList>

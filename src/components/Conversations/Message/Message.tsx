@@ -14,14 +14,14 @@ import {
 
 interface MessageProps {
   author?: string;
+  authorAvatarURL?: string | null;
   content: string;
   date: DateISO;
   isMe: boolean;
-  picture?: string | null;
 }
 
 export function Message(props: MessageProps) {
-  const { author, content, date, isMe } = props
+  const { author, content, date, isMe, authorAvatarURL } = props
 
   const formatedContent = content.split('\n').map((str, index) => <div key={`${str + index}`}>{str}</div>)
 
@@ -33,7 +33,7 @@ export function Message(props: MessageProps) {
         {!isMe && (
           <>
             <AvatarContainer>
-              <Avatar />
+              <Avatar src={authorAvatarURL} />
             </AvatarContainer>
             <Author>{author}</Author>
           </>
