@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { variants } from 'src/styles'
-import { Container, OwnerContainer, StarBadge, ParnerContainer } from './UsersItem.styles'
+import * as S from './UsersItem.styles'
 
 export interface UserItemProps {
   isOwner: boolean;
@@ -33,27 +33,27 @@ export function UserItem(props: UserItemProps) {
   }, [onClickProps, userId])
 
   return (
-    <Container onClick={onClick}>
+    <S.Container onClick={onClick}>
       <Box m={1} position="relative" style={{ padding: 3 }}>
         <Avatar alt={userName} src={profilePictureURL} />
         {isPartner && (
-          <StarBadge />
+          <S.StarBadge />
         )}
       </Box>
       <Box>
         <Typography variant={variants.bodyBold}>
           {userName}
           {partnerName && (
-            <ParnerContainer>&nbsp;- {partnerName}</ParnerContainer>
+            <S.ParnerContainer>&nbsp;- {partnerName}</S.ParnerContainer>
           )}
         </Typography>
       </Box>
       <Box flexGrow="1" />
       {isOwner && (
-        <OwnerContainer>
+        <S.OwnerContainer>
           Créateur
-        </OwnerContainer>
+        </S.OwnerContainer>
       )}
-    </Container>
+    </S.Container>
   )
 }

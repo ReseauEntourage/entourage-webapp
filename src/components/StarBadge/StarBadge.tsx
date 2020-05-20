@@ -1,6 +1,6 @@
 import Star from '@material-ui/icons/Star'
 import React from 'react'
-import { Container } from './StarBadge.styles'
+import * as S from './StarBadge.styles'
 
 interface StarBadgeProps {
   containerStyle?: React.CSSProperties;
@@ -10,7 +10,7 @@ interface StarBadgeProps {
 export function StarBadge(props: StarBadgeProps) {
   const { containerStyle, iconStyle } = props
   return (
-    <Container style={containerStyle}>
+    <S.Container style={containerStyle}>
       <Star
         style={{
           fontSize: 10,
@@ -19,6 +19,6 @@ export function StarBadge(props: StarBadgeProps) {
           ...iconStyle,
         }}
       />
-    </Container>
+    </S.Container>
   )
 }

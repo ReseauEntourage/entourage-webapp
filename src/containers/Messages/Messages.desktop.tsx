@@ -5,7 +5,7 @@ import React, { useEffect } from 'react'
 import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
-import { Container } from './Messages.styles'
+import * as S from './Messages.styles'
 import { useEntourageId } from './useEntourageId'
 
 export function MessagesDesktop() {
@@ -31,9 +31,9 @@ export function MessagesDesktop() {
   }
 
   return (
-    <Container>
+    <S.Container>
       <ConversationsList entourageId={entourageId} />
       {entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : null}
-    </Container>
+    </S.Container>
   )
 }

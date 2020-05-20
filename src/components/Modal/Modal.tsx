@@ -9,7 +9,7 @@ import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
-import { GlobalStyle, CloseIconContainer } from './Modal.styles'
+import * as S from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
 interface ModalProps {
@@ -72,7 +72,7 @@ export function Modal(props: ModalProps) {
       onClose={onClose}
       open={true}
     >
-      <GlobalStyle />
+      <S.GlobalStyle />
       {title && (
         <DialogTitle
           id="form-dialog-title"
@@ -86,9 +86,9 @@ export function Modal(props: ModalProps) {
         >
           {title}
           {showCloseButton && (
-            <CloseIconContainer aria-label="close" onClick={onClose}>
+            <S.CloseIconContainer aria-label="close" onClick={onClose}>
               <CloseIcon style={{ color: 'white' }} />
-            </CloseIconContainer>
+            </S.CloseIconContainer>
           )}
         </DialogTitle>
       )}

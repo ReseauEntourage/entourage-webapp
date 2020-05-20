@@ -11,7 +11,7 @@ import {
   useMutateDeleteEntourageUser,
 } from 'src/core/store'
 import { useDelayLoading } from 'src/utils/hooks'
-import { Container } from './MembersPendingRequest.styles'
+import * as S from './MembersPendingRequest.styles'
 
 interface MembersPendingRequestProps {
   entourageId: number;
@@ -50,7 +50,7 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
   }
 
   return (
-    <Container>
+    <S.Container>
       <PendingNotif
         key={currentMemberPending.id}
         label={<div><b>{currentMemberPending.displayName} souhaite rejoindre votre action</b></div>}
@@ -86,6 +86,6 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
           }}
         />
       )}
-    </Container>
+    </S.Container>
   )
 }

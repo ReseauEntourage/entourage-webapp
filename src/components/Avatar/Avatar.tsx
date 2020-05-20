@@ -1,13 +1,13 @@
 import React from 'react'
 import { colors } from 'src/styles'
-import { Container, AvatarPicture, NoProfilePicture, Size } from './Avatar.styles'
+import * as S from './Avatar.styles'
 
 interface AvatarProps {
   alt?: string;
   borderColor?: keyof typeof colors.main;
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
-  size?: Size;
+  size?: S.Size;
   src?: string | null;
   style?: React.CSSProperties;
 }
@@ -24,7 +24,7 @@ export function Avatar(props: AvatarProps) {
   } = props
 
   return (
-    <Container
+    <S.Container
       className={className}
       onClick={onClick}
       style={{
@@ -32,7 +32,7 @@ export function Avatar(props: AvatarProps) {
         border: !borderColor ? undefined : `solid 1px ${borderColor}`,
       }}
     >
-      {src ? <AvatarPicture alt={alt} size={size} src={src} /> : <NoProfilePicture size={size} />}
-    </Container>
+      {src ? <S.AvatarPicture alt={alt} size={size} src={src} /> : <S.NoProfilePicture size={size} />}
+    </S.Container>
   )
 }

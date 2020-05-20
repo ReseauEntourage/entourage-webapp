@@ -10,7 +10,7 @@ import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
 import { colors } from 'src/styles'
 import { useOnScroll, useDelayLoading, usePrevious } from 'src/utils/hooks'
-import * as UI from './FeedList.styles'
+import * as S from './FeedList.styles'
 import { SearchCity } from './SearchCity'
 
 function getFeedItemIcon(feedItem: UseQueryFeedItem) {
@@ -82,11 +82,11 @@ export function FeedList() {
   })
 
   return (
-    <UI.Container>
-      <UI.SearchContainer>
+    <S.Container>
+      <S.SearchContainer>
         <SearchCity />
-      </UI.SearchContainer>
-      <UI.FeedContainer
+      </S.SearchContainer>
+      <S.FeedContainer
         boxShadow={4}
         width={350}
         zIndex={2}
@@ -100,8 +100,8 @@ export function FeedList() {
           <ul>{feedsListContent}</ul>
         </Box>
         {isLoading && <OverlayLoader />}
-      </UI.FeedContainer>
+      </S.FeedContainer>
       <Box />
-    </UI.Container>
+    </S.Container>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import { UserItem, UserItemProps } from './UserItem'
-import { Container } from './UsersList.styles'
+import * as S from './UsersList.styles'
 
 interface UsersListProps {
   onClickUser?: (userId: string) => void;
@@ -10,8 +10,8 @@ interface UsersListProps {
 export function UsersList(props: UsersListProps) {
   const { users, onClickUser } = props
   return (
-    <Container>
+    <S.Container>
       {users.map((user) => <UserItem key={user.userId} onClick={onClickUser} {...user} />)}
-    </Container>
+    </S.Container>
   )
 }

@@ -1,18 +1,18 @@
 import Toolbar from '@material-ui/core/Toolbar'
 import React from 'react'
-import { AppBar, Grow } from './Nav.styles'
+import * as S from './Nav.styles'
 import { NavItems } from './NavItems'
 
 export function Nav() {
   return (
-    <Grow>
-      <AppBar
+    <S.Grow>
+      <S.AppBar
         position="static"
       >
         <Toolbar>
           <NavItems />
         </Toolbar>
-      </AppBar>
-    </Grow>
+      </S.AppBar>
+    </S.Grow>
   )
 }

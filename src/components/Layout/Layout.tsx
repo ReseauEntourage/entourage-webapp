@@ -3,7 +3,7 @@ import React from 'react'
 import { LayoutProvider } from 'src/containers/LayoutContext'
 import { DrawerNav } from 'src/containers/Nav'
 import { variants } from 'src/styles'
-import { Main, Page, Nav } from './Layout.styles'
+import * as S from './Layout.styles'
 
 export function Layout(props: { children: JSX.Element;}) {
   const { children } = props
@@ -11,12 +11,12 @@ export function Layout(props: { children: JSX.Element;}) {
   return (
     <LayoutProvider>
       <Typography component="div" variant={variants.bodyRegular}>
-        <Main>{children}</Main>
+        <S.Main>{children}</S.Main>
         <DrawerNav />
       </Typography>
     </LayoutProvider>
   )
 }
 
-Layout.Nav = Nav
-Layout.Page = Page
+Layout.Nav = S.Nav
+Layout.Page = S.Page

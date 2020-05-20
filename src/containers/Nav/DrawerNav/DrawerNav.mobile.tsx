@@ -11,7 +11,6 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
-import { DrawerHeader } from '../Nav.styles'
 import { NavItem } from '../NavItem'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
@@ -23,6 +22,7 @@ import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useQueryIAmLogged } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
+import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
   const iAmLogged = useQueryIAmLogged()
@@ -53,11 +53,11 @@ export function DrawerNavMobile() {
       open={open}
       variant="persistent"
     >
-      <DrawerHeader>
+      <S.DrawerHeader>
         <IconButton onClick={onClickDrawerClose}>
           {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
         </IconButton>
-      </DrawerHeader>
+      </S.DrawerHeader>
       <Divider />
       <List>
         <ListItem key="actions" button={true}>

@@ -2,7 +2,7 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import { Container, TitleContainer /* , AvatarNumber */ } from './FeedItem.styles'
+import * as S from './FeedItem.styles'
 
 export { iconStyle } from './FeedItem.styles'
 
@@ -28,14 +28,14 @@ export function FeedItem(props: FeedItemProps) {
     : `${primaryText.substring(0, 100)}...`
 
   return (
-    <Container isActive={isActive}>
+    <S.Container isActive={isActive}>
       <div>
-        <TitleContainer>
+        <S.TitleContainer>
           {icon}
           <Typography variant="subtitle2">
             {primaryTextCropped}
           </Typography>
-        </TitleContainer>
+        </S.TitleContainer>
         <Typography variant="caption">
           {secondText}
         </Typography>
@@ -45,6 +45,6 @@ export function FeedItem(props: FeedItemProps) {
         <Avatar alt="Profile" src={profilePictureURL} />
         {/* <AvatarNumber /> */}
       </Box>
-    </Container>
+    </S.Container>
   )
 }

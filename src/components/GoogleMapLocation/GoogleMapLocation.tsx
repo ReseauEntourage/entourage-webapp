@@ -9,7 +9,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
 import { isSSR, createAutocompleteSessionToken } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
-import { LocationIcon } from './GoogleMapLocation.styles'
+import * as S from './GoogleMapLocation.styles'
 
 const autocompleteService = { current: null }
 
@@ -131,7 +131,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
         return (
           <Grid alignItems="center" container={true}>
             <Grid item={true}>
-              <LocationIcon />
+              <S.LocationIcon />
             </Grid>
             <Grid item={true} xs={true}>
               {parts.map((part, index) => (

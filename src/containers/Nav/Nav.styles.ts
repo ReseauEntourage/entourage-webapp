@@ -35,11 +35,3 @@ export const AccountContainer = styled.div`
 export const Grow = styled.div`
   flex-grow: 1;
 `
-
-export const DrawerHeader = styled.div`
-  display: flex;
-  align-items: center;
-  padding: ${theme.spacing(0, 1)};
-  min-height: ${theme.mixins.toolbar.minHeight}px;
-  justify-content: flex-start;
-`

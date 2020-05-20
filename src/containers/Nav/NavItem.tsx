@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import { Container, Label, InternalLink } from './NavItem.styles'
+import * as S from './NavItem.styles'
 
 interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
   href?: string;
@@ -13,20 +13,20 @@ export function NavItem(props: NavItemProps) {
   const { label, icon, href, ...restProps } = props
 
   const content = (
-    <Container {...restProps}>
+    <S.Container {...restProps}>
       {icon}
-      <Label>
+      <S.Label>
         {label}
-      </Label>
-    </Container>
+      </S.Label>
+    </S.Container>
   )
 
   if (href) {
     return (
       <Link href={href}>
-        <InternalLink>
+        <S.InternalLink>
           {content}
-        </InternalLink>
+        </S.InternalLink>
       </Link>
     )
   }

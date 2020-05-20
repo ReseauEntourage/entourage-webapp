@@ -3,14 +3,7 @@ import { fr } from 'date-fns/locale' // eslint-disable-line
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { DateISO } from 'src/utils/types'
-import {
-  MessageContainer,
-  Container,
-  AvatarContainer,
-  Content,
-  Author,
-  DateContainer,
-} from './Message.styles'
+import * as S from './Message.styles'
 
 interface MessageProps {
   author?: string;
@@ -28,19 +21,19 @@ export function Message(props: MessageProps) {
   const dateLabel = formatRelative(new Date(date), new Date(), { locale: fr })
 
   return (
-    <MessageContainer style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
-      <Container>
+    <S.MessageContainer style={{ justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+      <S.Container>
         {!isMe && (
           <>
-            <AvatarContainer>
+            <S.AvatarContainer>
               <Avatar src={authorAvatarURL} />
-            </AvatarContainer>
-            <Author>{author}</Author>
+            </S.AvatarContainer>
+            <S.Author>{author}</S.Author>
           </>
         )}
-        <Content>{formatedContent}</Content>
-        <DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</DateContainer>
-      </Container>
-    </MessageContainer>
+        <S.Content>{formatedContent}</S.Content>
+        <S.DateContainer style={{ textAlign: isMe ? 'right' : 'left' }}>{dateLabel}</S.DateContainer>
+      </S.Container>
+    </S.MessageContainer>
   )
 }

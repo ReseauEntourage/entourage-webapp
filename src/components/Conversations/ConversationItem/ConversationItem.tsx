@@ -1,6 +1,6 @@
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import { Container, Picture, Texts, Title, Excerpt } from './ConversationItem.styles'
+import * as S from './ConversationItem.styles'
 
 interface ConversationItemProps {
   excerpt: string | JSX.Element;
@@ -13,14 +13,14 @@ export function ConversationItem(props: ConversationItemProps) {
   const { excerpt, profilePictureURL, title, isActive } = props
 
   return (
-    <Container isActive={isActive}>
-      <Picture>
+    <S.Container isActive={isActive}>
+      <S.Picture>
         <Avatar alt="Profile" src={profilePictureURL || null} />
-      </Picture>
-      <Texts>
-        <Title>{title}</Title>
-        <Excerpt>{excerpt}</Excerpt>
-      </Texts>
-    </Container>
+      </S.Picture>
+      <S.Texts>
+        <S.Title>{title}</S.Title>
+        <S.Excerpt>{excerpt}</S.Excerpt>
+      </S.Texts>
+    </S.Container>
   )
 }

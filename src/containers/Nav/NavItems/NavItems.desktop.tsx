@@ -4,7 +4,7 @@ import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
 import { LoggedChunk } from '../LoggedChunk'
-import { ConnectButton, NavItem, Grow, AccountContainer } from '../Nav.styles'
+import * as S from '../Nav.styles'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
@@ -26,37 +26,37 @@ export function NavItemsDeskTop() {
       <a href="/">
         <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
       </a>
-      <Grow />
-      <NavItem
+      <S.Grow />
+      <S.NavItem
         href="/actions"
         icon={<MapIcon />}
         label={texts.nav.actions}
       />
       {iAmLogged && (
         <>
-          <NavItem
+          <S.NavItem
             href="/messages"
             icon={<ChatBubbleOutlineIcon />}
             label={texts.nav.messages}
           />
           <NavTakeAction>
-            <NavItem
+            <S.NavItem
               icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
               label={texts.nav.takeAction}
             />
           </NavTakeAction>
         </>
       )}
-      <AccountContainer>
+      <S.AccountContainer>
         {iAmLogged ? (
           <LoggedChunk />
         ) : (
-          <ConnectButton onClick={onClickSignIn}>
+          <S.ConnectButton onClick={onClickSignIn}>
             <PersonIcon />
             {texts.nav.signIn}
-          </ConnectButton>
+          </S.ConnectButton>
         )}
-      </AccountContainer>
+      </S.AccountContainer>
     </>
   )
 }
