@@ -16,7 +16,7 @@ export function MessagesDesktop() {
 
   useEffect(() => {
     if (!entourageId && firstConversationId) {
-      router.push(`/messages/${firstConversationId}`)
+      router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
     }
   }, [entourageId, firstConversationId, router])
 

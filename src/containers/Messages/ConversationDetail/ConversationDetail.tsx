@@ -37,7 +37,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   const onClickTopBar = useCallback(() => {
     if (entourage.groupType === 'action' || entourage.groupType === 'outing') {
-      router.push(`/actions/${entourage.uuid}`)
+      router.push('/actions/[actionId]', `/actions/${entourage.uuid}`)
     }
   }, [entourage.groupType, entourage.uuid, router])
 
