@@ -5,6 +5,8 @@ import * as S from './UserCard.styles'
 
 interface UserCardProps {
   actionsCount: number;
+  allowContact?: boolean;
+  allowReport?: boolean;
   avatarURL?: string;
   conversationUuid: string;
   description: string;
@@ -17,6 +19,8 @@ export function UserCard(props: UserCardProps) {
   const {
     name,
     conversationUuid,
+    allowContact = false,
+    allowReport = false,
     avatarURL,
     description,
     actionsCount,
@@ -45,12 +49,16 @@ export function UserCard(props: UserCardProps) {
           </S.OrganizationDetail>
         </S.Organization>
       )}
-      <S.ReportBtn>
-        <Button color="secondary">Signaler</Button>
-      </S.ReportBtn>
-      <S.ContactBtn>
-        <Button href={`/messages/${conversationUuid}`}>Contacter</Button>
-      </S.ContactBtn>
+      {allowReport && (
+        <S.ReportBtn>
+          <Button color="secondary">Signaler</Button>
+        </S.ReportBtn>
+      )}
+      {allowContact && (
+        <S.ContactBtn>
+          <Button href={`/messages/${conversationUuid}`}>Contacter</Button>
+        </S.ContactBtn>
+      )}
     </S.Container>
   )
 }

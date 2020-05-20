@@ -15,6 +15,7 @@ export const Container = styled(Typography).attrs(() => ({
     "ReportBtn . ContactBtn";
   grid-template-columns: 1fr 1fr 1fr;
   max-width: 100%;
+  margin-bottom: ${theme.spacing(2)}px;
 `
 
 export const Avatar = styled.div`
@@ -66,10 +67,10 @@ export const ContactBtn = styled.div`
   grid-area: ContactBtn;
   display: flex;
   justify-content: flex-end;
-  margin: ${theme.spacing(2)}px 0;
+  margin-top: ${theme.spacing(2)}px;
 `
 
 export const ReportBtn = styled.div`
   grid-area: ReportBtn;
-  margin: ${theme.spacing(2)}px 0;
+  margin-top: ${theme.spacing(2)}px;
 `

@@ -8,10 +8,10 @@ import * as S from './UsersItem.styles'
 export interface UserItemProps {
   isOwner: boolean;
   isPartner: boolean;
-  onClick?: (userId: string) => void;
+  onClick?: (userId: number) => void;
   partnerName?: string;
   profilePictureURL: string;
-  userId: string;
+  userId: number;
   userName: string;
 }
 

@@ -12,14 +12,14 @@ export const UsersList = () => {
       <UsersListCpmt
         users={[
           {
-            userId: '1',
+            userId: 1,
             userName: 'Tristan',
             profilePictureURL: 'https://i.pravatar.cc/100',
             isPartner: false,
             isOwner: true,
           },
           {
-            userId: '2',
+            userId: 2,
             userName: 'Emma',
             profilePictureURL: 'https://i.pravatar.cc/100',
             isPartner: true,
@@ -27,7 +27,7 @@ export const UsersList = () => {
             isOwner: false,
           },
           {
-            userId: '3',
+            userId: 3,
             userName: 'Valentin',
             profilePictureURL: 'https://i.pravatar.cc/100',
             isPartner: false,

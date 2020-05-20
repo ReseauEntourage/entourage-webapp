@@ -3,7 +3,7 @@ import { UserItem, UserItemProps } from './UserItem'
 import * as S from './UsersList.styles'
 
 interface UsersListProps {
-  onClickUser?: (userId: string) => void;
+  onClickUser?: (userId: number) => void;
   users: UserItemProps[];
 }
 

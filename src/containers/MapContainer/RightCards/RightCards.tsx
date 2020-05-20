@@ -89,7 +89,7 @@ export function RightCards(props: RightCardsProps) {
     )
   }, [feedItem])
 
-  const onClickUser = useCallback((userId) => {
+  const onClickUser = useCallback((userId: number) => {
     openModal(<ModalUserCard userId={userId} />)
   }, [])
 
@@ -209,7 +209,7 @@ export function RightCards(props: RightCardsProps) {
         <UsersList
           onClickUser={onClickUser}
           users={entourageUsers.map((user) => ({
-            userId: `${user.id}`,
+            userId: user.id,
             userName: user.displayName,
             profilePictureURL: user.avatarUrl,
             isOwner: feedItem.author.id === user.id,
