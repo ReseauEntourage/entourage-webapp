@@ -1,14 +1,18 @@
+import IconInfo from '@material-ui/icons/Info'
 import React from 'react'
-import { TopBarContainer, TopBarTypography } from './TopBar.styles'
+import * as S from './TopBar.styles'
 import { TopBarProps } from '.'
 
 export function TopBarDesktop(props: TopBarProps) {
-  const { title } = props
+  const { title, onClickTopBar } = props
   return (
-    <TopBarContainer>
-      <TopBarTypography>
+    <S.TopBarContainer onClick={onClickTopBar}>
+      <S.TopBarTypography>
         {title}
-      </TopBarTypography>
-    </TopBarContainer>
+      </S.TopBarTypography>
+      <S.Icon>
+        <IconInfo color="primary" />
+      </S.Icon>
+    </S.TopBarContainer>
   )
 }

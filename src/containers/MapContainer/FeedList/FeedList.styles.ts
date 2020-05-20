@@ -13,4 +13,5 @@ export const SearchContainer = styled.div`
 export const FeedContainer = styled(Box)`
   flex: 1;
   overflow: hidden;
+  position: relative;
 `

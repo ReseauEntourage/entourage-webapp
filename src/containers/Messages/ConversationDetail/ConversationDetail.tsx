@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { Messages, TopBar } from 'src/components/Conversations'
 import {
@@ -15,6 +16,7 @@ interface ConversationDetailProps {
 
 export function ConversationDetail(props: ConversationDetailProps) {
   const { entourageId } = props
+  const router = useRouter()
 
   const entourage = useQueryEntourageFromMyFeeds(entourageId)
 
@@ -33,6 +35,12 @@ export function ConversationDetail(props: ConversationDetailProps) {
     await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })
   }, [createcChatMessage])
 
+  const onClickTopBar = useCallback(() => {
+    if (entourage.groupType === 'action' || entourage.groupType === 'outing') {
+      router.push(`/actions/${entourage.uuid}`)
+    }
+  }, [entourage.groupType, entourage.uuid, router])
+
   // must make a shallow copy because reverse() will mutate
   // and messages is cached
   const reversedMessages = [...messages].reverse().map((message) => ({
@@ -46,7 +54,10 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   return (
     <S.Container>
-      <TopBar title={entourage.title} />
+      <TopBar
+        onClickTopBar={onClickTopBar}
+        title={`${entourage.title} - ${entourage.description}`}
+      />
       <MembersPendingRequest entourageId={entourageId} />
       {!userIsAccepted ? (
         <S.Pending>

@@ -4,6 +4,7 @@ import { TopBarMobile } from './TopBar.mobile'
 
 export interface TopBarProps {
   onClickBackToMessages?: () => void;
+  onClickTopBar?: () => void;
   title: string;
 }
 
