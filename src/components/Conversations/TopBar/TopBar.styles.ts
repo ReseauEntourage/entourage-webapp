@@ -15,6 +15,9 @@ export const TopBarTypography = styled(Typography).attrs(() => ({
 }))`
   padding: ${theme.spacing(3)}px;
   flex: 1;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `
 
 export const Icon = styled.div`

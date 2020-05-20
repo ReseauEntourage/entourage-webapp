@@ -33,7 +33,11 @@ export function MessagesDesktop() {
   return (
     <S.Container>
       <ConversationsList entourageId={entourageId} />
-      {entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : null}
+      {entourageId ? (
+        <S.ConversationDetailContainer>
+          <ConversationDetail key={entourageId} entourageId={entourageId} />
+        </S.ConversationDetailContainer>
+      ) : null}
     </S.Container>
   )
 }
