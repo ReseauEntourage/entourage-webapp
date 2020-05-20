@@ -14,6 +14,7 @@ export const TopBarTypography = styled(Typography).attrs(() => ({
   component: 'div',
 }))`
   padding: ${theme.spacing(3)}px;
+  flex: 1;
 `
 
 export const Icon = styled.div`
