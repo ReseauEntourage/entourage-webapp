@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "test": "run-s test:*",
+    "test:ts-check": "tsc --noEmit",
     "test:eslint": "npx eslint src --ext ts,tsx --max-warnings=0",
     "test:jest": "npx jest",
     "test:jest:watch": "npx jest --watch",

@@ -28,6 +28,7 @@ export const ConversationItemDefault = () => (
 export const MessageExternalUser = () => (
   <Message
     author="Jeanne B. Association pour l'amitié"
+    authorAvatarURL="https://i.pravatar.cc/100"
     content={`
       Bonjour Mathieu,
       Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
@@ -35,7 +36,6 @@ export const MessageExternalUser = () => (
     `}
     date={new Date().toISOString()}
     isMe={false}
-    picture="https://i.pravatar.cc/100"
   />
 )
 
