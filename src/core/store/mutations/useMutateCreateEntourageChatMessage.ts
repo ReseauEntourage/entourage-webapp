@@ -6,12 +6,12 @@ interface Data {
   content: string;
 }
 
-export function useMutateCreateEntourageChatMessage(entourageId: number) {
+export function useMutateCreateEntourageChatMessage(entourageUuid: string, refetchQueries?: string[]) {
   return useMutation((data: Data) => {
     return api.request({
       name: '/entourages/:entourageId/chat_messages POST',
       pathParams: {
-        entourageId,
+        entourageUuid,
       },
       data: {
         chatMessage: {
@@ -20,6 +20,9 @@ export function useMutateCreateEntourageChatMessage(entourageId: number) {
       },
     })
   }, {
-    refetchQueries: [queryKeys.chatMessage(entourageId)],
+    refetchQueries: [
+      queryKeys.chatMessage(entourageUuid),
+      ...(refetchQueries ?? []),
+    ],
   })
 }

@@ -5,16 +5,16 @@ import { useQueryMyFeeds } from './useQueryMyFeeds'
 
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
   const { data: dataMyFeeds } = useQueryMyFeeds()
-  const entourageIds = dataMyFeeds?.map((feed) => feed.data.id)
+  const entourageUuids = dataMyFeeds?.map((feed) => feed.data.uuid)
 
   const { data: entourageMembers } = useQuery(
-    entourageIds ? [queryKeys.entourageUsers, { entourageIds }] : null,
+    entourageUuids ? [queryKeys.entourageUsers, { entourageUuids }] : null,
     (params) => {
-      return Promise.all(params.entourageIds.map(async (entourageId) => {
+      return Promise.all(params.entourageUuids.map(async (entourageUuid) => {
         const members = await api.request({
           name: '/entourages/:entourageId/users GET',
           pathParams: {
-            entourageId,
+            entourageUuid,
           },
           params: {
             context: 'groupFeed',
@@ -23,7 +23,7 @@ export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
 
         return {
           members,
-          entourageId,
+          entourageUuid,
         }
       }))
     },
@@ -38,13 +38,13 @@ export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
 
   let entouragesWithMembers = entourageMembers
     .map((data) => ({
-      entourageId: data.entourageId,
+      entourageUuid: data.entourageUuid,
       members: data.members.data.users,
     }))
 
   if (memberStatus) {
     entouragesWithMembers = entouragesWithMembers.map((entourage) => ({
-      entourageId: entourage.entourageId,
+      entourageUuid: entourage.entourageUuid,
       // strange bug from TypeScript as he know member type
       // @ts-ignore
       members: entourage.members.filter((member) => member.status === memberStatus),

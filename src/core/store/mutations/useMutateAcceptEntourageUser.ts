@@ -1,8 +1,11 @@
 import { useMutation } from 'react-query'
-import { api, schema } from 'src/core/api'
+import { api } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
 
-type PathParams = Parameters<typeof schema['/entourages/:entourageId/users/:userId PUT']['url']>[0]
+interface PathParams {
+  entourageUuid: string;
+  userId: number;
+}
 
 export function useMutateAcceptEntourageUser() {
   return useMutation((pathParams: PathParams) => {
@@ -10,7 +13,7 @@ export function useMutateAcceptEntourageUser() {
       name: '/entourages/:entourageId/users/:userId PUT',
       pathParams: {
         userId: pathParams.userId,
-        entourageId: pathParams.entourageId,
+        entourageUuid: pathParams.entourageUuid,
       },
       data: {
         user: {

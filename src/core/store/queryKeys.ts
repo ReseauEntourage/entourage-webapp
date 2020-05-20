@@ -4,6 +4,7 @@ export const queryKeys = {
   POIs: 'POIs',
   entourageUsers: 'entourageUsers',
   myFeeds: 'myFeeds',
+  entourage: 'entourage',
   chatMessage: (entourageId: string | number) => `chatmessage_${entourageId}`,
   user: (userId: number) => `user_${userId}`,
 }

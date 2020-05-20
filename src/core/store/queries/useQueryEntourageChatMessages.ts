@@ -8,24 +8,24 @@ import { AnyCantFix } from 'src/utils/types'
 
 type Messages = typeof schema['/entourages/:entourageId/chat_messages GET']['response']['chatMessages']
 
-export function useQueryEntourageChatMessages(entourageId: number | null) {
+export function useQueryEntourageChatMessages(entourageUuid?: string | null) {
   const [messages, setMessages] = useState<Messages>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const queryKey = !entourageId
+  const queryKey = !entourageUuid
     ? null
     : [
-      queryKeys.chatMessage(entourageId),
-      { entourageId, before: undefined },
-    ] as [string, { before?: string; entourageId: number | null; }]
+      queryKeys.chatMessage(entourageUuid),
+      { entourageUuid, before: undefined },
+    ] as [string, { before?: string; entourageUuid: string | null; }]
 
   const queryRes = useQuery(queryKey, (params) => {
-    assertIsDefined(entourageId, 'useQueryEntourageChatMessages required entourageId')
+    assertIsDefined(entourageUuid, 'useQueryEntourageChatMessages required entourageId')
 
     return api.request({
       name: '/entourages/:entourageId/chat_messages GET',
       pathParams: {
-        entourageId,
+        entourageUuid,
       },
       params: {
         before: params.before,
@@ -46,7 +46,7 @@ export function useQueryEntourageChatMessages(entourageId: number | null) {
 
     queryRes.fetchMore({
       before: lastMessage.createdAt,
-      entourageId: null,
+      entourageUuid: null,
     })
   }, [messages, queryRes])
 

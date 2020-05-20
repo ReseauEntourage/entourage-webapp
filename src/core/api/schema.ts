@@ -2,6 +2,7 @@ import { DateISO } from 'src/utils/types'
 
 import {
   EntourageTypes,
+  EntourageIdOrUUIDParams,
   FeedDisplayCategory,
   FeedEntourageType,
   FeedGroupType,
@@ -69,7 +70,7 @@ export const schema = {
     },
   },
   '/entourages PATCH': {
-    url: ({ entourageId }: { entourageId: number; }) => `entourages/${entourageId}`,
+    url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}`,
     method: 'PATCH',
     params: null,
     data: {} as {
@@ -77,8 +78,42 @@ export const schema = {
     },
     response: {} as {},
   },
+  '/entourages/:entourageId GET': {
+    url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}`,
+    method: 'GET',
+    params: null,
+    data: null,
+    response: {} as {
+      entourage: {
+        author: User;
+        createdAt: DateISO;
+        description: string;
+        displayCategory: FeedDisplayCategory;
+        entourageType: FeedEntourageType;
+        groupType: FeedGroupType;
+        id: number | null;
+        joinStatus: FeedJoinStatus;
+        location: {
+          latitude: number;
+          longitude: number;
+        };
+        metadata: {
+          city: string;
+          displayAddress: string;
+        };
+        numberOfPeople: number;
+        numberOfUnreadMessages: number;
+        public: boolean;
+        shareUrl: string;
+        status: FeedStatus;
+        title: string;
+        updatedAt: DateISO;
+        uuid: string;
+      };
+    },
+  },
   '/entourages/:entourageId/chat_messages GET': {
-    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}/chat_messages`,
     method: 'GET',
     params: {} as void | {
       before?: DateISO;
@@ -100,7 +135,7 @@ export const schema = {
     },
   },
   '/entourages/:entourageId/chat_messages POST': {
-    url: (params: { entourageId: number; }) => `/entourages/${params.entourageId}/chat_messages`,
+    url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}/chat_messages`,
     method: 'POST',
     params: null,
     data: {} as {
@@ -111,7 +146,7 @@ export const schema = {
     response: {} as {},
   },
   '/entourages/:entourageId/users GET': {
-    url: (params: { entourageId: string | number; }) => `entourages/${params.entourageId}/users`,
+    url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}/users`,
     method: 'GET',
     params: {} as void | {
       context?: 'groupFeed';
@@ -135,15 +170,15 @@ export const schema = {
     },
   },
   '/entourages/:entourageId/users POST': {
-    url: (params: { entourageId: number; }) => `entourages/${params.entourageId}/users`,
+    url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}/users`,
     method: 'POST',
     params: null,
     data: null,
     response: {} as {},
   },
   '/entourages/:entourageId/users/:userId PUT': {
-    url: (params: { entourageId: number; userId: number; }) => {
-      return `entourages/${params.entourageId}/users/${params.userId}`
+    url: (params: EntourageIdOrUUIDParams & { userId: number; }) => {
+      return `entourages/${params.entourageId || params.entourageUuid}/users/${params.userId}`
     },
     method: 'PUT',
     params: null,
@@ -155,8 +190,8 @@ export const schema = {
     response: null,
   },
   '/entourages/:entourageId/users/:userId DELETE': {
-    url: (params: { entourageId: number; userId: number; }) => {
-      return `entourages/${params.entourageId}/users/${params.userId}`
+    url: (params: EntourageIdOrUUIDParams & { userId: number; }) => {
+      return `entourages/${params.entourageId || params.entourageUuid}/users/${params.userId}`
     },
     method: 'DELETE',
     params: null,

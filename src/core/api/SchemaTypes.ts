@@ -10,6 +10,10 @@ export type FeedGroupType = 'action' | 'outing' | 'conversation'
 
 export type FeedEntourageType = 'contribution' | 'ask_for_help'
 
+export type EntourageIdOrUUIDParams =
+  | { entourageId: number; entourageUuid?: string; }
+  | { entourageId?: number; entourageUuid: string; }
+
 export type FeedDisplayCategory =
   | 'event'
   | 'info'

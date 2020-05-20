@@ -6,11 +6,11 @@ import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
 
 interface ModalLeaveEntourageProps {
-  entourageId: number;
+  entourageUuid: string;
 }
 
 export function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
-  const { entourageId } = props
+  const { entourageUuid } = props
   const [deleteEntourageUser] = useMutateDeleteEntourageUser()
   const me = useQueryMeNonNullable()
 
@@ -18,12 +18,12 @@ export function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
 
   const onValidate = useCallback(async () => {
     try {
-      await deleteEntourageUser({ entourageId, userId: me.id }, { waitForRefetchQueries: true })
+      await deleteEntourageUser({ entourageUuid, userId: me.id }, { waitForRefetchQueries: true })
       return true
     } catch (e) {
       return false
     }
-  }, [deleteEntourageUser, entourageId, me.id])
+  }, [deleteEntourageUser, entourageUuid, me.id])
 
   return (
     <Modal

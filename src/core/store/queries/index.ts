@@ -1,4 +1,5 @@
 // queries
+export * from './useQueryEntourage'
 export * from './useQueryEntourageChatMessages'
 export * from './useQueryEntourageUsers'
 export * from './useQueryEntourageFromMyFeeds'

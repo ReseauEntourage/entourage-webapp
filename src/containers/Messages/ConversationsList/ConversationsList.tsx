@@ -12,11 +12,11 @@ import { ConversationItemExcerpt } from './ConversationItemExcerpt'
 import * as S from './ConversationsList.styles'
 
 interface ConversationsListProps {
-  entourageId?: number;
+  entourageUuid?: string;
 }
 
 export function ConversationsList(props: ConversationsListProps) {
-  const { entourageId } = props
+  const { entourageUuid } = props
   const { data: dataMyFeeds } = useQueryMyFeeds()
   const me = useQueryMeNonNullable()
   const { entouragesWithMembers: entouragesWithMembersPending } = useQueryEntouragesWithMembers('pending')
@@ -35,8 +35,10 @@ export function ConversationsList(props: ConversationsListProps) {
       {dataMyFeeds
         .filter((feed) => feed.data.joinStatus === 'accepted' || feed.data.joinStatus === 'pending')
         .map((feed) => {
+          const feedUuid = feed.data.uuid
+
           const entourageWithMembers = entouragesWithMembersPending.find((entourage) => {
-            return entourage.entourageId === feed.data.id
+            return entourage.entourageUuid === feedUuid
           })
 
           assertIsDefined(entourageWithMembers)
@@ -44,8 +46,8 @@ export function ConversationsList(props: ConversationsListProps) {
           const { members } = entourageWithMembers
           return (
             <Link
-              key={feed.data.id}
-              as={`/messages/${feed.data.id}`}
+              key={feedUuid}
+              as={`/messages/${feedUuid}`}
               href="/messages/[messageId]"
             >
               <a>
@@ -58,7 +60,7 @@ export function ConversationsList(props: ConversationsListProps) {
                       text={feed.data.lastMessage?.text ?? ''}
                     />
                   )}
-                  isActive={feed.data.id === entourageId}
+                  isActive={feedUuid === entourageUuid}
                   profilePictureURL={feed.data.author.avatarUrl}
                   title={feed.data.title}
                 />

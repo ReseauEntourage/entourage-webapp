@@ -44,8 +44,8 @@ export function ParticipateButton(props: ParticipateButtonProps) {
   }, [iAmLogged, onRequestEntourageUser])
 
   const onClickPending = useCallback(() => {
-    openModal(<ModalLeaveEntourage entourageId={feedItem.id} />)
-  }, [feedItem.id])
+    openModal(<ModalLeaveEntourage entourageUuid={feedItem.uuid} />)
+  }, [feedItem.uuid])
 
   if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled' || participateLoading) {
     return <Button loading={participateLoading} onClick={onClickParticipate}>Participer</Button>

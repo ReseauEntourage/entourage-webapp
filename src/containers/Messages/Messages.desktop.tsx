@@ -6,21 +6,21 @@ import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
 import * as S from './Messages.styles'
-import { useEntourageId } from './useEntourageId'
+import { useEntourageUuid } from './useEntourageUuid'
 
 export function MessagesDesktop() {
   const { data: dataMyFeeds } = useQueryMyFeeds()
-  const entourageId = useEntourageId()
+  const entourageUuid = useEntourageUuid()
   const router = useRouter()
   const firstConversationId = dataMyFeeds?.[0]?.data.id
 
   useEffect(() => {
-    if (!entourageId && firstConversationId) {
+    if (!entourageUuid && firstConversationId) {
       router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
     }
-  }, [entourageId, firstConversationId, router])
+  }, [entourageUuid, firstConversationId, router])
 
-  const isReady = dataMyFeeds && (dataMyFeeds.length === 0 || entourageId)
+  const isReady = dataMyFeeds && (dataMyFeeds.length === 0 || entourageUuid)
 
   if (!isReady) {
     return (
@@ -32,10 +32,10 @@ export function MessagesDesktop() {
 
   return (
     <S.Container>
-      <ConversationsList entourageId={entourageId} />
-      {entourageId ? (
+      <ConversationsList entourageUuid={entourageUuid} />
+      {entourageUuid ? (
         <S.ConversationDetailContainer>
-          <ConversationDetail key={entourageId} entourageId={entourageId} />
+          <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} />
         </S.ConversationDetailContainer>
       ) : null}
     </S.Container>

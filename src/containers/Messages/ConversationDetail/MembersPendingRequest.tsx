@@ -14,18 +14,18 @@ import { useDelayLoading } from 'src/utils/hooks'
 import * as S from './MembersPendingRequest.styles'
 
 interface MembersPendingRequestProps {
-  entourageId: number;
+  entourageUuid: string;
 }
 
 export function MembersPendingRequest(props: MembersPendingRequestProps) {
-  const { entourageId } = props
+  const { entourageUuid } = props
 
   const [deleting, setDeleting] = useDelayLoading()
   const [accepting, setAccepting] = useDelayLoading()
-  const { membersPending } = useQueryMembersPending(entourageId)
+  const { membersPending } = useQueryMembersPending(entourageUuid)
   const me = useQueryMeNonNullable()
-  const entourage = useQueryEntourageFromMyFeeds(entourageId)
-  const iAmAuthor = me.id === entourage.author.id
+  const entourage = useQueryEntourageFromMyFeeds(entourageUuid)
+  const iAmAuthor = me.id === entourage?.author.id
 
   const [accepteEntourageUser] = useMutateAcceptEntourageUser()
   const [deleteEntourageUser] = useMutateDeleteEntourageUser()
@@ -35,15 +35,15 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
 
   const onValidateRequest = useCallback(async () => {
     setAccepting(true)
-    await accepteEntourageUser({ entourageId, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
+    await accepteEntourageUser({ entourageUuid, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
     setAccepting(false)
-  }, [accepteEntourageUser, currentMemberPending, entourageId, setAccepting])
+  }, [accepteEntourageUser, currentMemberPending, entourageUuid, setAccepting])
 
   const onRejectRequest = useCallback(async () => {
     setDeleting(true)
-    await deleteEntourageUser({ entourageId, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
+    await deleteEntourageUser({ entourageUuid, userId: currentMemberPending.id }, { waitForRefetchQueries: true })
     setDeleting(false)
-  }, [deleteEntourageUser, currentMemberPending, entourageId, setDeleting])
+  }, [setDeleting, deleteEntourageUser, entourageUuid, currentMemberPending])
 
   if (!iAmAuthor || !currentMemberPending) {
     return null

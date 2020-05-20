@@ -5,10 +5,10 @@ import { useQueryMyFeeds } from 'src/core/store'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
 import * as S from './Messages.styles'
-import { useEntourageId } from './useEntourageId'
+import { useEntourageUuid } from './useEntourageUuid'
 
 export function MessagesMobile() {
-  const entourageId = useEntourageId()
+  const entourageUuid = useEntourageUuid()
   const { data: dataMyFeeds } = useQueryMyFeeds()
 
   if (!dataMyFeeds) {
@@ -21,7 +21,7 @@ export function MessagesMobile() {
 
   return (
     <S.Container>
-      {entourageId ? <ConversationDetail key={entourageId} entourageId={entourageId} /> : <ConversationsList />}
+      {entourageUuid ? <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} /> : <ConversationsList />}
     </S.Container>
   )
 }
