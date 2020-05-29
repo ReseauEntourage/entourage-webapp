@@ -1,7 +1,9 @@
 import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { Messages, TopBar } from 'src/components/Conversations'
+import { openModal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
+import { ModalUserCard } from 'src/containers/ModalUserCard'
 import {
   useQueryMe,
   useQueryEntourageChatMessages,
@@ -49,6 +51,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
     if (entourage.groupType === 'action' || entourage.groupType === 'outing') {
       router.push('/actions/[actionId]', `/actions/${entourage.uuid}`)
+    } else if (entourage.groupType === 'conversation' && entourage.author.id) {
+      openModal(<ModalUserCard userId={entourage.author.id} />)
     }
   }, [entourage, router])
 
