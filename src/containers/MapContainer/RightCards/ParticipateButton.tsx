@@ -24,7 +24,7 @@ export function ParticipateButton(props: ParticipateButtonProps) {
   const [isHover, setIsHover] = useState(false)
   const [requestEntourageUser] = useMutateEntourageUsers()
   const { data: dataMe } = useQueryMe()
-  const iAmLogged = useQueryIAmLogged()
+  const { iAmLogged } = useQueryIAmLogged()
   const [participateLoading, setParticipateLoading] = useDelayLoading()
 
   const iAmCreator = dataMe?.data.user.id === feedItem.author.id

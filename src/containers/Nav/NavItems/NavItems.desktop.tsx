@@ -13,7 +13,7 @@ import { useQueryIAmLogged } from 'src/core/store'
 import { texts } from 'src/i18n'
 
 export function NavItemsDeskTop() {
-  const iAmLogged = useQueryIAmLogged()
+  const { iAmLogged } = useQueryIAmLogged()
 
   useOpenModalProfileOnLogin()
 

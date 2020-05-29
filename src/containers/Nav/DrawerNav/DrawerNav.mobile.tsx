@@ -25,7 +25,7 @@ import { theme } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
-  const iAmLogged = useQueryIAmLogged()
+  const { iAmLogged } = useQueryIAmLogged()
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
   useOpenModalProfileOnLogin()
