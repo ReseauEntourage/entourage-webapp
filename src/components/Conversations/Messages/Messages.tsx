@@ -28,7 +28,7 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
 
   const { onScroll, isAtBottom, isAtTop } = useOnScroll()
 
-  const lastMessage = messages.length && messages[0]
+  const lastMessage = messages.length && messages[messages.length - 1]
   const prevLastMessage = usePrevious(lastMessage)
   const lastMessageHasChanged = lastMessage && prevLastMessage && lastMessage.id !== prevLastMessage.id
 
