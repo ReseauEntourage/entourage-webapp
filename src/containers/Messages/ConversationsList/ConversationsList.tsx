@@ -41,9 +41,8 @@ export function ConversationsList(props: ConversationsListProps) {
             return entourage.entourageUuid === feedUuid
           })
 
-          assertIsDefined(entourageWithMembers)
+          const pendingMembers = entourageWithMembers?.members ?? []
 
-          const { members } = entourageWithMembers
           return (
             <Link
               key={feedUuid}
@@ -56,7 +55,7 @@ export function ConversationsList(props: ConversationsListProps) {
                     <ConversationItemExcerpt
                       feedJoinStatus={feed.data.joinStatus}
                       iAmAuthor={feed.data.author.id === me.id}
-                      pendingMembers={members}
+                      pendingMembers={pendingMembers}
                       text={feed.data.lastMessage?.text ?? ''}
                     />
                   )}

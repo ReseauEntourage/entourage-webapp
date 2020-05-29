@@ -45,8 +45,6 @@ export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
   if (memberStatus) {
     entouragesWithMembers = entouragesWithMembers.map((entourage) => ({
       entourageUuid: entourage.entourageUuid,
-      // strange bug from TypeScript as he know member type
-      // @ts-ignore
       members: entourage.members.filter((member) => member.status === memberStatus),
     }))
   }
