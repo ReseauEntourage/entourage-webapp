@@ -96,12 +96,14 @@ export function ConversationDetail(props: ConversationDetailProps) {
           vous verrez ici la conversation des participants à cette action/cet évènement.
         </S.Pending>
       ) : (
-        <Messages
-          fetchMore={fetchMore}
-          messages={reversedMessages}
-          meUserId={meData?.data.user.id}
-          onSendMessage={onClickSend}
-        />
+        <S.MessagesContainer>
+          <Messages
+            fetchMore={fetchMore}
+            messages={reversedMessages}
+            meUserId={meData?.data.user.id}
+            onSendMessage={onClickSend}
+          />
+        </S.MessagesContainer>
       )}
     </S.Container>
   )

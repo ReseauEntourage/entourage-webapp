@@ -21,3 +21,8 @@ export const Pending = styled(Typography).attrs(() => ({
   display: flex;
   justify-content: center;
 `
+
+export const MessagesContainer = styled.div`
+  flex: 1;
+  overflow: hidden;
+`
