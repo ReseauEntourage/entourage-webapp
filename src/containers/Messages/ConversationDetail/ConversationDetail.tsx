@@ -56,6 +56,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
     }
   }, [entourage, router])
 
+  const onClickBackToMessages = useCallback(() => router.push('/messages'), [router])
+
   // must make a shallow copy because reverse() will mutate
   // and messages is cached
   const reversedMessages = [...messages].reverse().map((message) => ({
@@ -84,6 +86,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
   return (
     <S.Container>
       <TopBar
+        onClickBackToMessages={onClickBackToMessages}
         onClickTopBar={onClickTopBar}
         title={title}
       />
