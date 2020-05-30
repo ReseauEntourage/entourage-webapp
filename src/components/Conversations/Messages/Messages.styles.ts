@@ -13,7 +13,7 @@ export const MessageList = styled.div`
   flex: 1;
   position: relative;
   overflow: auto;
-  margin: ${theme.spacing(2)}px;
+  padding: ${theme.spacing(2)}px;
 `
 
 export const BottomBar = styled.div`

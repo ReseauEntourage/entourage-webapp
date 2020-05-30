@@ -7,7 +7,10 @@ export const TopBarContainer = styled.div`
   border-bottom: solid 1px ${colors.borderColor};
   align-items: center;
   cursor: pointer;
+  padding: ${theme.spacing(0, 1)};
+  min-height: ${theme.mixins.toolbar.minHeight}px;
 `
+
 export const TopBarTypography = styled(Typography).attrs(() => ({
   variant: variants.bodyRegular,
   color: 'primary',
