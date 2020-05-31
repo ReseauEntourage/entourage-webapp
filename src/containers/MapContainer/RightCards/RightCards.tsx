@@ -126,7 +126,7 @@ export function RightCards(props: RightCardsProps) {
     card = (
       <ActionCard
         actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+          <S.ActionsContainer>
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
@@ -134,7 +134,7 @@ export function RightCards(props: RightCardsProps) {
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
-          </Box>
+          </S.ActionsContainer>
         )}
         dateLabel={dataLabel}
         description={description}
@@ -157,7 +157,7 @@ export function RightCards(props: RightCardsProps) {
     card = (
       <EventCard
         actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+          <S.ActionsContainer>
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
@@ -165,7 +165,7 @@ export function RightCards(props: RightCardsProps) {
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
-          </Box>
+          </S.ActionsContainer>
         )}
         address={feedItem.metadata.displayAddress}
         dateLabel={dateLabel}
