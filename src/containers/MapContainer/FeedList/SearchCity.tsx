@@ -1,10 +1,10 @@
-import Box from '@material-ui/core/Box'
 import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { useMapContext } from 'src/components/Map'
 import { constants } from 'src/constants'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
+import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
 
@@ -29,12 +29,12 @@ export function SearchCity() {
   }, [mapContext])
 
   return (
-    <Box padding={2}>
+    <S.Container>
       <GoogleMapLocation
         defaultValue={constants.DEFAULT_LOCATION.CITY_NAME}
         onChange={onChange}
         textFieldProps={{}}
       />
-    </Box>
+    </S.Container>
   )
 }

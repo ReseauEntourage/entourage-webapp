@@ -25,6 +25,10 @@ export const texts = {
     validate: 'Valider',
   },
   content: {
+    navActions: {
+      mapButton: 'Carte',
+      returnButton: 'Retour',
+    },
     profilModal: {
       modalTitle: 'Mon profil',
       STEP_1: '',

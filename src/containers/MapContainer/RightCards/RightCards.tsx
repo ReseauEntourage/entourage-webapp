@@ -19,6 +19,7 @@ import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/s
 import { variants } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
 import { ParticipateButton } from './ParticipateButton'
+import * as S from './RightCards.styles'
 
 interface RightCardsProps {
   feedItem: UseQueryFeedItem;
@@ -177,47 +178,42 @@ export function RightCards(props: RightCardsProps) {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height="100%"
-      paddingY={2}
-      style={{
-        boxSizing: 'border-box',
-      }}
-    >
-      <Box display="flex" justifyContent="flex-end" marginRight={1}>
-        <Link href="/actions">
-          <a>
-            <CloseIcon color="primary" fontSize="large" />
-          </a>
-        </Link>
-      </Box>
-      <Box marginX={4}>
-        {card}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        marginTop={2}
-        marginX={4}
-        overflow="hidden"
-      >
-        <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
+    <S.Container>
+      <S.Scroll>
+        <Box display="flex" justifyContent="flex-end" marginRight={1}>
+          <Link href="/actions">
+            <a>
+              <CloseIcon color="primary" fontSize="large" />
+            </a>
+          </Link>
+        </Box>
+        <Box marginX={4}>
+          {card}
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          marginTop={2}
+          marginX={4}
+          overflow="hidden"
+        >
+          <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
           Participants
-        </Typography>
-        <UsersList
-          onClickUser={onClickUser}
-          users={entourageUsers.map((user) => ({
-            userId: user.id,
-            userName: user.displayName,
-            profilePictureURL: user.avatarUrl,
-            isOwner: feedItem.author.id === user.id,
-            isPartner: !!user.partner,
-            partnerName: user.partner ? user.partner.name : undefined,
-          }))}
-        />
-      </Box>
-    </Box>
+          </Typography>
+          <UsersList
+            onClickUser={onClickUser}
+            users={entourageUsers.map((user) => ({
+              userId: user.id,
+              userName: user.displayName,
+              profilePictureURL: user.avatarUrl,
+              isOwner: feedItem.author.id === user.id,
+              isPartner: !!user.partner,
+              partnerName: user.partner ? user.partner.name : undefined,
+            }))}
+          />
+        </Box>
+      </S.Scroll>
+    </S.Container>
+
   )
 }
