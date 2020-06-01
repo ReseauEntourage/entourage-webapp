@@ -69,6 +69,7 @@ module.exports = {
     'react/jsx-sort-props': 1,
 
     // Plain JavaScript Rules
+    'class-methods-use-this': 0,
     'arrow-body-style': 0,
     'max-len': [1, { code: 120 }],
     'no-console': [1, { allow: ['warn', 'error'] }],

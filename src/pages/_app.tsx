@@ -5,6 +5,8 @@ import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
+import { Provider as ReduxProvider } from 'react-redux'
+import { HTTPEntourageGateway } from 'src/adapters/secondary/HTTPEntourageGateway'
 import { Layout } from 'src/components/Layout'
 import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
@@ -15,6 +17,10 @@ import { api } from 'src/core/api'
 import { Dispatchers } from 'src/core/events'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
+import { authUserIdReducer } from 'src/coreLogic/useCases/users/authUserId.reducer'
+import { retrieveAuthUserEpic } from 'src/coreLogic/useCases/users/users.epic'
+import { usersReducer } from 'src/coreLogic/useCases/users/users.reducer'
+import { createReduxStore } from 'src/store'
 import { theme } from 'src/styles'
 import { isSSR, initFacebookApp } from 'src/utils/misc'
 
@@ -24,6 +30,19 @@ if (process.env.NODE_ENV !== 'production') {
 
 initSentry()
 initFacebookApp()
+
+const entourageGateway = new HTTPEntourageGateway()
+
+const store = createReduxStore({
+  dependencies: {
+    entourageGateway,
+  },
+  reducers: {
+    users: usersReducer,
+    authUserId: authUserIdReducer,
+  },
+  epics: [retrieveAuthUserEpic],
+})
 
 export default class App extends NextApp {
   // Only uncomment this method if you have blocking data requirements for
@@ -82,28 +101,30 @@ export default class App extends NextApp {
         <SSRDataContext.Provider value={SSRDataValue}>
           {!isSSR && (
             <>
-              <Dispatchers />
-              <StylesProvider injectFirst={true}>
-                <ThemeProvider theme={theme}>
-                  <ReactQueryConfigProvider config={queryConfig}>
-                    <MainStoreProvider>
-                      <MapProvider>
-                        <Layout>
-                          <>
-                            <Layout.Nav>
-                              <Nav />
-                            </Layout.Nav>
-                            <Layout.Page>
-                              <Component {...pageProps} />
-                              <ModalsListener />
-                            </Layout.Page>
-                          </>
-                        </Layout>
-                      </MapProvider>
-                    </MainStoreProvider>
-                  </ReactQueryConfigProvider>
-                </ThemeProvider>
-              </StylesProvider>
+              <ReduxProvider store={store}>
+                <Dispatchers />
+                <StylesProvider injectFirst={true}>
+                  <ThemeProvider theme={theme}>
+                    <ReactQueryConfigProvider config={queryConfig}>
+                      <MainStoreProvider>
+                        <MapProvider>
+                          <Layout>
+                            <>
+                              <Layout.Nav>
+                                <Nav />
+                              </Layout.Nav>
+                              <Layout.Page>
+                                <Component {...pageProps} />
+                                <ModalsListener />
+                              </Layout.Page>
+                            </>
+                          </Layout>
+                        </MapProvider>
+                      </MainStoreProvider>
+                    </ReactQueryConfigProvider>
+                  </ThemeProvider>
+                </StylesProvider>
+              </ReduxProvider>
             </>
           )}
         </SSRDataContext.Provider>
