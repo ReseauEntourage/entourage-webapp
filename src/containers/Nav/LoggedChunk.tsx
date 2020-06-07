@@ -3,6 +3,7 @@ import MenuItem from '@material-ui/core/MenuItem'
 import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
+import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { useQueryMe } from 'src/core/store'
 import { texts } from 'src/i18n'
@@ -11,6 +12,7 @@ import { useOnClickLogout } from './useOnClickLogout'
 export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const me = useQueryMe()
+  const iAmAssoAdmin = false
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -23,6 +25,10 @@ export function LoggedChunk() {
   const openModalProfile = useCallback(() => {
     openModal(<ModalProfile />)
     setAnchorEl(null)
+  }, [])
+
+  const openAdminAsso = useCallback(() => {
+    window.open(constants.ADMIN_ASSO_LINK, '_blank')
   }, [])
 
   const onClickLogout = useOnClickLogout()
@@ -62,6 +68,11 @@ export function LoggedChunk() {
         <MenuItem onClick={openModalProfile}>
           {texts.nav.profile}
         </MenuItem>
+        {iAmAssoAdmin && (
+          <MenuItem onClick={openAdminAsso}>
+            {texts.nav.adminAsso}
+          </MenuItem>
+        )}
         <MenuItem onClick={onClickLogout}>
           {texts.nav.logout}
         </MenuItem>
