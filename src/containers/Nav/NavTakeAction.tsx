@@ -13,7 +13,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
-import { ModalCharte } from 'src/containers/ModalCharte'
+import { ModalCharter } from 'src/containers/ModalCharter'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { variants, colors } from 'src/styles'
@@ -103,7 +103,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
 
   const openActionModal = useCallback(() => {
     openModal(
-      <ModalCharte
+      <ModalCharter
         onValidate={() => {
           openModal(<ModalEditAction />)
         }}

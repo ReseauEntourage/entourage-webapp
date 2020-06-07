@@ -39,9 +39,21 @@ export const texts = {
       locationLabel: 'Entrez un adresse, un lieu, une ville...',
       emailLabel: 'Votre email',
     },
-    modalCharte: {
+    modalCharter: {
       title: 'Je respecte la charte d\'Entourage',
       validateLabel: 'J\'ai lu et j\'accepte',
+      step1: {
+        title: 'Recueillir l\'accord',
+        content: 'Je dois recueillir le consentement des personnes concernées avant de créer un entourage',
+      },
+      step2: {
+        title: 'Sécurité',
+        content: 'Je n\'inclus aucun donnée permettant d\'identifier ou de localiser les personnes concernées',
+      },
+      step3: {
+        title: 'Géolocalisation',
+        content: 'La position précise des actions ne sera pas diffusée: elle est remplacée par les zones orange sur la carte',
+      },
     },
     modalEditAction: {
       titleCreate: 'Vous souhaitez créer une action solidaire ? C\'est parti !',

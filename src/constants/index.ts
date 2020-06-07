@@ -13,4 +13,5 @@ export const constants = {
     },
     ZOOM: 13,
   },
+  CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
 }
