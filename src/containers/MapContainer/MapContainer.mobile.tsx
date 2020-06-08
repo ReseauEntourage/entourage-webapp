@@ -53,7 +53,8 @@ export function MapContainerMobile() {
 
         </S.MapContainer>
       ) : (
-        <><FeedList />
+        <>
+          <FeedList />
           <S.FabFeed color="primary" onClick={() => setIsMapOpen(true)} size="small" variant="extended">
             <S.NavIcon />
             {texts.content.navActions.mapButton}

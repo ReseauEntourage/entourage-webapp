@@ -198,7 +198,7 @@ export function RightCards(props: RightCardsProps) {
           overflow="hidden"
         >
           <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
-          Participants
+            Participants
           </Typography>
           <UsersList
             onClickUser={onClickUser}
