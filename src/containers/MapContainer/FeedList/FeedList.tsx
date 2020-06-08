@@ -91,14 +91,11 @@ export function FeedList() {
         width={350}
         zIndex={2}
       >
-        <Box
-          height="100%"
+        <S.Scroll
           onScroll={onScroll}
-          overflow="scroll"
-          position="relative"
         >
           <ul>{feedsListContent}</ul>
-        </Box>
+        </S.Scroll>
         {isLoading && <OverlayLoader />}
       </S.FeedContainer>
       <Box />

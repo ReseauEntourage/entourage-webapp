@@ -19,6 +19,7 @@ import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/s
 import { variants } from 'src/styles'
 import { useMount } from 'src/utils/hooks'
 import { ParticipateButton } from './ParticipateButton'
+import * as S from './RightCards.styles'
 
 interface RightCardsProps {
   feedItem: UseQueryFeedItem;
@@ -125,7 +126,7 @@ export function RightCards(props: RightCardsProps) {
     card = (
       <ActionCard
         actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+          <S.ActionsContainer>
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
@@ -133,7 +134,7 @@ export function RightCards(props: RightCardsProps) {
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
-          </Box>
+          </S.ActionsContainer>
         )}
         dateLabel={dataLabel}
         description={description}
@@ -156,7 +157,7 @@ export function RightCards(props: RightCardsProps) {
     card = (
       <EventCard
         actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+          <S.ActionsContainer>
             <ParticipateButton feedItem={feedItem} />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
@@ -164,7 +165,7 @@ export function RightCards(props: RightCardsProps) {
             ) : (
               <Button onClick={onClickReport} variant="outlined">Signaler</Button>
             )}
-          </Box>
+          </S.ActionsContainer>
         )}
         address={feedItem.metadata.displayAddress}
         dateLabel={dateLabel}
@@ -177,47 +178,42 @@ export function RightCards(props: RightCardsProps) {
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      height="100%"
-      paddingY={2}
-      style={{
-        boxSizing: 'border-box',
-      }}
-    >
-      <Box display="flex" justifyContent="flex-end" marginRight={1}>
-        <Link href="/actions">
-          <a>
-            <CloseIcon color="primary" fontSize="large" />
-          </a>
-        </Link>
-      </Box>
-      <Box marginX={4}>
-        {card}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        marginTop={2}
-        marginX={4}
-        overflow="hidden"
-      >
-        <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
-          Participants
-        </Typography>
-        <UsersList
-          onClickUser={onClickUser}
-          users={entourageUsers.map((user) => ({
-            userId: user.id,
-            userName: user.displayName,
-            profilePictureURL: user.avatarUrl,
-            isOwner: feedItem.author.id === user.id,
-            isPartner: !!user.partner,
-            partnerName: user.partner ? user.partner.name : undefined,
-          }))}
-        />
-      </Box>
-    </Box>
+    <S.Container>
+      <S.Scroll>
+        <Box display="flex" justifyContent="flex-end" marginRight={1}>
+          <Link href="/actions">
+            <a>
+              <CloseIcon color="primary" fontSize="large" />
+            </a>
+          </Link>
+        </Box>
+        <Box marginX={4}>
+          {card}
+        </Box>
+        <Box
+          display="flex"
+          flexDirection="column"
+          marginTop={2}
+          marginX={4}
+          overflow="hidden"
+        >
+          <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
+            Participants
+          </Typography>
+          <UsersList
+            onClickUser={onClickUser}
+            users={entourageUsers.map((user) => ({
+              userId: user.id,
+              userName: user.displayName,
+              profilePictureURL: user.avatarUrl,
+              isOwner: feedItem.author.id === user.id,
+              isPartner: !!user.partner,
+              partnerName: user.partner ? user.partner.name : undefined,
+            }))}
+          />
+        </Box>
+      </S.Scroll>
+    </S.Container>
+
   )
 }
