@@ -17,7 +17,7 @@ export const Scroll = styled.div`
 
 export const ActionsContainer = styled.div`
   display: flex;
-  justifyContent: space-around;
+  justify-content: space-around;
   @media ${devices.desktop} {
     margin: ${theme.spacing(2, 4)};
   }
