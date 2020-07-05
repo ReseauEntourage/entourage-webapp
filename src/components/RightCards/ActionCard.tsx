@@ -32,7 +32,7 @@ export function ActionCard(props: ActionCardProps) {
       <Typography variant={variants.title1}>{title}</Typography>
       <Box alignItems="center" display="flex" justifyContent="flex-start" marginY={1}>
         <Box marginRight={1}>
-          <Avatar alt="Organizer" onClick={onClickAvatar} src={organizerPictureURL} />
+          <Avatar alt="Organizer" onClick={onClickAvatar} src={organizerPictureURL} style={{ cursor: 'pointer' }} />
         </Box>
         <Box>
           <Typography color={isAssociation ? 'primary' : undefined} variant={variants.footNote}>

@@ -1,6 +1,9 @@
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
+import { ExtendedUserPartner } from 'src/core/api'
+
+import { PartnerCard } from './PartnerCard'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
@@ -11,10 +14,10 @@ interface UserCardProps {
   conversationUuid: string;
   description: string;
   name: string;
-  organizationAvatarURL?: string;
-  organizationName?: string;
+  partner?: ExtendedUserPartner;
 }
 
+// TODO : i18n
 export function UserCard(props: UserCardProps) {
   const {
     name,
@@ -24,9 +27,17 @@ export function UserCard(props: UserCardProps) {
     avatarURL,
     description,
     actionsCount,
-    organizationName,
-    organizationAvatarURL,
+    partner,
   } = props
+
+  const [partnerCardIsOpen, setPartnerCardIsOpen] = React.useState(false)
+
+  if (partnerCardIsOpen && partner) {
+    return <PartnerCard onClickBack={() => setPartnerCardIsOpen(false)} partner={props.partner} />
+  }
+
+  const partnerName = partner?.name
+  const partnerAvatarURL = partner?.smallLogoUrl
 
   return (
     <S.Container>
@@ -41,11 +52,11 @@ export function UserCard(props: UserCardProps) {
         <S.SectionTitle>Actions</S.SectionTitle>
         {actionsCount} actions créées
       </S.Actions>
-      {organizationName && (
+      {partnerName && (
         <S.Organization>
           <S.SectionTitle>Association</S.SectionTitle>
-          <S.OrganizationDetail>
-            <Avatar size="large" src={organizationAvatarURL} /> {organizationName}
+          <S.OrganizationDetail onClick={() => setPartnerCardIsOpen(true)}>
+            <Avatar size="large" src={partnerAvatarURL} /> {partnerName}
           </S.OrganizationDetail>
         </S.Organization>
       )}

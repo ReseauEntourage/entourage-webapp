@@ -98,7 +98,6 @@ export interface UserPartner {
   name: string;
   smallLogoUrl: string;
 }
-
 export interface AnonymousUser {
   about: string | null;
   address: null;
@@ -275,4 +274,14 @@ export interface DTOUpdateEntourageAsEvent {
     streetAddress?: string;
   };
   title?: string;
+}
+export interface ExtendedUserPartner extends UserPartner {
+  address: string;
+  description: string;
+  donationsNeeds: string;
+  email: string;
+  phone: string;
+  userRoleTitle: string;
+  volunteersNeeds: string;
+  websiteUrl: string;
 }

@@ -21,6 +21,7 @@ import {
   DTOUpdateEntourageAsEvent,
   DTOCreateEntourageAsAction,
   DTOUpdateEntourageAsAction,
+  ExtendedUserPartner,
 } from './SchemaTypes'
 
 export const schema = {
@@ -377,19 +378,7 @@ export const schema = {
           name: string;
           phone: string;
         };
-        partner?: {
-          address: string;
-          default: boolean;
-          description: string;
-          email: string;
-          id: number;
-          largeLogoUrl: string;
-          name: string;
-          phone: string;
-          smallLogoUrl: string;
-          userRoleTitle: string;
-          websiteUrl: string;
-        };
+        partner?: ExtendedUserPartner;
         stats: {
           encounterCount: number;
           entourageCount: number;
