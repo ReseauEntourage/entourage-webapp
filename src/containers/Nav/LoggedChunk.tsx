@@ -12,7 +12,7 @@ import { useOnClickLogout } from './useOnClickLogout'
 export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const me = useQueryMe()
-  const iAmAssoAdmin = false
+  const iAmAssoAdmin = me.data?.data.user.partnerAdmin
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)

@@ -120,6 +120,7 @@ export interface AnonymousUser {
   memberships: unknown[];
   organization: null;
   partner: null;
+  partnerAdmin?: boolean;
   roles: unknown[];
   stats: {
     encounterCount: number;
@@ -156,6 +157,7 @@ export interface LoggedUser {
   memberships: unknown[];
   organization: null;
   partner: null;
+  partnerAdmin?: boolean;
   roles: unknown[];
   stats: {
     encounterCount: number;
