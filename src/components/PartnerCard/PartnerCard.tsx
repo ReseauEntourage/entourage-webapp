@@ -48,18 +48,18 @@ export function PartnerCard(props: PartnerCard) {
           {volunteersNeeds}
         </S.VolunteersNeeds>
       ) }
-      <S.PhoneArea>
+      <S.Phone>
         <IconPhone />
         <div>{phone}</div>
-      </S.PhoneArea>
-      <S.MailArea>
+      </S.Phone>
+      <S.Mail>
         <IconMail />
         <div>{email}</div>
-      </S.MailArea>
-      <S.WebsiteArea>
+      </S.Mail>
+      <S.Website>
         <IconLink />
         <div>{websiteUrl}</div>
-      </S.WebsiteArea>
+      </S.Website>
     </S.Container>
   )
 }

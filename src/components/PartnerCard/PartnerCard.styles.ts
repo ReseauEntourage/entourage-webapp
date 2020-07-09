@@ -61,7 +61,7 @@ export const Container = styled(Typography).attrs(() => ({
   margin-bottom: ${theme.spacing(2)}px;
 `
 
-export const PhoneArea = styled.div`
+export const Phone = styled.div`
   grid-area: Phone;
   @media ${devices.desktop} {
     float: left;
@@ -72,7 +72,7 @@ export const PhoneArea = styled.div`
   }
 `
 
-export const WebsiteArea = styled.div`
+export const Website = styled.div`
   grid-area: Website;
   @media ${devices.desktop} {
     float: left;
@@ -83,7 +83,7 @@ export const WebsiteArea = styled.div`
   }
 `
 
-export const MailArea = styled.div`
+export const Mail = styled.div`
   grid-area: Mail;
   @media ${devices.desktop} {
     float: left;
