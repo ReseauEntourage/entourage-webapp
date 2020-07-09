@@ -21,7 +21,7 @@ export interface ImageCropperValue {
 export interface ImageCropperProps {
   onChange?: (value: ImageCropperValue) => void;
   onValidate?: (value: ImageCropperValue) => void;
-  src?: string;
+  src?: string | null;
 }
 
 export function ImageCropper(props: ImageCropperProps) {

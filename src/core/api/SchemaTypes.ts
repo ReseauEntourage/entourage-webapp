@@ -108,6 +108,9 @@ export interface AnonymousUser {
   };
   displayName: null;
   email: null;
+  featureFlags: {
+    organizationAdmin: boolean;
+  };
   firebaseProperties: {
     ActionZoneCP: string;
     ActionZoneDep: string;
@@ -144,6 +147,9 @@ export interface LoggedUser {
   };
   displayName: string | null;
   email: string | null;
+  featureFlags: {
+    organizationAdmin: boolean;
+  };
   firebaseProperties: {
     ActionZoneCP: string;
     ActionZoneDep: string;

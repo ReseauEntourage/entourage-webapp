@@ -5,12 +5,12 @@ import { openModal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import {
-  useQueryMe,
   useQueryEntourageChatMessages,
   useMutateCreateEntourageChatMessage,
   useQueryEntourageFromMyFeeds,
   useQueryEntourage,
   queryKeys,
+  useQueryMeNonNullable,
 } from 'src/core/store'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './ConversationDetail.styles'
@@ -40,7 +40,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
     isNewConversation ? [queryKeys.myFeeds] : undefined,
   )
 
-  const { data: meData } = useQueryMe()
+  const me = useQueryMeNonNullable()
 
   const onClickSend = useCallback(async (messageContent) => {
     await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })
@@ -103,7 +103,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
           <Messages
             fetchMore={fetchMore}
             messages={reversedMessages}
-            meUserId={meData?.data.user.id}
+            meUserId={me.id}
             onSendMessage={onClickSend}
           />
         </S.MessagesContainer>
