@@ -12,14 +12,16 @@ interface PartnerCard {
 }
 
 export function PartnerCard(props: PartnerCard) {
-  const name = props?.partner?.name
-  const smallLogoUrl = props?.partner?.smallLogoUrl
-  const description = props?.partner?.description
-  const email = props?.partner?.email
-  const phone = props?.partner?.phone
-  const websiteUrl = props?.partner?.websiteUrl
-  const donationsNeeds = props?.partner?.donationsNeeds
-  const volunteersNeeds = props?.partner?.volunteersNeeds
+  const {
+    name,
+    smallLogoUrl,
+    description,
+    email,
+    phone,
+    websiteUrl,
+    donationsNeeds,
+    volunteersNeeds
+  } = props.partner || {}
 
   return (
     <S.Container>
