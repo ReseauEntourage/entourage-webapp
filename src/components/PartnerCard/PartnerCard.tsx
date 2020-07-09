@@ -20,8 +20,8 @@ export function PartnerCard(props: PartnerCard) {
     phone,
     websiteUrl,
     donationsNeeds,
-    volunteersNeeds
-  } = props.partner || {}
+    volunteersNeeds,
+  } = props?.partner || {}
 
   return (
     <S.Container>
@@ -50,15 +50,15 @@ export function PartnerCard(props: PartnerCard) {
       ) }
       <S.PhoneArea>
         <IconPhone />
-        {phone}
+        <div>{phone}</div>
       </S.PhoneArea>
       <S.MailArea>
         <IconMail />
-        {email}
+        <div>{email}</div>
       </S.MailArea>
       <S.WebsiteArea>
         <IconLink />
-        {websiteUrl}
+        <div>{websiteUrl}</div>
       </S.WebsiteArea>
     </S.Container>
   )

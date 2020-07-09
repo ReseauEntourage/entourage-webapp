@@ -64,8 +64,9 @@ export const Container = styled(Typography).attrs(() => ({
 export const PhoneArea = styled.div`
   grid-area: Phone;
   @media ${devices.desktop} {
-    display: grid;
+    float: left;
   }
+
   @media ${devices.mobile} {
     display: flex;
   }
@@ -74,7 +75,7 @@ export const PhoneArea = styled.div`
 export const WebsiteArea = styled.div`
   grid-area: Website;
   @media ${devices.desktop} {
-    display: grid;
+    float: left;
   }
 
   @media ${devices.mobile} {
@@ -85,7 +86,7 @@ export const WebsiteArea = styled.div`
 export const MailArea = styled.div`
   grid-area: Mail;
   @media ${devices.desktop} {
-    display: grid;
+    float: left;
   }
 
   @media ${devices.mobile} {
@@ -95,10 +96,10 @@ export const MailArea = styled.div`
 
 export const DonationsNeeds = styled.div`
   grid-area: DonationsNeeds;
-  display: grid;
+  float: left;
 `
 
 export const VolunteersNeeds = styled.div`
   grid-area: VolunteersNeeds;
-  display: grid;
+  float: left;
 `
