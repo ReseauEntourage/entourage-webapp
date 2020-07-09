@@ -1,9 +1,9 @@
 import React from 'react'
+import { openModal } from '../Modal'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
-import { ExtendedUserPartner } from 'src/core/api'
-
-import { PartnerCard } from './PartnerCard'
+import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
+import { UserPartnerWithDetails } from 'src/core/api'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
@@ -14,7 +14,7 @@ interface UserCardProps {
   conversationUuid: string;
   description: string;
   name: string;
-  partner?: ExtendedUserPartner;
+  partner?: UserPartnerWithDetails;
 }
 
 // TODO : i18n
@@ -30,14 +30,11 @@ export function UserCard(props: UserCardProps) {
     partner,
   } = props
 
-  const [partnerCardIsOpen, setPartnerCardIsOpen] = React.useState(false)
-
-  if (partnerCardIsOpen && partner) {
-    return <PartnerCard onClickBack={() => setPartnerCardIsOpen(false)} partner={props.partner} />
-  }
-
-  const partnerName = partner?.name
-  const partnerAvatarURL = partner?.smallLogoUrl
+  const onClick = React.useCallback(() => {
+    if (partner) {
+      openModal(<ModalPartnerCard partner={partner} />)
+    }
+  }, [partner])
 
   return (
     <S.Container>
@@ -52,11 +49,11 @@ export function UserCard(props: UserCardProps) {
         <S.SectionTitle>Actions</S.SectionTitle>
         {actionsCount} actions créées
       </S.Actions>
-      {partnerName && (
+      {partner?.name && (
         <S.Organization>
           <S.SectionTitle>Association</S.SectionTitle>
-          <S.OrganizationDetail onClick={() => setPartnerCardIsOpen(true)}>
-            <Avatar size="large" src={partnerAvatarURL} /> {partnerName}
+          <S.OrganizationDetail clickable={!!partner} onClick={onClick}>
+            <Avatar size="large" src={partner?.smallLogoUrl} /> {partner?.name}
           </S.OrganizationDetail>
         </S.Organization>
       )}

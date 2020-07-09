@@ -3,13 +3,12 @@ import IconMail from '@material-ui/icons/Mail'
 import IconPhone from '@material-ui/icons/Phone'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import { ExtendedUserPartner } from 'src/core/api'
+import { UserPartnerWithDetails } from 'src/core/api'
 
-import * as S from './UserCard.styles'
+import * as S from './PartnerCard.styles'
 
 interface PartnerCard {
-  onClickBack: () => void;
-  partner?: ExtendedUserPartner;
+  partner?: UserPartnerWithDetails;
 }
 
 export function PartnerCard(props: PartnerCard) {
@@ -23,7 +22,7 @@ export function PartnerCard(props: PartnerCard) {
   const volunteersNeeds = props?.partner?.volunteersNeeds
 
   return (
-    <S.PartnerContainer>
+    <S.Container>
       <S.Avatar>
         <Avatar size="large" src={smallLogoUrl} />
       </S.Avatar>
@@ -59,6 +58,6 @@ export function PartnerCard(props: PartnerCard) {
         <IconLink />
         {websiteUrl}
       </S.WebsiteArea>
-    </S.PartnerContainer>
+    </S.Container>
   )
 }

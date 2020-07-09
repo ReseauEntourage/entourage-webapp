@@ -281,7 +281,7 @@ export interface DTOUpdateEntourageAsEvent {
   };
   title?: string;
 }
-export interface ExtendedUserPartner extends UserPartner {
+export interface UserPartnerWithDetails extends UserPartner {
   address: string;
   description: string;
   donationsNeeds: string;
