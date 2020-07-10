@@ -3,15 +3,20 @@ import IconMail from '@material-ui/icons/Mail'
 import IconPhone from '@material-ui/icons/Phone'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import { UserPartnerWithDetails } from 'src/core/api'
-
 import * as S from './PartnerCard.styles'
 
-interface PartnerCard {
-  partner?: UserPartnerWithDetails;
+interface PartnerCardProps {
+  description: string;
+  donationsNeeds: string;
+  email: string;
+  name: string;
+  phone: string;
+  smallLogoUrl: string;
+  volunteersNeeds: string;
+  websiteUrl: string;
 }
 
-export function PartnerCard(props: PartnerCard) {
+export function PartnerCard(props: PartnerCardProps) {
   const {
     name,
     smallLogoUrl,
@@ -21,7 +26,7 @@ export function PartnerCard(props: PartnerCard) {
     websiteUrl,
     donationsNeeds,
     volunteersNeeds,
-  } = props?.partner || {}
+  } = props
 
   return (
     <S.Container>

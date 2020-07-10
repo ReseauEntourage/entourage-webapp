@@ -2,11 +2,10 @@ import React from 'react'
 import { Modal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { PartnerCard } from 'src/components/PartnerCard'
-import { UserPartnerWithDetails } from 'src/core/api'
 import { assertIsDefined } from 'src/utils/misc'
 
 interface ModalParnerCardProps {
-  partner: UserPartnerWithDetails;
+  partner: React.ComponentProps<typeof PartnerCard>;
 }
 
 export function ModalPartnerCard(props: ModalParnerCardProps) {
@@ -30,7 +29,7 @@ export function ModalPartnerCard(props: ModalParnerCardProps) {
       validate={false}
     >
       <PartnerCard
-        partner={partner}
+        {...partner}
       />
     </Modal>
   )

@@ -1,9 +1,9 @@
 import React from 'react'
 import { openModal } from '../Modal'
+import { PartnerCard } from '../PartnerCard'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
 import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
-import { UserPartnerWithDetails } from 'src/core/api'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
@@ -14,7 +14,7 @@ interface UserCardProps {
   conversationUuid: string;
   description: string;
   name: string;
-  partner?: UserPartnerWithDetails;
+  partner?: React.ComponentProps<typeof PartnerCard>;
 }
 
 // TODO : i18n
