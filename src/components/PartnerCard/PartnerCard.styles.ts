@@ -63,43 +63,36 @@ export const Container = styled(Typography).attrs(() => ({
 
 export const Phone = styled.div`
   grid-area: Phone;
+  display: flex;
   @media ${devices.desktop} {
-    float: left;
-  }
-
-  @media ${devices.mobile} {
-    display: flex;
+    flex-direction: column;
   }
 `
 
 export const Website = styled.div`
   grid-area: Website;
+  display: flex;
   @media ${devices.desktop} {
-    float: left;
-  }
-
-  @media ${devices.mobile} {
-    display: flex;
+    flex-direction: column;
   }
 `
 
 export const Mail = styled.div`
   grid-area: Mail;
+  display: flex;
   @media ${devices.desktop} {
-    float: left;
-  }
-
-  @media ${devices.mobile} {
-    display: flex;
+    flex-direction: column;
   }
 `
 
 export const DonationsNeeds = styled.div`
   grid-area: DonationsNeeds;
-  float: left;
+  display: flex;
+  flex-direction: column;
 `
 
 export const VolunteersNeeds = styled.div`
   grid-area: VolunteersNeeds;
-  float: left;
+  display: flex;
+  flex-direction: column;
 `
