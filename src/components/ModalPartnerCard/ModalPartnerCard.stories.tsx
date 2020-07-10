@@ -1,15 +1,13 @@
-/* eslint-disable max-len */
 import React from 'react'
-import { ModalsListener } from '../Modal'
+import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { UserPartnerWithDetails } from 'src/core/api'
-import { ThemeProvider } from 'src/styles'
 import { loremIpsum } from 'src/utils/misc'
-import { UserCard } from './UserCard'
+import { ModalPartnerCard } from './ModalPartnerCard'
 
 export default {
-  title: 'UserCard',
+  title: 'ModalModalPartnerCardShare',
   parameters: {
-    component: UserCard,
+    component: ModalPartnerCard,
   },
 }
 
@@ -30,16 +28,9 @@ const partner: UserPartnerWithDetails = {
 }
 
 export const Demo = () => (
-  <ThemeProvider>
-    <ModalsListener />
-    <UserCard
-      actionsCount={2}
-      conversationUuid="12"
-      description={loremIpsum(150)}
-      name="Name"
-      partner={
-        partner
-      }
+  <TransparentWrapper>
+    <ModalPartnerCard
+      partner={partner}
     />
-  </ThemeProvider>
+  </TransparentWrapper>
 )

@@ -26,6 +26,8 @@ export function ModalUserCard(props: ModalUserCardProps) {
     )
   }
 
+  const partner = user?.partner
+
   assertIsDefined(user)
 
   return (
@@ -43,8 +45,7 @@ export function ModalUserCard(props: ModalUserCardProps) {
         conversationUuid={user.conversation.uuid}
         description={user.about}
         name={user.displayName}
-        organizationAvatarURL={user.organization?.logoUrl}
-        organizationName={user.organization?.name}
+        partner={partner}
       />
     </Modal>
   )

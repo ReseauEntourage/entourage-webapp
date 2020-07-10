@@ -1,6 +1,9 @@
 import React from 'react'
+import { openModal } from '../Modal'
+import { PartnerCard } from '../PartnerCard'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
+import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
@@ -11,10 +14,10 @@ interface UserCardProps {
   conversationUuid: string;
   description: string;
   name: string;
-  organizationAvatarURL?: string;
-  organizationName?: string;
+  partner?: React.ComponentProps<typeof PartnerCard>;
 }
 
+// TODO : i18n
 export function UserCard(props: UserCardProps) {
   const {
     name,
@@ -24,9 +27,14 @@ export function UserCard(props: UserCardProps) {
     avatarURL,
     description,
     actionsCount,
-    organizationName,
-    organizationAvatarURL,
+    partner,
   } = props
+
+  const onClick = React.useCallback(() => {
+    if (partner) {
+      openModal(<ModalPartnerCard partner={partner} />)
+    }
+  }, [partner])
 
   return (
     <S.Container>
@@ -41,11 +49,11 @@ export function UserCard(props: UserCardProps) {
         <S.SectionTitle>Actions</S.SectionTitle>
         {actionsCount} actions créées
       </S.Actions>
-      {organizationName && (
+      {partner?.name && (
         <S.Organization>
           <S.SectionTitle>Association</S.SectionTitle>
-          <S.OrganizationDetail>
-            <Avatar size="large" src={organizationAvatarURL} /> {organizationName}
+          <S.OrganizationDetail clickable={!!partner} onClick={onClick}>
+            <Avatar size="large" src={partner?.smallLogoUrl} /> {partner?.name}
           </S.OrganizationDetail>
         </S.Organization>
       )}

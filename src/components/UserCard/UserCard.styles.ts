@@ -1,19 +1,30 @@
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
-import { variants, theme } from 'src/styles'
+import { variants, theme, devices } from 'src/styles'
 
 export const Container = styled(Typography).attrs(() => ({
   variant: variants.bodyRegular,
   component: 'div',
 }))`
   display: grid;
-  grid-template-areas:
+  @media ${devices.desktop} {
+    grid-template-areas:
     ". Avatar ."
     ". Name ."
     "Description Description Description"
     "Actions . Organization"
     "ReportBtn . ContactBtn";
-  grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  @media ${devices.mobile} {
+    grid-template-areas:
+      "Avatar Avatar"
+      "Name Name"
+      "Description Description"
+      "Actions Organization"
+      "ReportBtn ContactBtn";
+    grid-template-columns: 1fr 1fr;
+  }
   max-width: 100%;
   margin-bottom: ${theme.spacing(2)}px;
 `
@@ -49,12 +60,17 @@ export const Organization = styled.div`
   grid-area: Organization;
 `
 
-export const OrganizationDetail = styled.div`
+interface OrganizationDetailProps { clickable: boolean;}
+
+export const OrganizationDetail = styled.div<OrganizationDetailProps>`
   display: flex;
   align-items: center;
   & > *:first-child {
     margin-right: ${theme.spacing(2)}px;
   }
+  ${({ clickable }) => clickable && `
+    cursor: pointer;
+`}
 `
 
 export const SectionTitle = styled(Typography).attrs(() => ({
