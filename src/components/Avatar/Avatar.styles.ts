@@ -26,6 +26,7 @@ export const NoProfilePicture = styled.div<{ size: Size; }>`
 
 export const Container = styled.div`
   border-radius: 100%;
+  cursor: ${(props) => props.onClick && 'pointer'};
 `
 
 export const AvatarPicture = styled(AvatarMUI)<{ size: Size; }>`
