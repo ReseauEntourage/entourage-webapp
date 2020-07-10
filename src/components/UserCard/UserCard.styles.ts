@@ -62,13 +62,13 @@ export const Organization = styled.div`
 
 interface OrganizationDetailProps { clickable: boolean;}
 
-export const OrganizationDetail = styled.div`
+export const OrganizationDetail = styled.div<OrganizationDetailProps>`
   display: flex;
   align-items: center;
   & > *:first-child {
     margin-right: ${theme.spacing(2)}px;
   }
-  ${({ clickable }: OrganizationDetailProps) => clickable && `
+  ${({ clickable }) => clickable && `
     cursor: pointer;
 `}
 `
