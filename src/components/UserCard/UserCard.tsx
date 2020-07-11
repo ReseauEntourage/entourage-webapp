@@ -1,9 +1,9 @@
 import React from 'react'
-import { openModal } from '../Modal'
-import { PartnerCard } from '../PartnerCard'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
+import { openModal } from 'src/components/Modal'
 import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
+import { PartnerCard } from 'src/components/PartnerCard'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
