@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import React from 'react'
 import { ModalsListener } from '../Modal'
-import { UserPartnerWithDetails } from 'src/core/api'
 import { ThemeProvider } from 'src/styles'
 import { loremIpsum } from 'src/utils/misc'
 import { UserCard } from './UserCard'
@@ -13,7 +12,7 @@ export default {
   },
 }
 
-const partner: UserPartnerWithDetails = {
+const partner = {
   address: loremIpsum(30),
   email: 'name@partner.fr',
   phone: '0000000000',

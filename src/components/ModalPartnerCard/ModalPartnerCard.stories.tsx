@@ -1,6 +1,5 @@
 import React from 'react'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
-import { UserPartnerWithDetails } from 'src/core/api'
 import { loremIpsum } from 'src/utils/misc'
 import { ModalPartnerCard } from './ModalPartnerCard'
 
@@ -11,7 +10,7 @@ export default {
   },
 }
 
-const partner: UserPartnerWithDetails = {
+const partner = {
   address: loremIpsum(30),
   email: 'name@partner.fr',
   phone: '0000000000',
