@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import React from 'react'
-import { ModalsListener } from '../Modal'
+import { ModalsListener } from 'src/components/Modal'
 import { ThemeProvider } from 'src/styles'
 import { loremIpsum } from 'src/utils/misc'
 import { UserCard } from './UserCard'
