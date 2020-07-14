@@ -35,7 +35,7 @@ describe('Retrieve Auth User', () => {
   })
 
   it('should show logging state during user authentication', () => {
-    entourageGateway.delayAuthenticateUserResponse = 1000
+    entourageGateway.delayResponse = 1000
 
     store.dispatch(retrieveAuthUser())
 

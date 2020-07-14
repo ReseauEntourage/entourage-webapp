@@ -6,7 +6,7 @@ import {
   FeedDisplayCategory,
   FeedEntourageType,
   FeedGroupType,
-  FeedItemTour,
+  // FeedItemTour,
   FeedItemEntourage,
   FeedJoinStatus,
   FeedStatus,
@@ -220,7 +220,8 @@ export const schema = {
     },
     data: null,
     response: {} as {
-      feeds: (FeedItemEntourage | FeedItemTour)[];
+      // feeds: (FeedItemEntourage | FeedItemTour)[];
+      feeds: FeedItemEntourage[];
       nextPageToken?: string;
     },
   },
