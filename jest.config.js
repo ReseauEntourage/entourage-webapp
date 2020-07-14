@@ -3,8 +3,9 @@ module.exports = {
     '<rootDir>/src',
   ],
   transform: {
-    '^.+\\.tsx?$': 'ts-jest',
+    '^.+\\.tsx?$': 'babel-jest',
   },
   testEnvironment: 'node',
   testRegex: '.spec.tsx?$',
+  moduleDirectories: ["node_modules", "."],
 }
