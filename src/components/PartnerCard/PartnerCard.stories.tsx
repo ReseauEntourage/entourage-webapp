@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import React from 'react'
-import { PartnerCard } from 'src/components/PartnerCard'
 import { loremIpsum } from 'src/utils/misc'
+import { PartnerCard } from './PartnerCard'
 
 export default {
   title: 'PartnerCard',
