@@ -12,6 +12,7 @@ import { texts } from 'src/i18n'
 import { useIsDesktop } from 'src/styles'
 import { handleServerError } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
+import * as S from './ModalSignIn.styles'
 
 type Step =
   | 'phone'
@@ -161,12 +162,13 @@ function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
 
 interface SecretFieldProps {
   phoneForm: PhoneForm;
+  resetPassword: () => void;
   secretForm: SecretForm;
   step: Step;
 }
 
 function SecretField(props: SecretFieldProps) {
-  const { secretForm, step } = props
+  const { secretForm, step, resetPassword } = props
   const secretTypeRef = useRef<'password' | 'code-SMS'>()
   const secretTypeDone = secretTypeRef.current && step !== 'code-SMS' && step !== 'password'
   const secretTypeActive = step === 'code-SMS' || step === 'password'
@@ -182,22 +184,28 @@ function SecretField(props: SecretFieldProps) {
   }
 
   return (
-    <TextField
-      autoFocus={true}
-      disabled={secretTypeDone}
-      formErrors={secretForm.errors}
-      fullWidth={true}
-      inputRef={secretForm.register({
-        required: true,
-      })}
-      label={
+    <>
+      <TextField
+        autoFocus={true}
+        disabled={secretTypeDone}
+        formErrors={secretForm.errors}
+        fullWidth={true}
+        inputRef={secretForm.register({
+          required: true,
+        })}
+        label={
+          step === 'password'
+            ? 'Entre votre mot de passe (au moins 8 caractères)'
+            : 'Entrez le code d\'activation reçu'
+        }
+        name="secret"
+        type="password"
+      />
+      {
         step === 'password'
-          ? 'Entre votre mot de passe (au moins 8 caractères)'
-          : 'Entrez le code d\'activation reçu'
+        && <S.ForgottenPasswordLink onClick={resetPassword}>Mot de passe oublié ?</S.ForgottenPasswordLink>
       }
-      name="secret"
-      type="password"
-    />
+    </>
   )
 }
 
@@ -332,6 +340,20 @@ export function ModalSignIn(props: ModalSignInProps) {
     onSuccess,
   ])
 
+  const resetPassword = React.useCallback(async () => {
+    const { phone } = phoneForm.getValues()
+    if (phone) {
+      await api.request({
+        name: '/users/me/code PATCH',
+        data: {
+          action: 'regenerate',
+          phone,
+        },
+      })
+      setStep('code-SMS')
+    }
+  }, [phoneForm])
+
   const validateLabel = (() => {
     switch (step) {
       case 'phone':
@@ -370,7 +392,7 @@ export function ModalSignIn(props: ModalSignInProps) {
           />
         )}
         <PhoneField phoneForm={phoneForm} step={step} />
-        <SecretField phoneForm={phoneForm} secretForm={secretForm} step={step} />
+        <SecretField phoneForm={phoneForm} resetPassword={resetPassword} secretForm={secretForm} step={step} />
         <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />
       </Box>
     </Modal>
