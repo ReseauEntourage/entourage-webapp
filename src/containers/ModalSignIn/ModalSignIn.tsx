@@ -346,8 +346,8 @@ export function ModalSignIn(props: ModalSignInProps) {
       await api.request({
         name: '/users/me/code PATCH',
         data: {
-          action: 'regenerate',
-          phone,
+          code: { action: 'regenerate' },
+          user: { phone },
         },
       })
       setStep('code-SMS')

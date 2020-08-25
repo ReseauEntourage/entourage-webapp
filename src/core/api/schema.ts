@@ -420,8 +420,12 @@ export const schema = {
     method: 'PATCH',
     params: null,
     data: {} as {
-      action: 'regenerate';
-      phone: string;
+      code: {
+        action: 'regenerate';
+      };
+      user: {
+        phone: string;
+      };
     },
     response: {} as {
       user: User;
