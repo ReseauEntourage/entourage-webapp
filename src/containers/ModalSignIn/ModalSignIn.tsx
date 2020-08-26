@@ -1,4 +1,8 @@
 import Box from '@material-ui/core/Box'
+import IconButton from '@material-ui/core/IconButton'
+import InputAdornment from '@material-ui/core/InputAdornment'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import useForm from 'react-hook-form'
 import React, { useCallback, useState, useRef, useEffect } from 'react'
 import { refetchQuery } from 'react-query'
@@ -172,6 +176,8 @@ function SecretField(props: SecretFieldProps) {
   const secretTypeRef = useRef<'password' | 'code-SMS'>()
   const secretTypeDone = secretTypeRef.current && step !== 'code-SMS' && step !== 'password'
   const secretTypeActive = step === 'code-SMS' || step === 'password'
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword(!showPassword)
 
   useEffect(() => {
     if (step === 'password' || step === 'code-SMS') {
@@ -190,6 +196,18 @@ function SecretField(props: SecretFieldProps) {
         disabled={secretTypeDone}
         formErrors={secretForm.errors}
         fullWidth={true}
+        InputProps={{ // <-- This is where the toggle button is added.
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
         inputRef={secretForm.register({
           required: true,
         })}
@@ -199,7 +217,7 @@ function SecretField(props: SecretFieldProps) {
             : 'Entrez le code d\'activation reçu'
         }
         name="secret"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
       />
       {
         step === 'password'
