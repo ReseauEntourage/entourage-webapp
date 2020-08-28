@@ -3,10 +3,12 @@ import React, { useCallback } from 'react'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { api } from 'src/core/api'
+import { useQueryGetUserInfosAreIncompleted } from 'src/core/store'
 import { handleServerError } from 'src/utils/misc'
 
 export function useDefinePasswordStep() {
   const definePasswordForm = useForm<{confirmationPassword: string; password: string; }>()
+  const getUserInfosAreIncompleted = useQueryGetUserInfosAreIncompleted()
 
   const onValidate = useCallback(async () => {
     if (!await definePasswordForm.triggerValidation()) {
@@ -23,7 +25,9 @@ export function useDefinePasswordStep() {
         },
       })
 
-      openModal(<ModalProfile />)
+      if (getUserInfosAreIncompleted()) {
+        openModal(<ModalProfile />)
+      }
 
       return true
     } catch (error) {
@@ -38,7 +42,7 @@ export function useDefinePasswordStep() {
 
       return false
     }
-  }, [definePasswordForm])
+  }, [definePasswordForm, getUserInfosAreIncompleted])
 
   return [definePasswordForm, onValidate] as [typeof definePasswordForm, typeof onValidate]
 }
