@@ -1,0 +1,44 @@
+import useForm from 'react-hook-form'
+import React, { useCallback } from 'react'
+import { openModal } from 'src/components/Modal'
+import { ModalProfile } from 'src/containers/ModalProfile'
+import { api } from 'src/core/api'
+import { handleServerError } from 'src/utils/misc'
+
+export function useDefinePasswordStep() {
+  const definePasswordForm = useForm<{confirmationPassword: string; password: string; }>()
+
+  const onValidate = useCallback(async () => {
+    if (!await definePasswordForm.triggerValidation()) {
+      return false
+    }
+
+    try {
+      await api.request({
+        name: '/users/me PATCH',
+        data: {
+          user: {
+            password: definePasswordForm.getValues().password,
+          },
+        },
+      })
+
+      openModal(<ModalProfile />)
+
+      return true
+    } catch (error) {
+      handleServerError(error, () => {
+        if (error.response.status === 400) {
+          definePasswordForm.setError('password', error.response.data.error.code, error.response.data.error.message)
+          return true
+        }
+
+        return false
+      })
+
+      return false
+    }
+  }, [definePasswordForm])
+
+  return [definePasswordForm, onValidate] as [typeof definePasswordForm, typeof onValidate]
+}
