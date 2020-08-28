@@ -103,7 +103,7 @@ export function ModalSignIn(props: ModalSignInProps) {
           />
         )}
         <PhoneField phoneForm={phoneForm} step={step} />
-        <SecretField phoneForm={phoneForm} resetPassword={resetPassword} secretForm={secretForm} step={step} />
+        <SecretField resetPassword={resetPassword} secretForm={secretForm} step={step} />
         <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />
       </Box>
     </Modal>

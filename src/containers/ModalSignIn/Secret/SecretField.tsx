@@ -5,14 +5,12 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import useForm from 'react-hook-form'
 import React, { useState, useRef, useEffect } from 'react'
 import { Step } from '../ModalSignIn'
-import { PhoneForm } from '../Phone/PhoneField'
 import { TextField } from 'src/components/Form'
 import * as S from './Secret.styles'
 
 type SecretForm = ReturnType<typeof useForm>
 
 interface SecretFieldProps {
-  phoneForm: PhoneForm;
   resetPassword: () => void;
   secretForm: SecretForm;
   step: Step;
