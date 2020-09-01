@@ -1,3 +1,4 @@
+import { validateSchema } from 'typescript-request-schema'
 import { DateISO } from 'src/utils/types'
 
 import {
@@ -23,6 +24,16 @@ import {
   DTOUpdateEntourageAsAction,
   UserPartnerWithDetails,
 } from './SchemaTypes'
+
+export interface TypeScriptRequestSchemaConf {
+  DataKey: 'data';
+  MethodKey: 'method';
+  PathParamsKey: 'pathParams';
+  QueryParamsKey: 'params';
+  ResponseKey: 'response';
+  RouteNameKey: 'name';
+  URLKey: 'url';
+}
 
 export const schema = {
   '/anonymous_users POST': {
@@ -360,6 +371,7 @@ export const schema = {
   '/users/:id GET': {
     url: (params: { userId: number; }) => `users/${params.userId}`,
     method: 'GET',
+    data: null,
     params: null,
     response: {} as {
       user: {
@@ -456,3 +468,5 @@ export const schema = {
 }
 
 export type FeedItem = typeof schema['/feeds GET']['response']['feeds'][0]['data']
+
+validateSchema<TypeScriptRequestSchemaConf>(schema)

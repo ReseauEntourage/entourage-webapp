@@ -56,7 +56,7 @@
     "stop-runaway-react-effects": "^1.2.1",
     "styled-components": "^5.1.1",
     "styled-reset": "^4.0.7",
-    "typescript-object-schema": "^1.0.0",
+    "typescript-request-schema": "^2.0.0",
     "uniqid": "^5.2.0",
     "validator": "^12.1.0",
     "webpack": "^4.41.2"

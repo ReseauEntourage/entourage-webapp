@@ -1,23 +1,18 @@
 import axios, { AxiosRequestConfig, AxiosPromise } from 'axios'
 import { NextPageContext } from 'next'
-import { ObjectParams, FnParams, Extends } from 'typescript-object-schema'
+import { Config, Response } from 'typescript-request-schema'
 import { env } from 'src/core/env'
 import { createAnonymousUser, getTokenFromCookies } from 'src/core/services'
 import { AnyToFix } from 'src/utils/types'
 import { addAxiosInterceptors } from './interceptors'
-import { schema } from './schema'
+import { schema, TypeScriptRequestSchemaConf } from './schema'
 
 type Schema = typeof schema
-type SchemaKeys = keyof Schema
-
-type Config<T extends SchemaKeys> =
-  { name: T; }
-  & FnParams<Schema[T], 'url', 'pathParams'>
-  & ObjectParams<Schema[T], 'params'>
-  & ObjectParams<Schema[T], 'data'>
-  & Extends<Schema[T], AxiosRequestConfig>
-
-type Request = <T extends SchemaKeys>(config: Config<T>) => AxiosPromise<Schema[T]['response']>
+type RequestName = keyof Schema
+type ExtraConfig = AxiosRequestConfig
+type RequestConfig<T extends RequestName> = Config<T, Schema, ExtraConfig, TypeScriptRequestSchemaConf>
+type RequestResponse<T extends RequestName> = AxiosPromise<Response<T, Schema>>
+type Request = <T extends RequestName>(config: RequestConfig<T>) => RequestResponse<T>
 
 const axiosInstance = axios.create({ baseURL: env.API_V1_URL })
 
