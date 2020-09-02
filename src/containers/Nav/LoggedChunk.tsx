@@ -13,9 +13,7 @@ export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const me = useQueryMe()
   const user = me.data?.data.user
-  const iAmOrganizationAdmin = user?.featureFlags.organizationAdmin
-  const iAmOrganizationPartner = !!user?.partner
-  const showAdminLink = iAmOrganizationAdmin || iAmOrganizationPartner
+  const partnerName = user?.partner?.name
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -71,9 +69,9 @@ export function LoggedChunk() {
         <MenuItem onClick={openModalProfile}>
           {texts.nav.profile}
         </MenuItem>
-        {showAdminLink && (
+        {partnerName && (
           <MenuItem onClick={openAdminAsso}>
-            {texts.nav.adminAsso}
+            {texts.nav.manage} {partnerName}
           </MenuItem>
         )}
         <MenuItem onClick={onClickLogout}>

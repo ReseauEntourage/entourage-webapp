@@ -160,7 +160,7 @@ export interface LoggedUser {
   lastName: string | null;
   memberships: unknown[];
   organization: null;
-  partner: null;
+  partner: UserPartner;
   roles: unknown[];
   stats: {
     encounterCount: number;

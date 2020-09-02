@@ -16,7 +16,7 @@ export const texts = {
     profile: 'Mon Profil',
     signIn: 'Connexion / Inscription',
     logout: 'Déconnexion',
-    adminAsso: 'Gérer entourage',
+    manage: 'Gérer',
   },
   labels: {
     save: 'Enregistrer',
