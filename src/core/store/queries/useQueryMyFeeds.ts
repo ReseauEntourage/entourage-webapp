@@ -11,6 +11,9 @@ export function useQueryMyFeeds() {
     const feedEntourage = feedsRes.data.feeds.filter((feed) => feed.type === 'Entourage')
 
     return feedEntourage
+  }, {
+    staleTime: 0,
+    refetchInterval: 60 * 1e3,
   })
 }
 

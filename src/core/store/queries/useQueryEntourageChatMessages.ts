@@ -37,6 +37,7 @@ export function useQueryEntourageChatMessages(entourageUuid?: string | null) {
       return lastPage.data.chatMessages.length === 25
     },
     staleTime: 0,
+    refetchInterval: 60 * 1e3,
   })
 
   const { data: pages } = queryRes
