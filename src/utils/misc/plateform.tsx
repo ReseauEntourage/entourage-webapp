@@ -23,14 +23,10 @@ export function plateform<T extends React.ComponentType<AnyCantFix>>(data: Plate
       setKey(new Date().getTime())
     })
 
-    if (Desktop && isDesktop) {
-      return <Desktop key={key} {...props} />
+    if (isDesktop) {
+      return Desktop ? <Desktop key={key} {...props} /> : null
     }
 
-    if (Mobile) {
-      return <Mobile key={key} {...props} />
-    }
-
-    throw new Error('plateform error')
+    return Mobile ? <Mobile key={key} {...props} /> : null
   }
 }

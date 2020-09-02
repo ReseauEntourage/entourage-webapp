@@ -415,6 +415,23 @@ export const schema = {
       user: User;
     },
   },
+  '/users/me/code PATCH': {
+    url: 'users/me/code',
+    method: 'PATCH',
+    params: null,
+    data: {} as {
+      code: {
+        action: 'regenerate';
+      };
+      user: {
+        phone: string;
+      };
+    },
+    response: {} as {
+      user: User;
+    },
+
+  },
   '/users/me/address POST': {
     url: 'users/me/address',
     method: 'POST',

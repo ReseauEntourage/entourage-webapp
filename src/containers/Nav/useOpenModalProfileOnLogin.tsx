@@ -2,13 +2,13 @@ import React from 'react'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { useOnLogin } from 'src/core/events'
+import { useQueryGetUserInfosAreIncompleted } from 'src/core/store'
 
 export function useOpenModalProfileOnLogin() {
-  useOnLogin((meResponse) => {
-    const { firstName, lastName, address, hasPassword } = meResponse.data.user
-    const userInfosIncompleted = !firstName || !lastName || !address
+  const getUserInfosAreIncompleted = useQueryGetUserInfosAreIncompleted()
 
-    if (hasPassword && userInfosIncompleted) {
+  useOnLogin(() => {
+    if (getUserInfosAreIncompleted()) {
       openModal(<ModalProfile />)
     }
   })
