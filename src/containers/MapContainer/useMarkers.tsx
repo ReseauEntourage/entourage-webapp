@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import React from 'react'
-import { EventMarker, POIMarker, MarkerWrapper } from 'src/components/Map'
-import { useQueryPOIs } from 'src/core/store'
+import { EventMarker, /* POIMarker, */ MarkerWrapper } from 'src/components/Map'
+// import { useQueryPOIs } from 'src/core/store'
 import { useActionId } from './useActionId'
 import { useFeeds } from './useFeeds'
 
 export function useMarkers() {
   const actionId = useActionId()
-  const [POIs] = useQueryPOIs()
+  // const [POIs] = useQueryPOIs()
   const { feeds, isLoading } = useFeeds()
 
   const feedsMarkersContent = feeds.map((feed) => {
@@ -33,17 +33,22 @@ export function useMarkers() {
     )
   })
 
-  const POIsMarkersContent = POIs && POIs.data.pois.map((poi) => (
-    <MarkerWrapper
-      key={poi.id}
-      lat={poi.latitude}
-      lng={poi.longitude}
-    >
-      <POIMarker
-        category={poi.category}
-      />
-    </MarkerWrapper>
-  ))
+  // POI marker temporary disabled
+  // TODO: https://entourage-asso.atlassian.net/browse/EN-2322
+
+  // const POIsMarkersContent = POIs && POIs.data.pois.map((poi) => (
+  //   <MarkerWrapper
+  //     key={poi.id}
+  //     lat={poi.latitude}
+  //     lng={poi.longitude}
+  //   >
+  //     <POIMarker
+  //       category={poi.category}
+  //     />
+  //   </MarkerWrapper>
+  // ))
+
+  const POIsMarkersContent = null
 
   return { feedsMarkersContent, POIsMarkersContent, isLoading }
 }
