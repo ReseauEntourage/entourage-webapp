@@ -15,7 +15,7 @@ export function ConversationItemExcerpt(props: ConversationItemExcerptProps) {
 
   if (iAmAuthor && pendingMembers.length) {
     const label = pendingMembers.length > 1
-      ? <div><b>Plusieurs demande en attente</b></div>
+      ? <div><b>Plusieurs demandes en attente ({pendingMembers.length})</b></div>
       : <div><b>{pendingMembers[0].displayName}</b> souhaite participer</div>
 
     const pictureURL = pendingMembers.length > 1

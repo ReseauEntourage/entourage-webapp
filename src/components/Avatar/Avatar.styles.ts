@@ -22,6 +22,8 @@ export const NoProfilePicture = styled.div<{ size: Size; }>`
   ${CSSGetSize()}
   border-radius: 100%;
   background-color: ${colors.main.primary};
+  max-width: 100%;
+  max-height: 100%;
 `
 
 export const Container = styled.div`
