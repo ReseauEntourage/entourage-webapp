@@ -9,9 +9,9 @@ interface PartnerCardProps {
   description: string;
   donationsNeeds: string;
   email: string;
+  largeLogoUrl: string;
   name: string;
   phone: string;
-  smallLogoUrl: string;
   volunteersNeeds: string;
   websiteUrl: string;
 }
@@ -19,7 +19,7 @@ interface PartnerCardProps {
 export function PartnerCard(props: PartnerCardProps) {
   const {
     name,
-    smallLogoUrl,
+    largeLogoUrl,
     description,
     email,
     phone,
@@ -31,7 +31,7 @@ export function PartnerCard(props: PartnerCardProps) {
   return (
     <S.Container>
       <S.Avatar>
-        <Avatar size="large" src={smallLogoUrl} />
+        <Avatar size="large" src={largeLogoUrl} />
       </S.Avatar>
       <S.Name>{name}</S.Name>
       {description && (

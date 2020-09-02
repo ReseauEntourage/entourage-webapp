@@ -1,4 +1,3 @@
-/* eslint-disable max-len */
 import React from 'react'
 import { loremIpsum } from 'src/utils/misc'
 import { PartnerCard } from './PartnerCard'
@@ -11,7 +10,6 @@ export default {
 }
 
 const partner: React.ComponentProps<typeof PartnerCard> = {
-  // address: loremIpsum(30),
   email: 'name@partner.fr',
   phone: '0000000000',
   description: loremIpsum(150),
@@ -19,11 +17,7 @@ const partner: React.ComponentProps<typeof PartnerCard> = {
   donationsNeeds: 'shoes',
   volunteersNeeds: 'local people',
   websiteUrl: 'web.fr',
-  // default: false,
-  // userRoleTitle: 'test',
-  smallLogoUrl: '',
-  // largeLogoUrl: '',
-  // id: '123',
+  largeLogoUrl: '',
 }
 
 export const Demo = () => (

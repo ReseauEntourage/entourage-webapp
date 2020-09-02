@@ -53,7 +53,7 @@ export function UserCard(props: UserCardProps) {
         <S.Organization>
           <S.SectionTitle>Association</S.SectionTitle>
           <S.OrganizationDetail clickable={!!partner} onClick={onClick}>
-            <Avatar size="large" src={partner?.smallLogoUrl} /> {partner?.name}
+            <Avatar size="large" src={partner.largeLogoUrl} /> {partner?.name}
           </S.OrganizationDetail>
         </S.Organization>
       )}
