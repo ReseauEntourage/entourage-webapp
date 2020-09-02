@@ -165,7 +165,6 @@ export function ModalProfile() {
         <TextField
           fullWidth={true}
           inputRef={register}
-          label={modalTexts.decriptionLabel}
           multiline={true}
           name={'about' as FormFieldKey}
           type="text"

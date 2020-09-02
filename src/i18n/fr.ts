@@ -40,7 +40,6 @@ export const texts = {
       step5: '5. Pour finir, téléchargez une photo de vous afin de mettre un visage sur vos actions',
       firstNameLabel: 'Votre prénom',
       lastNameLabel: 'Votre nom (ne sera pas affiché)',
-      decriptionLabel: 'Pourquoi avez-vous rejoins entourage ?',
       locationLabel: 'Entrez un adresse, un lieu, une ville...',
       emailLabel: 'Votre email',
     },
@@ -91,7 +90,7 @@ export const texts = {
         social: 'Passer du temps avec une personne',
       },
       validateLabelCreate: 'Créer mon action',
-      validateLabelUpdate: 'metter à jour mon action',
+      validateLabelUpdate: 'Mettre à jour mon action',
     },
     modalEditEvent: {
       title: 'Vous souhaitez créer un événement solidaire ? C\'est parti !',

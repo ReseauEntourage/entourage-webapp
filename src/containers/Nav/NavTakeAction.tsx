@@ -171,7 +171,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
             <Divider />
             <IconExternalLink
               icon={<MicIcon />}
-              label="Devenir ambassadeur entourage"
+              label="Devenir Ambassadeur Entourage"
               link="https://www.entourage.social/devenir-ambassadeur/"
             />
             <IconExternalLink
