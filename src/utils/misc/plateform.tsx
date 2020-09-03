@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useIsDesktop } from 'src/styles'
-import { useMount } from 'src/utils/hooks'
 import { AnyCantFix } from 'src/utils/types'
 
 interface PlateformParams<T> {
@@ -15,18 +14,11 @@ export function plateform<T extends React.ComponentType<AnyCantFix>>(data: Plate
   // @ts-ignore
   return (props: React.ComponentProps<typeof T>) => {
     const isDesktop = useIsDesktop()
-    const [key, setKey] = useState<number>(0)
-
-    // force refresh on client side after first render
-    // because of lack of SSR screen width info
-    useMount(() => {
-      setKey(new Date().getTime())
-    })
 
     if (isDesktop) {
-      return Desktop ? <Desktop key={key} {...props} /> : null
+      return Desktop ? <Desktop {...props} /> : null
     }
 
-    return Mobile ? <Mobile key={key} {...props} /> : null
+    return Mobile ? <Mobile {...props} /> : null
   }
 }

@@ -3,6 +3,7 @@ import { AnyToFix } from 'src/utils/types'
 
 interface ContextValue {
   me?: AnyToFix;
+  userAgent: string;
 }
 
 export const SSRDataContext = createContext<ContextValue>({} as ContextValue)

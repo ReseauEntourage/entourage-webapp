@@ -32,6 +32,8 @@ export default class App extends NextApp {
   // be server-side rendered.
 
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
+    const { req } = appContext.ctx
+    const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
     // calls page's `getInitialProps` and fills `appProps.pageProps`
     const appProps = await NextApp.getInitialProps(appContext)
 
@@ -55,57 +57,57 @@ export default class App extends NextApp {
       ...appProps,
       // @ts-ignore
       me,
+      userAgent,
     }
   }
 
-  // componentDidMount() {
-  //   const jssStyles = document.querySelector('#jss-server-side')
-  //   if (jssStyles && jssStyles.parentElement) {
-  //     jssStyles.parentElement.removeChild(jssStyles)
-  //   }
-  // }
+  componentDidMount() {
+    const jssStyles = document.querySelector('#jss-server-side')
+    if (jssStyles && jssStyles.parentElement) {
+      jssStyles.parentElement.removeChild(jssStyles)
+    }
+  }
 
   render() {
     // @ts-ignore
-    const { Component, pageProps, me } = this.props
+    const { Component, pageProps, me, userAgent } = this.props
 
-    const SSRDataValue = { me }
+    const SSRDataValue = { me, userAgent }
 
     return (
       <>
         <Head>
           <title>Home</title>
           <link href="/favicon.ico" rel="icon" />
+          <base href="/" />
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
         </Head>
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
-          {!isSSR && (
-            <>
-              <Dispatchers />
-              <StylesProvider injectFirst={true}>
-                <ThemeProvider theme={theme}>
-                  <ReactQueryConfigProvider config={queryConfig}>
-                    <MainStoreProvider>
-                      <MapProvider>
-                        <Layout>
-                          <>
-                            <Layout.Nav>
-                              <Nav />
-                            </Layout.Nav>
-                            <Layout.Page>
-                              <Component {...pageProps} />
-                              <ModalsListener />
-                            </Layout.Page>
-                          </>
-                        </Layout>
-                      </MapProvider>
-                    </MainStoreProvider>
-                  </ReactQueryConfigProvider>
-                </ThemeProvider>
-              </StylesProvider>
-            </>
-          )}
+          <>
+            <Dispatchers />
+            <StylesProvider injectFirst={true}>
+              <ThemeProvider theme={theme}>
+                <ReactQueryConfigProvider config={queryConfig}>
+                  <MainStoreProvider>
+                    <MapProvider>
+                      <Layout>
+                        <>
+                          <Layout.Nav>
+                            <Nav />
+                          </Layout.Nav>
+                          <Layout.Page>
+                            <Component {...pageProps} />
+                            <ModalsListener />
+                          </Layout.Page>
+                        </>
+                      </Layout>
+                    </MapProvider>
+                  </MainStoreProvider>
+                </ReactQueryConfigProvider>
+              </ThemeProvider>
+            </StylesProvider>
+          </>
         </SSRDataContext.Provider>
       </>
     )
