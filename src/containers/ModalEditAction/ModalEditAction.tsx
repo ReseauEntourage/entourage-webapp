@@ -2,24 +2,49 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import DescriptionIcon from '@material-ui/icons/Description'
 import ListIcon from '@material-ui/icons/List'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect } from 'react'
-import { TextField, Label, RowFields, useForm, Select } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import {
+  TextField,
+  Label,
+  RowFields,
+  useForm,
+  Select,
+} from 'src/components/Form'
+import {
+  GoogleMapLocation,
+  GoogleMapLocationValue,
+} from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import {
+  useMutateCreateEntourages,
+  useMutateUpdateEntourages,
+} from 'src/core/store'
 import { texts } from 'src/i18n'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
-const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
+const categories: FeedDisplayCategory[] = [
+  'info',
+  'mat_help',
+  'other',
+  'resource',
+  'skill',
+  'social',
+]
 
-function createCategoryValue(entourageType: FeedEntourageType, displayCategory: FeedDisplayCategory) {
+function createCategoryValue(
+  entourageType: FeedEntourageType,
+  displayCategory: FeedDisplayCategory,
+) {
   return `${entourageType}:${displayCategory}`
 }
 
 function parseCategoryValue(value: string) {
-  const [entourageType, displayCategory] = value.split(':') as [FeedEntourageType, FeedDisplayCategory]
+  const [entourageType, displayCategory] = value.split(':') as [
+    FeedEntourageType,
+    FeedDisplayCategory
+  ]
 
   return {
     entourageType,
@@ -34,7 +59,7 @@ interface FormField {
   title: string;
 }
 
-type FormFieldKey = keyof FormField
+type FormFieldKey = keyof FormField;
 
 type Options = {
   label: string;
@@ -42,7 +67,7 @@ type Options = {
     label: string;
     value: string;
   }[];
-}[]
+}[];
 
 interface ModalEditActionProps {
   action?: {
@@ -61,20 +86,22 @@ export function ModalEditAction(props: ModalEditActionProps) {
   const isCreation = !existedAction
 
   const defaultValues = {
-    category: existedAction ? `${existedAction.entourageType}:${existedAction.displayCategory}` : '',
+    category: existedAction
+      ? `${existedAction.entourageType}:${existedAction.displayCategory}`
+      : '',
     description: existedAction?.description,
     title: existedAction?.title,
   }
 
   const form = useForm<FormField>({ defaultValues })
-  const { register, triggerValidation, getValues, setValue } = form
+  const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditAction
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) return false
+    if (!(await trigger())) return false
 
     const {
       category: plainCategory,
@@ -83,7 +110,9 @@ export function ModalEditAction(props: ModalEditActionProps) {
       description,
     } = getValues()
 
-    const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
+    const { displayCategory, entourageType } = parseCategoryValue(
+      plainCategory,
+    )
 
     const getLocation = async () => {
       const placeDetail = await getDetailPlacesService(
@@ -104,9 +133,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
     }
 
     if (existedAction) {
-      const location = autocompletePlace
-        ? await getLocation()
-        : undefined
+      const location = autocompletePlace ? await getLocation() : undefined
 
       const action = {
         id: existedAction.id,
@@ -141,7 +168,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
     }
 
     return true
-  }, [createEntourage, existedAction, getValues, triggerValidation, updateEntourage])
+  }, [createEntourage, existedAction, getValues, trigger, updateEntourage])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -168,15 +195,19 @@ export function ModalEditAction(props: ModalEditActionProps) {
     <Modal
       onValidate={onValidate}
       title={isCreation ? modalTexts.titleCreate : modalTexts.titleUpdate}
-      validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
+      validateLabel={
+        isCreation
+          ? modalTexts.validateLabelCreate
+          : modalTexts.validateLabelUpdate
+      }
     >
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <Label>{modalTexts.step1}</Label>
         <RowFields>
           <Select
             inputRef={register({ required: true })}
             label={modalTexts.fieldLabelCategory}
-            name={'category' as FormFieldKey}
+            name="category"
             options={options}
             startAdornment={(
               <InputAdornment position="start">
@@ -211,7 +242,6 @@ export function ModalEditAction(props: ModalEditActionProps) {
           name={'title' as FormFieldKey}
           placeholder={modalTexts.fieldLabelTitle}
           type="text"
-
         />
         <Label>{modalTexts.step3}</Label>
         <TextField
@@ -232,7 +262,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           rows="4"
           type="text"
         />
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }

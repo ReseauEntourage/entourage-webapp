@@ -1,9 +1,9 @@
-import useForm from 'react-hook-form'
 import React from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField, validators } from 'src/components/Form'
+import { usePhoneStep } from './usePhoneStep'
 
-export type PhoneForm = ReturnType<typeof useForm>
+export type PhoneForm = ReturnType<typeof usePhoneStep>['phoneForm'];
 
 interface PhoneFieldProps {
   phoneForm: PhoneForm;

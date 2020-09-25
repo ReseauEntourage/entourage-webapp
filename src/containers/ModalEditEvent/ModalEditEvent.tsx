@@ -6,14 +6,25 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields, useForm } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import {
+  GoogleMapLocation,
+  GoogleMapLocationValue,
+} from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
-import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import {
+  useMutateCreateEntourages,
+  useMutateUpdateEntourages,
+} from 'src/core/store'
 import { texts } from 'src/i18n'
-import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
+import {
+  getDetailPlacesService,
+  assertIsString,
+  assertIsNumber,
+  assertIsDefined,
+} from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
 interface FormField {
@@ -23,7 +34,7 @@ interface FormField {
   title: string;
 }
 
-type FormFieldKey = keyof FormField
+type FormFieldKey = keyof FormField;
 
 interface ModalEditEventProps {
   event?: {
@@ -46,11 +57,15 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   }
 
   const form = useForm<FormField>({ defaultValues })
-  const { register, triggerValidation, getValues, setValue } = form
+  const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditEvent
 
-  const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
-  const defaultTime = existingEvent?.dateISO ? new Date(existingEvent.dateISO).toLocaleTimeString('fr-FR') : '12:00'
+  const defaultDate = existingEvent?.dateISO
+    ? new Date(existingEvent?.dateISO)
+    : new Date()
+  const defaultTime = existingEvent?.dateISO
+    ? new Date(existingEvent.dateISO).toLocaleTimeString('fr-FR')
+    : '12:00'
 
   const [date, setDate] = useState(defaultDate)
   const [time, setTime] = useState(defaultTime)
@@ -68,18 +83,14 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) return false
+    if (!(await trigger())) return false
 
     const formatedDate = date
     const [hours, minutes] = time.split(':')
     formatedDate.setHours(Number(hours))
     formatedDate.setMinutes(Number(minutes))
 
-    const {
-      autocompletePlace,
-      title,
-      description,
-    } = getValues()
+    const { autocompletePlace, title, description } = getValues()
 
     const getLocation = async () => {
       const placeDetail = await getDetailPlacesService(
@@ -109,9 +120,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     if (existingEvent) {
-      const locationMeta = autocompletePlace
-        ? await getLocation()
-        : null
+      const locationMeta = autocompletePlace ? await getLocation() : null
 
       const event = {
         id: existingEvent.id,
@@ -162,7 +171,15 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [triggerValidation, date, time, getValues, existingEvent, updateEntourage, createEntourage])
+  }, [
+    trigger,
+    date,
+    time,
+    getValues,
+    existingEvent,
+    updateEntourage,
+    createEntourage,
+  ])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -172,9 +189,13 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     <Modal
       onValidate={onValidate}
       title={modalTexts.title}
-      validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
+      validateLabel={
+        isCreation
+          ? modalTexts.validateLabelCreate
+          : modalTexts.validateLabelUpdate
+      }
     >
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Label>{modalTexts.step1}</Label>
           <TextField
@@ -257,7 +278,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             type="text"
           />
         </MuiPickersUtilsProvider>
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }

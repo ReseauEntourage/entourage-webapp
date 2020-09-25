@@ -2,13 +2,13 @@ import IconButton from '@material-ui/core/IconButton'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
-import useForm from 'react-hook-form'
 import React, { useState, useRef, useEffect } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
 import * as S from './Secret.styles'
+import { useSecretStep } from './useSecretStep'
 
-type SecretForm = ReturnType<typeof useForm>
+type SecretForm = ReturnType<typeof useSecretStep>['secretForm'];
 
 interface SecretFieldProps {
   resetPassword: () => void;
@@ -41,7 +41,8 @@ export function SecretField(props: SecretFieldProps) {
         disabled={secretTypeDone}
         formErrors={secretForm.errors}
         fullWidth={true}
-        InputProps={{ // <-- This is where the toggle button is added.
+        InputProps={{
+          // <-- This is where the toggle button is added.
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
@@ -59,15 +60,16 @@ export function SecretField(props: SecretFieldProps) {
         label={
           step === 'password'
             ? 'Entre votre mot de passe (au moins 8 caractères)'
-            : 'Entrez le code d\'activation reçu'
+            : "Entrez le code d'activation reçu"
         }
         name="secret"
         type={showPassword ? 'text' : 'password'}
       />
-      {
-        step === 'password'
-        && <S.ForgottenPasswordLink onClick={resetPassword}>Mot de passe oublié ?</S.ForgottenPasswordLink>
-      }
+      <S.ForgottenPasswordLink onClick={resetPassword}>
+        {step === 'password'
+          ? 'Mot de passe oublié ?'
+          : "Renvoyer le code d'activation"}
+      </S.ForgottenPasswordLink>
     </>
   )
 }

@@ -1,3 +1,4 @@
+import { useWatch } from 'react-hook-form'
 import React, { useRef, useCallback, useEffect } from 'react'
 import { Message } from '../Message'
 import { useForm, TextField } from 'src/components/Form'
@@ -23,7 +24,10 @@ interface FormFields {
   content: string;
 }
 
-function useMessagesScroll(messages: MessageProps['messages'], fetchMore: MessageProps['fetchMore']) {
+function useMessagesScroll(
+  messages: MessageProps['messages'],
+  fetchMore: MessageProps['fetchMore'],
+) {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 
   const { onScroll, isAtBottom, isAtTop } = useOnScroll()
@@ -55,7 +59,13 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
     if (isAtBottom && lastMessageHasChanged) {
       scrollToBottom()
     }
-  }, [fetchMore, fetchMoreIsNeeded, isAtBottom, lastMessageHasChanged, scrollToBottom])
+  }, [
+    fetchMore,
+    fetchMoreIsNeeded,
+    isAtBottom,
+    lastMessageHasChanged,
+    scrollToBottom,
+  ])
 
   return {
     onScroll,
@@ -64,28 +74,40 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
 }
 
 function useMessagesForm(onSendMessage: MessageProps['onSendMessage']) {
-  const { register, getValues, setValue, triggerValidation } = useForm<FormFields>()
+  const { register, getValues, setValue, trigger, control } = useForm<
+  FormFields
+  >()
+
+  const content = useWatch({
+    control,
+    name: 'content',
+    defaultValue: '',
+  })
 
   const onSubmit = useCallback(async () => {
-    if (!await triggerValidation()) {
+    if (!(await trigger())) {
       return
     }
 
     onSendMessage(getValues().content)
 
     setValue('content', '')
-  }, [getValues, onSendMessage, setValue, triggerValidation])
+  }, [getValues, onSendMessage, setValue, trigger])
 
   return {
     register,
     onSubmit,
+    content,
   }
 }
 
 export function Messages(props: MessageProps) {
   const { messages, fetchMore, meUserId, onSendMessage } = props
-  const { register, onSubmit } = useMessagesForm(onSendMessage)
-  const { onScroll, messagesContainerRef } = useMessagesScroll(messages, fetchMore)
+  const { register, onSubmit, content } = useMessagesForm(onSendMessage)
+  const { onScroll, messagesContainerRef } = useMessagesScroll(
+    messages,
+    fetchMore,
+  )
 
   return (
     <S.Container>
@@ -111,7 +133,7 @@ export function Messages(props: MessageProps) {
             flex: 1,
           }}
         />
-        <SendButton onClick={onSubmit} />
+        <SendButton disabled={content.length === 0} onClick={onSubmit} />
       </S.BottomBar>
     </S.Container>
   )

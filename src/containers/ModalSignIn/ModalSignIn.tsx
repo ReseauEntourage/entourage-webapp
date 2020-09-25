@@ -7,13 +7,9 @@ import { useDefinePasswordStep, DefinePasswordField } from './DefinePassword'
 import { usePhoneStep, PhoneField } from './Phone'
 import { useSecretStep, SecretField } from './Secret'
 
-export type Step =
-  | 'phone'
-  | 'code-SMS'
-  | 'password'
-  | 'define-password'
+export type Step = 'phone' | 'code-SMS' | 'password' | 'define-password';
 
-export type SetNextStep = (step: Step) => void
+export type SetNextStep = (step: Step) => void;
 
 interface ModalSignInProps {
   onSuccess?: () => void;
@@ -22,22 +18,30 @@ interface ModalSignInProps {
 export function ModalSignIn(props: ModalSignInProps) {
   const { onSuccess } = props
   const [step, setStep] = useState<Step>('phone')
-  const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
-  const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)
-  const [definePasswordForm, onValidateDefinePasswordStep] = useDefinePasswordStep()
+  const { phoneForm, onValidate: onValidatePhoneStep } = usePhoneStep(setStep)
+  const { secretForm, onValidate: onValidateSecretStep } = useSecretStep(
+    setStep,
+    phoneForm,
+  )
+  const {
+    definePasswordForm,
+    onValidate: onValidateDefinePasswordStep,
+  } = useDefinePasswordStep()
   const isDesktop = useIsDesktop()
 
   const onValidate = useCallback(async () => {
     if (step === 'phone') {
       return onValidatePhoneStep()
-    } if (step === 'password' || step === 'code-SMS') {
+    }
+    if (step === 'password' || step === 'code-SMS') {
       const isValid = await onValidateSecretStep()
       if (onSuccess && isValid) {
         onSuccess()
       }
 
       return isValid
-    } if (step === 'define-password') {
+    }
+    if (step === 'define-password') {
       return onValidateDefinePasswordStep()
     }
 
@@ -103,8 +107,15 @@ export function ModalSignIn(props: ModalSignInProps) {
           />
         )}
         <PhoneField phoneForm={phoneForm} step={step} />
-        <SecretField resetPassword={resetPassword} secretForm={secretForm} step={step} />
-        <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />
+        <SecretField
+          resetPassword={resetPassword}
+          secretForm={secretForm}
+          step={step}
+        />
+        <DefinePasswordField
+          definePasswordForm={definePasswordForm}
+          step={step}
+        />
       </Box>
     </Modal>
   )

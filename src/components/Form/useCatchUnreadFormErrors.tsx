@@ -1,43 +1,45 @@
 import Typography from '@material-ui/core/Typography'
 import cogoToast from 'cogo-toast'
-import { FieldError } from 'react-hook-form/dist/types'
+import { useForm } from 'react-hook-form'
 import React, { useEffect, useRef } from 'react'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 
-type Errors = Partial<Record<string, FieldError>>
+type Errors = ReturnType<typeof useForm>['errors']
 
 export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
   const readErrors = useRef<{ [key: string]: boolean; }>({})
   readErrors.current = {}
 
   useEffect(() => {
-    const keyUnhandled = Object.keys(errors).filter((key) => !readErrors.current[key])
+    const keyUnhandled = Object.keys(errors).filter(
+      (key) => !readErrors.current[key],
+    )
 
     if (!keyUnhandled.length) return
 
-    const errorsMessages = keyUnhandled.map((key) => {
-      const error = errors[key]
-      if (!error) return ''
+    const errorsMessages = keyUnhandled
+      .map((key) => {
+        const error = errors[key]
+        if (!error) return ''
 
-      let message = error && error.message
+        let message = error && error.message
 
-      if (!message) {
-        if (error.type === 'required') {
-          message = `${key}: ${texts.form.FIELD_REQUIRED}`
-        } else {
-          throw new Error('Unhandle')
+        if (!message) {
+          if (error.type === 'required') {
+            message = `${key}: ${texts.form.FIELD_REQUIRED}`
+          } else {
+            throw new Error('Unhandle')
+          }
         }
-      }
 
-      return message
-    }).join('\n')
+        return message
+      })
+      .join('\n')
 
     cogoToast.error(
       // @ts-ignore
-      <Typography variant={variants.bodyRegular}>
-        {errorsMessages}
-      </Typography>,
+      <Typography variant={variants.bodyRegular}>{errorsMessages}</Typography>,
       { hideAfter: 5 },
     )
   }, [errors])

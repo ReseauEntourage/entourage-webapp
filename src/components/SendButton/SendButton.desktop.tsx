@@ -5,9 +5,10 @@ import { theme } from 'src/styles'
 import { SendButtonProps } from '.'
 
 export function SendButtonDesktop(props: SendButtonProps) {
-  const { onClick } = props
+  const { onClick, disabled = false } = props
   return (
     <Button
+      disabled={disabled}
       onClick={onClick}
       startIcon={<SendIcon />}
       style={{ marginLeft: theme.spacing(2) }}

@@ -1,5 +1,4 @@
-
-import useForm from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { SetNextStep } from '../ModalSignIn'
 import { api } from 'src/core/api'
@@ -10,7 +9,7 @@ export function usePhoneStep(setNextStep: SetNextStep) {
   const phoneForm = useForm<{ phone: string; }>()
 
   const onValidate = useCallback(async () => {
-    if (!await phoneForm.triggerValidation()) {
+    if (!(await phoneForm.trigger())) {
       return false
     }
 
@@ -51,9 +50,15 @@ export function usePhoneStep(setNextStep: SetNextStep) {
       return false
     } catch (error) {
       handleServerError(error, () => {
-        const serverError = error.response && error.response.data && error.response.data && error.response.data.error
+        const serverError = error.response
+          && error.response.data
+          && error.response.data
+          && error.response.data.error
         if (serverError && serverError.code === 'INVALID_PHONE_FORMAT') {
-          phoneForm.setError('phone', serverError.code, texts.form.BAD_FORMAT)
+          phoneForm.setError('phone', {
+            type: serverError.code,
+            message: texts.form.BAD_FORMAT,
+          })
           return true
         }
 
@@ -64,5 +69,5 @@ export function usePhoneStep(setNextStep: SetNextStep) {
     }
   }, [phoneForm, setNextStep])
 
-  return [phoneForm, onValidate] as [typeof phoneForm, typeof onValidate]
+  return { phoneForm, onValidate }
 }

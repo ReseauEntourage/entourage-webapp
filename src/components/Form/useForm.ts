@@ -1,4 +1,4 @@
-import useFormBase from 'react-hook-form'
+import { useForm as useFormBase } from 'react-hook-form'
 import { useCatchUnreadFormErrors } from './useCatchUnreadFormErrors'
 
 export const useForm: typeof useFormBase = (config) => {

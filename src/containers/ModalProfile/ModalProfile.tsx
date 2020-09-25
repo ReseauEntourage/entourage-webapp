@@ -1,10 +1,19 @@
 import InputAdornment from '@material-ui/core/InputAdornment'
 import EmailIcon from '@material-ui/icons/Email'
 import axios from 'axios'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
-import { TextField, Label, RowFields, validators, useForm } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
+import {
+  TextField,
+  Label,
+  RowFields,
+  validators,
+  useForm,
+} from 'src/components/Form'
+import {
+  GoogleMapLocation,
+  GoogleMapLocationProps,
+} from 'src/components/GoogleMapLocation'
 import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
 import { Modal } from 'src/components/Modal'
 import { api } from 'src/core/api'
@@ -12,11 +21,13 @@ import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { notifServerError } from 'src/utils/misc'
 
-type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
+type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>;
 
 // we can force user to NonNullable because useQueryMe() always return a user in ProfileModal
 // because ProfileModal is only open if user is not null
-type NonNullableUser = NonNullable<ReturnType<typeof useQueryMe>['data']>['data']['user']
+type NonNullableUser = NonNullable<
+ReturnType<typeof useQueryMe>['data']
+>['data']['user'];
 
 interface FormField {
   about: UserUpdate['about'];
@@ -26,10 +37,12 @@ interface FormField {
   lastName: UserUpdate['lastName'];
 }
 
-type FormFieldKey = keyof FormField
+type FormFieldKey = keyof FormField;
 
 function useUploadImageProfile() {
-  const [imageCropperValue, setImageCropperValue] = useState<ImageCropperValue>()
+  const [imageCropperValue, setImageCropperValue] = useState<
+  ImageCropperValue
+  >()
 
   const uploadIfNeeded = useCallback(async () => {
     if (!imageCropperValue) return null
@@ -42,11 +55,15 @@ function useUploadImageProfile() {
     })
 
     try {
-      await axios.put(presignedURLResponse.data.presignedUrl, imageCropperValue.blob, {
-        headers: {
-          'Content-Type': imageCropperValue.blob.type,
+      await axios.put(
+        presignedURLResponse.data.presignedUrl,
+        imageCropperValue.blob,
+        {
+          headers: {
+            'Content-Type': imageCropperValue.blob.type,
+          },
         },
-      })
+      )
 
       return presignedURLResponse.data.avatarKey
     } catch (error) {
@@ -55,10 +72,7 @@ function useUploadImageProfile() {
     }
   }, [imageCropperValue])
 
-  return [
-    setImageCropperValue,
-    uploadIfNeeded,
-  ] as [
+  return [setImageCropperValue, uploadIfNeeded] as [
     typeof setImageCropperValue,
     typeof uploadIfNeeded
   ]
@@ -70,7 +84,7 @@ export function ModalProfile() {
   const [mutateMeAddress] = useMutateMeAddress(false)
   const [onValidateImageProfile, upload] = useUploadImageProfile()
 
-  const user = me?.data?.user || {} as NonNullableUser
+  const user = me?.data?.user || ({} as NonNullableUser)
 
   const form = useForm<FormField>({
     defaultValues: {
@@ -81,12 +95,12 @@ export function ModalProfile() {
     },
   })
 
-  const { register, triggerValidation, setValue, getValues } = form
+  const { register, trigger, setValue, getValues } = form
 
   const modalTexts = texts.content.profilModal
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) {
+    if (!(await trigger())) {
       return false
     }
 
@@ -120,13 +134,17 @@ export function ModalProfile() {
     } catch (e) {
       return false
     }
-  }, [getValues, mutateMe, mutateMeAddress, triggerValidation, upload])
+  }, [getValues, mutateMe, mutateMeAddress, trigger, upload])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
   }, [register])
 
-  const requiredInfoAreCompleted = !!(user.firstName && user.lastName && user.address?.displayAddress)
+  const requiredInfoAreCompleted = !!(
+    user.firstName
+    && user.lastName
+    && user.address?.displayAddress
+  )
 
   return (
     <Modal
@@ -135,10 +153,8 @@ export function ModalProfile() {
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
     >
-      <FormContext {...form}>
-        <Label>
-          {modalTexts.step1}
-        </Label>
+      <FormProvider {...form}>
+        <Label>{modalTexts.step1}</Label>
         <RowFields>
           <TextField
             fullWidth={true}
@@ -159,9 +175,7 @@ export function ModalProfile() {
             type="text"
           />
         </RowFields>
-        <Label>
-          {modalTexts.step2}
-        </Label>
+        <Label>{modalTexts.step2}</Label>
         <TextField
           fullWidth={true}
           inputRef={register}
@@ -169,9 +183,7 @@ export function ModalProfile() {
           name={'about' as FormFieldKey}
           type="text"
         />
-        <Label>
-          {modalTexts.step3}
-        </Label>
+        <Label>{modalTexts.step3}</Label>
         <GoogleMapLocation
           defaultValue={user.address ? user.address.displayAddress : ''}
           onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
@@ -179,9 +191,7 @@ export function ModalProfile() {
             label: modalTexts.locationLabel,
           }}
         />
-        <Label>
-          {modalTexts.step4}
-        </Label>
+        <Label>{modalTexts.step4}</Label>
         <TextField
           fullWidth={true}
           InputProps={{
@@ -208,7 +218,7 @@ export function ModalProfile() {
             src={me?.data.user.avatarUrl}
           />
         </Label>
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }
