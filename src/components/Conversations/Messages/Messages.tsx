@@ -1,3 +1,4 @@
+import { useWatch } from 'react-hook-form'
 import React, { useRef, useCallback, useEffect } from 'react'
 import { Message } from '../Message'
 import { useForm, TextField } from 'src/components/Form'
@@ -64,7 +65,13 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
 }
 
 function useMessagesForm(onSendMessage: MessageProps['onSendMessage']) {
-  const { register, getValues, setValue, trigger } = useForm<FormFields>()
+  const { register, getValues, setValue, trigger, control } = useForm<FormFields>()
+
+  const content = useWatch({
+    control,
+    name: 'content',
+    defaultValue: '',
+  })
 
   const onSubmit = useCallback(async () => {
     if (!await trigger()) {
@@ -79,12 +86,13 @@ function useMessagesForm(onSendMessage: MessageProps['onSendMessage']) {
   return {
     register,
     onSubmit,
+    content,
   }
 }
 
 export function Messages(props: MessageProps) {
   const { messages, fetchMore, meUserId, onSendMessage } = props
-  const { register, onSubmit } = useMessagesForm(onSendMessage)
+  const { register, onSubmit, content } = useMessagesForm(onSendMessage)
   const { onScroll, messagesContainerRef } = useMessagesScroll(messages, fetchMore)
 
   return (
@@ -111,7 +119,7 @@ export function Messages(props: MessageProps) {
             flex: 1,
           }}
         />
-        <SendButton onClick={onSubmit} />
+        <SendButton disabled={content.length === 0} onClick={onSubmit} />
       </S.BottomBar>
     </S.Container>
   )

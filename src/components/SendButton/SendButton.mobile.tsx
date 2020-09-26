@@ -5,9 +5,10 @@ import { theme } from 'src/styles'
 import { SendButtonProps } from '.'
 
 export function SendButtonMobile(props: SendButtonProps) {
-  const { onClick } = props
+  const { onClick, disabled = false } = props
   return (
     <Button
+      disabled={disabled}
       onClick={onClick}
       style={{ marginLeft: theme.spacing(2) }}
     >
