@@ -64,17 +64,17 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
 }
 
 function useMessagesForm(onSendMessage: MessageProps['onSendMessage']) {
-  const { register, getValues, setValue, triggerValidation } = useForm<FormFields>()
+  const { register, getValues, setValue, trigger } = useForm<FormFields>()
 
   const onSubmit = useCallback(async () => {
-    if (!await triggerValidation()) {
+    if (!await trigger()) {
       return
     }
 
     onSendMessage(getValues().content)
 
     setValue('content', '')
-  }, [getValues, onSendMessage, setValue, triggerValidation])
+  }, [getValues, onSendMessage, setValue, trigger])
 
   return {
     register,

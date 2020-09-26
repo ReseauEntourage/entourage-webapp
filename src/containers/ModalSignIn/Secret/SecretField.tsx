@@ -2,13 +2,15 @@ import IconButton from '@material-ui/core/IconButton'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import VisibilityIcon from '@material-ui/icons/Visibility'
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
-import useForm from 'react-hook-form'
 import React, { useState, useRef, useEffect } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
 import * as S from './Secret.styles'
+import { useSecretStep } from './useSecretStep'
 
-type SecretForm = ReturnType<typeof useForm>
+type SecretForm = ReturnType<
+typeof useSecretStep
+>['secretForm'];
 
 interface SecretFieldProps {
   resetPassword: () => void;

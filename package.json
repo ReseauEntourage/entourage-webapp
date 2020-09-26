@@ -50,7 +50,7 @@
     "path-to-regexp": "^5.0.0",
     "react": "16.11.0",
     "react-dom": "16.11.0",
-    "react-hook-form": "^3.28.4",
+    "react-hook-form": "6.8.2",
     "react-image-crop": "^8.4.2",
     "react-query": "^0.3.23",
     "rxjs": "^6.5.3",

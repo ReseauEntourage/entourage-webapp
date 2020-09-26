@@ -1,5 +1,5 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import useForm from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
 import { TextField, validators } from 'src/components/Form'
@@ -26,13 +26,13 @@ function BasicModal() {
 }
 
 function FormModal() {
-  const { register, getValues, triggerValidation, errors } = useForm()
+  const { register, getValues, trigger, errors } = useForm()
 
   const onValidate = useCallback(async () => {
-    await triggerValidation()
+    await trigger()
     // eslint-disable-next-line
     console.log('value', getValues())
-  }, [getValues, triggerValidation])
+  }, [getValues, trigger])
 
   return (
     <Modal onValidate={onValidate} title="Form Demo">

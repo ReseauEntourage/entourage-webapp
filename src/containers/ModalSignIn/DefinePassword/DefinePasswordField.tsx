@@ -1,10 +1,12 @@
-import useForm from 'react-hook-form'
 import React, { useRef, useEffect } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
 import { texts } from 'src/i18n'
+import { useDefinePasswordStep } from './useDefinePasswordStep'
 
-type DefinePasswordForm = ReturnType<typeof useForm>
+type DefinePasswordForm = ReturnType<
+  typeof useDefinePasswordStep
+>['definePasswordForm'];
 
 interface DefinePasswordFieldProps {
   definePasswordForm: DefinePasswordForm;

@@ -22,9 +22,9 @@ interface ModalSignInProps {
 export function ModalSignIn(props: ModalSignInProps) {
   const { onSuccess } = props
   const [step, setStep] = useState<Step>('phone')
-  const [phoneForm, onValidatePhoneStep] = usePhoneStep(setStep)
-  const [secretForm, onValidateSecretStep] = useSecretStep(setStep, phoneForm)
-  const [definePasswordForm, onValidateDefinePasswordStep] = useDefinePasswordStep()
+  const { phoneForm, onValidate: onValidatePhoneStep } = usePhoneStep(setStep)
+  const { secretForm, onValidate: onValidateSecretStep } = useSecretStep(setStep, phoneForm)
+  const { definePasswordForm, onValidate: onValidateDefinePasswordStep } = useDefinePasswordStep()
   const isDesktop = useIsDesktop()
 
   const onValidate = useCallback(async () => {

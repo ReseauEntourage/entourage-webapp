@@ -6,7 +6,7 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
@@ -46,7 +46,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   }
 
   const form = useForm<FormField>({ defaultValues })
-  const { register, triggerValidation, getValues, setValue } = form
+  const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditEvent
 
   const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
@@ -68,7 +68,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) return false
+    if (!await trigger()) return false
 
     const formatedDate = date
     const [hours, minutes] = time.split(':')
@@ -162,10 +162,10 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [triggerValidation, date, time, getValues, existingEvent, updateEntourage, createEntourage])
+  }, [trigger, date, time, getValues, existingEvent, updateEntourage, createEntourage])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' as FormFieldKey })
+    register({ name: 'autocompletePlace' })
   }, [register])
 
   return (
@@ -174,7 +174,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       title={modalTexts.title}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <Label>{modalTexts.step1}</Label>
           <TextField
@@ -190,7 +190,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               required: true,
             })}
             // label={modalTexts.fieldLabelTitle}
-            name={'title' as FormFieldKey}
+            name="title"
             placeholder={modalTexts.fieldTitlePlaceholder}
             type="text"
           />
@@ -198,7 +198,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           <GoogleMapLocation
             defaultValue={existingEvent?.displayAddress}
             includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+            onChange={(autocompletePlace) => setValue('autocompletePlace', autocompletePlace)}
             textFieldProps={{
               placeholder: modalTexts.fieldAddressPlaceholder,
               name: 'action-address',
@@ -251,13 +251,13 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               required: true,
             })}
             multiline={true}
-            name={'description' as FormFieldKey}
+            name="description"
             placeholder={modalTexts.fieldDescriptionPlaceholder}
             rows="4"
             type="text"
           />
         </MuiPickersUtilsProvider>
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }
