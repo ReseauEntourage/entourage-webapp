@@ -66,10 +66,9 @@ export function SecretField(props: SecretFieldProps) {
         name="secret"
         type={showPassword ? 'text' : 'password'}
       />
-      {
-        step === 'password'
-        && <S.ForgottenPasswordLink onClick={resetPassword}>Mot de passe oublié ?</S.ForgottenPasswordLink>
-      }
+      <S.ForgottenPasswordLink onClick={resetPassword}>
+        {step === 'password' ? 'Mot de passe oublié ?' : "Renvoyer le code d'activation"}
+      </S.ForgottenPasswordLink>
     </>
   )
 }
