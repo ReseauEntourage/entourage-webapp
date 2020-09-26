@@ -60,7 +60,7 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         })}
         label="Choisissez votre mot de passe"
         name="password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
       />
       <TextField
         disabled={stepPast}
@@ -91,7 +91,7 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         })}
         label="Confirmez votre mot de passe"
         name="confirmationPassword"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
       />
     </>
   )
