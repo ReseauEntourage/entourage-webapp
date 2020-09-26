@@ -1,4 +1,7 @@
-import React, { useRef, useEffect } from 'react'
+import { InputAdornment, IconButton } from '@material-ui/core'
+import VisibilityIcon from '@material-ui/icons/Visibility'
+import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+import React, { useRef, useEffect, useState } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
 import { texts } from 'src/i18n'
@@ -16,6 +19,8 @@ interface DefinePasswordFieldProps {
 export function DefinePasswordField(props: DefinePasswordFieldProps) {
   const { definePasswordForm, step } = props
   const stepDone = useRef<boolean>()
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword(!showPassword)
 
   useEffect(() => {
     if (step === 'define-password') {
@@ -37,6 +42,19 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         disabled={stepPast}
         formErrors={definePasswordForm.errors}
         fullWidth={true}
+        InputProps={{
+          // <-- This is where the toggle button is added.
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
         inputRef={definePasswordForm.register({
           required: true,
         })}
@@ -48,6 +66,19 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         disabled={stepPast}
         formErrors={definePasswordForm.errors}
         fullWidth={true}
+        InputProps={{
+          // <-- This is where the toggle button is added.
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
         inputRef={definePasswordForm.register({
           required: true,
           validate: {
