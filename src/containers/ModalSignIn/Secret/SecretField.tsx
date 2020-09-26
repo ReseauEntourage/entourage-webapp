@@ -48,6 +48,7 @@ export function SecretField(props: SecretFieldProps) {
             <InputAdornment position="end">
               <IconButton
                 aria-label="toggle password visibility"
+                disabled={secretTypeDone}
                 onClick={handleClickShowPassword}
               >
                 {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
