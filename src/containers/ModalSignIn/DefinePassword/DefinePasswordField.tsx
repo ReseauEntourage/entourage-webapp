@@ -1,9 +1,7 @@
-import { InputAdornment, IconButton } from '@material-ui/core'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
 import React, { useRef, useEffect, useState } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
+import { ToggleVisibility } from 'src/components/ToggleVisibility'
 import { texts } from 'src/i18n'
 import { useDefinePasswordStep } from './useDefinePasswordStep'
 
@@ -45,14 +43,10 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         InputProps={{
           // <-- This is where the toggle button is added.
           endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-              >
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            </InputAdornment>
+            <ToggleVisibility
+              handleClickShowPassword={handleClickShowPassword}
+              showPassword={showPassword}
+            />
           ),
         }}
         inputRef={definePasswordForm.register({
@@ -69,14 +63,10 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         InputProps={{
           // <-- This is where the toggle button is added.
           endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={handleClickShowPassword}
-              >
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            </InputAdornment>
+            <ToggleVisibility
+              handleClickShowPassword={handleClickShowPassword}
+              showPassword={showPassword}
+            />
           ),
         }}
         inputRef={definePasswordForm.register({

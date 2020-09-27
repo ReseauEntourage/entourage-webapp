@@ -1,10 +1,8 @@
-import IconButton from '@material-ui/core/IconButton'
-import InputAdornment from '@material-ui/core/InputAdornment'
-import VisibilityIcon from '@material-ui/icons/Visibility'
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff'
+
 import React, { useState, useRef, useEffect } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
+import { ToggleVisibility } from 'src/components/ToggleVisibility'
 import * as S from './Secret.styles'
 import { useSecretStep } from './useSecretStep'
 
@@ -43,18 +41,12 @@ export function SecretField(props: SecretFieldProps) {
         disabled={secretTypeDone}
         formErrors={secretForm.errors}
         fullWidth={true}
-        InputProps={{ // <-- This is where the toggle button is added.
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                disabled={secretTypeDone}
-                onClick={handleClickShowPassword}
-              >
-                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-              </IconButton>
-            </InputAdornment>
-          ),
+        InputProps={{
+          endAdornment: <ToggleVisibility
+            disabled={secretTypeDone}
+            handleClickShowPassword={handleClickShowPassword}
+            showPassword={showPassword}
+          />,
         }}
         inputRef={secretForm.register({
           required: true,
