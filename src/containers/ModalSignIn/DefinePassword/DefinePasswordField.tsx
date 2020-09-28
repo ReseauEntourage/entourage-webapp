@@ -41,7 +41,6 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         formErrors={definePasswordForm.errors}
         fullWidth={true}
         InputProps={{
-          // <-- This is where the toggle button is added.
           endAdornment: (
             <ToggleVisibility
               handleClickShowPassword={handleClickShowPassword}
@@ -61,7 +60,6 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         formErrors={definePasswordForm.errors}
         fullWidth={true}
         InputProps={{
-          // <-- This is where the toggle button is added.
           endAdornment: (
             <ToggleVisibility
               handleClickShowPassword={handleClickShowPassword}
