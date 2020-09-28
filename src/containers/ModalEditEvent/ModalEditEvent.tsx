@@ -165,7 +165,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   }, [trigger, date, time, getValues, existingEvent, updateEntourage, createEntourage])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' })
+    register({ name: 'autocompletePlace' as FormFieldKey })
   }, [register])
 
   return (
@@ -190,7 +190,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               required: true,
             })}
             // label={modalTexts.fieldLabelTitle}
-            name="title"
+            name={'title' as FormFieldKey}
             placeholder={modalTexts.fieldTitlePlaceholder}
             type="text"
           />
@@ -198,7 +198,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           <GoogleMapLocation
             defaultValue={existingEvent?.displayAddress}
             includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace', autocompletePlace)}
+            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
             textFieldProps={{
               placeholder: modalTexts.fieldAddressPlaceholder,
               name: 'action-address',
@@ -251,7 +251,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               required: true,
             })}
             multiline={true}
-            name="description"
+            name={'description' as FormFieldKey}
             placeholder={modalTexts.fieldDescriptionPlaceholder}
             rows="4"
             type="text"

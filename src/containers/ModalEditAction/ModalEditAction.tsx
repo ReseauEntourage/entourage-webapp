@@ -176,7 +176,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           <Select
             inputRef={register({ required: true })}
             label={modalTexts.fieldLabelCategory}
-            name="category"
+            name={'category' as FormFieldKey}
             options={options}
             startAdornment={(
               <InputAdornment position="start">
@@ -187,7 +187,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           <GoogleMapLocation
             defaultValue={existedAction?.displayAddress || ''}
             includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace', autocompletePlace)}
+            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
             textFieldProps={{
               name: 'action-address',
               inputRef: register({ required: isCreation }),
@@ -208,7 +208,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           inputRef={register({
             required: true,
           })}
-          name="title"
+          name={'title' as FormFieldKey}
           placeholder={modalTexts.fieldLabelTitle}
           type="text"
 
@@ -227,7 +227,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
             required: true,
           })}
           multiline={true}
-          name="description"
+          name={'description' as FormFieldKey}
           placeholder={modalTexts.fieldLabelDescription}
           rows="4"
           type="text"

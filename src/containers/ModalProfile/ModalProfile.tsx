@@ -166,7 +166,7 @@ export function ModalProfile() {
           fullWidth={true}
           inputRef={register}
           multiline={true}
-          name="about"
+          name={'about' as FormFieldKey}
           type="text"
         />
         <Label>
@@ -174,7 +174,7 @@ export function ModalProfile() {
         </Label>
         <GoogleMapLocation
           defaultValue={user.address ? user.address.displayAddress : ''}
-          onChange={(autocompletePlace) => setValue('autocompletePlace', autocompletePlace)}
+          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
           textFieldProps={{
             label: modalTexts.locationLabel,
           }}
@@ -198,7 +198,7 @@ export function ModalProfile() {
             },
           })}
           label={modalTexts.emailLabel}
-          name="email"
+          name={'email' as FormFieldKey}
           type="email"
         />
         <Label>
