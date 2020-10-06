@@ -3,6 +3,7 @@ import { SendButtonDesktop } from './SendButton.desktop'
 import { SendButtonMobile } from './SendButton.mobile'
 
 export interface SendButtonProps {
+  disabled?: boolean;
   onClick: () => Promise<void>;
 }
 

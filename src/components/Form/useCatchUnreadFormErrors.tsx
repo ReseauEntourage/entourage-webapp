@@ -1,11 +1,11 @@
 import Typography from '@material-ui/core/Typography'
 import cogoToast from 'cogo-toast'
-import { FieldError } from 'react-hook-form/dist/types'
+import { useForm } from 'react-hook-form'
 import React, { useEffect, useRef } from 'react'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 
-type Errors = Partial<Record<string, FieldError>>
+type Errors = ReturnType<typeof useForm>['errors']
 
 export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
   const readErrors = useRef<{ [key: string]: boolean; }>({})

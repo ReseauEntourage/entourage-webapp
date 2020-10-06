@@ -1,4 +1,4 @@
-import useForm from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useCallback } from 'react'
 import { refetchQuery } from 'react-query'
 import { SetNextStep } from '../ModalSignIn'
@@ -13,7 +13,7 @@ export function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
   const secretForm = useForm<{ secret: string; }>()
 
   const onValidate = useCallback(async () => {
-    if (!await secretForm.triggerValidation()) {
+    if (!await secretForm.trigger()) {
       return false
     }
 
@@ -42,7 +42,7 @@ export function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
     } catch (error) {
       handleServerError(error, () => {
         if (error.response.status === 401) {
-          secretForm.setError('secret', '401', texts.form.INCORRECT_VALUE)
+          secretForm.setError('secret', { type: '401', message: texts.form.INCORRECT_VALUE })
           return true
         }
 
@@ -53,5 +53,5 @@ export function useSecretStep(setNextStep: SetNextStep, phoneForm: AnyToFix) {
     }
   }, [phoneForm, secretForm, setNextStep])
 
-  return [secretForm, onValidate] as [typeof secretForm, typeof onValidate]
+  return { secretForm, onValidate }
 }

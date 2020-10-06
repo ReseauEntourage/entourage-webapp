@@ -1,10 +1,13 @@
-import useForm from 'react-hook-form'
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Step } from '../ModalSignIn'
 import { TextField } from 'src/components/Form'
+import { ToggleVisibility } from 'src/components/ToggleVisibility'
 import { texts } from 'src/i18n'
+import { useDefinePasswordStep } from './useDefinePasswordStep'
 
-type DefinePasswordForm = ReturnType<typeof useForm>
+type DefinePasswordForm = ReturnType<
+  typeof useDefinePasswordStep
+>['definePasswordForm'];
 
 interface DefinePasswordFieldProps {
   definePasswordForm: DefinePasswordForm;
@@ -14,6 +17,8 @@ interface DefinePasswordFieldProps {
 export function DefinePasswordField(props: DefinePasswordFieldProps) {
   const { definePasswordForm, step } = props
   const stepDone = useRef<boolean>()
+  const [showPassword, setShowPassword] = useState(false)
+  const handleClickShowPassword = () => setShowPassword(!showPassword)
 
   useEffect(() => {
     if (step === 'define-password') {
@@ -35,17 +40,33 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         disabled={stepPast}
         formErrors={definePasswordForm.errors}
         fullWidth={true}
+        InputProps={{
+          endAdornment: (
+            <ToggleVisibility
+              handleClickShowPassword={handleClickShowPassword}
+              showPassword={showPassword}
+            />
+          ),
+        }}
         inputRef={definePasswordForm.register({
           required: true,
         })}
         label="Choisissez votre mot de passe"
         name="password"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
       />
       <TextField
         disabled={stepPast}
         formErrors={definePasswordForm.errors}
         fullWidth={true}
+        InputProps={{
+          endAdornment: (
+            <ToggleVisibility
+              handleClickShowPassword={handleClickShowPassword}
+              showPassword={showPassword}
+            />
+          ),
+        }}
         inputRef={definePasswordForm.register({
           required: true,
           validate: {
@@ -58,7 +79,7 @@ export function DefinePasswordField(props: DefinePasswordFieldProps) {
         })}
         label="Confirmez votre mot de passe"
         name="confirmationPassword"
-        type="password"
+        type={showPassword ? 'text' : 'password'}
       />
     </>
   )

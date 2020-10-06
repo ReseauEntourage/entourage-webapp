@@ -2,7 +2,7 @@ import InputAdornment from '@material-ui/core/InputAdornment'
 import DescriptionIcon from '@material-ui/icons/Description'
 import ListIcon from '@material-ui/icons/List'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect } from 'react'
 import { TextField, Label, RowFields, useForm, Select } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
@@ -67,14 +67,14 @@ export function ModalEditAction(props: ModalEditActionProps) {
   }
 
   const form = useForm<FormField>({ defaultValues })
-  const { register, triggerValidation, getValues, setValue } = form
+  const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditAction
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) return false
+    if (!await trigger()) return false
 
     const {
       category: plainCategory,
@@ -141,7 +141,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
     }
 
     return true
-  }, [createEntourage, existedAction, getValues, triggerValidation, updateEntourage])
+  }, [createEntourage, existedAction, getValues, updateEntourage, trigger])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -170,7 +170,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
       title={isCreation ? modalTexts.titleCreate : modalTexts.titleUpdate}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <Label>{modalTexts.step1}</Label>
         <RowFields>
           <Select
@@ -232,7 +232,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           rows="4"
           type="text"
         />
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }

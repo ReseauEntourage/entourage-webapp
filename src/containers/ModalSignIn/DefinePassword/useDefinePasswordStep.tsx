@@ -1,4 +1,4 @@
-import useForm from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import React, { useCallback } from 'react'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
@@ -11,7 +11,7 @@ export function useDefinePasswordStep() {
   const getUserInfosAreIncompleted = useQueryGetUserInfosAreIncompleted()
 
   const onValidate = useCallback(async () => {
-    if (!await definePasswordForm.triggerValidation()) {
+    if (!await definePasswordForm.trigger()) {
       return false
     }
 
@@ -33,7 +33,11 @@ export function useDefinePasswordStep() {
     } catch (error) {
       handleServerError(error, () => {
         if (error.response.status === 400) {
-          definePasswordForm.setError('password', error.response.data.error.code, error.response.data.error.message)
+          definePasswordForm.setError('password',
+            {
+              type: error.response.data.error.code,
+              message: error.response.data.error.message,
+            })
           return true
         }
 
@@ -44,5 +48,5 @@ export function useDefinePasswordStep() {
     }
   }, [definePasswordForm, getUserInfosAreIncompleted])
 
-  return [definePasswordForm, onValidate] as [typeof definePasswordForm, typeof onValidate]
+  return { definePasswordForm, onValidate }
 }

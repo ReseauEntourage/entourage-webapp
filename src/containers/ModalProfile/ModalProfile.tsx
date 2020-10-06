@@ -1,7 +1,7 @@
 import InputAdornment from '@material-ui/core/InputAdornment'
 import EmailIcon from '@material-ui/icons/Email'
 import axios from 'axios'
-import { FormContext } from 'react-hook-form'
+import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields, validators, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
@@ -81,12 +81,12 @@ export function ModalProfile() {
     },
   })
 
-  const { register, triggerValidation, setValue, getValues } = form
+  const { register, trigger, setValue, getValues } = form
 
   const modalTexts = texts.content.profilModal
 
   const onValidate = useCallback(async () => {
-    if (!await triggerValidation()) {
+    if (!await trigger()) {
       return false
     }
 
@@ -120,7 +120,7 @@ export function ModalProfile() {
     } catch (e) {
       return false
     }
-  }, [getValues, mutateMe, mutateMeAddress, triggerValidation, upload])
+  }, [getValues, mutateMe, mutateMeAddress, trigger, upload])
 
   useEffect(() => {
     register({ name: 'autocompletePlace' as FormFieldKey })
@@ -135,7 +135,7 @@ export function ModalProfile() {
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
     >
-      <FormContext {...form}>
+      <FormProvider {...form}>
         <Label>
           {modalTexts.step1}
         </Label>
@@ -208,7 +208,7 @@ export function ModalProfile() {
             src={me?.data.user.avatarUrl}
           />
         </Label>
-      </FormContext>
+      </FormProvider>
     </Modal>
   )
 }
