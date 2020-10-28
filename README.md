@@ -1,6 +1,8 @@
 Entourage Web App
 ---
 
+[![Build Status](https://travis-ci.org/ReseauEntourage/entourage-webapp.svg?branch=master)](https://travis-ci.org/ReseauEntourage/entourage-webapp)
+
 * [Technologies](#technologies)
     * [Outils](#outils)
     * [Bibliothèques internes](#bibliothèques-internes)
