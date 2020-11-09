@@ -8,6 +8,7 @@ import * as S from './MapContainer.styles'
 import { RightCards } from './RightCards'
 import { useActionId } from './useActionId'
 import { useFeeds } from './useFeeds'
+import { useFetchCurrentAction } from './useFetchCurrentAction'
 import { useMarkers } from './useMarkers'
 
 interface MapContainer {}
@@ -16,6 +17,7 @@ export function MapContainerMobile() {
   const actionId = useActionId()
   const mainContext = useMainStore()
   const { feeds } = useFeeds()
+  const isReady = useFetchCurrentAction()
   const { feedsMarkersContent, POIsMarkersContent, isLoading } = useMarkers()
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
 
@@ -24,6 +26,10 @@ export function MapContainerMobile() {
   const currentFeedItem = actionId
     ? (selectedFeedItemFromFeed || prevFeedItem)
     : null
+
+  if (!isReady) {
+    return <OverlayLoader />
+  }
 
   if (currentFeedItem) {
     return (

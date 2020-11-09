@@ -31,7 +31,7 @@ export function SearchCity() {
   return (
     <S.Container>
       <GoogleMapLocation
-        defaultValue={constants.DEFAULT_LOCATION.CITY_NAME}
+        defaultValue={mapContext.value.cityName || constants.DEFAULT_LOCATION.CITY_NAME}
         onChange={onChange}
         textFieldProps={{}}
       />
