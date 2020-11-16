@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux'
 import { useActionId } from '../containers/MapContainer/useActionId'
 import { MapContainer } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
-import { GoogleMapProvider } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -22,9 +21,7 @@ const Actions: StatelessPage<Props> = () => {
       <Head>
         <title>Actions</title>
       </Head>
-      <GoogleMapProvider>
-        <MapContainer />
-      </GoogleMapProvider>
+      <MapContainer />
     </>
   )
 }

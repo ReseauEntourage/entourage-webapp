@@ -7,7 +7,7 @@ import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { useGoogleMapContext } from 'src/utils/misc'
+import { GoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 import * as S from './GoogleMapLocation.styles'
 
@@ -39,7 +39,7 @@ export interface GoogleMapLocationProps {
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, defaultValue } = props
 
-  const googleMap = useGoogleMapContext()
+  const googleMap = GoogleMapApi.getInstance()
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
@@ -49,7 +49,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
   }, [])
 
   const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
-    if (onChange && googleMap.isReady) {
+    if (onChange && googleMap.isReady && place) {
       onChange({
         googleSessionToken: googleMap.sessionToken.Rf,
         place,

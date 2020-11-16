@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { constants } from 'src/constants'
 import { env } from 'src/core/env'
 import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
+import { GoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
 interface Props {
@@ -34,11 +35,12 @@ export function Map(props: Props) {
 
   return (
     <GoogleMapReact
-      bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
+      bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY, libraries: ['places'] }}
       center={filters.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
       onChange={(nextValue) => onChange(nextValue)}
+      onGoogleApiLoaded={GoogleMapApi.onLoaded}
       yesIWantToUseGoogleMapApiInternals={true}
     >
       {children}
