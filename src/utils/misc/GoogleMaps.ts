@@ -15,25 +15,17 @@ export function getDetailPlacesService(placeId: string, sessionToken: string): P
   })
 }
 
-export function createAutocompleteSessionToken(): { Rf: string; } {
-  // @ts-ignore
-  return new google.maps.places.AutocompleteSessionToken()
-}
-
 type GoogleMapState = {
   autoCompleteService: google.maps.places.AutocompleteService;
   isReady: true;
-  sessionToken: ReturnType<typeof createAutocompleteSessionToken>;
 } | {
   autoCompleteService: undefined;
   isReady: false;
-  sessionToken: undefined;
 }
 
 let instance: GoogleMapState = {
   autoCompleteService: undefined,
   isReady: false,
-  sessionToken: undefined,
 }
 
 const onLoaded = () => {
@@ -42,7 +34,6 @@ const onLoaded = () => {
     instance = {
       autoCompleteService: new googleMapInst.places.AutocompleteService(),
       isReady: true,
-      sessionToken: createAutocompleteSessionToken(),
     }
   }
 }
@@ -50,4 +41,10 @@ const onLoaded = () => {
 export const GoogleMapApi = {
   onLoaded,
   getInstance: () => instance,
+}
+
+export function createAutocompleteSessionToken(): { Rf: string; } | undefined {
+  const { isReady } = GoogleMapApi.getInstance()
+  // @ts-ignore
+  return isReady ? new google.maps.places.AutocompleteSessionToken() : undefined
 }

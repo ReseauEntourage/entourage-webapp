@@ -5,9 +5,9 @@ import GpsFixedIcon from '@material-ui/icons/GpsFixed'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { GoogleMapApi } from 'src/utils/misc'
+import { GoogleMapApi, createAutocompleteSessionToken } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 import * as S from './GoogleMapLocation.styles'
 
@@ -36,10 +36,21 @@ export interface GoogleMapLocationProps {
   textFieldProps: TextFieldProps;
 }
 
+function useAutocompleteSessionToken(): { Rf: string; } | undefined {
+  const autocompleteSessionToken = useRef(createAutocompleteSessionToken())
+  const { isReady } = GoogleMapApi.getInstance()
+  useEffect(() => {
+    if (isReady) {
+      autocompleteSessionToken.current = createAutocompleteSessionToken()
+    }
+  }, [isReady])
+  return autocompleteSessionToken.current
+}
+
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, defaultValue } = props
-
   const googleMap = GoogleMapApi.getInstance()
+  const sessionToken = useAutocompleteSessionToken()
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
@@ -49,25 +60,25 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
   }, [])
 
   const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
-    if (onChange && googleMap.isReady && place) {
+    if (onChange && googleMap.isReady && place && sessionToken) {
       onChange({
-        googleSessionToken: googleMap.sessionToken.Rf,
+        googleSessionToken: sessionToken.Rf,
         place,
       })
     }
-  }, [onChange, googleMap])
+  }, [onChange, googleMap, sessionToken])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {
-      if (googleMap.isReady) {
+      if (googleMap.isReady && sessionToken) {
         const data = {
           input: input.input,
-          sessionToken: googleMap.sessionToken,
+          sessionToken,
         }
         googleMap.autoCompleteService.getPlacePredictions(data, callback)
       }
     }, 200),
-    [googleMap],
+    [googleMap, sessionToken],
   )
 
   useEffect(() => {
