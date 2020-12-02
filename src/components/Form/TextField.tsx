@@ -9,13 +9,15 @@ type Errors = Partial<Record<string, FieldError>>
 export type TextFieldProps = {
   formErrors?: Errors;
   name?: string;
+  errorText?: string;
 } & TextFieldPropsBase
 
 export function TextField(props: TextFieldProps) {
   const {
     variant,
-    error,
-    helperText,
+    // error,
+    errorText,
+    helperText: helperTextProps,
     formErrors: formErrorProps,
     name,
     ...restProps
@@ -25,10 +27,15 @@ export function TextField(props: TextFieldProps) {
   const formErrors = formErrorProps || (formContext && formContext.errors)
   const formError = (formErrors && name) ? formErrors[name] : null
 
+  const hasError = !!formError || !!errorText
+  const helperText = formError
+    ? helperTextError(formError)
+    : errorText
+
   return (
     <TextFieldMUI
-      error={!!formError}
-      helperText={formError && helperTextError(formError)}
+      error={hasError}
+      helperText={helperText}
       margin="normal"
       name={name}
       variant="outlined"

@@ -1,0 +1,7 @@
+export type { IFeedGateway } from './IFeedGateway'
+export type { FeedState, FeedItem } from './feed.reducer'
+export type { Dependencies } from './feed.saga'
+export { feedReducer } from './feed.reducer'
+export { feedSaga } from './feed.saga'
+export { publicActions as feedActions } from './feed.actions'
+export * from './feed.selectors'

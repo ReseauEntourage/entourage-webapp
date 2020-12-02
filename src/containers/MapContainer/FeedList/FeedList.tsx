@@ -3,17 +3,24 @@ import LocalMallIcon from '@material-ui/icons/LocalMall'
 import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
-import React, { useRef, useEffect } from 'react'
+import React from 'react'
+import { useDispatch } from 'react-redux'
 import { useActionId } from '../useActionId'
+import { useNextFeed } from '../useNextFeed'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { useQueryFeeds, UseQueryFeedItem } from 'src/core/store'
+import { FeedItem as FeedItemType, feedActions } from 'src/coreLogic/useCases/feed'
 import { colors } from 'src/styles'
-import { useOnScroll, useDelayLoading, usePrevious } from 'src/utils/hooks'
+import { useOnScroll } from 'src/utils/hooks'
 import * as S from './FeedList.styles'
 import { SearchCity } from './SearchCity'
 
-function getFeedItemIcon(feedItem: UseQueryFeedItem) {
+interface FeedItemIconProps {
+  feedItem: FeedItemType;
+}
+
+function FeedItemIcon(props: FeedItemIconProps) {
+  const { feedItem } = props
   const { entourageType, displayCategory } = feedItem
   if (entourageType === 'contribution') {
     const backgroundColor = colors.main.primary
@@ -28,51 +35,37 @@ function getFeedItemIcon(feedItem: UseQueryFeedItem) {
     // TODO
   }
 
-  return undefined
+  return null
 }
-
-interface MapContainer {}
 
 export function FeedList() {
   const actionId = useActionId()
-  const [plainFeeds, feedsLoading, fetchMore] = useQueryFeeds()
-  const prevFeedsLoading = usePrevious(feedsLoading)
-  const lastFeedsRef = useRef<typeof plainFeeds>()
-  const [isLoading, setIsLoading] = useDelayLoading()
+  const dispatch = useDispatch()
+  const { feeds, isLoading } = useNextFeed()
 
-  if (!feedsLoading) {
-    lastFeedsRef.current = plainFeeds
-  }
+  const { onScroll } = useOnScroll({
+    onScrollBottomEnd: () => {
+      dispatch(feedActions.retrieveFeedNextPage())
+    },
+  })
 
-  useEffect(() => {
-    if (prevFeedsLoading && !feedsLoading) {
-      setIsLoading(false)
-    } else if (feedsLoading && !prevFeedsLoading) {
-      setIsLoading(true)
-    }
-  }, [feedsLoading, prevFeedsLoading, setIsLoading])
-
-  const feeds = feedsLoading ? (lastFeedsRef.current || []) : plainFeeds
-
-  const { onScroll } = useOnScroll({ onScrollBottomEnd: fetchMore })
-
-  const feedsListContent = feeds.map((feed) => {
-    const createAtDistance = formatDistance(new Date(feed.createdAt), new Date(), { locale: fr })
+  const feedsListContent = feeds.map((feedItem) => {
+    const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
     const secondText = `
       Créé il y a ${createAtDistance}
-      par ${feed.author.displayName}
+      par ${feedItem.author.displayName}
     `
 
     return (
-      <li key={feed.uuid}>
-        <Link as={`/actions/${feed.uuid}`} href="/actions/[actionId]">
+      <li key={feedItem.uuid}>
+        <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
-              key={feed.uuid}
-              icon={getFeedItemIcon(feed)}
-              isActive={feed.uuid === actionId}
-              primaryText={feed.title}
-              profilePictureURL={feed.author.avatarUrl}
+              key={feedItem.uuid}
+              icon={<FeedItemIcon feedItem={feedItem} />}
+              isActive={feedItem.uuid === actionId}
+              primaryText={feedItem.title}
+              profilePictureURL={feedItem.author.avatarUrl}
               secondText={secondText}
             />
           </a>

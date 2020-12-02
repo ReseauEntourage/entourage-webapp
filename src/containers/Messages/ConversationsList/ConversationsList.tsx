@@ -5,8 +5,8 @@ import { ConversationItem } from 'src/components/Conversations'
 import {
   useQueryMyFeeds,
   useQueryEntouragesWithMembers,
-  useQueryMeNonNullable,
 } from 'src/core/store'
+import { useMeNonNullable } from 'src/hooks/useMe'
 import { assertIsDefined } from 'src/utils/misc'
 import { ConversationItemExcerpt } from './ConversationItemExcerpt'
 import * as S from './ConversationsList.styles'
@@ -18,7 +18,7 @@ interface ConversationsListProps {
 export function ConversationsList(props: ConversationsListProps) {
   const { entourageUuid } = props
   const { data: dataMyFeeds } = useQueryMyFeeds()
-  const me = useQueryMeNonNullable()
+  const me = useMeNonNullable()
   const { entouragesWithMembers: entouragesWithMembersPending } = useQueryEntouragesWithMembers('pending')
 
   if (!dataMyFeeds) {

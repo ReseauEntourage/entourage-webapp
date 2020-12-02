@@ -9,11 +9,11 @@ import { NavTakeAction } from '../NavTakeAction'
 import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import { useQueryIAmLogged } from 'src/core/store'
+import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 
 export function NavItemsDeskTop() {
-  const { iAmLogged } = useQueryIAmLogged()
+  const iAmLogged = !!useMe()
 
   useOpenModalProfileOnLogin()
 

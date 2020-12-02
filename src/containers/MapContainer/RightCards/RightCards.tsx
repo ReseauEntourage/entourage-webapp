@@ -5,39 +5,30 @@ import { formatDistance } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React, { useCallback } from 'react'
+import { useCurrentFeedItem } from '../useCurrentFeedItem'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalShare } from 'src/components/ModalShare'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { constants } from 'src/constants'
-import { useMainStore } from 'src/containers/MainStore'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
-import { useQueryEntourageUsers, useQueryMe, UseQueryFeedItem } from 'src/core/store'
+import { useQueryEntourageUsers } from 'src/core/store'
+import { useMe } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
-import { useMount } from 'src/utils/hooks'
+import { assertIsDefined } from 'src/utils/misc'
 import { ParticipateButton } from './ParticipateButton'
 import * as S from './RightCards.styles'
 
-interface RightCardsProps {
-  feedItem: UseQueryFeedItem;
-}
-
-export function RightCards(props: RightCardsProps) {
-  const { feedItem } = props
-  const mainContext = useMainStore()
+export function RightCards() {
+  const feedItem = useCurrentFeedItem()
+  assertIsDefined(feedItem)
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
-  const { data: dataMe } = useQueryMe()
+  const me = useMe()
 
-  const iAmCreator = dataMe?.data.user.id === feedItem.author.id
-
-  useMount(() => {
-    if (feedItem) {
-      mainContext.onChangeFeedItem(feedItem)
-    }
-  })
+  const iAmCreator = me?.id === feedItem.author.id
 
   const onClickReport = useCallback(() => {
     // eslint-disable-next-line no-useless-escape
@@ -127,7 +118,7 @@ export function RightCards(props: RightCardsProps) {
       <ActionCard
         actions={(
           <S.ActionsContainer>
-            <ParticipateButton feedItem={feedItem} />
+            <ParticipateButton />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
               <Button onClick={onClickUpdateAction} variant="outlined">Modifier</Button>
@@ -158,7 +149,7 @@ export function RightCards(props: RightCardsProps) {
       <EventCard
         actions={(
           <S.ActionsContainer>
-            <ParticipateButton feedItem={feedItem} />
+            <ParticipateButton />
             <Button onClick={onClickShare} variant="outlined">Partager</Button>
             {iAmCreator ? (
               <Button onClick={onClickUpdateEvent} variant="outlined">Modifier</Button>

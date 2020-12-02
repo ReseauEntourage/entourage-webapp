@@ -1,14 +1,12 @@
 import { useRef, useCallback } from 'react'
-import { useQueryIAmLogged } from './useQueryIAmLogged'
-import { useQueryMe } from './useQueryMe'
+import { useMe } from 'src/hooks/useMe'
 
 export function useQueryGetUserInfosAreIncompleted(): () => boolean {
   const userInfosAreIncompletedRef = useRef(false)
-  const { iAmLogged } = useQueryIAmLogged()
-  const me = useQueryMe()
+  const me = useMe()
 
-  if (iAmLogged) {
-    const { firstName, lastName, address, hasPassword } = me.data?.data.user ?? {}
+  if (me) {
+    const { firstName, lastName, address, hasPassword } = me
     userInfosAreIncompletedRef.current = !!hasPassword && (!firstName || !lastName || !address)
   }
 

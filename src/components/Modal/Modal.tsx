@@ -4,7 +4,7 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
@@ -22,6 +22,7 @@ interface ModalProps {
   title?: string;
   validate?: boolean;
   validateLabel?: string;
+  closeOnNextRender?: boolean;
 }
 
 const defaultProps = {
@@ -42,6 +43,7 @@ export function Modal(props: ModalProps) {
     onValidate: onValidateProp,
     onClose: onCloseProp,
     showCloseButton,
+    closeOnNextRender,
   } = { ...defaultProps, ...props }
 
   const modalContext = useModalContext()
@@ -62,6 +64,12 @@ export function Modal(props: ModalProps) {
       onClose()
     }
   }, [onClose, onValidateProp, setLoading])
+
+  useEffect(() => {
+    if (closeOnNextRender && onClose) {
+      onClose()
+    }
+  }, [closeOnNextRender, onClose])
 
   const hasCTAButtons = validate || cancel
 

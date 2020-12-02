@@ -1,11 +1,21 @@
 import Head from 'next/head'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch } from 'react-redux'
+import { useActionId } from '../containers/MapContainer/useActionId'
 import { MapContainer } from 'src/containers/MapContainer'
+import { feedActions } from 'src/coreLogic/useCases/feed'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
 const Actions: StatelessPage<Props> = () => {
+  const dispatch = useDispatch()
+  const actionId = useActionId()
+
+  useEffect(() => {
+    dispatch(feedActions.setCurrentItemUuid(actionId || null))
+  }, [actionId, dispatch])
+
   return (
     <>
       <Head>

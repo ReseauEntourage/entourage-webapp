@@ -1,9 +1,11 @@
 import { useRef, useEffect } from 'react'
-import { useQueryFeeds } from 'src/core/store'
+import { useSelector } from 'react-redux'
+import { selectFeedIsFetching, selectFeedItems } from 'src/coreLogic/useCases/feed'
 import { useDelayLoading, usePrevious } from 'src/utils/hooks'
 
-export function useFeeds() {
-  const [plainFeeds, feedsLoading] = useQueryFeeds()
+export function useNextFeed() {
+  const feedsLoading = useSelector(selectFeedIsFetching)
+  const plainFeeds = useSelector(selectFeedItems)
   const prevFeedsLoading = usePrevious(feedsLoading)
   const lastFeedsRef = useRef<typeof plainFeeds>()
   const [isLoading, setIsLoading] = useDelayLoading()

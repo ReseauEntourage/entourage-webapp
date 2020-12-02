@@ -33,8 +33,7 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/ban-ts-ignore': 0,
     '@typescript-eslint/indent': ['error', 2],
-    'typescript-sort-keys/interface': 1,
-    'typescript-sort-keys/string-enum': 1,
+    '@typescript-eslint/interface-name-prefix': 0,
 
     // Import Rules
     'import/extensions': [2, 'always', { 'ts': 'never', 'tsx': 'never', 'js': 'never' }],
@@ -88,6 +87,10 @@ module.exports = {
     'semi': [1, 'never'],
     // max-len is enought
     'object-curly-newline': 0,
+    // disable due to TypeScript params. More infos here: https://kendaleiv.com/typescript-constructor-assignment-public-and-private-keywords
+    'no-useless-constructor': 0,
+    'class-methods-use-this': 0,
+    'max-classes-per-file': 0,
   },
   'overrides': [
     {

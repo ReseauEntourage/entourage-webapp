@@ -5,15 +5,14 @@ import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
-import { useQueryMe } from 'src/core/store'
+import { useMeNonNullable } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
 export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
-  const me = useQueryMe()
-  const user = me.data?.data.user
-  const partnerName = user?.partner?.name
+  const me = useMeNonNullable()
+  const partnerName = me.partner?.name
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -48,7 +47,7 @@ export function LoggedChunk() {
         }}
         tabIndex={0}
       >
-        <Avatar src={me.data?.data?.user.avatarUrl} />
+        <Avatar src={me.avatarUrl} />
       </div>
       <Menu
         anchorEl={anchorEl}

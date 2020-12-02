@@ -1,29 +1,33 @@
 import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
+import { useDispatch, useStore } from 'react-redux'
 import { Modal } from 'src/components/Modal'
-import { useMutateDeleteEntourageUser, useQueryMeNonNullable } from 'src/core/store'
+import { selectJoinRequestStatus, feedActions } from 'src/coreLogic/useCases/feed'
+import { useMeNonNullable } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
-import { assertIsDefined } from 'src/utils/misc'
 
 interface ModalLeaveEntourageProps {
   entourageUuid: string;
 }
 
 export function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
+  const me = useMeNonNullable()
+  const dispatch = useDispatch()
+  const store = useStore()
   const { entourageUuid } = props
-  const [deleteEntourageUser] = useMutateDeleteEntourageUser()
-  const me = useQueryMeNonNullable()
 
-  assertIsDefined(me.id)
+  const onValidate = useCallback(() => {
+    return new Promise<boolean>((resolve) => {
+      store.subscribe(() => {
+        const status = selectJoinRequestStatus(store.getState(), entourageUuid)
+        if (status === 'NOT_REQUEST') {
+          resolve(true)
+        }
+      })
 
-  const onValidate = useCallback(async () => {
-    try {
-      await deleteEntourageUser({ entourageUuid, userId: me.id }, { waitForRefetchQueries: true })
-      return true
-    } catch (e) {
-      return false
-    }
-  }, [deleteEntourageUser, entourageUuid, me.id])
+      dispatch(feedActions.leaveEntourage({ entourageUuid, userId: me.id }))
+    })
+  }, [dispatch, entourageUuid, me.id, store])
 
   return (
     <Modal
