@@ -12,17 +12,24 @@ import { AnyToFix } from 'src/utils/types'
 import * as S from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
-interface ModalProps {
-  cancel?: boolean;
-  cancelLabel?: string;
+interface BaseProps {
   children?: AnyToFix;
   onClose?: () => void;
   onValidate?: () => void | boolean | Promise<void | boolean>;
   showCloseButton?: boolean;
   title?: string;
+}
+
+interface BasicModalProps extends BaseProps {
+  cancel?: boolean;
+  cancelLabel?: string;
   validate?: boolean;
   validateLabel?: string;
   closeOnNextRender?: boolean;
+}
+
+interface CustomModalProps extends BaseProps {
+  customActions: (close?: () => void) => JSX.Element;
 }
 
 const defaultProps = {
@@ -32,7 +39,7 @@ const defaultProps = {
   cancel: true,
 }
 
-export function Modal(props: ModalProps) {
+export function Modal(props: BasicModalProps | CustomModalProps) {
   const {
     title,
     children,
@@ -44,6 +51,7 @@ export function Modal(props: ModalProps) {
     onClose: onCloseProp,
     showCloseButton,
     closeOnNextRender,
+    customActions,
   } = { ...defaultProps, ...props }
 
   const modalContext = useModalContext()
@@ -71,7 +79,7 @@ export function Modal(props: ModalProps) {
     }
   }, [closeOnNextRender, onClose])
 
-  const hasCTAButtons = validate || cancel
+  const hasCTAButtons = validate || cancel || customActions
 
   return (
     <Dialog
@@ -81,7 +89,7 @@ export function Modal(props: ModalProps) {
       open={true}
     >
       <S.GlobalStyle />
-      {title && (
+      {title ? (
         <DialogTitle
           id="form-dialog-title"
           style={{
@@ -99,24 +107,39 @@ export function Modal(props: ModalProps) {
             </S.CloseIconContainer>
           )}
         </DialogTitle>
+      ) : (
+        <> { showCloseButton ? (
+          <S.CloseIconContainer aria-label="close" onClick={onClose}>
+            <CloseIcon color="primary" />
+          </S.CloseIconContainer>
+        ) : null}
+        </>
       )}
       <Typography component={DialogContent} variant={variants.bodyRegular}>
         {children}
       </Typography>
-      {hasCTAButtons && (
+      {hasCTAButtons ? (
         <DialogActions>
-          {cancel && (
-            <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
-              {cancelLabel}
-            </Button>
-          )}
-          {validate && (
-            <Button color="primary" loading={loading} onClick={onValidate}>
-              {validateLabel}
-            </Button>
-          )}
+          {customActions
+            ? customActions(onClose)
+            : (
+              <>
+                {cancel
+                  ? (
+                    <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+                      {cancelLabel}
+                    </Button>
+                  ) : null}
+                {validate ? (
+                  <Button color="primary" loading={loading} onClick={onValidate}>
+                    {validateLabel}
+                  </Button>
+                ) : null }
+              </>
+            )}
+
         </DialogActions>
-      )}
+      ) : null }
     </Dialog>
   )
 }

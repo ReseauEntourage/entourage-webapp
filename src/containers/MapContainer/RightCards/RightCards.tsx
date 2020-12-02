@@ -6,20 +6,15 @@ import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React, { useCallback } from 'react'
 import { useCurrentFeedItem } from '../useCurrentFeedItem'
-import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
-import { ModalShare } from 'src/components/ModalShare'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
-import { constants } from 'src/constants'
-import { ModalEditAction } from 'src/containers/ModalEditAction'
-import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import { useQueryEntourageUsers } from 'src/core/store'
 import { useMe } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
-import { ParticipateButton } from './ParticipateButton'
+import { Actions } from './Actions'
 import * as S from './RightCards.styles'
 
 export function RightCards() {
@@ -29,57 +24,6 @@ export function RightCards() {
   const me = useMe()
 
   const iAmCreator = me?.id === feedItem.author.id
-
-  const onClickReport = useCallback(() => {
-    // eslint-disable-next-line no-useless-escape
-    window.open(`mailto:${constants.MAIL_TO_REPORT}?subject=Je signale un problème concernant \"${feedItem.title}\"`)
-  }, [feedItem.title])
-
-  const onClickShare = useCallback(() => {
-    openModal(
-      <ModalShare
-        content={feedItem.description}
-        entourageUuid={feedItem.uuid}
-        title={feedItem.title}
-      />,
-    )
-  }, [feedItem.description, feedItem.title, feedItem.uuid])
-
-  const onClickUpdateAction = useCallback(() => {
-    openModal(
-      <ModalEditAction
-        action={{
-          id: feedItem.id,
-          title: feedItem.title,
-          description: feedItem.description,
-          displayCategory: feedItem.displayCategory,
-          entourageType: feedItem.entourageType,
-          displayAddress: feedItem.metadata.displayAddress,
-        }}
-      />,
-    )
-  }, [
-    feedItem.description,
-    feedItem.displayCategory,
-    feedItem.entourageType,
-    feedItem.id,
-    feedItem.metadata.displayAddress,
-    feedItem.title,
-  ])
-
-  const onClickUpdateEvent = useCallback(() => {
-    openModal(
-      <ModalEditEvent
-        event={{
-          id: feedItem.id,
-          title: feedItem.title,
-          description: feedItem.description,
-          dateISO: feedItem.metadata.startsAt,
-          displayAddress: feedItem.metadata.displayAddress,
-        }}
-      />,
-    )
-  }, [feedItem])
 
   const onClickUser = useCallback((userId: number) => {
     openModal(<ModalUserCard userId={userId} />)
@@ -116,17 +60,7 @@ export function RightCards() {
 
     card = (
       <ActionCard
-        actions={(
-          <S.ActionsContainer>
-            <ParticipateButton />
-            <Button onClick={onClickShare} variant="outlined">Partager</Button>
-            {iAmCreator ? (
-              <Button onClick={onClickUpdateAction} variant="outlined">Modifier</Button>
-            ) : (
-              <Button onClick={onClickReport} variant="outlined">Signaler</Button>
-            )}
-          </S.ActionsContainer>
-        )}
+        actions={<Actions iAmCreator={iAmCreator} />}
         dateLabel={dataLabel}
         description={description}
         isAssociation={!!partner}
@@ -147,17 +81,7 @@ export function RightCards() {
 
     card = (
       <EventCard
-        actions={(
-          <S.ActionsContainer>
-            <ParticipateButton />
-            <Button onClick={onClickShare} variant="outlined">Partager</Button>
-            {iAmCreator ? (
-              <Button onClick={onClickUpdateEvent} variant="outlined">Modifier</Button>
-            ) : (
-              <Button onClick={onClickReport} variant="outlined">Signaler</Button>
-            )}
-          </S.ActionsContainer>
-        )}
+        actions={<Actions iAmCreator={iAmCreator} />}
         address={feedItem.metadata.displayAddress}
         dateLabel={dateLabel}
         description={feedItem.description}

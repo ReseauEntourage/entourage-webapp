@@ -23,6 +23,8 @@ import {
   DTOCreateEntourageAsAction,
   DTOUpdateEntourageAsAction,
   UserPartnerWithDetails,
+  DTOCloseEntourage,
+  DTOReopenEntourage,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -86,7 +88,7 @@ export const schema = {
     method: 'PATCH',
     params: null,
     data: {} as {
-      entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent;
+      entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent | DTOCloseEntourage | DTOReopenEntourage;
     },
     response: {} as {},
   },

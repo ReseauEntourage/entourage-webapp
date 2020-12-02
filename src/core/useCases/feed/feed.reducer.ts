@@ -5,7 +5,9 @@ import {
   FeedDisplayCategory,
   FeedGroupType,
   UserPartner,
-  FeedEntourageType, FeedJoinStatus,
+  FeedEntourageType,
+  FeedJoinStatus,
+  FeedStatus,
 } from 'src/core/api'
 import { Action, ActionType } from './feed.actions'
 
@@ -39,6 +41,7 @@ export interface FeedItem {
   entourageType: FeedEntourageType;
   groupType: FeedGroupType;
   joinStatus: FeedJoinStatus;
+  status: FeedStatus;
 }
 
 export interface FeedState {

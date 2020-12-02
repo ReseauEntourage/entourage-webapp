@@ -250,6 +250,17 @@ export interface DTOUpdateEntourageAsAction {
   title: string;
 }
 
+export interface DTOCloseEntourage {
+  outcome: {
+    success: boolean;
+  };
+  status: 'closed';
+}
+
+export interface DTOReopenEntourage {
+  status: 'open';
+}
+
 export interface DTOCreateEntourageAsEvent {
   description: string;
   groupType: string;
