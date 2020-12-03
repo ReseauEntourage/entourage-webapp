@@ -95,14 +95,14 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
       })
   }
 
-  loginWithPassword(data: { phone: string; password: string; }) {
+  loginWithPassword = (data: { phone: string; password: string; }) => {
     return this.login({
       phone: data.phone,
       secret: data.password,
     })
   }
 
-  loginWithSMSCode(data: { phone: string; SMSCode: string; }) {
+  loginWithSMSCode = (data: { phone: string; SMSCode: string; }) => {
     return this.login({
       phone: data.phone,
       secret: data.SMSCode,

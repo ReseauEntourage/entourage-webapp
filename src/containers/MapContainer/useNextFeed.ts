@@ -5,8 +5,8 @@ import { useDelayLoading, usePrevious } from 'src/utils/hooks'
 
 export function useNextFeed() {
   const feedsLoading = useSelector(selectFeedIsFetching)
-  const plainFeeds = useSelector(selectFeedItems)
   const prevFeedsLoading = usePrevious(feedsLoading)
+  const plainFeeds = useSelector(selectFeedItems)
   const lastFeedsRef = useRef<typeof plainFeeds>()
   const [isLoading, setIsLoading] = useDelayLoading()
 

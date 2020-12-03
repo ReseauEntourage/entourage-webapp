@@ -58,6 +58,10 @@ function* setCurrentItemUuid(action: Actions['setCurrentItemUuid']) {
   }
 }
 
+function* setFilters() {
+  yield put(actions.retrieveFeed())
+}
+
 function* joinEntourage(action: Actions['joinEntourage']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { feedGateway } = dependencies
@@ -78,7 +82,7 @@ function* leaveEntourage(action: Actions['leaveEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(ActionType.RETRIEVE_FEED, retrieveFeed)
-  yield takeEvery(ActionType.SET_FILTERS, retrieveFeed)
+  yield takeEvery(ActionType.SET_FILTERS, setFilters)
   yield takeEvery(ActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(ActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(ActionType.JOIN_ENTOURAGE, joinEntourage)

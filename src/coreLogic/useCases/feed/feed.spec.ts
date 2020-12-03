@@ -37,6 +37,30 @@ describe('Feed', () => {
     expect(store.getState().feed).toEqual(defaultFeedState)
   })
 
+  it(`
+    Given user has not any items
+    When user set filters
+    Then items should being fetched during request
+      And items should not being fetched after request succeeded
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    const promise = Promise.resolve({ items: [], nextPageToken: null })
+    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    const store = configureStoreWithFeed({ feedGateway })
+    const nextFilters: FeedState['filters'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(publicActions.setFilters(nextFilters))
+
+    expect(selectFeedIsFetching(store.getState())).toEqual(true)
+
+    await promise
+
+    expect(selectFeedIsFetching(store.getState())).toEqual(false)
+  })
+
   it('should update filter successfully with full object', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockReturnValueOnce(Promise.resolve({

@@ -31,6 +31,8 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
+  store: ReturnType<typeof bootstrapStore> | null = null
+
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
     const { req } = appContext.ctx
     const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
@@ -75,27 +77,25 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     const SSRDataValue = { me, userAgent }
 
-    // const cookiesAuthUserTokenStorage = new CookiesAuthUserTokenStorage()
+    if (!this.store) {
+      this.store = bootstrapStore()
 
-    // const authUser = new AuthUser(new HTTPAuthUserGateway(), cookiesAuthUserTokenStorage)
+      if (authUserData && !authUserData.anonymous) {
+        assertIsDefined(authUserData.email)
 
-    const store = bootstrapStore()
-
-    if (authUserData && !authUserData.anonymous) {
-      assertIsDefined(authUserData.email)
-
-      store.dispatch(authUserActions.setUser({
-        id: authUserData.id,
-        email: authUserData.email,
-        hasPassword: authUserData.hasPassword,
-        avatarUrl: authUserData.avatarUrl || undefined,
-        partner: authUserData.partner,
-        lastName: authUserData.lastName || undefined,
-        firstName: authUserData.firstName || undefined,
-        address: authUserData.address || undefined,
-        about: authUserData.about || undefined,
-        token: authUserData.token,
-      }))
+        this.store.dispatch(authUserActions.setUser({
+          id: authUserData.id,
+          email: authUserData.email,
+          hasPassword: authUserData.hasPassword,
+          avatarUrl: authUserData.avatarUrl || undefined,
+          partner: authUserData.partner,
+          lastName: authUserData.lastName || undefined,
+          firstName: authUserData.firstName || undefined,
+          address: authUserData.address || undefined,
+          about: authUserData.about || undefined,
+          token: authUserData.token,
+        }))
+      }
     }
 
     return (
@@ -111,7 +111,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
           <>
             <StylesProvider injectFirst={true}>
               <ThemeProvider theme={theme}>
-                <Provider store={store}>
+                <Provider store={this.store}>
                   <ReactQueryConfigProvider config={queryConfig}>
                     <Layout>
                       <>
