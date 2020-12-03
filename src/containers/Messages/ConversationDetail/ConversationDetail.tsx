@@ -77,11 +77,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
     throw new Error(`Entourage with joins status ${joinStatus} shouldn't be in /myfeeds`)
   }
 
-  let { title } = entourage
-
-  if (entourage.description) {
-    title += ` - ${entourage.description}`
-  }
+  const { title } = entourage
 
   return (
     <S.Container>
