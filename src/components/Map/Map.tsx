@@ -44,6 +44,7 @@ export function Map(props: Props) {
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
       onChange={(nextValue) => onChange(nextValue)}
+      options={{ fullscreenControl: false }}
       yesIWantToUseGoogleMapApiInternals={true}
     >
       {children}
