@@ -10,6 +10,7 @@ import {
   selectFeedIsFetching,
   selectFeedItems,
   selectHasNextPageToken,
+  selectFeedIsIdle,
 } from './feed.selectors'
 
 const reducers = {
@@ -59,6 +60,34 @@ describe('Feed', () => {
     await promise
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given feed request is idle
+    When no action is trigger by user
+    Then feed request should still be idle
+  `, () => {
+    const feedGateway = new TestFeedGateway()
+    const store = configureStoreWithFeed({ feedGateway })
+
+    expect(selectFeedIsIdle(store.getState())).toEqual(true)
+  })
+
+  it(`
+    Given feed request is idle
+    When user retrieve feed successfully
+    Then feed request should not be idle
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    const promise = Promise.resolve({ items: [], nextPageToken: null })
+    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    const store = configureStoreWithFeed({ feedGateway })
+
+    store.dispatch(publicActions.retrieveFeed())
+
+    await promise
+
+    expect(selectFeedIsIdle(store.getState())).toEqual(false)
   })
 
   it('should update filter successfully with full object', () => {

@@ -2,8 +2,7 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
-import { constants } from 'src/constants'
-import { selectFeedFilters, feedActions } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters, feedActions, selectFeedIsIdle } from 'src/coreLogic/useCases/feed'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 import * as S from './SearchCity.styles'
 
@@ -12,6 +11,8 @@ const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation
 export function SearchCity() {
   const filters = useSelector(selectFeedFilters)
   const dispatch = useDispatch()
+  const feedIsIdle = useSelector(selectFeedIsIdle)
+  const defaultInputValue = filters.cityName
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
     const placeDetail = await getDetailPlacesService(value.place.place_id, value.googleSessionToken)
@@ -33,10 +34,14 @@ export function SearchCity() {
     )
   }, [dispatch, filters])
 
+  if (feedIsIdle) {
+    return null
+  }
+
   return (
     <S.Container>
       <GoogleMapLocation
-        defaultValue={filters.cityName || constants.DEFAULT_LOCATION.CITY_NAME}
+        defaultValue={defaultInputValue}
         onChange={onChange}
         textFieldProps={{}}
       />

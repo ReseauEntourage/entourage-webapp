@@ -58,6 +58,7 @@ export interface FeedState {
   nextPageToken: string | null;
   selectedItemUuid: string | null;
   isUpdatingJoinStatus: boolean;
+  isIdle: boolean;
 }
 
 export const defaultFeedState: FeedState = {
@@ -72,6 +73,7 @@ export const defaultFeedState: FeedState = {
   cacheItems: {},
   selectedItemUuid: null,
   isUpdatingJoinStatus: false,
+  isIdle: true,
 }
 
 export function feedReducer(state: FeedState = defaultFeedState, action: Action): FeedState {
@@ -97,6 +99,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
     case ActionType.RETRIEVE_FEED_SUCCESS: {
       return {
         ...state,
+        isIdle: false,
         cacheItems: action.payload.items.reduce(
           (acc: FeedState['cacheItems'], item: FeedState['cacheItems'][number]) => {
             return {

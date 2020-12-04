@@ -4,6 +4,10 @@ interface AppState {
   feed: FeedState;
 }
 
+export function selectFeedIsIdle(state: AppState) {
+  return state.feed.isIdle
+}
+
 export function selectFeed(state: AppState) {
   return state.feed
 }
