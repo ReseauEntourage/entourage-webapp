@@ -38,7 +38,7 @@ export function Map(props: Props) {
       center={filters.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
-      onChange={(nextValue) => onChange({ ...value, ...nextValue })}
+      onChange={(nextValue) => onChange(nextValue)}
       yesIWantToUseGoogleMapApiInternals={true}
     >
       {children}

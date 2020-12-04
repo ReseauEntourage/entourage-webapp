@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useQueryIAmLogged } from 'src/core/store'
+import { useSelector } from 'react-redux'
+import { selectIsLogged, selectIsLogging } from 'src/coreLogic/useCases/authUser'
 
 interface PrivateRouteProps {
   children: React.ReactNode;
@@ -9,7 +10,8 @@ interface PrivateRouteProps {
 export function PrivateRoute(props: PrivateRouteProps) {
   const { children } = props
   const router = useRouter()
-  const { iAmLogged, iAmLogging } = useQueryIAmLogged()
+  const iAmLogged = useSelector(selectIsLogged)
+  const iAmLogging = useSelector(selectIsLogging)
 
   useEffect(() => {
     const shouldRedirect = !iAmLogged && !iAmLogging
