@@ -1,6 +1,6 @@
 import Box from '@material-ui/core/Box'
 import LocalMallIcon from '@material-ui/icons/LocalMall'
-import { formatDistance } from 'date-fns' // eslint-disable-line
+import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
@@ -50,11 +50,18 @@ export function FeedList() {
   })
 
   const feedsListContent = feeds.map((feedItem) => {
-    const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
-    const secondText = `
-      Créé il y a ${createAtDistance}
-      par ${feedItem.author.displayName}
-    `
+    let secondText = ''
+    if (feedItem.groupType === 'action') {
+      const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
+      secondText = `
+        Créé il y a ${createAtDistance}
+        par ${feedItem.author.displayName}
+      `
+    }
+    if (feedItem.groupType === 'outing') {
+      const startDate = new Date(feedItem.metadata.startsAt)
+      secondText = format(startDate, "'Rendez-vous le' d MMMM 'à' H'h'mm", { locale: fr })
+    }
 
     return (
       <li key={feedItem.uuid}>
