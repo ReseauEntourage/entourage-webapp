@@ -32,16 +32,56 @@ function configureStoreWithFeed(
   })
 }
 
+function configureStoreWithSelectedItems() {
+  const itemsFromStore = createFeedItemList()
+  const itemsFromGateway = createFeedItemList()
+
+  const itemsEntities = itemsFromStore.reduce((acc, item) => ({
+    ...acc,
+    [item.uuid]: item,
+  }), {})
+
+  const feedGateway = new TestFeedGateway()
+  const promise = Promise.resolve({ nextPageToken: null, items: itemsFromGateway })
+  feedGateway.retrieveFeedItems.mockReturnValue(promise)
+
+  const store = configureStoreWithFeed(
+    {
+      feedGateway,
+    },
+    {
+      feed: {
+        ...fakeFeedData,
+        cacheItems: itemsEntities,
+        items: Object.keys(itemsEntities),
+        selectedItemUuid: Object.keys(itemsEntities)[0],
+      },
+    },
+  )
+
+  return {
+    store,
+    promise,
+    itemsEntities,
+  }
+}
+
 describe('Feed Item', () => {
-  describe('Given feed is at initial state', () => {
+  it(`
+    Given feed is at initial state
+    When no action is triggered,
+    Then selected item should be null
+  `, () => {
     const store = configureStoreWithFeed({})
 
-    it('Then selected item should be null', () => {
-      expect(selectCurrentItem(store.getState())).toEqual(null)
-    })
+    expect(selectCurrentItem(store.getState())).toEqual(null)
   })
 
-  describe('Given feed has cached items and selected item to null', () => {
+  it(`
+    Given feed has cached items and selected item to null
+    When user select and item
+    Then should selected item be defined after to set item uuid
+  `, () => {
     const store = configureStoreWithFeed(
       {},
       {
@@ -51,291 +91,243 @@ describe('Feed Item', () => {
       },
     )
 
-    describe('When user select and item', () => {
-      store.dispatch(publicActions.setCurrentItemUuid('abc'))
+    store.dispatch(publicActions.setCurrentItemUuid('abc'))
 
-      it('should selected item be defined after to set item uuid', () => {
-        expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.cacheItems.abc)
-      })
-    })
+    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.cacheItems.abc)
   })
 
-  describe('Given feed has selected item', () => {
-    function configure() {
-      const itemsFromStore = createFeedItemList()
-      const itemsFromGateway = createFeedItemList()
+  it(`
+    Given feed has selected item
+    When user fetch new items
+    Then items uuid should changes And selected items should never change
+  `, async () => {
+    const { store, promise } = configureStoreWithSelectedItems()
 
-      const itemsEntities = itemsFromStore.reduce((acc, item) => ({
-        ...acc,
-        [item.uuid]: item,
-      }), {})
+    const prevItems = selectFeedItems(store.getState())
+    const prevSelectedItem = selectCurrentItem(store.getState())
 
-      const feedGateway = new TestFeedGateway()
-      feedGateway.retrieveFeedItems.mockReturnValue(Promise.resolve({
-        nextPageToken: null,
-        items: itemsFromGateway,
-      }))
+    store.dispatch(publicActions.retrieveFeed())
 
-      const store = configureStoreWithFeed(
-        {
-          feedGateway,
-        },
-        {
-          feed: {
-            ...fakeFeedData,
-            cacheItems: itemsEntities,
-            items: Object.keys(itemsEntities),
-            selectedItemUuid: Object.keys(itemsEntities)[0],
-          },
-        },
-      )
+    await promise
 
-      return {
-        store,
-        itemsFromStore,
-        itemsFromGateway,
-        itemsEntities,
-      }
-    }
+    const nextItems = selectFeedItems(store.getState())
+    const nextSelectedItem = selectCurrentItem(store.getState())
 
-    describe('When user fetch new items', () => {
-      const { store } = configure()
+    expect(nextItems).toBeTruthy()
+    expect(prevItems).not.toEqual(nextItems)
 
-      const prevItems = selectFeedItems(store.getState())
-      const prevSelectedItem = selectCurrentItem(store.getState())
-
-      store.dispatch(publicActions.retrieveFeed())
-
-      it('Then items uuid should changes And selected items should never change', () => {
-        const nextItems = selectFeedItems(store.getState())
-        const nextSelectedItem = selectCurrentItem(store.getState())
-
-        expect(nextItems).toBeTruthy()
-        expect(prevItems).not.toEqual(nextItems)
-
-        expect(nextSelectedItem).toBeTruthy()
-        expect(prevSelectedItem).toEqual(nextSelectedItem)
-      })
-    })
-
-    describe('When user select a new current item uuid', () => {
-      const { store, itemsEntities } = configure()
-
-      const prevSelectedItem = selectCurrentItem(store.getState())
-      store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
-      const nextSelectedItem = selectCurrentItem(store.getState())
-
-      it('Then prev and next selected item should be truthy', () => {
-        expect(prevSelectedItem).toBeTruthy()
-        expect(nextSelectedItem).toBeTruthy()
-      })
-
-      it('Then prev and next selected items should be different', () => {
-        expect(prevSelectedItem).not.toEqual(nextSelectedItem)
-      })
-    })
+    expect(nextSelectedItem).toBeTruthy()
+    expect(prevSelectedItem).toEqual(nextSelectedItem)
   })
 
-  describe('Given feed has no cached items but a selected item uuid', () => {
-    function configure() {
-      const itemsFromStore = createFeedItemList()
-      const itemsFromGateway = createFeedItemList()
+  it(`
+    Given feed has selected item
+    When user select a new current item uuid
+    Then prev and next selected item should be truthy
+      And prev and next selected items should be different
+  `, async () => {
+    const { store, promise, itemsEntities } = configureStoreWithSelectedItems()
 
-      const itemsEntities = itemsFromStore.reduce((acc, item) => ({
-        ...acc,
-        [item.uuid]: item,
-      }), {})
+    const prevSelectedItem = selectCurrentItem(store.getState())
 
-      const promiseRetrieveFeedItems = Promise.resolve({
-        nextPageToken: null,
-        items: itemsFromGateway,
-      })
+    store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
 
-      const promiseRetrieveFeedItem = Promise.resolve({
+    await promise
+
+    const nextSelectedItem = selectCurrentItem(store.getState())
+
+    expect(prevSelectedItem).toBeTruthy()
+    expect(nextSelectedItem).toBeTruthy()
+
+    expect(prevSelectedItem).not.toEqual(nextSelectedItem)
+  })
+
+  it(`
+    Given feed has no cached items but a selected item uuid
+    When user set selected item uuid
+    Then item should be retrieved from gateway
+      And feed should be retrieved with position of item
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+    const promiseRetrieveFeedItems = Promise.resolve({
+      nextPageToken: null,
+      items: itemsFromGateway,
+    })
+
+    const promiseRetrieveFeedItem = Promise.resolve({
+      center: {
+        lat: 1,
+        lng: 2,
+      },
+      cityName: 'Marseille',
+    })
+
+    const promises = Promise.all([promiseRetrieveFeedItems, promiseRetrieveFeedItem])
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockReturnValue(promiseRetrieveFeedItems)
+    feedGateway.retrieveFeedItem.mockResolvedValueOnce(promiseRetrieveFeedItem)
+
+    const store = configureStoreWithFeed(
+      {
+        feedGateway,
+      },
+      {
+        feed: {
+          ...fakeFeedData,
+          cacheItems: {},
+          items: [],
+          selectedItemUuid: null,
+        },
+      },
+    )
+
+    const selectedItemUuid = itemsFromGateway[0].uuid
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+
+    await promises
+
+    expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        zoom: store.getState().feed.filters.zoom,
         center: {
           lat: 1,
           lng: 2,
         },
-        cityName: 'Marseille',
-      })
-
-      const allPromises = Promise.all([promiseRetrieveFeedItems, promiseRetrieveFeedItem])
-
-      const feedGateway = new TestFeedGateway()
-      feedGateway.retrieveFeedItems.mockReturnValue(promiseRetrieveFeedItems)
-      feedGateway.retrieveFeedItem.mockResolvedValueOnce(promiseRetrieveFeedItem)
-
-      const store = configureStoreWithFeed(
-        {
-          feedGateway,
-        },
-        {
-          feed: {
-            ...fakeFeedData,
-            cacheItems: {},
-            items: [],
-            selectedItemUuid: null,
-          },
-        },
-      )
-
-      return {
-        store,
-        itemsFromStore,
-        itemsFromGateway,
-        itemsEntities,
-        feedGateway,
-        allPromises,
-      }
-    }
-
-    describe('When user set selected item uuid', () => {
-      const { store, feedGateway, itemsFromGateway, allPromises } = configure()
-      const selectedItemUuid = itemsFromGateway[0].uuid
-
-      store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
-
-      it(`
-        Then item should be retrieved from gateway
-        And feed should be retrieved with position of item
-      `, async () => {
-        await allPromises
-
-        expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
-        expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
-          filters: {
-            zoom: store.getState().feed.filters.zoom,
-            center: {
-              lat: 1,
-              lng: 2,
-            },
-          },
-        })
-      })
+      },
     })
   })
 
   describe('Join entourage', () => {
-    describe(`
-      Given state has items
-      And feed item status is not requested
-    `, () => {
-      function configure() {
-        const defaultFeedDataJoinEntourage = {
-          ...fakeFeedData,
-          cacheItems: {
-            ...fakeFeedData.cacheItems,
-            abc: {
-              ...fakeFeedData.cacheItems.abc,
-              joinStatus: 'not_requested' as FeedJoinStatus,
-            },
+    function configureStoreWithJoinRequestNotRequested() {
+      const defaultFeedDataJoinEntourage = {
+        ...fakeFeedData,
+        cacheItems: {
+          ...fakeFeedData.cacheItems,
+          abc: {
+            ...fakeFeedData.cacheItems.abc,
+            joinStatus: 'not_requested' as FeedJoinStatus,
           },
-        }
-
-        const feedGateway = new TestFeedGateway()
-        const joinRequestPromise = Promise.resolve()
-        feedGateway.joinEntourage.mockResolvedValueOnce(joinRequestPromise)
-
-        const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
-
-        return {
-          store,
-          feedGateway,
-          joinRequestPromise,
-        }
+        },
       }
 
-      it(`
+      const feedGateway = new TestFeedGateway()
+      const joinRequestPromise = Promise.resolve()
+      feedGateway.joinEntourage.mockResolvedValueOnce(joinRequestPromise)
+
+      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+
+      return {
+        store,
+        feedGateway,
+        joinRequestPromise,
+      }
+    }
+
+    it(`
+        Given state has items
+          And feed item status is not requested
         When no action is done,
-        Then join request should not being send
+        Then join request should not being sent
           And join status should be not requested
       `, () => {
-        const { store } = configure()
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
-        expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
-      })
+      const { store } = configureStoreWithJoinRequestNotRequested()
 
-      it(`
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
+    })
+
+    it(`
         When user want to join an entourage
-        Then join request should being send
-          And join entourage gateway method be called with entourage uuid
-          And join request should not being send after succeeded
+        Then join request should being sent
+          And join entourage gateway method should be called with entourage uuid
+          And join request should not being sent after succeeded
           And join request status should be updated
       `, async () => {
-        const { store, feedGateway, joinRequestPromise } = configure()
-        const entourageUuid = 'abc'
-        store.dispatch(publicActions.joinEntourage({ entourageUuid }))
+      const { store, feedGateway, joinRequestPromise } = configureStoreWithJoinRequestNotRequested()
+      const entourageUuid = 'abc'
+      store.dispatch(publicActions.joinEntourage({ entourageUuid }))
 
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
-        expect(feedGateway.joinEntourage).toHaveBeenCalledWith(entourageUuid)
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
 
-        await joinRequestPromise
+      expect(feedGateway.joinEntourage).toHaveBeenCalledWith(entourageUuid)
 
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
-        expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.PENDING)
-      })
+      await joinRequestPromise
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.PENDING)
     })
   })
 
   describe('Leave entourage', () => {
-    describe(`
-      Given state has items
-      And feed item status is accepted
-    `, () => {
-      function configure() {
-        const defaultFeedDataJoinEntourage = {
-          ...fakeFeedData,
-          cacheItems: {
-            ...fakeFeedData.cacheItems,
-            abc: {
-              ...fakeFeedData.cacheItems.abc,
-              joinStatus: 'accepted' as FeedJoinStatus,
-            },
+    function configureStoreWithItemJoinRequestAccepted() {
+      const defaultFeedDataJoinEntourage = {
+        ...fakeFeedData,
+        cacheItems: {
+          ...fakeFeedData.cacheItems,
+          abc: {
+            ...fakeFeedData.cacheItems.abc,
+            joinStatus: 'accepted' as FeedJoinStatus,
           },
-        }
-
-        const feedGateway = new TestFeedGateway()
-        const leaveRequestPromise = Promise.resolve()
-        feedGateway.leaveEntourage.mockResolvedValueOnce(leaveRequestPromise)
-
-        const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
-
-        return {
-          store,
-          feedGateway,
-          leaveRequestPromise,
-        }
+        },
       }
 
-      it(`
-        When no action is done,
-        Then leave request should not being send
+      const feedGateway = new TestFeedGateway()
+      const leaveRequestPromise = Promise.resolve()
+      feedGateway.leaveEntourage.mockResolvedValueOnce(leaveRequestPromise)
+
+      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+
+      return {
+        store,
+        feedGateway,
+        leaveRequestPromise,
+      }
+    }
+
+    it(`
+        Given state has items
+          And feed item status is accepted
+        When no action is triggered
+        Then leave request should not being sent
           And join status should be accepted
       `, () => {
-        const { store } = configure()
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
-        expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.ACCEPTED)
-      })
+      const { store } = configureStoreWithItemJoinRequestAccepted()
 
-      it(`
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.ACCEPTED)
+    })
+
+    it(`
+        Given state has items
+          And feed item status is accepted
         When user want to leave an entourage
-        Then join request should being send
-          And leave entourage gateway method be called with entourage uuid and user id
-          And leave request should not being send after succeeded
+        Then leave request should being sent
+          And leave entourage gateway should be called with entourage uuid and user id
+          And leave request should not being sent after succeeded
           And leave request status should be updated
       `, async () => {
-        const { store, feedGateway, leaveRequestPromise } = configure()
-        const entourageUuid = 'abc'
-        store.dispatch(publicActions.leaveEntourage({ entourageUuid, userId: 1 }))
+      const { store, feedGateway, leaveRequestPromise } = configureStoreWithItemJoinRequestAccepted()
+      const entourageUuid = 'abc'
 
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
-        expect(feedGateway.leaveEntourage).toHaveBeenCalledWith(entourageUuid, 1)
+      store.dispatch(publicActions.leaveEntourage({ entourageUuid, userId: 1 }))
 
-        await leaveRequestPromise
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
 
-        expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
-        expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
-      })
+      expect(feedGateway.leaveEntourage).toHaveBeenCalledWith(entourageUuid, 1)
+
+      await leaveRequestPromise
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
     })
   })
 })
