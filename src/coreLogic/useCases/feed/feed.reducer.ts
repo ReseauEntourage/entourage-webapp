@@ -89,14 +89,14 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.RETRIEVE_FEED: {
+    case ActionType.RETRIEVE_FEED_STARTED: {
       return {
         ...state,
         fetching: true,
       }
     }
 
-    case ActionType.RETRIEVE_FEED_SUCCESS: {
+    case ActionType.RETRIEVE_FEED_SUCCEEDED: {
       return {
         ...state,
         isIdle: false,
@@ -114,7 +114,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCESS: {
+    case ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
         cacheItems: action.payload.items.reduce(

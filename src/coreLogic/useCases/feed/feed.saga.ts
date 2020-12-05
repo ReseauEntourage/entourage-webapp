@@ -3,7 +3,7 @@ import { CallReturnType } from '../../utils/CallReturnType'
 import { IFeedGateway } from './IFeedGateway'
 import { ActionType, actions, Actions } from './feed.actions'
 import { FeedState } from './feed.reducer'
-import { selectCurrentItem, selectFeed } from './feed.selectors'
+import { selectCurrentItem, selectFeed, selectFeedIsFetching } from './feed.selectors'
 
 interface AppState {
   feed: FeedState;
@@ -16,8 +16,15 @@ export interface Dependencies {
 function* retrieveFeed() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveFeedItems } = dependencies.feedGateway
+  const feedIsFetching: ReturnType<typeof selectFeedIsFetching> = yield select(selectFeedIsFetching)
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const { filters: { zoom, center }, nextPageToken } = feedState
+
+  if (feedIsFetching) {
+    return
+  }
+
+  yield put(actions.retrieveFeedStarted())
 
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,

@@ -4,9 +4,10 @@ import { FeedState } from './feed.reducer'
 export const ActionType = {
   SET_FILTERS: 'FEED/SET_FILTERS',
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
-  RETRIEVE_FEED_SUCCESS: 'FEED/RETRIEVE_FEED_SUCCESS',
+  RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
+  RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
   RETRIEVE_FEED_NEXT_PAGE: 'FEED/RETRIEVE_FEED_NEXT_PAGE',
-  RETRIEVE_FEED_NEXT_PAGE_SUCCESS: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCESS',
+  RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
@@ -33,6 +34,12 @@ function retrieveFeed(payload?: Pick<FeedState, 'filters' | 'nextPageToken'>) {
   }
 }
 
+function retrieveFeedStarted() {
+  return {
+    type: ActionType.RETRIEVE_FEED_STARTED,
+  }
+}
+
 function retrieveFeedSuccess(
   payload: {
     items: FeedState['cacheItems'][number][];
@@ -40,7 +47,7 @@ function retrieveFeedSuccess(
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_SUCCESS,
+    type: ActionType.RETRIEVE_FEED_SUCCEEDED,
     payload,
   }
 }
@@ -58,7 +65,7 @@ function retrieveFeedNextPageSuccess(
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCESS,
+    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
     payload,
   }
 }
@@ -112,14 +119,15 @@ export const publicActions = {
   updateItem,
   setCurrentItemUuid,
   joinEntourage,
-  joinEntourageSucceeded,
   leaveEntourage,
-  leaveEntourageSucceeded,
 }
 
 const privateActions = {
+  retrieveFeedStarted,
   retrieveFeedSuccess,
   retrieveFeedNextPageSuccess,
+  joinEntourageSucceeded,
+  leaveEntourageSucceeded,
 }
 
 export const actions = {

@@ -60,7 +60,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.CREATE_ACCOUNT_SUCCESS: {
+    case ActionType.CREATE_ACCOUNT_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
@@ -68,7 +68,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.LOGIN_WITH_SMS_CODE_SUCCESS: {
+    case ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.CREATE_PASSWORD,
@@ -76,7 +76,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.CREATE_PASSWORD_SUCCESS: {
+    case ActionType.CREATE_PASSWORD_SUCCEEDED: {
       return {
         ...state,
         step: null,
@@ -99,14 +99,14 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.RESET_PASSWORD_SUCCESS: {
+    case ActionType.RESET_PASSWORD_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
       }
     }
 
-    case ActionType.LOGIN_WITH_PASSWORD_SUCCESS: {
+    case ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED: {
       return {
         ...state,
         user: action.payload.user,

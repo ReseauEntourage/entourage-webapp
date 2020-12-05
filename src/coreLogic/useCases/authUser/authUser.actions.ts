@@ -4,17 +4,17 @@ import { AuthUserState } from './authUser.reducer'
 export const ActionType = {
   PHONE_LOOK_UP: 'AUTH/PHONE_LOOK_UP',
   CREATE_ACCOUNT: 'AUTH/CREATE_ACCOUNT',
-  CREATE_ACCOUNT_SUCCESS: 'AUTH/CREATE_ACCOUNT_SUCCESS',
+  CREATE_ACCOUNT_SUCCEEDED: 'AUTH/CREATE_ACCOUNT_SUCCEEDED',
   ASK_SMS_CODE: 'AUTH/ASK_SMS_CODE',
   ASK_PASSWORD: 'AUTH/ASK_PASSWORD',
   LOGIN_WITH_PASSWORD: 'AUTH/LOGIN_WITH_PASSWORD',
-  LOGIN_WITH_PASSWORD_SUCCESS: 'AUTH/LOGIN_WITH_PASSWORD_SUCCESS',
+  LOGIN_WITH_PASSWORD_SUCCEEDED: 'AUTH/LOGIN_WITH_PASSWORD_SUCCEEDED',
   LOGIN_WITH_SMS_CODE: 'AUTH/LOGIN_WITH_SMS_CODE',
-  LOGIN_WITH_SMS_CODE_SUCCESS: 'AUTH/LOGIN_WITH_SMS_CODE_SUCCESS',
+  LOGIN_WITH_SMS_CODE_SUCCEEDED: 'AUTH/LOGIN_WITH_SMS_CODE_SUCCEEDED',
   CREATE_PASSWORD: 'AUTH/CREATE_PASSWORD',
-  CREATE_PASSWORD_SUCCESS: 'AUTH/CREATE_PASSWORD_SUCCESS',
+  CREATE_PASSWORD_SUCCEEDED: 'AUTH/CREATE_PASSWORD_SUCCEEDED',
   RESET_PASSWORD: 'AUTH/RESET_PASSWORD',
-  RESET_PASSWORD_SUCCESS: 'AUTH/RESET_PASSWORD_SUCCESS',
+  RESET_PASSWORD_SUCCEEDED: 'AUTH/RESET_PASSWORD_SUCCEEDED',
   SET_ERRORS: 'AUTH/SET_ERRORS',
   RESET_FORM: 'AUTH/RESET_FORM',
   SET_USER: 'AUTH/SET_USER',
@@ -42,7 +42,7 @@ function createAccount(phone: string) {
 
 function createAccountSuccess() {
   return {
-    type: ActionType.CREATE_ACCOUNT_SUCCESS,
+    type: ActionType.CREATE_ACCOUNT_SUCCEEDED,
   }
 }
 
@@ -67,7 +67,7 @@ function loginWithPassword(payload: { phone: string; password: string; }) {
 
 function loginWithPasswordSuccess(payload: { user: AuthUserState['user']; }) {
   return {
-    type: ActionType.LOGIN_WITH_PASSWORD_SUCCESS,
+    type: ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED,
     payload,
   }
 }
@@ -81,7 +81,7 @@ function loginWithSMSCode(payload: { phone: string; SMSCode: string; }) {
 
 function loginWithSMSCodeSuccess(payload: { user: AuthUserState['user']; }) {
   return {
-    type: ActionType.LOGIN_WITH_SMS_CODE_SUCCESS,
+    type: ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED,
     payload,
   }
 }
@@ -95,7 +95,7 @@ function createPassword(payload: { password: string; passwordConfirmation: strin
 
 function createPasswordSuccess() {
   return {
-    type: ActionType.CREATE_PASSWORD_SUCCESS,
+    type: ActionType.CREATE_PASSWORD_SUCCEEDED,
   }
 }
 
@@ -108,7 +108,7 @@ function resetPassword(payload: { phone: string; }) {
 
 function resetPasswordSuccess() {
   return {
-    type: ActionType.RESET_PASSWORD_SUCCESS,
+    type: ActionType.RESET_PASSWORD_SUCCEEDED,
   }
 }
 
