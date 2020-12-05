@@ -1,6 +1,6 @@
 import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
-import { createPromises } from '../../utils/createPromises'
+import { AnyToFix } from 'src/utils/types'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
 import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
@@ -52,92 +52,163 @@ function configureStoreWithAuthUser(
   })
 }
 
+function configureStoreWithUserAccount() {
+  const authUserGateway = new TestAuthUserGateway()
+  const user = createUser()
+
+  const promises = {
+    phoneLookup: Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED),
+    resetPassword: Promise.resolve(null),
+    loginWithPassword: Promise.resolve(user),
+    loginWithSMSCode: Promise.resolve(user),
+  }
+
+  authUserGateway.phoneLookUp.mockReturnValue(promises.phoneLookup)
+  authUserGateway.resetPassword.mockReturnValue(promises.resetPassword)
+  authUserGateway.loginWithPassword.mockReturnValue(promises.loginWithPassword)
+  authUserGateway.loginWithSMSCode.mockReturnValue(promises.loginWithSMSCode)
+
+  const allPromises = Promise.all<AnyToFix>(Object.values(promises))
+
+  const store = configureStoreWithAuthUser({ authUserGateway })
+
+  return {
+    store,
+    authUserGateway,
+    allPromises,
+    user,
+  }
+}
+
 describe('Auth User', () => {
-  describe('before any action', () => {
+  it(`
+    Given initial state
+    When no action is triggered
+    Then user should not being logged
+      And first step should be "phone"
+  `, () => {
     const authUserGateway = new TestAuthUserGateway()
 
     const store = configureStoreWithAuthUser({ authUserGateway })
 
-    it('should isLogging state be false', () => {
-      expect(selectIsLogging(store.getState())).toEqual(false)
-    })
+    expect(selectIsLogging(store.getState())).toEqual(false)
 
-    it('should first step be phone', () => {
-      expect(selectStep(store.getState())).toEqual(LoginSteps.PHONE)
-    })
+    expect(selectStep(store.getState())).toEqual(LoginSteps.PHONE)
   })
 
-  describe('during phone loockup', () => {
+  it(`
+    Given server ask password on phone lookup
+    When user trigger phone lookup
+    Then user should being logged during phone lookup
+      And user should not being logged after request succeeded
+  `, async () => {
     const authUserGateway = new TestAuthUserGateway()
+    const promise = Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED)
+    authUserGateway.phoneLookUp.mockReturnValueOnce(promise)
+
     const store = configureStoreWithAuthUser({ authUserGateway })
 
-    it('should isLogging state be true', () => {
-      authUserGateway.phoneLookUp.mockReturnValueOnce(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
-      store.dispatch(publicActions.phoneLookUp('0600000000'))
-      expect(selectIsLogging(store.getState())).toEqual(true)
-    })
+    store.dispatch(publicActions.phoneLookUp('0600000000'))
 
-    it('should isLogging state be false after password needed response', async () => {
-      authUserGateway.phoneLookUp.mockReturnValueOnce(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
-      await store.dispatch(publicActions.phoneLookUp('0600000000'))
-      expect(selectIsLogging(store.getState())).toEqual(false)
-    })
+    expect(selectIsLogging(store.getState())).toEqual(true)
 
-    it('should isLogging state be false after sms code needed response', async () => {
-      authUserGateway.phoneLookUp.mockReturnValueOnce(Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED))
-      await store.dispatch(publicActions.phoneLookUp('0600000000'))
-      expect(selectIsLogging(store.getState())).toEqual(false)
-    })
+    await promise
 
-    it('should isLogging state be false after not found response', async () => {
-      const { promises, all } = createPromises({
-        phoneLookup: PhoneLookUpResponse.PHONE_NOT_FOUND,
-        createAccount: null,
-      })
-
-      authUserGateway.phoneLookUp.mockReturnValueOnce(promises.phoneLookup)
-      authUserGateway.createAccount.mockReturnValueOnce(promises.createAccount)
-
-      store.dispatch(publicActions.phoneLookUp('0600000000'))
-
-      await all
-
-      expect(selectIsLogging(store.getState())).toEqual(false)
-    })
+    expect(selectIsLogging(store.getState())).toEqual(false)
   })
 
-  describe(
-    'Given user hasn\'t any account. On phone look up with phone not found',
-    () => {
-      const testAuthUserGateway = new TestAuthUserGateway()
-      testAuthUserGateway.phoneLookUp.mockReturnValueOnce(Promise.resolve(PhoneLookUpResponse.PHONE_NOT_FOUND))
-      testAuthUserGateway.createAccount.mockReturnValueOnce(Promise.resolve(null))
-      // @ts-expect-error
-      testAuthUserGateway.loginWithSMSCode.mockReturnValue(Promise.resolve(null))
-      testAuthUserGateway.definePassword.mockReturnValue(Promise.resolve(null))
+  it(`
+    Given server ask SMS Code on phone lookup
+    When user trigger phone lookup
+    Then user should being logged during phone lookup
+      And user should not being logged after request succeeded
+  `, async () => {
+    const authUserGateway = new TestAuthUserGateway()
+    const promise = Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED)
+    authUserGateway.phoneLookUp.mockReturnValueOnce(promise)
 
-      const store = configureStoreWithAuthUser({
-        authUserGateway: testAuthUserGateway,
-      })
-      const phone = '0700000000'
-      store.dispatch(publicActions.phoneLookUp(phone))
+    const store = configureStoreWithAuthUser({ authUserGateway })
 
-      it('should create account', () => {
-        expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
-        expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
-        expect(testAuthUserGateway.createAccount).toHaveBeenCalledTimes(1)
-        expect(testAuthUserGateway.createAccount).toHaveBeenCalledWith({ phone })
-      })
+    store.dispatch(publicActions.phoneLookUp('0600000000'))
 
-      it('should next step be SMS Code', () => {
-        expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
-      })
-    },
-  )
+    expect(selectIsLogging(store.getState())).toEqual(true)
 
-  describe('Given user must define password create password', () => {
+    await promise
+
+    expect(selectIsLogging(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given server does not found user on phone lookup
+    When user trigger phone lookup
+    Then user should being logged during phone lookup
+      And user should not being logged after request succeeded
+  `, async () => {
+    const authUserGateway = new TestAuthUserGateway()
+
+    const promisePhoneLookup = Promise.resolve(PhoneLookUpResponse.PHONE_NOT_FOUND)
+    authUserGateway.phoneLookUp.mockReturnValueOnce(promisePhoneLookup)
+
+    const promiseCreateAccount = Promise.resolve(null)
+    authUserGateway.createAccount.mockReturnValueOnce(promiseCreateAccount)
+
+    const store = configureStoreWithAuthUser({ authUserGateway })
+
+    store.dispatch(publicActions.phoneLookUp('0600000000'))
+
+    expect(selectIsLogging(store.getState())).toEqual(true)
+
+    await Promise.all([promisePhoneLookup, promiseCreateAccount])
+
+    expect(selectIsLogging(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given user hasn't any account and server return not found on phone lookup
+    When user trigger phone lookup
+    Then should create account
+      And next step should be SMS Code
+  `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
-    testAuthUserGateway.definePassword.mockReturnValue(Promise.resolve(null))
+
+    const promises = {
+      phoneLookup: Promise.resolve(PhoneLookUpResponse.PHONE_NOT_FOUND),
+      createAccount: Promise.resolve(null),
+      loginWithSMSCode: Promise.resolve(null),
+      definePassword: Promise.resolve(null),
+    }
+
+    testAuthUserGateway.phoneLookUp.mockReturnValueOnce(promises.phoneLookup)
+    testAuthUserGateway.createAccount.mockReturnValueOnce(promises.createAccount)
+    // @ts-expect-error
+    testAuthUserGateway.loginWithSMSCode.mockReturnValue(promises.loginWithSMSCode)
+    testAuthUserGateway.definePassword.mockReturnValue(promises.definePassword)
+
+    const store = configureStoreWithAuthUser({
+      authUserGateway: testAuthUserGateway,
+    })
+    const phone = '0700000000'
+
+    store.dispatch(publicActions.phoneLookUp(phone))
+
+    await Promise.all(Object.values(promises))
+
+    expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
+    expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
+    expect(testAuthUserGateway.createAccount).toHaveBeenCalledTimes(1)
+    expect(testAuthUserGateway.createAccount).toHaveBeenCalledWith({ phone })
+
+    expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
+  })
+
+  it(`
+    Given user must define password
+    When user want to create password
+    Then assword should be created
+  `, async () => {
+    const testAuthUserGateway = new TestAuthUserGateway()
+    const promise = Promise.resolve(null)
+    testAuthUserGateway.definePassword.mockReturnValue(promise)
 
     const initialState = {
       authUser: {
@@ -148,232 +219,363 @@ describe('Auth User', () => {
       },
     }
 
-    const store = configureStoreWithAuthUser({
-      authUserGateway: testAuthUserGateway,
-    }, initialState)
+    const store = configureStoreWithAuthUser({ authUserGateway: testAuthUserGateway }, initialState)
 
-    it('should create password', async () => {
-      const password = 'abcdefghi'
-      const passwordConfirmation = 'abcdefghi'
-      await store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
-      expect(selectStep(store.getState())).toEqual(null)
-    })
+    const password = 'abcdefghi'
+    const passwordConfirmation = 'abcdefghi'
+
+    store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
+
+    await promise
+
+    expect(selectStep(store.getState())).toEqual(null)
   })
 
-  describe('Given user has an account but not validated', () => {
+  it(`
+    Given user has an account but not validated (server return SMS code needed)
+    When user trigger phone lookup
+    Then step should be SMS Code after request succeeded
+  `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
-    testAuthUserGateway.phoneLookUp.mockReturnValueOnce(Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED))
+    const promise = Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED)
+    testAuthUserGateway.phoneLookUp.mockReturnValueOnce(promise)
 
     const store = configureStoreWithAuthUser({
       authUserGateway: testAuthUserGateway,
     })
     const phone = '0700000000'
+
     store.dispatch(publicActions.phoneLookUp(phone))
 
-    it('should step be SMS code', () => {
-      expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
-    })
+    await promise
+
+    expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
   })
 
-  describe('Given user as an account', () => {
-    const authUserGateway = new TestAuthUserGateway()
-    const user = createUser()
+  it(`
+    Given user as an account
+    When user trigger phone lookup
+    Then step should be password after request succeeded
+  `, async () => {
+    const { store, allPromises } = configureStoreWithUserAccount()
 
-    authUserGateway.phoneLookUp.mockReturnValue(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
-    authUserGateway.resetPassword.mockReturnValue(Promise.resolve(null))
-    authUserGateway.loginWithPassword.mockReturnValue(Promise.resolve(user))
-    authUserGateway.loginWithSMSCode.mockReturnValue(Promise.resolve(user))
+    const phone = '0700000000'
+    store.dispatch(publicActions.phoneLookUp(phone))
 
-    it('should step be password after phone lock up', async () => {
-      const store = configureStoreWithAuthUser({ authUserGateway })
-      const phone = '0700000000'
-      await store.dispatch(publicActions.phoneLookUp(phone))
-      expect(selectStep(store.getState())).toEqual(LoginSteps.PASSWORD)
-    })
+    await allPromises
 
-    it('should reset password and next step should be SMS code', async () => {
-      const store = configureStoreWithAuthUser({ authUserGateway })
-      const phone = '0700000000'
-      await store.dispatch(publicActions.resetPassword({ phone }))
+    expect(selectStep(store.getState())).toEqual(LoginSteps.PASSWORD)
+  })
 
-      expect(authUserGateway.resetPassword).toHaveBeenCalledTimes(1)
-      expect(authUserGateway.resetPassword).toHaveBeenCalledWith({ phone })
-      expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
-    })
+  it(`
+    Given user as an account
+    When user want to reset password
+    Then password reset gateway should be called once with phone number
+      And next step should be SMS Code
+  `, async () => {
+    const { store, allPromises, authUserGateway } = configureStoreWithUserAccount()
 
-    describe('when user is logged with password', () => {
-      const store = configureStoreWithAuthUser({ authUserGateway })
-      const phone = '0700000000'
-      const password = 'abcdefghi'
+    const phone = '0700000000'
+    store.dispatch(publicActions.resetPassword({ phone }))
 
-      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+    await allPromises
 
-      it('should be logged', () => {
-        expect(selectIsLogged(store.getState())).toEqual(true)
-      })
+    expect(authUserGateway.resetPassword).toHaveBeenCalledTimes(1)
+    expect(authUserGateway.resetPassword).toHaveBeenCalledWith({ phone })
 
-      it('should have user', () => {
-        expect(selectUser(store.getState())).toEqual(user)
-      })
+    expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
+  })
 
-      it('should step be null', () => {
-        expect(selectStep(store.getState())).toEqual(null)
-      })
+  it(`
+    Given user as an account
+    When user want to login with password
+    Then user should being logged during request
+    And should be logged after request succeeded
+      And should have user
+      should step be null
+  `, async () => {
+    const { store, allPromises, user } = configureStoreWithUserAccount()
+    const phone = '0700000000'
+    const password = 'abcdefghi'
 
-      // TODO
-      //   it('should trigger onLogin', () => {
-      //     expect(onLoginSubscribe).toHaveBeenCalledTimes(1)
-      //   })
-    })
+    store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
-    describe('when user is logged with SMS Code', () => {
-      const store = configureStoreWithAuthUser({ authUserGateway })
-      const phone = '0700000000'
-      const SMSCode = 'abc'
+    // TODO
+    // expect(selectIsLogging(store.getState())).toEqual(true)
 
-      store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+    await allPromises
 
-      it('should be logged', () => {
-        expect(selectIsLogged(store.getState())).toEqual(true)
-      })
+    expect(selectIsLogged(store.getState())).toEqual(true)
 
-      it('should have user', () => {
-        expect(selectUser(store.getState())).toEqual(user)
-      })
+    expect(selectUser(store.getState())).toEqual(user)
 
-      it('should step be create password', () => {
-        expect(selectStep(store.getState())).toEqual(LoginSteps.CREATE_PASSWORD)
-        expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledTimes(1)
-        expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledWith({ phone, SMSCode })
-      })
+    expect(selectStep(store.getState())).toEqual(null)
+  })
 
-      // TODO
-      //   it('should trigger onLogin', () => {
-      //     expect(onLoginSubscribe).toHaveBeenCalledTimes(1)
-      //   })
-    })
+  it(`
+    Given user as an account
+    When user want to login with SMS Code
+    Then user should being logged during request
+    And should be logged after request succeeded
+      And should have user
+      should step should be create password
+  `, async () => {
+    const { store, allPromises, user, authUserGateway } = configureStoreWithUserAccount()
+    const phone = '0700000000'
+    const SMSCode = 'abc'
 
-    // it.skip('should user be null on logout and be call logout gateway on logout', () => {
-    //   // TODO
-    // })
+    store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+
+    await allPromises
+
+    expect(selectIsLogged(store.getState())).toEqual(true)
+
+    expect(selectUser(store.getState())).toEqual(user)
+
+    expect(selectStep(store.getState())).toEqual(LoginSteps.CREATE_PASSWORD)
+    expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledTimes(1)
+    expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledWith({ phone, SMSCode })
   })
 
   describe('Phone validation: phone look up', () => {
-    const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.phoneLookUp.mockReturnValue(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
+    function configureStoreWithPasswordNeeded() {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.phoneLookUp.mockReturnValue(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+      const store = configureStoreWithAuthUser({ authUserGateway })
 
-    it('should haven\'t any error at first', () => {
+      return {
+        store,
+      }
+    }
+
+    it(`
+      Given initial state
+      When no action is triggered
+      Then should haven't any error
+    `, () => {
+      const { store } = configureStoreWithPasswordNeeded()
+
       expect(selectErrors(store.getState())).toEqual({})
     })
 
-    it('should have "required" error', () => {
+    it(`
+      Given initial state
+      When user set a empty phone number
+      Then should have phone error as required phone
+    `, () => {
+      const { store } = configureStoreWithPasswordNeeded()
+
       store.dispatch(publicActions.phoneLookUp(''))
+
       expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.REQUIRED })
     })
 
-    it('should have "invalid format" error', () => {
+    it(`
+      Given initial state
+      When user set an invalid phone number with letter
+      Then should have phone error as invalid format
+    `, () => {
+      const { store } = configureStoreWithPasswordNeeded()
+
       store.dispatch(publicActions.phoneLookUp('abc'))
+
       expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.INVALID_FORMAT })
     })
 
-    it('should haven\'t any error on success after previous errors', () => {
+    it(`
+      Given initial state
+      When user set an invalid phone number with letter
+        And correct his error with a valid phone number
+      Then should first have phone error as invalid format
+        And error should disappear after correction
+    `, () => {
+      const { store } = configureStoreWithPasswordNeeded()
+
+      store.dispatch(publicActions.phoneLookUp('abc'))
+
+      expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.INVALID_FORMAT })
+
       store.dispatch(publicActions.phoneLookUp('0600000000'))
+
       expect(selectErrors(store.getState())).toEqual({})
     })
   })
 
   describe('Phone validation: reset password', () => {
-    const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.resetPassword.mockReturnValue(Promise.resolve(null))
+    function configureStoreWithResetPassword() {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.resetPassword.mockReturnValue(Promise.resolve(null))
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+      const store = configureStoreWithAuthUser({ authUserGateway })
 
-    it('should haven\'t any error at first', () => {
+      return { store }
+    }
+
+    it(`
+      Given initial state
+      When no action is triggered
+      Then should haven't any error
+    `, () => {
+      const { store } = configureStoreWithResetPassword()
+
       expect(selectErrors(store.getState())).toEqual({})
     })
 
-    it('should have "required" error', () => {
+    it(`
+      Given initial state
+      When user want to reset password with an empty phone number
+      Then should have phone error as required phone
+    `, () => {
+      const { store } = configureStoreWithResetPassword()
+
       store.dispatch(publicActions.resetPassword({ phone: '' }))
+
       expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.REQUIRED })
     })
 
-    it('should have "invalid format" error', () => {
+    it(`
+      Given initial state
+      When user want to reset password with an invalid empty phone number with letters
+      Then should have phone error as invalid format
+    `, () => {
+      const { store } = configureStoreWithResetPassword()
+
       store.dispatch(publicActions.resetPassword({ phone: 'abc' }))
+
       expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.INVALID_FORMAT })
     })
 
-    it('should haven\'t any error on success after previous errors', () => {
+    it(`
+      Given initial state
+      When user want to reset password with an invalid empty phone number with letters
+        And correct his error with a valid phone number
+      Then should first have phone error as invalid format
+        And error should disappear after correction
+    `, () => {
+      const { store } = configureStoreWithResetPassword()
+
+      store.dispatch(publicActions.resetPassword({ phone: 'abc' }))
+
+      expect(selectErrors(store.getState())).toEqual({ phone: PhoneValidationsError.INVALID_FORMAT })
+
       store.dispatch(publicActions.resetPassword({ phone: '0600000000' }))
+
       expect(selectErrors(store.getState())).toEqual({})
     })
   })
 
   describe('Password validations', () => {
-    const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.definePassword.mockReturnValue(Promise.resolve(null))
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    function configureStoreWithDefinedPassword() {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.definePassword.mockReturnValue(Promise.resolve(null))
 
-    it('should have no error at first', () => {
-      expect(store.getState().authUser.errors).toEqual({})
+      const store = configureStoreWithAuthUser({ authUserGateway })
+
+      return { store }
+    }
+
+    it(`
+      Given initial state
+      When no action is triggered
+      Then should have no error at first
+    `, () => {
+      const { store } = configureStoreWithDefinedPassword()
+      expect(selectErrors(store.getState())).toEqual({})
     })
 
-    it('define password: should have "required" error', () => {
+    it(`
+      Given initial state
+      When user defined empty password
+        And user defined an empty password confirmation
+      Then should have an error as required password
+        And should have an error as required password confirmation
+    `, () => {
+      const { store } = configureStoreWithDefinedPassword()
+
       store.dispatch(publicActions.createPassword({ password: '', passwordConfirmation: '' }))
 
-      expect(store.getState().authUser.errors).toEqual({
+      expect(selectErrors(store.getState())).toEqual({
         password: PasswordValidationsError.REQUIRED,
         passwordConfirmation: PasswordConfirmationValidationsError.REQUIRED,
       })
     })
 
-    it('define password: should have "too sort" error', () => {
+    it(`
+      Given initial state
+      When user defined password too short
+        And user defined a password confirmation too short
+      Then should have an error as too short password
+        And should have an error as too short password confirmation
+    `, () => {
+      const { store } = configureStoreWithDefinedPassword()
+
       store.dispatch(publicActions.createPassword({ password: 'abc', passwordConfirmation: 'abc' }))
 
-      expect(store.getState().authUser.errors).toEqual({
+      expect(selectErrors(store.getState())).toEqual({
         password: PasswordValidationsError.PASSWORD_TOO_SHORT,
         passwordConfirmation: undefined,
       })
     })
 
-    it('define password: should have "no match" error', () => {
+    it(`
+      Given initial state
+      When user defined a valid password
+        And user defined a password confirmation different than password
+      Then should have an error as password confirmation doesn't match password
+    `, () => {
+      const { store } = configureStoreWithDefinedPassword()
+
       store.dispatch(publicActions.createPassword({ password: 'abcdefghi', passwordConfirmation: 'a' }))
 
-      expect(store.getState().authUser.errors).toEqual({
+      expect(selectErrors(store.getState())).toEqual({
         passwordConfirmation: PasswordConfirmationValidationsError.PASSWORD_CONFIRMATION_NOT_MATCH,
       })
     })
 
-    it('define password: should haven\'t any error', () => {
-      store.dispatch(publicActions.createPassword({ password: 'abcdefghi', passwordConfirmation: 'abcdefghi' }))
+    it(`
+      Given initial state
+      When user defined empty password
+        And user defined an empty password confirmation
+        And user correct his error
+      Then should first have an error as required password and password confirmation
+        And error should disappear after correction
+    `, () => {
+      const { store } = configureStoreWithDefinedPassword()
 
-      expect(store.getState().authUser.errors).toEqual({})
-    })
-  })
+      store.dispatch(publicActions.createPassword({ password: '', passwordConfirmation: '' }))
 
-  describe('Auth user bad credential', () => {
-    it('should show invalid password', async () => {
-      const authUserGateway = new TestAuthUserGateway()
-      authUserGateway.loginWithPassword.mockImplementationOnce(() => { throw new AuthUserErrorUnauthorized() })
-      const store = configureStoreWithAuthUser({ authUserGateway })
-
-      const phone = '0600000000'
-      let password = ''
-      await store.dispatch(publicActions.loginWithPassword({ phone, password }))
-
-      expect(store.getState().authUser.errors).toEqual({
+      expect(selectErrors(store.getState())).toEqual({
         password: PasswordValidationsError.REQUIRED,
+        passwordConfirmation: PasswordConfirmationValidationsError.REQUIRED,
       })
 
-      password = 'xxx'
-      await store.dispatch(publicActions.loginWithPassword({ phone, password }))
+      store.dispatch(publicActions.createPassword({ password: 'abcdefgh', passwordConfirmation: 'abcdefgh' }))
 
-      expect(store.getState().authUser.errors).toEqual({
-        password: PasswordValidationsError.INVALID_PASSWORD,
-      })
+      expect(selectErrors(store.getState())).toEqual({})
     })
   })
+
+  it(`
+    Given user has an account
+    When user set bad credential
+    Then should have error as invalid password
+  `, async () => {
+    const authUserGateway = new TestAuthUserGateway()
+    authUserGateway.loginWithPassword.mockImplementationOnce(() => { throw new AuthUserErrorUnauthorized() })
+    const store = configureStoreWithAuthUser({ authUserGateway })
+
+    const phone = '0600000000'
+    const password = 'xxx'
+
+    store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+    expect(selectErrors(store.getState())).toEqual({
+      password: PasswordValidationsError.INVALID_PASSWORD,
+    })
+  })
+
+  // TODO CONTINUE
 
   it('should show invalid SMS Code', async () => {
     const authUserGateway = new TestAuthUserGateway()
