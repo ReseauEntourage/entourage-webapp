@@ -181,8 +181,8 @@ export function NavTakeAction(props: NavTakeActionProps) {
             />
             <IconExternalLink
               icon={<GroupIcon />}
-              label="Participer à nos évènements"
-              link="https://www.facebook.com/pg/EntourageReseauCivique/events/?ref=page_internal"
+              label="Entourer une personne isolée"
+              link="https://entourage-asso.typeform.com/to/OIO0bI"
             />
             <IconExternalLink
               icon={<FavoriteIcon />}
