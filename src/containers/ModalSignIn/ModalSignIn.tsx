@@ -1,19 +1,26 @@
 import Box from '@material-ui/core/Box'
-import React, { useCallback, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { TextField, TextFieldPassword } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
-import { api } from 'src/core/api'
+import { useOnLogin } from 'src/core/events'
+import {
+  selectStep,
+  authUserActions,
+  selectErrors,
+  selectLoginStepIsCompleted,
+} from 'src/core/useCases/authUser'
+import { texts } from 'src/i18n'
 import { useIsDesktop } from 'src/styles'
-import { useDefinePasswordStep, DefinePasswordField } from './DefinePassword'
-import { usePhoneStep, PhoneField } from './Phone'
-import { useSecretStep, SecretField } from './Secret'
+import * as S from './ModalSignin.styles'
 
-export type Step =
-  | 'phone'
-  | 'code-SMS'
-  | 'password'
-  | 'define-password'
-
-export type SetNextStep = (step: Step) => void
+type FormFields = {
+  phone: string;
+  password: string;
+  SMSCode: string;
+  passwordConfirmation: string;
+}
 
 interface ModalSignInProps {
   onSuccess?: () => void;
@@ -21,70 +28,84 @@ interface ModalSignInProps {
 
 export function ModalSignIn(props: ModalSignInProps) {
   const { onSuccess } = props
-  const [step, setStep] = useState<Step>('phone')
-  const { phoneForm, onValidate: onValidatePhoneStep } = usePhoneStep(setStep)
-  const { secretForm, onValidate: onValidateSecretStep } = useSecretStep(setStep, phoneForm)
-  const { definePasswordForm, onValidate: onValidateDefinePasswordStep } = useDefinePasswordStep()
+  const dispatch = useDispatch()
+  const step = useSelector(selectStep)
+  const errors = useSelector(selectErrors)
+  const closeOnNextRender = useSelector(selectLoginStepIsCompleted)
+  const phoneForm = useForm<FormFields>()
+
   const isDesktop = useIsDesktop()
 
-  const onValidate = useCallback(async () => {
-    if (step === 'phone') {
-      return onValidatePhoneStep()
-    } if (step === 'password' || step === 'code-SMS') {
-      const isValid = await onValidateSecretStep()
-      if (onSuccess && isValid) {
-        onSuccess()
-      }
+  useEffect(() => {
+    return () => {
+      dispatch(authUserActions.resetForm())
+    }
+  }, [dispatch, onSuccess])
 
-      return isValid
-    } if (step === 'define-password') {
-      return onValidateDefinePasswordStep()
+  useOnLogin(() => {
+    if (onSuccess) {
+      onSuccess()
+    }
+  })
+
+  const onValidate = () => {
+    const { phone, password, SMSCode, passwordConfirmation } = phoneForm.getValues()
+
+    if (step === 'PHONE') {
+      dispatch(authUserActions.phoneLookUp(phone))
+    } else if (step === 'PASSWORD') {
+      dispatch(authUserActions.loginWithPassword({ phone, password }))
+    } else if (step === 'SMS_CODE') {
+      dispatch(authUserActions.loginWithSMSCode({ phone, SMSCode }))
+    } else if (step === 'CREATE_PASSWORD') {
+      dispatch(authUserActions.createPassword({ password, passwordConfirmation }))
     }
 
     return false
-  }, [
-    onValidateDefinePasswordStep,
-    onValidatePhoneStep,
-    onValidateSecretStep,
-    step,
-    onSuccess,
-  ])
+  }
 
-  const resetPassword = React.useCallback(async () => {
+  const resetPassword = () => {
     const { phone } = phoneForm.getValues()
-    secretForm.reset()
-    if (phone) {
-      await api.request({
-        name: '/users/me/code PATCH',
-        data: {
-          code: { action: 'regenerate' },
-          user: { phone },
-        },
-      })
-      setStep('code-SMS')
-    }
-  }, [phoneForm, secretForm])
+    dispatch(authUserActions.resetPassword({ phone }))
+  }
 
   const validateLabel = (() => {
     switch (step) {
-      case 'phone':
+      case 'PHONE':
         return 'Valider le numéro'
-      case 'code-SMS':
+      case 'SMS_CODE':
         return 'Valider le code SMS'
-      case 'define-password':
+      case 'CREATE_PASSWORD':
         return 'Valider le mot de passe'
-      case 'password':
+      case 'PASSWORD':
         return 'Connexion'
+      case null:
+        // do nothing, login is completed
+        return ''
+        break
       default:
         throw new Error('UNHANDLED')
     }
   })()
 
-  const allowCancel = step !== 'define-password'
+  const allowCancel = step !== 'CREATE_PASSWORD'
+  const showPasswordField = step === 'PASSWORD'
+  const showSMSCodeField = step === 'SMS_CODE' || step === 'CREATE_PASSWORD'
+  const showForgottenPasswordLink = step === 'PASSWORD' || step === 'SMS_CODE'
+  const showDefinePasswordFields = step === 'CREATE_PASSWORD'
+
+  const passwordError = errors?.password === 'UNKNOWN_SERVER_ERROR'
+    ? errors?.passwordUnknowServerError
+    : errors?.password && texts.form[errors?.password]
+
+  const passwordConfirmationError = errors?.passwordConfirmation === 'UNKNOWN_SERVER_ERROR'
+    ? errors?.passwordUnknowServerError
+    : errors?.passwordConfirmation && texts.form[errors?.passwordConfirmation]
 
   return (
     <Modal
       cancel={allowCancel}
+      closeOnNextRender={closeOnNextRender}
       onValidate={onValidate}
       title="Connexion / Inscription"
       validateLabel={validateLabel}
@@ -102,9 +123,62 @@ export function ModalSignIn(props: ModalSignInProps) {
             width="200"
           />
         )}
-        <PhoneField phoneForm={phoneForm} step={step} />
-        <SecretField resetPassword={resetPassword} secretForm={secretForm} step={step} />
-        <DefinePasswordField definePasswordForm={definePasswordForm} step={step} />
+        <TextField
+          autoFocus={true}
+          disabled={step !== 'PHONE'}
+          errorText={errors?.phone && texts.form[errors?.phone]}
+          fullWidth={true}
+          inputRef={phoneForm.register}
+          label="Téléphone"
+          name="phone"
+          type="text"
+        />
+        {showPasswordField && (
+          <TextFieldPassword
+            autoFocus={true}
+            disabled={step !== 'PASSWORD'}
+            errorText={passwordError}
+            fullWidth={true}
+            inputRef={phoneForm.register}
+            label="Entre votre mot de passe (au moins 8 caractères)"
+            name="password"
+          />
+        )}
+        {showSMSCodeField && (
+          <TextFieldPassword
+            autoFocus={true}
+            disabled={step !== 'SMS_CODE'}
+            errorText={errors?.code && texts.form[errors?.code]}
+            fullWidth={true}
+            inputRef={phoneForm.register}
+            label="Entrez le code d\'activation reçu"
+            name="SMSCode"
+          />
+        )}
+        {showForgottenPasswordLink && (
+          <S.ForgottenPasswordLink onClick={resetPassword}>
+            {step === 'PASSWORD' ? 'Mot de passe oublié ?' : "Renvoyer le code d'activation"}
+          </S.ForgottenPasswordLink>
+        )}
+        {showDefinePasswordFields && (
+          <>
+            <TextFieldPassword
+              autoFocus={true}
+              errorText={passwordError}
+              fullWidth={true}
+              inputRef={phoneForm.register}
+              label="Choisissez votre mot de passe"
+              name="password"
+            />
+            <TextFieldPassword
+              errorText={passwordConfirmationError}
+              fullWidth={true}
+              inputRef={phoneForm.register}
+              label="Confirmez votre mot de passe"
+              name="passwordConfirmation"
+            />
+          </>
+        )}
       </Box>
     </Modal>
   )
