@@ -176,7 +176,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
         isUpdatingJoinStatus: false,
         cacheItems: produce(state.cacheItems, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
-          item.joinStatus = 'pending'
+          item.joinStatus = action.payload.status
         }),
       }
     }

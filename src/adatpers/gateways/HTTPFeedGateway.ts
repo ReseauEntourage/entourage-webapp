@@ -73,14 +73,16 @@ export class HTTPFeedGateway implements IFeedGateway {
     })
   }
 
-  joinEntourage(entourageUuid: string): Promise<void | null> {
+  joinEntourage: IFeedGateway['joinEntourage'] = (entourageUuid: string) => {
     return api.request({
       name: '/entourages/:entourageId/users POST',
       pathParams: {
         entourageUuid,
       },
-    }).then(() => {
-      return null
+    }).then((data) => {
+      return {
+        status: data.data.user.status,
+      }
     })
   }
 

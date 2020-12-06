@@ -1,3 +1,4 @@
+import { FeedJoinStatus } from 'src/core/api'
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
 import { FeedState } from './feed.reducer'
 
@@ -91,7 +92,7 @@ function joinEntourage(payload: { entourageUuid: string; }) {
   }
 }
 
-function joinEntourageSucceeded(payload: { entourageUuid: string; }) {
+function joinEntourageSucceeded(payload: { entourageUuid: string; status: FeedJoinStatus; }) {
   return {
     type: ActionType.JOIN_ENTOURAGE_SUCCEEDED,
     payload,

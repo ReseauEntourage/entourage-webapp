@@ -220,7 +220,6 @@ describe('Feed Item', () => {
       }
 
       const feedGateway = new TestFeedGateway()
-      feedGateway.joinEntourage.mockDeferredValueOnce(null)
 
       const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
 
@@ -254,6 +253,8 @@ describe('Feed Item', () => {
       const { store, feedGateway } = configureStoreWithJoinRequestNotRequested()
       const entourageUuid = 'abc'
 
+      feedGateway.joinEntourage.mockDeferredValueOnce({ status: 'accepted' })
+
       store.dispatch(publicActions.joinEntourage({ entourageUuid }))
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
@@ -265,7 +266,7 @@ describe('Feed Item', () => {
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
-      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.PENDING)
+      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.ACCEPTED)
     })
   })
 

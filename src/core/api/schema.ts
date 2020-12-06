@@ -187,8 +187,10 @@ export const schema = {
     params: null,
     data: null,
     response: {} as {
-      id: number;
-      status: FeedJoinStatus;
+      user: {
+        id: number;
+        status: FeedJoinStatus;
+      };
     },
   },
   '/entourages/:entourageId/users/:userId PUT': {

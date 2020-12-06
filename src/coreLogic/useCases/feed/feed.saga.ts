@@ -74,9 +74,11 @@ function* joinEntourage(action: Actions['joinEntourage']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { feedGateway } = dependencies
   const { entourageUuid } = action.payload
-
-  yield call(feedGateway.joinEntourage, entourageUuid)
-  yield put(actions.joinEntourageSucceeded({ entourageUuid }))
+  const response: CallReturnType<typeof feedGateway.joinEntourage> = yield call(
+    feedGateway.joinEntourage,
+    entourageUuid,
+  )
+  yield put(actions.joinEntourageSucceeded({ entourageUuid, status: response.status }))
 }
 
 function* leaveEntourage(action: Actions['leaveEntourage']) {

@@ -1,3 +1,4 @@
+import { FeedJoinStatus } from 'src/core/api'
 import { FeedState, FeedItem } from './feed.reducer'
 
 export interface IFeedGateway {
@@ -17,6 +18,6 @@ export interface IFeedGateway {
     cityName: string;
   }>;
 
-  joinEntourage(entourageUuid: string): Promise<void | null>;
+  joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;
   leaveEntourage(entourageUuid: string, userId: number): Promise<void | null>;
 }
