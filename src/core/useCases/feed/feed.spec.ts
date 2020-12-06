@@ -61,7 +61,7 @@ describe('Feed', () => {
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
   })
@@ -89,7 +89,7 @@ describe('Feed', () => {
     store.dispatch(publicActions.retrieveFeed())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectFeedIsIdle(store.getState())).toEqual(false)
   })
@@ -156,7 +156,7 @@ describe('Feed', () => {
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc])
 
@@ -192,7 +192,7 @@ describe('Feed', () => {
     store.dispatch(publicActions.setFilters(nextFilters))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
@@ -243,7 +243,7 @@ describe('Feed', () => {
     store.dispatch(publicActions.retrieveFeedNextPage())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
@@ -273,7 +273,7 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.retrieveFeedNextPage())
 
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
 
@@ -297,7 +297,7 @@ it(`
   store.dispatch(publicActions.retrieveFeed())
 
   feedGateway.retrieveFeedItems.resolveDeferredValue()
-  await store.waitForSagaEnd()
+  await store.waitForActionEnd()
 
   expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
 })

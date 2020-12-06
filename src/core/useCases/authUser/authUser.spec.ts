@@ -116,7 +116,7 @@ describe('Auth User', () => {
     expect(selectIsLogging(store.getState())).toEqual(true)
 
     authUserGateway.phoneLookUp.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -137,7 +137,7 @@ describe('Auth User', () => {
     expect(selectIsLogging(store.getState())).toEqual(true)
 
     authUserGateway.phoneLookUp.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -164,7 +164,7 @@ describe('Auth User', () => {
     expect(selectIsLogging(store.getState())).toEqual(true)
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -205,7 +205,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.phoneLookUp(phone))
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
     expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
@@ -240,7 +240,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
 
     testAuthUserGateway.definePassword.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(null)
   })
@@ -259,7 +259,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.phoneLookUp(phone))
 
     testAuthUserGateway.phoneLookUp.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
   })
@@ -275,7 +275,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.phoneLookUp(phone))
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.PASSWORD)
   })
@@ -292,7 +292,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.resetPassword({ phone }))
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(authUserGateway.resetPassword).toHaveBeenCalledTimes(1)
     expect(authUserGateway.resetPassword).toHaveBeenCalledWith({ phone })
@@ -318,7 +318,7 @@ describe('Auth User', () => {
     // expect(selectIsLogging(store.getState())).toEqual(true)
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectIsLogged(store.getState())).toEqual(true)
 
@@ -345,7 +345,7 @@ describe('Auth User', () => {
     // expect(selectIsLogging(store.getState())).toEqual(true)
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectIsLogged(store.getState())).toEqual(true)
 
@@ -594,7 +594,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
     authUserGateway.loginWithPassword.rejectDeferredValue(new AuthUserErrorUnauthorized())
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(selectErrors(store.getState())).toEqual({
       password: PasswordValidationsError.INVALID_PASSWORD,
@@ -620,7 +620,7 @@ describe('Auth User', () => {
     store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
     authUserGateway.loginWithSMSCode.rejectDeferredValue(new AuthUserErrorUnauthorized())
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(store.getState().authUser.errors).toEqual({
       code: SMSCodeValidationsError.INVALID_SMS_CODE,
@@ -640,7 +640,7 @@ describe('Auth User', () => {
     }))
 
     authUserGateway.definePassword.rejectDeferredValue(new AuthUserErrorUnkownPasswordError('foo error'))
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(store.getState().authUser.errors).toEqual({
       password: PasswordValidationsError.UNKNOWN_SERVER_ERROR,
@@ -722,7 +722,7 @@ describe('Auth User', () => {
       store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
       authUserGateway.loginWithPassword.resolveDeferredValue()
-      await store.waitForSagaEnd()
+      await store.waitForActionEnd()
 
       expect(authUserTokenStorage.setToken).toHaveBeenNthCalledWith(1, user.token)
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)
@@ -744,7 +744,7 @@ describe('Auth User', () => {
       store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
       authUserGateway.loginWithSMSCode.resolveDeferredValue()
-      await store.waitForSagaEnd()
+      await store.waitForActionEnd()
 
       expect(authUserTokenStorage.setToken).toHaveBeenNthCalledWith(1, user.token)
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)

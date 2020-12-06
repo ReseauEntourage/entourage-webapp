@@ -108,7 +108,7 @@ describe('Feed Item', () => {
     store.dispatch(publicActions.retrieveFeed())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     const nextItems = selectFeedItems(store.getState())
     const nextSelectedItem = selectCurrentItem(store.getState())
@@ -133,7 +133,7 @@ describe('Feed Item', () => {
     store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     const nextSelectedItem = selectCurrentItem(store.getState())
 
@@ -192,7 +192,7 @@ describe('Feed Item', () => {
     store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
-    await store.waitForSagaEnd()
+    await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
@@ -262,7 +262,7 @@ describe('Feed Item', () => {
       expect(feedGateway.joinEntourage).toHaveBeenCalledWith(entourageUuid)
 
       feedGateway.joinEntourage.resolveDeferredValue()
-      await store.waitForSagaEnd()
+      await store.waitForActionEnd()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
@@ -327,7 +327,7 @@ describe('Feed Item', () => {
       expect(feedGateway.leaveEntourage).toHaveBeenCalledWith(entourageUuid, 1)
 
       feedGateway.leaveEntourage.resolveDeferredValue()
-      await store.waitForSagaEnd()
+      await store.waitForActionEnd()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
