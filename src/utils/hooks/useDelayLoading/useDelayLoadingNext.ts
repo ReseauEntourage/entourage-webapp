@@ -50,21 +50,3 @@ export function useDelayLoadingNext(loading: boolean, options: Options = default
 
   return loadingRef.current
 }
-
-// export function useDelayLoadingNext(loading: boolean, options: Options = defaultOptions): boolean {
-//   const [internalLoading, setInternalLoading] = useState(loading)
-
-//   const loading$ = useMemo(() => {
-//     const loadingSubject = new Subject<boolean>()
-
-//     loadingSubject.pipe().subscribe(setInternalLoading)
-
-//     return loadingSubject
-//   }, [])
-
-//   useEffect(() => {
-
-//   }, [])
-
-//   return internalLoading
-// }
