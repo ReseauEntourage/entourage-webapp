@@ -2,7 +2,7 @@ import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
 import { useDispatch, useStore } from 'react-redux'
 import { Modal } from 'src/components/Modal'
-import { selectJoinRequestStatus, feedActions } from 'src/coreLogic/useCases/feed'
+import { selectJoinRequestStatus, feedActions } from 'src/core/useCases/feed'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
 

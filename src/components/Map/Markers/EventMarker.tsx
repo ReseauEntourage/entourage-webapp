@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { constants } from 'src/constants'
-import { selectFeedFilters } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { getPixelPerMeter } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'

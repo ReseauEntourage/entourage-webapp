@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { useActionId } from '../containers/MapContainer/useActionId'
 import { MapContainer } from 'src/containers/MapContainer'
-import { feedActions } from 'src/coreLogic/useCases/feed'
+import { feedActions } from 'src/core/useCases/feed'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}

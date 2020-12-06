@@ -8,7 +8,7 @@ import SpaIcon from '@material-ui/icons/Spa'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { POICategory } from 'src/core/api'
-import { selectFeedFilters } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { BaseMarker } from './BaseMarker'
 

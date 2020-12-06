@@ -74,13 +74,25 @@ module.exports = {
     'no-multiple-empty-lines': [2, { "max": 1 }], // prettier like
     'no-restricted-imports': ['error', {
       'patterns': [
+        'src/*/*',
+        '!src/adapters/**/*',
+        '!src/components/*',
         'src/components/*/*',
+        '!src/constants',
         'src/constants/*',
+        '!src/containers/*',
         'src/containers/*/*',
+        '!src/core/*',
         'src/core/*/*',
+        '!src/core/useCases/*',
+        'src/core/useCases/*/*',
+        '!src/core/utils/*',
+        '!src/hooks/*',
+        '!src/i18n',
         'src/i18n/*',
-        'src/pages',
+        '!src/styles',
         'src/styles/*',
+        '!src/utils/*',
         'src/utils/*/*',
       ]
     }],

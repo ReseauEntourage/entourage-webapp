@@ -1,6 +1,6 @@
 import { constants } from 'src/constants'
 import { api } from 'src/core/api'
-import { IFeedGateway } from 'src/coreLogic/useCases/feed'
+import { IFeedGateway } from 'src/core/useCases/feed'
 import { assertCondition } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 

@@ -2,7 +2,7 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
-import { selectFeedFilters, feedActions, selectFeedIsIdle } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters, feedActions, selectFeedIsIdle } from 'src/core/useCases/feed'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 import * as S from './SearchCity.styles'
 

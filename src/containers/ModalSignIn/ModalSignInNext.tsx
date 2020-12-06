@@ -10,7 +10,7 @@ import {
   selectIsLogged,
   selectErrors,
   selectLoginStepIsCompleted,
-} from 'src/coreLogic/useCases/authUser'
+} from 'src/core/useCases/authUser'
 import { texts } from 'src/i18n'
 import { useIsDesktop } from 'src/styles'
 import { usePrevious } from 'src/utils/hooks'

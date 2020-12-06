@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux'
-import { selectUser } from 'src/coreLogic/useCases/authUser'
+import { selectUser } from 'src/core/useCases/authUser'
 import { assertIsDefined } from 'src/utils/misc'
 
 export function useMe() {

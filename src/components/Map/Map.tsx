@@ -3,7 +3,7 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { constants } from 'src/constants'
 import { env } from 'src/core/env'
-import { selectFeedFilters, feedActions } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
 import { AnyToFix } from 'src/utils/types'
 
 interface Props {

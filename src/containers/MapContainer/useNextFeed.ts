@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { selectFeedIsFetching, selectFeedItems } from 'src/coreLogic/useCases/feed'
+import { selectFeedIsFetching, selectFeedItems } from 'src/core/useCases/feed'
 import { useDelayLoading, usePrevious } from 'src/utils/hooks'
 
 export function useNextFeed() {

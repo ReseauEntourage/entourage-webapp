@@ -1,6 +1,6 @@
 // import { NextPageContext } from 'next'
 import { getTokenFromCookies, setTokenIntoCookies } from 'src/core/services'
-import { IAuthUserTokenStorage } from 'src/coreLogic/useCases/authUser'
+import { IAuthUserTokenStorage } from 'src/core/useCases/authUser'
 
 export class CookiesAuthUserTokenStorage implements IAuthUserTokenStorage {
   // constructor(private nextContext: NextPageContext) {}

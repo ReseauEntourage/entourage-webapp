@@ -1,5 +1,5 @@
 import { api } from 'src/core/api'
-import { IAuthUserGateway, PhoneLookUpResponse, AuthUserErrorUnauthorized } from 'src/coreLogic/useCases/authUser'
+import { IAuthUserGateway, PhoneLookUpResponse, AuthUserErrorUnauthorized } from 'src/core/useCases/authUser'
 import { assertIsDefined } from 'src/utils/misc'
 
 export class HTTPAuthUserGateway implements IAuthUserGateway {

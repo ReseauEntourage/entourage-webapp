@@ -1,4 +1,4 @@
-import { jestFn } from 'src/coreLogic/utils/jestFn'
+import { jestFn } from 'src/core/utils/jestFn'
 import { IAuthUserTokenStorage } from './IAuthUserTokenStorage'
 
 export class TestAuthUserTokenStorage implements IAuthUserTokenStorage {

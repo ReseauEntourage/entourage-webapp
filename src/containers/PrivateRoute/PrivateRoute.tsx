@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { selectIsLogged, selectIsLogging } from 'src/coreLogic/useCases/authUser'
+import { selectIsLogged, selectIsLogging } from 'src/core/useCases/authUser'
 
 interface PrivateRouteProps {
   children: React.ReactNode;

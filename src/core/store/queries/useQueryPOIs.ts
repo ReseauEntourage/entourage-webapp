@@ -2,7 +2,7 @@ import { useQuery } from 'react-query'
 import { useSelector } from 'react-redux'
 import { api } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
-import { selectFeedFilters } from 'src/coreLogic/useCases/feed'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 
 export function useQueryPOIs() {
   const { center } = useSelector(selectFeedFilters)

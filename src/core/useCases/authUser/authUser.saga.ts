@@ -1,6 +1,6 @@
 import { call, put, getContext } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
-import { takeEvery } from 'src/coreLogic/utils/takeEvery'
+import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
 import { IAuthUserTokenStorage } from './IAuthUserTokenStorage'
 import { ActionType, actions, Actions } from './authUser.actions'
