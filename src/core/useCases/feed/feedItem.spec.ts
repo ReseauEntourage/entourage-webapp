@@ -5,7 +5,7 @@ import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { feedReducer, JoinRequestStatus } from './feed.reducer'
+import { feedReducer, JoinRequestStatus, FeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentItem,
@@ -51,8 +51,8 @@ function configureStoreWithSelectedItems() {
     {
       feed: {
         ...fakeFeedData,
-        cacheItems: itemsEntities,
-        items: Object.keys(itemsEntities),
+        items: itemsEntities,
+        itemsUuids: Object.keys(itemsEntities),
         selectedItemUuid: Object.keys(itemsEntities)[0],
       },
     },
@@ -92,7 +92,7 @@ describe('Feed Item', () => {
 
     store.dispatch(publicActions.setCurrentItemUuid('abc'))
 
-    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.cacheItems.abc)
+    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.items.abc)
   })
 
   it(`
@@ -178,8 +178,8 @@ describe('Feed Item', () => {
       {
         feed: {
           ...fakeFeedData,
-          cacheItems: {},
-          items: [],
+          items: {},
+          itemsUuids: [],
           selectedItemUuid: null,
         },
       },
@@ -208,12 +208,12 @@ describe('Feed Item', () => {
 
   describe('Join entourage', () => {
     function configureStoreWithJoinRequestNotRequested() {
-      const defaultFeedDataJoinEntourage = {
+      const defaultFeedDataJoinEntourage: FeedState = {
         ...fakeFeedData,
-        cacheItems: {
-          ...fakeFeedData.cacheItems,
+        items: {
+          ...fakeFeedData.items,
           abc: {
-            ...fakeFeedData.cacheItems.abc,
+            ...fakeFeedData.items.abc,
             joinStatus: 'not_requested' as FeedJoinStatus,
           },
         },
@@ -272,12 +272,12 @@ describe('Feed Item', () => {
 
   describe('Leave entourage', () => {
     function configureStoreWithItemJoinRequestAccepted() {
-      const defaultFeedDataJoinEntourage = {
+      const defaultFeedDataJoinEntourage: FeedState = {
         ...fakeFeedData,
-        cacheItems: {
-          ...fakeFeedData.cacheItems,
+        items: {
+          ...fakeFeedData.items,
           abc: {
-            ...fakeFeedData.cacheItems.abc,
+            ...fakeFeedData.items.abc,
             joinStatus: 'accepted' as FeedJoinStatus,
           },
         },

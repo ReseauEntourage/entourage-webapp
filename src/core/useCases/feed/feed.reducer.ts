@@ -51,8 +51,8 @@ export interface FeedState {
     };
     zoom: number;
   };
-  items: string[];
-  cacheItems: {
+  itemsUuids: string[];
+  items: {
     [itemUuid: string]: FeedItem;
   };
   nextPageToken: string | null;
@@ -63,14 +63,14 @@ export interface FeedState {
 
 export const defaultFeedState: FeedState = {
   fetching: false,
-  items: [],
+  itemsUuids: [],
   filters: {
     cityName: constants.DEFAULT_LOCATION.CITY_NAME,
     center: constants.DEFAULT_LOCATION.CENTER,
     zoom: constants.DEFAULT_LOCATION.ZOOM,
   },
   nextPageToken: null,
-  cacheItems: {},
+  items: {},
   selectedItemUuid: null,
   isUpdatingJoinStatus: false,
   isIdle: true,
@@ -100,15 +100,15 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isIdle: false,
-        cacheItems: action.payload.items.reduce(
-          (acc: FeedState['cacheItems'], item: FeedState['cacheItems'][number]) => {
+        items: action.payload.items.reduce(
+          (acc: FeedState['items'], item: FeedState['items'][number]) => {
             return {
               ...acc,
               [item.uuid]: item,
             }
-          }, state.cacheItems,
+          }, state.items,
         ),
-        items: action.payload.items.map((item) => item.uuid),
+        itemsUuids: action.payload.items.map((item) => item.uuid),
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
       }
@@ -117,16 +117,16 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
     case ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
-        cacheItems: action.payload.items.reduce(
-          (acc: FeedState['cacheItems'], item: FeedState['cacheItems'][number]) => {
+        items: action.payload.items.reduce(
+          (acc: FeedState['items'], item: FeedState['items'][number]) => {
             return {
               ...acc,
               [item.uuid]: item,
             }
-          }, state.cacheItems,
+          }, state.items,
         ),
-        items: [
-          ...state.items,
+        itemsUuids: [
+          ...state.itemsUuids,
           ...action.payload.items.map((item) => item.uuid),
         ],
         nextPageToken: action.payload.nextPageToken,
@@ -141,14 +141,14 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
           throw new Error('UUID is required for item update')
         }
 
-        const item = draftState.cacheItems[uuid]
+        const item = draftState.items[uuid]
 
         if (!item) {
           throw new Error(`item with uuid ${uuid} is not defined`)
         }
 
         // eslint-disable-next-line
-        draftState.cacheItems[uuid] = {
+        draftState.items[uuid] = {
           ...item,
           ...action.payload,
         }
@@ -174,7 +174,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingJoinStatus: false,
-        cacheItems: produce(state.cacheItems, (cachedItems) => {
+        items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
           item.joinStatus = action.payload.status
         }),
@@ -185,7 +185,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingJoinStatus: false,
-        cacheItems: produce(state.cacheItems, (cachedItems) => {
+        items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
           item.joinStatus = 'not_requested'
         }),

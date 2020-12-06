@@ -21,8 +21,8 @@ export function selectFeedIsFetching(state: AppState) {
 }
 
 export function selectFeedItems(state: AppState) {
-  return state.feed.items.map((itemUuid) => {
-    return state.feed.cacheItems[itemUuid]
+  return state.feed.itemsUuids.map((itemUuid) => {
+    return state.feed.items[itemUuid]
   })
 }
 
@@ -31,9 +31,9 @@ export function selectHasNextPageToken(state: AppState) {
 }
 
 export function selectCurrentItem(state: AppState) {
-  const { selectedItemUuid, cacheItems } = state.feed
+  const { selectedItemUuid, items } = state.feed
 
-  return selectedItemUuid ? cacheItems[selectedItemUuid] : null
+  return selectedItemUuid ? items[selectedItemUuid] : null
 }
 
 export function selectIsUpdatingJoinStatus(state: AppState) {
@@ -41,7 +41,7 @@ export function selectIsUpdatingJoinStatus(state: AppState) {
 }
 
 export function selectJoinRequestStatus(state: AppState, entourageUuid: string) {
-  const entourage = state.feed.cacheItems[entourageUuid]
+  const entourage = state.feed.items[entourageUuid]
 
   switch (entourage.joinStatus) {
     case 'cancelled':

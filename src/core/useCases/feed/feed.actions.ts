@@ -43,7 +43,7 @@ function retrieveFeedStarted() {
 
 function retrieveFeedSuccess(
   payload: {
-    items: FeedState['cacheItems'][number][];
+    items: FeedState['items'][number][];
     nextPageToken: FeedState['nextPageToken'];
   },
 ) {
@@ -61,7 +61,7 @@ function retrieveFeedNextPage() {
 
 function retrieveFeedNextPageSuccess(
   payload: {
-    items: FeedState['cacheItems'][number][];
+    items: FeedState['items'][number][];
     nextPageToken: FeedState['nextPageToken'];
   },
 ) {
@@ -71,7 +71,7 @@ function retrieveFeedNextPageSuccess(
   }
 }
 
-function updateItem(payload: Partial<FeedState['cacheItems'][string]>) {
+function updateItem(payload: Partial<FeedState['items'][string]>) {
   return {
     type: ActionType.UPDATE_ITEM,
     payload,

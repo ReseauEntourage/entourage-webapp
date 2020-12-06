@@ -40,8 +40,8 @@ export const fakeFeedData = {
     zoom: 12,
   },
   nextPageToken: 'abc',
-  items: ['abc'],
-  cacheItems: {
+  itemsUuids: ['abc'],
+  items: {
     abc: {
       author: {
         avatarUrl: 'http://image.com',

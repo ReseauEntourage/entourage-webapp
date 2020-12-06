@@ -144,7 +144,7 @@ describe('Feed', () => {
       And should retrieve feed gateway method have been called with filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithFeed({ feedGateway })
 
@@ -158,7 +158,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForSagaEnd()
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.cacheItems.abc])
+    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc])
 
     expect(selectHasNextPageToken(store.getState())).toEqual(true)
 
@@ -179,7 +179,7 @@ describe('Feed', () => {
     Then should retrieve feed gateway method have been called the second time with next filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ feedGateway })
@@ -230,7 +230,7 @@ describe('Feed', () => {
             longitude: 2,
           },
           metadata: {},
-        } as FeedState['cacheItems'][number],
+        } as FeedState['items'][number],
       ],
     }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(feedNextData)
@@ -254,7 +254,7 @@ describe('Feed', () => {
       nextPageToken: 'wyz',
     })
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.cacheItems.abc, feedNextData.items[0]])
+    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc, feedNextData.items[0]])
   })
 
   it(`
@@ -309,14 +309,14 @@ it(`
 `, () => {
   const feedGateway = new TestFeedGateway()
   const store = configureStoreWithFeed({ feedGateway }, { feed: fakeFeedData })
-  const firstItem = store.getState().feed.cacheItems.abc
+  const firstItem = store.getState().feed.items.abc
 
   store.dispatch(publicActions.updateItem({
     uuid: 'abc',
     title: 'feed title updated',
   }))
 
-  const firstItemUpdated = store.getState().feed.cacheItems.abc
+  const firstItemUpdated = store.getState().feed.items.abc
 
   expect(firstItem.title).toEqual('feed title')
   expect(firstItem.description).toEqual('feed description')
