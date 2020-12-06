@@ -1,5 +1,6 @@
-import { call, put, takeEvery, select, getContext } from 'redux-saga/effects'
+import { call, put, select, getContext } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
+import { takeEvery } from 'src/coreLogic/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { ActionType, actions, Actions } from './feed.actions'
 import { FeedState } from './feed.reducer'

@@ -49,8 +49,7 @@ describe('Feed', () => {
       And items should not being fetched after request succeeded
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ items: [], nextPageToken: null })
-    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    feedGateway.retrieveFeedItems.mockDeferredValue({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ feedGateway })
     const nextFilters: FeedState['filters'] = {
       cityName: 'Nantes',
@@ -61,7 +60,8 @@ describe('Feed', () => {
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
   })
@@ -83,13 +83,13 @@ describe('Feed', () => {
     Then feed request should not be idle
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ items: [], nextPageToken: null })
-    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ feedGateway })
 
     store.dispatch(publicActions.retrieveFeed())
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectFeedIsIdle(store.getState())).toEqual(false)
   })
@@ -100,8 +100,7 @@ describe('Feed', () => {
     Then filters should be updated
   `, () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ items: [], nextPageToken: null })
-    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    feedGateway.retrieveFeedItems.mockResolvedValue({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ feedGateway })
     const filters: FeedState['filters'] = {
       cityName: 'Nantes',
@@ -120,8 +119,7 @@ describe('Feed', () => {
     Then filters should be updated and merge with existing filters
   `, () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ items: [], nextPageToken: null })
-    feedGateway.retrieveFeedItems.mockReturnValueOnce(promise)
+    feedGateway.retrieveFeedItems.mockResolvedValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ feedGateway })
     const filters: Partial<FeedState['filters']> = {
       center: { lat: 2, lng: 3 },
@@ -146,8 +144,8 @@ describe('Feed', () => {
       And should retrieve feed gateway method have been called with filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] })
-    feedGateway.retrieveFeedItems.mockReturnValue(promise)
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
+    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValue)
     const store = configureStoreWithFeed({ feedGateway })
 
     store.dispatch(publicActions.retrieveFeed({
@@ -157,7 +155,8 @@ describe('Feed', () => {
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.cacheItems.abc])
 
@@ -180,8 +179,9 @@ describe('Feed', () => {
     Then should retrieve feed gateway method have been called the second time with next filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const promise = Promise.resolve({ nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] })
-    feedGateway.retrieveFeedItems.mockReturnValue(promise)
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
+    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValue)
+
     const store = configureStoreWithFeed({ feedGateway })
     const nextFilters = {
       cityName: 'Lyon',
@@ -191,7 +191,8 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.setFilters(nextFilters))
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
@@ -232,8 +233,7 @@ describe('Feed', () => {
         } as FeedState['cacheItems'][number],
       ],
     }
-    const promise = Promise.resolve(feedNextData)
-    feedGateway.retrieveFeedItems.mockReturnValue(promise)
+    feedGateway.retrieveFeedItems.mockDeferredValue(feedNextData)
     const initialState = {
       ...fakeFeedData,
       nextPageToken: 'wyz',
@@ -242,7 +242,8 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.retrieveFeedNextPage())
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
@@ -261,32 +262,8 @@ describe('Feed', () => {
     When user want to retrieve next page items
     Then feed items should never be retrieved
       And store should be unchanged
-  `, () => {
+  `, async () => {
     const feedGateway = new TestFeedGateway()
-    const feedNextData = {
-      nextPageToken: null,
-      items: [
-        {
-          author: {
-            avatarUrl: 'http://image-2.com',
-            displayName: 'Jane',
-            id: 1,
-          },
-          createdAt: new Date().toISOString(),
-          description: 'feed description page 2',
-          id: 2,
-          uuid: '2',
-          title: 'feed title page 2',
-          location: {
-            latitude: 2,
-            longitude: 2,
-          },
-          metadata: {},
-        } as FeedState['cacheItems'][number],
-      ],
-    }
-    const promise = Promise.resolve(feedNextData)
-    feedGateway.retrieveFeedItems.mockReturnValue(promise)
     const initialState = {
       ...fakeFeedData,
       nextPageToken: null,
@@ -295,6 +272,8 @@ describe('Feed', () => {
     const previousSelectedFeedItems = selectFeedItems(store.getState())
 
     store.dispatch(publicActions.retrieveFeedNextPage())
+
+    await store.waitForSagaEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
 
@@ -306,10 +285,9 @@ it(`
   Given feed items are being fetched
   When use want to retrieved feed items
   Then the second request should never start
-`, () => {
+`, async () => {
   const feedGateway = new TestFeedGateway()
-  const promise = new Promise<{ items: []; nextPageToken: null; }>(() => null)
-  feedGateway.retrieveFeedItems.mockReturnValue(promise)
+  feedGateway.retrieveFeedItems.mockDeferredValue({ items: [], nextPageToken: null })
   const store = configureStoreWithFeed({ feedGateway })
 
   store.dispatch(publicActions.retrieveFeed())
@@ -317,6 +295,9 @@ it(`
   expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
   store.dispatch(publicActions.retrieveFeed())
+
+  feedGateway.retrieveFeedItems.resolveDeferredValue()
+  await store.waitForSagaEnd()
 
   expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
 })

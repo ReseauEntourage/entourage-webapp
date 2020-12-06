@@ -23,13 +23,28 @@ interface ConfigureStoreParams<R> {
 
 export function configureStore<
   Reducers,
-  Output = Store<StateFromReducersMapObject<Reducers>, ActionFromReducersMapObject<Reducers>>
+  Output = Store<
+  StateFromReducersMapObject<Reducers>,
+  ActionFromReducersMapObject<Reducers>
+  > & { waitForSagaEnd(): Promise<void>; }
 >(params: ConfigureStoreParams<Reducers>): Output {
   const { dependencies, reducers, sagas = [], initialState } = params
+
+  let sagaRunningCount = 0
+
+  function startAction() {
+    sagaRunningCount += 1
+  }
+
+  function endAction() {
+    sagaRunningCount -= 1
+  }
 
   const sagaMiddleware = createSagaMiddleware({
     context: {
       dependencies,
+      startAction,
+      endAction,
     },
   })
 
@@ -54,6 +69,24 @@ export function configureStore<
   }
 
   sagaMiddleware.run(rootSaga)
+
+  function waitForSagaEnd() {
+    return new Promise((resolve) => {
+      if (sagaRunningCount === 0) {
+        resolve()
+      } else {
+        const timer = setInterval(() => {
+          if (sagaRunningCount === 0) {
+            clearInterval(timer)
+            resolve()
+          }
+        }, 50)
+      }
+    })
+  }
+
+  // @ts-expect-error
+  store.waitForSagaEnd = waitForSagaEnd
 
   // @ts-expect-error
   return store

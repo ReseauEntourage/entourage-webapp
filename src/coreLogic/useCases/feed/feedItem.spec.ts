@@ -42,8 +42,7 @@ function configureStoreWithSelectedItems() {
   }), {})
 
   const feedGateway = new TestFeedGateway()
-  const promise = Promise.resolve({ nextPageToken: null, items: itemsFromGateway })
-  feedGateway.retrieveFeedItems.mockReturnValue(promise)
+  feedGateway.retrieveFeedItems.mockDeferredValue({ nextPageToken: null, items: itemsFromGateway })
 
   const store = configureStoreWithFeed(
     {
@@ -61,7 +60,7 @@ function configureStoreWithSelectedItems() {
 
   return {
     store,
-    promise,
+    feedGateway,
     itemsEntities,
   }
 }
@@ -101,14 +100,15 @@ describe('Feed Item', () => {
     When user fetch new items
     Then items uuid should changes And selected items should never change
   `, async () => {
-    const { store, promise } = configureStoreWithSelectedItems()
+    const { store, feedGateway } = configureStoreWithSelectedItems()
 
     const prevItems = selectFeedItems(store.getState())
     const prevSelectedItem = selectCurrentItem(store.getState())
 
     store.dispatch(publicActions.retrieveFeed())
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     const nextItems = selectFeedItems(store.getState())
     const nextSelectedItem = selectCurrentItem(store.getState())
@@ -126,13 +126,14 @@ describe('Feed Item', () => {
     Then prev and next selected item should be truthy
       And prev and next selected items should be different
   `, async () => {
-    const { store, promise, itemsEntities } = configureStoreWithSelectedItems()
+    const { store, feedGateway, itemsEntities } = configureStoreWithSelectedItems()
 
     const prevSelectedItem = selectCurrentItem(store.getState())
 
     store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
 
-    await promise
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     const nextSelectedItem = selectCurrentItem(store.getState())
 
@@ -149,24 +150,26 @@ describe('Feed Item', () => {
       And feed should be retrieved with position of item
   `, async () => {
     const itemsFromGateway = createFeedItemList()
-    const promiseRetrieveFeedItems = Promise.resolve({
+
+    const deferredValueRetrieveFeedItems = {
       nextPageToken: null,
       items: itemsFromGateway,
-    })
-
-    const promiseRetrieveFeedItem = Promise.resolve({
+    }
+    const deferredValueRetrieveFeedItem = {
       center: {
         lat: 1,
         lng: 2,
       },
       cityName: 'Marseille',
-    })
-
-    const promises = Promise.all([promiseRetrieveFeedItems, promiseRetrieveFeedItem])
+    }
 
     const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockReturnValue(promiseRetrieveFeedItems)
-    feedGateway.retrieveFeedItem.mockResolvedValueOnce(promiseRetrieveFeedItem)
+    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValueRetrieveFeedItems)
+    feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+      feedGateway.retrieveFeedItem.resolveDeferredValue()
+    }
 
     const store = configureStoreWithFeed(
       {
@@ -188,7 +191,8 @@ describe('Feed Item', () => {
 
     store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
 
-    await promises
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
@@ -216,15 +220,13 @@ describe('Feed Item', () => {
       }
 
       const feedGateway = new TestFeedGateway()
-      const joinRequestPromise = Promise.resolve()
-      feedGateway.joinEntourage.mockResolvedValueOnce(joinRequestPromise)
+      feedGateway.joinEntourage.mockDeferredValue(null)
 
       const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
 
       return {
         store,
         feedGateway,
-        joinRequestPromise,
       }
     }
 
@@ -249,15 +251,17 @@ describe('Feed Item', () => {
           And join request should not being sent after succeeded
           And join request status should be updated
       `, async () => {
-      const { store, feedGateway, joinRequestPromise } = configureStoreWithJoinRequestNotRequested()
+      const { store, feedGateway } = configureStoreWithJoinRequestNotRequested()
       const entourageUuid = 'abc'
+
       store.dispatch(publicActions.joinEntourage({ entourageUuid }))
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
 
       expect(feedGateway.joinEntourage).toHaveBeenCalledWith(entourageUuid)
 
-      await joinRequestPromise
+      feedGateway.joinEntourage.resolveDeferredValue()
+      await store.waitForSagaEnd()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
@@ -279,15 +283,13 @@ describe('Feed Item', () => {
       }
 
       const feedGateway = new TestFeedGateway()
-      const leaveRequestPromise = Promise.resolve()
-      feedGateway.leaveEntourage.mockResolvedValueOnce(leaveRequestPromise)
+      feedGateway.leaveEntourage.mockDeferredValue(null)
 
       const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
 
       return {
         store,
         feedGateway,
-        leaveRequestPromise,
       }
     }
 
@@ -314,7 +316,7 @@ describe('Feed Item', () => {
           And leave request should not being sent after succeeded
           And leave request status should be updated
       `, async () => {
-      const { store, feedGateway, leaveRequestPromise } = configureStoreWithItemJoinRequestAccepted()
+      const { store, feedGateway } = configureStoreWithItemJoinRequestAccepted()
       const entourageUuid = 'abc'
 
       store.dispatch(publicActions.leaveEntourage({ entourageUuid, userId: 1 }))
@@ -323,7 +325,8 @@ describe('Feed Item', () => {
 
       expect(feedGateway.leaveEntourage).toHaveBeenCalledWith(entourageUuid, 1)
 
-      await leaveRequestPromise
+      feedGateway.leaveEntourage.resolveDeferredValue()
+      await store.waitForSagaEnd()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 

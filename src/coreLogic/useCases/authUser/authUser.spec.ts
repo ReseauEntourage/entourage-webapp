@@ -1,6 +1,5 @@
 import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
-import { AnyToFix } from 'src/utils/types'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
 import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
@@ -56,26 +55,31 @@ function configureStoreWithUserAccount() {
   const authUserGateway = new TestAuthUserGateway()
   const user = createUser()
 
-  const promises = {
-    phoneLookup: Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED),
-    resetPassword: Promise.resolve(null),
-    loginWithPassword: Promise.resolve(user),
-    loginWithSMSCode: Promise.resolve(user),
+  const deferredValues = {
+    phoneLookup: PhoneLookUpResponse.PASSWORD_NEEDED,
+    resetPassword: null,
+    loginWithPassword: user,
+    loginWithSMSCode: user,
   }
 
-  authUserGateway.phoneLookUp.mockReturnValue(promises.phoneLookup)
-  authUserGateway.resetPassword.mockReturnValue(promises.resetPassword)
-  authUserGateway.loginWithPassword.mockReturnValue(promises.loginWithPassword)
-  authUserGateway.loginWithSMSCode.mockReturnValue(promises.loginWithSMSCode)
+  authUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
+  authUserGateway.resetPassword.mockDeferredValueOnce(deferredValues.resetPassword)
+  authUserGateway.loginWithPassword.mockDeferredValueOnce(deferredValues.loginWithPassword)
+  authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
 
-  const allPromises = Promise.all<AnyToFix>(Object.values(promises))
+  const resolveAllDeferredValue = () => {
+    authUserGateway.phoneLookUp.resolveDeferredValue()
+    authUserGateway.resetPassword.resolveDeferredValue()
+    authUserGateway.loginWithPassword.resolveDeferredValue()
+    authUserGateway.loginWithSMSCode.resolveDeferredValue()
+  }
 
   const store = configureStoreWithAuthUser({ authUserGateway })
 
   return {
     store,
     authUserGateway,
-    allPromises,
+    resolveAllDeferredValue,
     user,
   }
 }
@@ -103,8 +107,7 @@ describe('Auth User', () => {
       And user should not being logged after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
-    const promise = Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED)
-    authUserGateway.phoneLookUp.mockReturnValueOnce(promise)
+    authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
 
     const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -112,7 +115,8 @@ describe('Auth User', () => {
 
     expect(selectIsLogging(store.getState())).toEqual(true)
 
-    await promise
+    authUserGateway.phoneLookUp.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -124,8 +128,7 @@ describe('Auth User', () => {
       And user should not being logged after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
-    const promise = Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED)
-    authUserGateway.phoneLookUp.mockReturnValueOnce(promise)
+    authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
 
     const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -133,7 +136,8 @@ describe('Auth User', () => {
 
     expect(selectIsLogging(store.getState())).toEqual(true)
 
-    await promise
+    authUserGateway.phoneLookUp.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -145,12 +149,13 @@ describe('Auth User', () => {
       And user should not being logged after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
+    authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PHONE_NOT_FOUND)
+    authUserGateway.createAccount.mockDeferredValueOnce(null)
 
-    const promisePhoneLookup = Promise.resolve(PhoneLookUpResponse.PHONE_NOT_FOUND)
-    authUserGateway.phoneLookUp.mockReturnValueOnce(promisePhoneLookup)
-
-    const promiseCreateAccount = Promise.resolve(null)
-    authUserGateway.createAccount.mockReturnValueOnce(promiseCreateAccount)
+    const resolveAllDeferredValue = () => {
+      authUserGateway.phoneLookUp.resolveDeferredValue()
+      authUserGateway.createAccount.resolveDeferredValue()
+    }
 
     const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -158,7 +163,8 @@ describe('Auth User', () => {
 
     expect(selectIsLogging(store.getState())).toEqual(true)
 
-    await Promise.all([promisePhoneLookup, promiseCreateAccount])
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
   })
@@ -171,18 +177,25 @@ describe('Auth User', () => {
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
 
-    const promises = {
-      phoneLookup: Promise.resolve(PhoneLookUpResponse.PHONE_NOT_FOUND),
-      createAccount: Promise.resolve(null),
-      loginWithSMSCode: Promise.resolve(null),
-      definePassword: Promise.resolve(null),
+    const deferredValues = {
+      phoneLookup: PhoneLookUpResponse.PHONE_NOT_FOUND,
+      createAccount: null,
+      loginWithSMSCode: null,
+      definePassword: null,
     }
 
-    testAuthUserGateway.phoneLookUp.mockReturnValueOnce(promises.phoneLookup)
-    testAuthUserGateway.createAccount.mockReturnValueOnce(promises.createAccount)
+    testAuthUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
+    testAuthUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
     // @ts-expect-error
-    testAuthUserGateway.loginWithSMSCode.mockReturnValue(promises.loginWithSMSCode)
-    testAuthUserGateway.definePassword.mockReturnValue(promises.definePassword)
+    testAuthUserGateway.loginWithSMSCode.mockDeferredValue(deferredValues.loginWithSMSCode)
+    testAuthUserGateway.definePassword.mockDeferredValue(deferredValues.definePassword)
+
+    const resolveAllDeferredValue = () => {
+      testAuthUserGateway.phoneLookUp.resolveDeferredValue()
+      testAuthUserGateway.createAccount.resolveDeferredValue()
+      testAuthUserGateway.loginWithSMSCode.resolveDeferredValue()
+      testAuthUserGateway.definePassword.resolveDeferredValue()
+    }
 
     const store = configureStoreWithAuthUser({
       authUserGateway: testAuthUserGateway,
@@ -191,7 +204,8 @@ describe('Auth User', () => {
 
     store.dispatch(publicActions.phoneLookUp(phone))
 
-    await Promise.all(Object.values(promises))
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
     expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
@@ -207,8 +221,7 @@ describe('Auth User', () => {
     Then assword should be created
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
-    const promise = Promise.resolve(null)
-    testAuthUserGateway.definePassword.mockReturnValue(promise)
+    testAuthUserGateway.definePassword.mockDeferredValue(null)
 
     const initialState = {
       authUser: {
@@ -226,7 +239,8 @@ describe('Auth User', () => {
 
     store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
 
-    await promise
+    testAuthUserGateway.definePassword.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectStep(store.getState())).toEqual(null)
   })
@@ -237,17 +251,15 @@ describe('Auth User', () => {
     Then step should be SMS Code after request succeeded
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
-    const promise = Promise.resolve(PhoneLookUpResponse.SMS_CODE_NEEDED)
-    testAuthUserGateway.phoneLookUp.mockReturnValueOnce(promise)
+    testAuthUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
 
-    const store = configureStoreWithAuthUser({
-      authUserGateway: testAuthUserGateway,
-    })
+    const store = configureStoreWithAuthUser({ authUserGateway: testAuthUserGateway })
     const phone = '0700000000'
 
     store.dispatch(publicActions.phoneLookUp(phone))
 
-    await promise
+    testAuthUserGateway.phoneLookUp.resolveDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
   })
@@ -257,12 +269,13 @@ describe('Auth User', () => {
     When user trigger phone lookup
     Then step should be password after request succeeded
   `, async () => {
-    const { store, allPromises } = configureStoreWithUserAccount()
+    const { store, resolveAllDeferredValue } = configureStoreWithUserAccount()
 
     const phone = '0700000000'
     store.dispatch(publicActions.phoneLookUp(phone))
 
-    await allPromises
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.PASSWORD)
   })
@@ -273,12 +286,13 @@ describe('Auth User', () => {
     Then password reset gateway should be called once with phone number
       And next step should be SMS Code
   `, async () => {
-    const { store, allPromises, authUserGateway } = configureStoreWithUserAccount()
+    const { store, resolveAllDeferredValue, authUserGateway } = configureStoreWithUserAccount()
 
     const phone = '0700000000'
     store.dispatch(publicActions.resetPassword({ phone }))
 
-    await allPromises
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(authUserGateway.resetPassword).toHaveBeenCalledTimes(1)
     expect(authUserGateway.resetPassword).toHaveBeenCalledWith({ phone })
@@ -294,7 +308,7 @@ describe('Auth User', () => {
       And should have user
       should step be null
   `, async () => {
-    const { store, allPromises, user } = configureStoreWithUserAccount()
+    const { store, resolveAllDeferredValue, user } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const password = 'abcdefghi'
 
@@ -303,7 +317,8 @@ describe('Auth User', () => {
     // TODO
     // expect(selectIsLogging(store.getState())).toEqual(true)
 
-    await allPromises
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectIsLogged(store.getState())).toEqual(true)
 
@@ -316,17 +331,21 @@ describe('Auth User', () => {
     Given user as an account
     When user want to login with SMS Code
     Then user should being logged during request
-    And should be logged after request succeeded
+      And should be logged after request succeeded
       And should have user
-      should step should be create password
+      should step be create password
   `, async () => {
-    const { store, allPromises, user, authUserGateway } = configureStoreWithUserAccount()
+    const { store, resolveAllDeferredValue, user, authUserGateway } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const SMSCode = 'abc'
 
     store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
-    await allPromises
+    // TODO
+    // expect(selectIsLogging(store.getState())).toEqual(true)
+
+    resolveAllDeferredValue()
+    await store.waitForSagaEnd()
 
     expect(selectIsLogged(store.getState())).toEqual(true)
 
@@ -340,7 +359,7 @@ describe('Auth User', () => {
   describe('Phone validation: phone look up', () => {
     function configureStoreWithPasswordNeeded() {
       const authUserGateway = new TestAuthUserGateway()
-      authUserGateway.phoneLookUp.mockReturnValue(Promise.resolve(PhoneLookUpResponse.PASSWORD_NEEDED))
+      authUserGateway.phoneLookUp.mockDeferredValue(PhoneLookUpResponse.PASSWORD_NEEDED)
 
       const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -405,11 +424,13 @@ describe('Auth User', () => {
   describe('Phone validation: reset password', () => {
     function configureStoreWithResetPassword() {
       const authUserGateway = new TestAuthUserGateway()
-      authUserGateway.resetPassword.mockReturnValue(Promise.resolve(null))
+      authUserGateway.resetPassword.mockDeferredValue(null)
 
       const store = configureStoreWithAuthUser({ authUserGateway })
 
-      return { store }
+      return {
+        store,
+      }
     }
 
     it(`
@@ -472,7 +493,9 @@ describe('Auth User', () => {
 
       const store = configureStoreWithAuthUser({ authUserGateway })
 
-      return { store }
+      return {
+        store,
+      }
     }
 
     it(`
@@ -562,13 +585,16 @@ describe('Auth User', () => {
     Then should have error as invalid password
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.loginWithPassword.mockImplementationOnce(() => { throw new AuthUserErrorUnauthorized() })
+    authUserGateway.loginWithPassword.mockDeferredValue(createUser())
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const phone = '0600000000'
     const password = 'xxx'
 
     store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+    authUserGateway.loginWithPassword.rejectDeferredValue(new AuthUserErrorUnauthorized())
+    await store.waitForSagaEnd()
 
     expect(selectErrors(store.getState())).toEqual({
       password: PasswordValidationsError.INVALID_PASSWORD,
@@ -579,19 +605,22 @@ describe('Auth User', () => {
 
   it('should show invalid SMS Code', async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.loginWithSMSCode.mockImplementationOnce(() => { throw new AuthUserErrorUnauthorized() })
+    authUserGateway.loginWithSMSCode.mockDeferredValue(createUser())
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const phone = '0600000000'
     let SMSCode = ''
-    await store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+    store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
     expect(store.getState().authUser.errors).toEqual({
       code: SMSCodeValidationsError.REQUIRED,
     })
 
     SMSCode = 'xxx'
-    await store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+    store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+
+    authUserGateway.loginWithSMSCode.rejectDeferredValue(new AuthUserErrorUnauthorized())
+    await store.waitForSagaEnd()
 
     expect(store.getState().authUser.errors).toEqual({
       code: SMSCodeValidationsError.INVALID_SMS_CODE,
@@ -600,17 +629,18 @@ describe('Auth User', () => {
 
   it('should catch server error on password creation', async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.definePassword.mockImplementationOnce(() => {
-      throw new AuthUserErrorUnkownPasswordError('foo error')
-    })
+    authUserGateway.definePassword.mockDeferredValue(null)
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const password = 'abcdefghi'
 
-    await store.dispatch(publicActions.createPassword({
+    store.dispatch(publicActions.createPassword({
       password,
       passwordConfirmation: password,
     }))
+
+    authUserGateway.definePassword.rejectDeferredValue(new AuthUserErrorUnkownPasswordError('foo error'))
+    await store.waitForSagaEnd()
 
     expect(store.getState().authUser.errors).toEqual({
       password: PasswordValidationsError.UNKNOWN_SERVER_ERROR,
@@ -682,14 +712,17 @@ describe('Auth User', () => {
       const authUserTokenStorage = new TestAuthUserTokenStorage()
       const authUserGateway = new TestAuthUserGateway()
       authUserTokenStorage.setToken.mockReturnValueOnce()
-      authUserGateway.loginWithPassword.mockReturnValueOnce(Promise.resolve(user))
+      authUserGateway.loginWithPassword.mockDeferredValueOnce(user)
 
       const store = configureStoreWithAuthUser({ authUserGateway, authUserTokenStorage })
 
       const phone = '0600000000'
       const password = 'xxx'
 
-      await store.dispatch(publicActions.loginWithPassword({ phone, password }))
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      authUserGateway.loginWithPassword.resolveDeferredValue()
+      await store.waitForSagaEnd()
 
       expect(authUserTokenStorage.setToken).toHaveBeenNthCalledWith(1, user.token)
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)
@@ -701,14 +734,17 @@ describe('Auth User', () => {
       const authUserTokenStorage = new TestAuthUserTokenStorage()
       const authUserGateway = new TestAuthUserGateway()
       authUserTokenStorage.setToken.mockReturnValueOnce()
-      authUserGateway.loginWithSMSCode.mockReturnValueOnce(Promise.resolve(user))
+      authUserGateway.loginWithSMSCode.mockDeferredValueOnce(user)
 
       const store = configureStoreWithAuthUser({ authUserGateway, authUserTokenStorage })
 
       const phone = '0600000000'
       const SMSCode = 'xxx'
 
-      await store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+      store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+
+      authUserGateway.loginWithSMSCode.resolveDeferredValue()
+      await store.waitForSagaEnd()
 
       expect(authUserTokenStorage.setToken).toHaveBeenNthCalledWith(1, user.token)
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)
