@@ -49,7 +49,7 @@ describe('Feed', () => {
       And items should not being fetched after request succeeded
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValue({ items: [], nextPageToken: null })
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ feedGateway })
     const nextFilters: FeedState['filters'] = {
       cityName: 'Nantes',
@@ -145,7 +145,7 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
-    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValue)
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithFeed({ feedGateway })
 
     store.dispatch(publicActions.retrieveFeed({
@@ -180,7 +180,7 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.cacheItems.abc] }
-    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValue)
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ feedGateway })
     const nextFilters = {
@@ -233,7 +233,7 @@ describe('Feed', () => {
         } as FeedState['cacheItems'][number],
       ],
     }
-    feedGateway.retrieveFeedItems.mockDeferredValue(feedNextData)
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(feedNextData)
     const initialState = {
       ...fakeFeedData,
       nextPageToken: 'wyz',
@@ -287,7 +287,7 @@ it(`
   Then the second request should never start
 `, async () => {
   const feedGateway = new TestFeedGateway()
-  feedGateway.retrieveFeedItems.mockDeferredValue({ items: [], nextPageToken: null })
+  feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
   const store = configureStoreWithFeed({ feedGateway })
 
   store.dispatch(publicActions.retrieveFeed())

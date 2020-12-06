@@ -187,8 +187,8 @@ describe('Auth User', () => {
     testAuthUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
     testAuthUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
     // @ts-expect-error
-    testAuthUserGateway.loginWithSMSCode.mockDeferredValue(deferredValues.loginWithSMSCode)
-    testAuthUserGateway.definePassword.mockDeferredValue(deferredValues.definePassword)
+    testAuthUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+    testAuthUserGateway.definePassword.mockDeferredValueOnce(deferredValues.definePassword)
 
     const resolveAllDeferredValue = () => {
       testAuthUserGateway.phoneLookUp.resolveDeferredValue()
@@ -221,7 +221,7 @@ describe('Auth User', () => {
     Then assword should be created
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
-    testAuthUserGateway.definePassword.mockDeferredValue(null)
+    testAuthUserGateway.definePassword.mockDeferredValueOnce(null)
 
     const initialState = {
       authUser: {
@@ -359,7 +359,7 @@ describe('Auth User', () => {
   describe('Phone validation: phone look up', () => {
     function configureStoreWithPasswordNeeded() {
       const authUserGateway = new TestAuthUserGateway()
-      authUserGateway.phoneLookUp.mockDeferredValue(PhoneLookUpResponse.PASSWORD_NEEDED)
+      authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
 
       const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -424,7 +424,7 @@ describe('Auth User', () => {
   describe('Phone validation: reset password', () => {
     function configureStoreWithResetPassword() {
       const authUserGateway = new TestAuthUserGateway()
-      authUserGateway.resetPassword.mockDeferredValue(null)
+      authUserGateway.resetPassword.mockDeferredValueOnce(null)
 
       const store = configureStoreWithAuthUser({ authUserGateway })
 
@@ -585,7 +585,7 @@ describe('Auth User', () => {
     Then should have error as invalid password
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.loginWithPassword.mockDeferredValue(createUser())
+    authUserGateway.loginWithPassword.mockDeferredValueOnce(createUser())
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const phone = '0600000000'
@@ -605,7 +605,7 @@ describe('Auth User', () => {
 
   it('should show invalid SMS Code', async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.loginWithSMSCode.mockDeferredValue(createUser())
+    authUserGateway.loginWithSMSCode.mockDeferredValueOnce(createUser())
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const phone = '0600000000'
@@ -629,7 +629,7 @@ describe('Auth User', () => {
 
   it('should catch server error on password creation', async () => {
     const authUserGateway = new TestAuthUserGateway()
-    authUserGateway.definePassword.mockDeferredValue(null)
+    authUserGateway.definePassword.mockDeferredValueOnce(null)
     const store = configureStoreWithAuthUser({ authUserGateway })
 
     const password = 'abcdefghi'

@@ -42,7 +42,7 @@ function configureStoreWithSelectedItems() {
   }), {})
 
   const feedGateway = new TestFeedGateway()
-  feedGateway.retrieveFeedItems.mockDeferredValue({ nextPageToken: null, items: itemsFromGateway })
+  feedGateway.retrieveFeedItems.mockDeferredValueOnce({ nextPageToken: null, items: itemsFromGateway })
 
   const store = configureStoreWithFeed(
     {
@@ -164,7 +164,7 @@ describe('Feed Item', () => {
     }
 
     const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValue(deferredValueRetrieveFeedItems)
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
     feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
     const resolveAllDeferredValue = () => {
       feedGateway.retrieveFeedItems.resolveDeferredValue()
@@ -220,7 +220,7 @@ describe('Feed Item', () => {
       }
 
       const feedGateway = new TestFeedGateway()
-      feedGateway.joinEntourage.mockDeferredValue(null)
+      feedGateway.joinEntourage.mockDeferredValueOnce(null)
 
       const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
 
@@ -283,7 +283,7 @@ describe('Feed Item', () => {
       }
 
       const feedGateway = new TestFeedGateway()
-      feedGateway.leaveEntourage.mockDeferredValue(null)
+      feedGateway.leaveEntourage.mockDeferredValueOnce(null)
 
       const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
 
