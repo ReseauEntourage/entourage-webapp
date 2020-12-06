@@ -174,6 +174,10 @@ export function ModalProfile() {
           onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
           textFieldProps={{
             label: modalTexts.locationLabel,
+            name: 'address',
+            inputRef: register({
+              required: true,
+            }),
           }}
         />
         <Label>

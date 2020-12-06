@@ -16,7 +16,7 @@ import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
 import { theme } from 'src/styles'
-import { isSSR, initFacebookApp, assertIsDefined } from 'src/utils/misc'
+import { isSSR, initFacebookApp } from 'src/utils/misc'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
@@ -81,11 +81,9 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
       this.store = bootstrapStore()
 
       if (authUserData && !authUserData.anonymous) {
-        assertIsDefined(authUserData.email)
-
         this.store.dispatch(authUserActions.setUser({
           id: authUserData.id,
-          email: authUserData.email,
+          email: authUserData.email || undefined,
           hasPassword: authUserData.hasPassword,
           avatarUrl: authUserData.avatarUrl || undefined,
           partner: authUserData.partner,

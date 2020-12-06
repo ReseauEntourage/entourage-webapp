@@ -65,14 +65,12 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
       })
       .then((res) => {
         const { user } = res.data
-        // const { id, email, firstName, lastName, hasPassword, avatarUrl, partner } = res.data.user
 
         assertIsDefined(user.id, 'user id')
-        assertIsDefined(user.email, 'user email')
 
         return {
           id: user.id,
-          email: user.email,
+          email: user.email ?? undefined,
           hasPassword: user.hasPassword,
           partner: user.partner ? { name: user.partner.name } : undefined,
           avatarUrl: user.avatarUrl ?? undefined,
@@ -84,7 +82,7 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
         }
       })
       .catch((error) => {
-        if (error.response.status === 401) {
+        if (error?.response?.status === 401) {
           // temp fix until remove notifServerError
           error.stopPropagation()
 
