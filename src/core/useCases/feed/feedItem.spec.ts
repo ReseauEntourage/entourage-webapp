@@ -233,7 +233,7 @@ describe('Feed Item', () => {
         Given state has items
           And feed item status is not requested
         When no action is done,
-        Then join request should not being sent
+        Then join request should not be sending
           And join status should be not requested
       `, () => {
       const { store } = configureStoreWithJoinRequestNotRequested()
@@ -245,9 +245,9 @@ describe('Feed Item', () => {
 
     it(`
         When user want to join an entourage
-        Then join request should being sent
+        Then join request should be sending
           And join entourage gateway method should be called with entourage uuid
-          And join request should not being sent after succeeded
+          And join request should not be sending after succeeded
           And join request status should be updated
       `, async () => {
       const { store, feedGateway } = configureStoreWithJoinRequestNotRequested()
@@ -298,7 +298,7 @@ describe('Feed Item', () => {
         Given state has items
           And feed item status is accepted
         When no action is triggered
-        Then leave request should not being sent
+        Then leave request should not be sending
           And join status should be accepted
       `, () => {
       const { store } = configureStoreWithItemJoinRequestAccepted()
@@ -312,9 +312,9 @@ describe('Feed Item', () => {
         Given state has items
           And feed item status is accepted
         When user want to leave an entourage
-        Then leave request should being sent
+        Then leave request should be sending
           And leave entourage gateway should be called with entourage uuid and user id
-          And leave request should not being sent after succeeded
+          And leave request should not be sending after succeeded
           And leave request status should be updated
       `, async () => {
       const { store, feedGateway } = configureStoreWithItemJoinRequestAccepted()

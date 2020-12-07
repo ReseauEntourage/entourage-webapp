@@ -45,8 +45,8 @@ describe('Feed', () => {
   it(`
     Given user has not any items
     When user set filters
-    Then items should being fetched during request
-      And items should not being fetched after request succeeded
+    Then items should be fetching during request
+      And items should not be fetching after request succeeded
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
@@ -137,7 +137,7 @@ describe('Feed', () => {
   it(`
     Given there is feed items return by the server
     When user retrieve feed for the first time
-    Then feed items should being fetched util request is succeeded
+    Then feed items should be fetching until request is succeeded
       And should retrieve feed successfully with items and next page token
       And should have next page token
       And should pending state be false after server response
@@ -282,7 +282,7 @@ describe('Feed', () => {
 })
 
 it(`
-  Given feed items are being fetched
+  Given feed items are fetching
   When use want to retrieved feed items
   Then the second request should never start
 `, async () => {

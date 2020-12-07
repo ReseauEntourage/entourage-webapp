@@ -88,7 +88,7 @@ describe('Auth User', () => {
   it(`
     Given initial state
     When no action is triggered
-    Then user should not being logged
+    Then the user should not be logging
       And first step should be "phone"
   `, () => {
     const authUserGateway = new TestAuthUserGateway()
@@ -103,8 +103,8 @@ describe('Auth User', () => {
   it(`
     Given server ask password on phone lookup
     When user trigger phone lookup
-    Then user should being logged during phone lookup
-      And user should not being logged after request succeeded
+    Then the user should be logging during phone lookup
+      And the user should not be logging after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
@@ -124,8 +124,8 @@ describe('Auth User', () => {
   it(`
     Given server ask SMS Code on phone lookup
     When user trigger phone lookup
-    Then user should being logged during phone lookup
-      And user should not being logged after request succeeded
+    Then user should be logging during phone lookup
+      And user should not be logging after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
@@ -145,8 +145,8 @@ describe('Auth User', () => {
   it(`
     Given server does not found user on phone lookup
     When user trigger phone lookup
-    Then user should being logged during phone lookup
-      And user should not being logged after request succeeded
+    Then user should be logging during phone lookup
+      And user should not be logging after request succeeded
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PHONE_NOT_FOUND)
@@ -172,7 +172,7 @@ describe('Auth User', () => {
   it(`
     Given user hasn't any account and server return not found on phone lookup
     When user trigger phone lookup
-    Then should create account
+    Then a use account should be created
       And next step should be SMS Code
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
@@ -218,7 +218,7 @@ describe('Auth User', () => {
   it(`
     Given user must define password
     When user want to create password
-    Then assword should be created
+    Then password should be created
   `, async () => {
     const testAuthUserGateway = new TestAuthUserGateway()
     testAuthUserGateway.definePassword.mockDeferredValueOnce(null)
@@ -246,7 +246,7 @@ describe('Auth User', () => {
   })
 
   it(`
-    Given user has an account but not validated (server return SMS code needed)
+    Given server return SMS Code needed on phone lookup
     When user trigger phone lookup
     Then step should be SMS Code after request succeeded
   `, async () => {
@@ -283,7 +283,7 @@ describe('Auth User', () => {
   it(`
     Given user as an account
     When user want to reset password
-    Then password reset gateway should be called once with phone number
+    Then password reset request should be called once with phone number
       And next step should be SMS Code
   `, async () => {
     const { store, resolveAllDeferredValue, authUserGateway } = configureStoreWithUserAccount()
@@ -303,10 +303,10 @@ describe('Auth User', () => {
   it(`
     Given user as an account
     When user want to login with password
-    Then user should being logged during request
-    And should be logged after request succeeded
-      And should have user
-      should step be null
+    Then user should be logging during request
+      And user should be logged after request succeeded
+      And user data should be equal to server response
+      And there should not be a next step
   `, async () => {
     const { store, resolveAllDeferredValue, user } = configureStoreWithUserAccount()
     const phone = '0700000000'
@@ -330,10 +330,10 @@ describe('Auth User', () => {
   it(`
     Given user as an account
     When user want to login with SMS Code
-    Then user should being logged during request
-      And should be logged after request succeeded
-      And should have user
-      should step be create password
+    Then user should be logging during request
+      And user should be logged after request succeeded
+      And user data should be equal to server response
+      And next step should be password creation
   `, async () => {
     const { store, resolveAllDeferredValue, user, authUserGateway } = configureStoreWithUserAccount()
     const phone = '0700000000'
@@ -371,7 +371,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When no action is triggered
-      Then should haven't any error
+      Then there should be no error
     `, () => {
       const { store } = configureStoreWithPasswordNeeded()
 
@@ -381,7 +381,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When user set a empty phone number
-      Then should have phone error as required phone
+      Then there should be phone error as required phone
     `, () => {
       const { store } = configureStoreWithPasswordNeeded()
 
@@ -393,7 +393,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When user set an invalid phone number with letter
-      Then should have phone error as invalid format
+      Then there should be phone error as invalid format
     `, () => {
       const { store } = configureStoreWithPasswordNeeded()
 
@@ -406,8 +406,8 @@ describe('Auth User', () => {
       Given initial state
       When user set an invalid phone number with letter
         And correct his error with a valid phone number
-      Then should first have phone error as invalid format
-        And error should disappear after correction
+      Then there should first be a phone error as invalid format
+        And that error should disappear after correction
     `, () => {
       const { store } = configureStoreWithPasswordNeeded()
 
@@ -436,7 +436,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When no action is triggered
-      Then should haven't any error
+      Then there should be no error
     `, () => {
       const { store } = configureStoreWithResetPassword()
 
@@ -446,7 +446,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When user want to reset password with an empty phone number
-      Then should have phone error as required phone
+      Then there should be a phone error as required phone
     `, () => {
       const { store } = configureStoreWithResetPassword()
 
@@ -458,7 +458,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When user want to reset password with an invalid empty phone number with letters
-      Then should have phone error as invalid format
+      Then there should be a phone error as invalid format
     `, () => {
       const { store } = configureStoreWithResetPassword()
 
@@ -471,8 +471,8 @@ describe('Auth User', () => {
       Given initial state
       When user want to reset password with an invalid empty phone number with letters
         And correct his error with a valid phone number
-      Then should first have phone error as invalid format
-        And error should disappear after correction
+      Then there should first be a phone error as invalid format
+        And that error should disappear after correction
     `, () => {
       const { store } = configureStoreWithResetPassword()
 
@@ -501,7 +501,7 @@ describe('Auth User', () => {
     it(`
       Given initial state
       When no action is triggered
-      Then should have no error at first
+      Then there should be no error
     `, () => {
       const { store } = configureStoreWithDefinedPassword()
       expect(selectErrors(store.getState())).toEqual({})
@@ -511,8 +511,8 @@ describe('Auth User', () => {
       Given initial state
       When user defined empty password
         And user defined an empty password confirmation
-      Then should have an error as required password
-        And should have an error as required password confirmation
+      Then there should be an error as required password
+        And there should be an error as required password confirmation
     `, () => {
       const { store } = configureStoreWithDefinedPassword()
 
@@ -528,8 +528,8 @@ describe('Auth User', () => {
       Given initial state
       When user defined password too short
         And user defined a password confirmation too short
-      Then should have an error as too short password
-        And should have an error as too short password confirmation
+      Then there should be an error as too short password
+        And there should be an error as too short password confirmation
     `, () => {
       const { store } = configureStoreWithDefinedPassword()
 
@@ -545,7 +545,7 @@ describe('Auth User', () => {
       Given initial state
       When user defined a valid password
         And user defined a password confirmation different than password
-      Then should have an error as password confirmation doesn't match password
+      Then there should be an error as password confirmation doesn't match password
     `, () => {
       const { store } = configureStoreWithDefinedPassword()
 
@@ -561,8 +561,8 @@ describe('Auth User', () => {
       When user defined empty password
         And user defined an empty password confirmation
         And user correct his error
-      Then should first have an error as required password and password confirmation
-        And error should disappear after correction
+      Then there should first be an error as required password and password confirmation
+        And that error should disappear after correction
     `, () => {
       const { store } = configureStoreWithDefinedPassword()
 
@@ -582,7 +582,7 @@ describe('Auth User', () => {
   it(`
     Given user has an account
     When user set bad credential
-    Then should have error as invalid password
+    Then there should be an error as invalid password
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.loginWithPassword.mockDeferredValueOnce(createUser())
