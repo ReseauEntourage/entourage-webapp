@@ -89,7 +89,8 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.RETRIEVE_FEED_STARTED: {
+    case ActionType.RETRIEVE_FEED_STARTED:
+    case ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED: {
       return {
         ...state,
         fetching: true,

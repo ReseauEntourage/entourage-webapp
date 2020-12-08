@@ -8,6 +8,7 @@ export const ActionType = {
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
   RETRIEVE_FEED_NEXT_PAGE: 'FEED/RETRIEVE_FEED_NEXT_PAGE',
+  RETRIEVE_FEED_NEXT_PAGE_STARTED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_STARTED',
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
@@ -56,6 +57,12 @@ function retrieveFeedSuccess(
 function retrieveFeedNextPage() {
   return {
     type: ActionType.RETRIEVE_FEED_NEXT_PAGE,
+  }
+}
+
+function retrieveFeedNextPageStarted() {
+  return {
+    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED,
   }
 }
 
@@ -116,6 +123,7 @@ function leaveEntourageSucceeded(payload: { entourageUuid: string; }) {
 export const publicActions = {
   setFilters,
   retrieveFeed,
+  retrieveFeedNextPageStarted,
   retrieveFeedNextPage,
   updateItem,
   setCurrentItemUuid,

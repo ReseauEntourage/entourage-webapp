@@ -283,7 +283,7 @@ describe('Feed', () => {
 
 it(`
   Given feed items are fetching
-  When use want to retrieved feed items
+  When user want to retrieve feed items
   Then the second request should never start
 `, async () => {
   const feedGateway = new TestFeedGateway()
@@ -295,6 +295,28 @@ it(`
   expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
   store.dispatch(publicActions.retrieveFeed())
+
+  feedGateway.retrieveFeedItems.resolveDeferredValue()
+  await store.waitForActionEnd()
+
+  expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+})
+
+it(`
+  Given feed items on next page are fetching
+  When user want to retrieve next page of feed items
+  Then the second request should never start
+`, async () => {
+  const feedGateway = new TestFeedGateway()
+  feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+  const initialState: FeedState = {
+    ...fakeFeedData,
+    nextPageToken: 'abc',
+  }
+  const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
+
+  store.dispatch(publicActions.retrieveFeedNextPage())
+  store.dispatch(publicActions.retrieveFeedNextPage())
 
   feedGateway.retrieveFeedItems.resolveDeferredValue()
   await store.waitForActionEnd()

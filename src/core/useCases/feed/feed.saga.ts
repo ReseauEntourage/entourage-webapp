@@ -4,7 +4,7 @@ import { takeEvery } from 'src/core/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { ActionType, actions, Actions } from './feed.actions'
 import { FeedState } from './feed.reducer'
-import { selectCurrentItem, selectFeed, selectFeedIsFetching } from './feed.selectors'
+import { selectCurrentItem, selectFeed } from './feed.selectors'
 
 interface AppState {
   feed: FeedState;
@@ -17,11 +17,10 @@ export interface Dependencies {
 function* retrieveFeed() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveFeedItems } = dependencies.feedGateway
-  const feedIsFetching: ReturnType<typeof selectFeedIsFetching> = yield select(selectFeedIsFetching)
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
-  const { filters: { zoom, center }, nextPageToken } = feedState
+  const { filters: { zoom, center }, nextPageToken, fetching } = feedState
 
-  if (feedIsFetching) {
+  if (fetching) {
     return
   }
 
@@ -39,11 +38,13 @@ function* retrieveFeed() {
 function* retrieveFeedNextPage() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveFeedItems } = dependencies.feedGateway
-  const { filters: { center, zoom }, nextPageToken }: ReturnType<typeof selectFeed> = yield select(selectFeed)
+  const { filters: { center, zoom }, nextPageToken, fetching }: ReturnType<typeof selectFeed> = yield select(selectFeed)
 
-  if (!nextPageToken) {
+  if (!nextPageToken || fetching) {
     return
   }
+
+  yield put(actions.retrieveFeedNextPageStarted())
 
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
