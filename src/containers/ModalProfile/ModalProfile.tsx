@@ -8,15 +8,12 @@ import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/Google
 import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
 import { Modal } from 'src/components/Modal'
 import { api } from 'src/core/api'
-import { useQueryMe, useMutateMe, useMutateMeAddress } from 'src/core/store'
+import { useMutateMe, useMutateMeAddress } from 'src/core/store'
+import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { notifServerError } from 'src/utils/misc'
 
 type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
-
-// we can force user to NonNullable because useQueryMe() always return a user in ProfileModal
-// because ProfileModal is only open if user is not null
-type NonNullableUser = NonNullable<ReturnType<typeof useQueryMe>['data']>['data']['user']
 
 interface FormField {
   about: UserUpdate['about'];
@@ -65,12 +62,12 @@ function useUploadImageProfile() {
 }
 
 export function ModalProfile() {
-  const { data: me } = useQueryMe()
+  const me = useMe()
   const [mutateMe] = useMutateMe()
   const [mutateMeAddress] = useMutateMeAddress(false)
   const [onValidateImageProfile, upload] = useUploadImageProfile()
 
-  const user = me?.data?.user || {} as NonNullableUser
+  const user = me || {} as NonNullable<typeof me>
 
   const form = useForm<FormField>({
     defaultValues: {
@@ -177,6 +174,10 @@ export function ModalProfile() {
           onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
           textFieldProps={{
             label: modalTexts.locationLabel,
+            name: 'address',
+            inputRef: register({
+              required: true,
+            }),
           }}
         />
         <Label>
@@ -205,7 +206,7 @@ export function ModalProfile() {
           {modalTexts.step5}
           <ImageCropper
             onValidate={onValidateImageProfile}
-            src={me?.data.user.avatarUrl}
+            src={me?.avatarUrl}
           />
         </Label>
       </FormProvider>

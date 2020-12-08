@@ -2,7 +2,8 @@ export const constants = {
   AUTH_TOKEN_KEY: 'authToken',
   AUTH_TOKEN_TTL: 30 * 24 * 60 * 60, // unit: seconds
   MARKER_DIAMETER: 250, // unit: meters
-  MAX_FEED_ITEM_UPDATED_AT_HOURS: 24 * 30, // unit: hours
+  // MAX_FEED_ITEM_UPDATED_AT_HOURS: 24 * 30, // unit: hours
+  MAX_FEED_ITEM_UPDATED_AT_HOURS: 10000,
   MAIL_TO_REPORT: 'guillaume@entourage.social',
   FB_APP_ID: '280727035774134',
   DEFAULT_LOCATION: {
@@ -15,4 +16,5 @@ export const constants = {
   },
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
   ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
+  FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
 }

@@ -1,15 +1,16 @@
 import { useQuery } from 'react-query'
-import { useMapContext } from 'src/components/Map'
+import { useSelector } from 'react-redux'
 import { api } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 
 export function useQueryPOIs() {
-  const mapContext = useMapContext()
+  const { center } = useSelector(selectFeedFilters)
 
   const POIsParams = {
     distance: 5,
-    latitude: mapContext.value.center.lat,
-    longitude: mapContext.value.center.lng,
+    latitude: center.lat,
+    longitude: center.lng,
     categoryIds: '1,2,3,4,5,6,7',
   }
 

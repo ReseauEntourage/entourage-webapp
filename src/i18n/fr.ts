@@ -3,6 +3,13 @@
 
 export const texts = {
   form: {
+    REQUIRED: 'Champs requis',
+    INVALID_FORMAT: 'Format incorrect',
+    PASSWORD_CONFIRMATION_NOT_MATCH: 'Confirmation invalide',
+    INVALID_PASSWORD: 'Mot de passe invalide',
+    INVALID_SMS_CODE: 'Code SMS invalide',
+    PASSWORD_TOO_SHORT: 'Mot de passe trop court',
+    // old
     FIELD_REQUIRED: 'Champs requis',
     EMAIL_REQUIRED: 'Format incorrect, veuillez entrer un email',
     PHONE_EXIST: 'Votre numéro exist déjà',

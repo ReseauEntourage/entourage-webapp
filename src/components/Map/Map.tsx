@@ -1,9 +1,10 @@
-import GoogleMapReact from 'google-map-react'
-import React, { useState, useCallback } from 'react'
+import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import { constants } from 'src/constants'
 import { env } from 'src/core/env'
+import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
 import { AnyToFix } from 'src/utils/types'
-import { MapContextValue, MapContext, useMapContext } from './context'
 
 interface Props {
   /**
@@ -11,46 +12,36 @@ interface Props {
    * Need to find the correct type
    */
   children: AnyToFix;
-  onChange?: (value: MapContextValue) => void;
 }
-
-const defaultValues = {
-  center: constants.DEFAULT_LOCATION.CENTER,
-  zoom: constants.DEFAULT_LOCATION.ZOOM,
-} as MapContextValue['value']
 
 export function Map(props: Props) {
   const { children } = props
-  const { onChange, value } = useMapContext()
+  const filters = useSelector(selectFeedFilters)
+  const dispatch = useDispatch()
+
+  function onChange(value: ChangeEventValue) {
+    const filtersHasChanged = filters.center.lat !== value.center.lat
+      || filters.center.lng !== value.center.lng
+      || filters.zoom !== value.zoom
+
+    if (filtersHasChanged) {
+      dispatch(feedActions.setFilters({
+        center: value.center,
+        zoom: value.zoom,
+      }))
+    }
+  }
 
   return (
     <GoogleMapReact
       bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
-      center={value.center}
+      center={filters.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
-      onChange={(nextValue) => onChange({ ...value, ...nextValue })}
+      onChange={(nextValue) => onChange(nextValue)}
       yesIWantToUseGoogleMapApiInternals={true}
     >
       {children}
     </GoogleMapReact>
-  )
-}
-
-export function MapProvider(props: { children: JSX.Element; }) {
-  const { children } = props
-  const [mapContextValue, setMapContextValue] = useState<MapContextValue['value']>(defaultValues)
-
-  const onChange = useCallback(setMapContextValue, [])
-
-  const context = {
-    value: mapContextValue,
-    onChange,
-  }
-
-  return (
-    <MapContext.Provider value={context}>
-      {children}
-    </MapContext.Provider>
   )
 }

@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import uniqid from 'uniqid'
 import { ModalContext } from './ModalContext'
 
@@ -12,20 +12,20 @@ export function openModal(modal: React.ReactNode) {
 export function ModalsListener() {
   const [modals, setModals] = useState<{ [key in string]: React.ReactNode; }>({})
 
-  useEffect(() => {
+  const subscription = useMemo(() => {
     // @ts-ignore
-    const subscription = modalsSubject.subscribe((modal: React.ReactNode) => {
+    return modalsSubject.subscribe((modal: React.ReactNode) => {
       const modalKey = uniqid()
       setModals((prevModals) => ({
         ...prevModals,
         [modalKey]: modal,
       }))
     })
-
-    return () => {
-      subscription.unsubscribe()
-    }
   }, [])
+
+  useEffect(() => {
+    return () => subscription.unsubscribe()
+  }, [subscription])
 
   return (
     <>

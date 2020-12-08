@@ -10,8 +10,8 @@ import {
   useQueryEntourageFromMyFeeds,
   useQueryEntourage,
   queryKeys,
-  useQueryMeNonNullable,
 } from 'src/core/store'
+import { useMeNonNullable } from 'src/hooks/useMe'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
@@ -40,7 +40,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
     isNewConversation ? [queryKeys.myFeeds] : undefined,
   )
 
-  const me = useQueryMeNonNullable()
+  const me = useMeNonNullable()
 
   const onClickSend = useCallback(async (messageContent) => {
     await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })

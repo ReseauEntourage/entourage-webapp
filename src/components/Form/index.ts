@@ -1,5 +1,6 @@
 export * from './valitators'
 export * from './TextField'
+export * from './TextFieldPassword'
 export * from './Label'
 export * from './RowFields'
 export * from './useForm'

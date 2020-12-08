@@ -32,3 +32,14 @@ export function assertIsDefined<T>(val: T, message = ''): asserts val is NonNull
     throwAssertionError(val, 'defined', message)
   }
 }
+
+export function assertCondition(condition: boolean, message = ''): asserts condition {
+  if (!condition) {
+    throwAssertionError(condition, 'condition', message)
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function assertUnreachable(x: never) {
+  throw new Error("Didn't expect to get here")
+}

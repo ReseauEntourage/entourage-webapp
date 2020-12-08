@@ -1,6 +1,7 @@
 import React from 'react'
-import { useMapContext } from '../context'
+import { useSelector } from 'react-redux'
 import { constants } from 'src/constants'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { getPixelPerMeter } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
@@ -19,11 +20,12 @@ interface Props {
   isActive: boolean;
 }
 
-// disable ESLint because lat and lng are internaly use by Google Map
+// disable ESLint because lat and lng are internally use by Google Map
 // eslint-disable-next-line
 export function EventMarker(props: Props) {
   const { isActive } = props
-  const { zoom, center: { lat } } = useMapContext().value
+  const filters = useSelector(selectFeedFilters)
+  const { zoom, center: { lat } } = filters
   const size = getMarkerSize(lat, zoom)
 
   return (

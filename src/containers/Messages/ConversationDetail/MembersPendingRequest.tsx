@@ -5,11 +5,11 @@ import { Button, ButtonsList } from 'src/components/Button'
 import { PendingNotif } from 'src/components/Conversations'
 import {
   useQueryMembersPending,
-  useQueryMeNonNullable,
   useQueryEntourageFromMyFeeds,
   useMutateAcceptEntourageUser,
   useMutateDeleteEntourageUser,
 } from 'src/core/store'
+import { useMeNonNullable } from 'src/hooks/useMe'
 import { useDelayLoading } from 'src/utils/hooks'
 import * as S from './MembersPendingRequest.styles'
 
@@ -23,7 +23,7 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
   const [deleting, setDeleting] = useDelayLoading()
   const [accepting, setAccepting] = useDelayLoading()
   const { membersPending } = useQueryMembersPending(entourageUuid)
-  const me = useQueryMeNonNullable()
+  const me = useMeNonNullable()
   const entourage = useQueryEntourageFromMyFeeds(entourageUuid)
   const iAmAuthor = me.id === entourage?.author.id
 

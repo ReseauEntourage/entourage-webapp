@@ -186,7 +186,12 @@ export const schema = {
     method: 'POST',
     params: null,
     data: null,
-    response: {} as {},
+    response: {} as {
+      user: {
+        id: number;
+        status: FeedJoinStatus;
+      };
+    },
   },
   '/entourages/:entourageId/users/:userId PUT': {
     url: (params: EntourageIdOrUUIDParams & { userId: number; }) => {

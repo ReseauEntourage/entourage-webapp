@@ -2,52 +2,51 @@ import AccessTimeIcon from '@material-ui/icons/AccessTime'
 import DoneIcon from '@material-ui/icons/Done'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import React, { useCallback, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { assertIsDefined } from '../../../utils/misc'
+import { useCurrentFeedItem } from '../useCurrentFeedItem'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
-import {
-  useMutateEntourageUsers,
-  useQueryMe,
-  UseQueryFeedItem,
-  useQueryIAmLogged,
-} from 'src/core/store'
+import { AppState } from 'src/core/boostrapStore'
+import { selectIsUpdatingJoinStatus, selectJoinRequestStatus, feedActions } from 'src/core/useCases/feed'
+import { useMe } from 'src/hooks/useMe'
 import { colors } from 'src/styles'
-import { useDelayLoading } from 'src/utils/hooks'
+import { useDelayLoadingNext } from 'src/utils/hooks'
 import { ModalLeaveEntourage } from './ModalLeaveEntourage'
 
-interface ParticipateButtonProps {
-  feedItem: UseQueryFeedItem;
-}
+export function ParticipateButton() {
+  const dispatch = useDispatch()
+  const feedItem = useCurrentFeedItem()
 
-export function ParticipateButton(props: ParticipateButtonProps) {
-  const { feedItem } = props
+  assertIsDefined(feedItem)
+
+  const joinRequestPending = useSelector(selectIsUpdatingJoinStatus)
+  const joinRequestStatus = useSelector((state: AppState) => selectJoinRequestStatus(state, feedItem.uuid))
   const [isHover, setIsHover] = useState(false)
-  const [requestEntourageUser] = useMutateEntourageUsers()
-  const { data: dataMe } = useQueryMe()
-  const { iAmLogged } = useQueryIAmLogged()
-  const [participateLoading, setParticipateLoading] = useDelayLoading()
+  const me = useMe()
 
-  const iAmCreator = dataMe?.data.user.id === feedItem.author.id
+  const participateLoading = useDelayLoadingNext(joinRequestPending)
 
-  const onRequestEntourageUser = useCallback(async () => {
-    setParticipateLoading(true)
-    await requestEntourageUser({ entourageId: feedItem.id }, { waitForRefetchQueries: true })
-    setParticipateLoading(false)
-  }, [setParticipateLoading, feedItem, requestEntourageUser])
+  const iAmCreator = me?.id === feedItem.author.id
 
   const onClickParticipate = useCallback(() => {
-    if (!iAmLogged) {
+    const onRequestEntourageUser = () => {
+      dispatch(feedActions.joinEntourage({ entourageUuid: feedItem.uuid }))
+    }
+
+    if (!me) {
       openModal(<ModalSignIn onSuccess={onRequestEntourageUser} />)
     } else {
       onRequestEntourageUser()
     }
-  }, [iAmLogged, onRequestEntourageUser])
+  }, [dispatch, feedItem.uuid, me])
 
   const onClickPending = useCallback(() => {
     openModal(<ModalLeaveEntourage entourageUuid={feedItem.uuid} />)
   }, [feedItem.uuid])
 
-  if (feedItem.joinStatus === 'not_requested' || feedItem.joinStatus === 'cancelled' || participateLoading) {
+  if (joinRequestStatus === 'NOT_REQUEST') {
     return <Button loading={participateLoading} onClick={onClickParticipate}>Participer</Button>
   }
 
@@ -59,7 +58,7 @@ export function ParticipateButton(props: ParticipateButtonProps) {
     )
   }
 
-  if (feedItem.joinStatus === 'pending') {
+  if (joinRequestStatus === 'PENDING') {
     return (
       <Button
         onClick={onClickPending}
@@ -75,7 +74,7 @@ export function ParticipateButton(props: ParticipateButtonProps) {
     )
   }
 
-  if (feedItem.joinStatus === 'accepted') {
+  if (joinRequestStatus === 'ACCEPTED') {
     return (
       <Button
         onClick={onClickPending}

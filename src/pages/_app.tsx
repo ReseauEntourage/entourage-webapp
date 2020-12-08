@@ -5,16 +5,16 @@ import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
+import { Provider } from 'react-redux'
 import { Layout } from 'src/components/Layout'
-import { MapProvider } from 'src/components/Map'
 import { ModalsListener } from 'src/components/Modal'
-import { MainStoreProvider } from 'src/containers/MainStore'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
-import { api } from 'src/core/api'
-import { Dispatchers } from 'src/core/events'
+import { api, LoggedUser } from 'src/core/api'
+import { bootstrapStore } from 'src/core/boostrapStore'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
+import { authUserActions } from 'src/core/useCases/authUser'
 import { theme } from 'src/styles'
 import { isSSR, initFacebookApp } from 'src/utils/misc'
 
@@ -25,11 +25,13 @@ if (process.env.NODE_ENV !== 'production') {
 initSentry()
 initFacebookApp()
 
-export default class App extends NextApp {
+export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
+
+  store: ReturnType<typeof bootstrapStore> | null = null
 
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
     const { req } = appContext.ctx
@@ -39,7 +41,7 @@ export default class App extends NextApp {
 
     let me
 
-    // use to get token, either anonyous token or authenticated token
+    // use to get token, either anonymous token or authenticated token
     if (isSSR) {
       const meData = await api.ssr(appContext.ctx).request({
         name: '/users/me GET',
@@ -57,6 +59,7 @@ export default class App extends NextApp {
       ...appProps,
       // @ts-ignore
       me,
+      authUserData: me?.data.user,
       userAgent,
     }
   }
@@ -70,9 +73,28 @@ export default class App extends NextApp {
 
   render() {
     // @ts-ignore
-    const { Component, pageProps, me, userAgent } = this.props
+    const { Component, pageProps, me, userAgent, authUserData } = this.props
 
     const SSRDataValue = { me, userAgent }
+
+    if (!this.store) {
+      this.store = bootstrapStore()
+
+      if (authUserData && !authUserData.anonymous) {
+        this.store.dispatch(authUserActions.setUser({
+          id: authUserData.id,
+          email: authUserData.email || undefined,
+          hasPassword: authUserData.hasPassword,
+          avatarUrl: authUserData.avatarUrl || undefined,
+          partner: authUserData.partner,
+          lastName: authUserData.lastName || undefined,
+          firstName: authUserData.firstName || undefined,
+          address: authUserData.address || undefined,
+          about: authUserData.about || undefined,
+          token: authUserData.token,
+        }))
+      }
+    }
 
     return (
       <>
@@ -85,26 +107,23 @@ export default class App extends NextApp {
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
           <>
-            <Dispatchers />
             <StylesProvider injectFirst={true}>
               <ThemeProvider theme={theme}>
-                <ReactQueryConfigProvider config={queryConfig}>
-                  <MainStoreProvider>
-                    <MapProvider>
-                      <Layout>
-                        <>
-                          <Layout.Nav>
-                            <Nav />
-                          </Layout.Nav>
-                          <Layout.Page>
-                            <Component {...pageProps} />
-                            <ModalsListener />
-                          </Layout.Page>
-                        </>
-                      </Layout>
-                    </MapProvider>
-                  </MainStoreProvider>
-                </ReactQueryConfigProvider>
+                <Provider store={this.store}>
+                  <ReactQueryConfigProvider config={queryConfig}>
+                    <Layout>
+                      <>
+                        <Layout.Nav>
+                          <Nav />
+                        </Layout.Nav>
+                        <Layout.Page>
+                          <Component {...pageProps} />
+                          <ModalsListener />
+                        </Layout.Page>
+                      </>
+                    </Layout>
+                  </ReactQueryConfigProvider>
+                </Provider>
               </ThemeProvider>
             </StylesProvider>
           </>

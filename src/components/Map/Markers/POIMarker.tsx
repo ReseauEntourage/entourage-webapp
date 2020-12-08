@@ -6,8 +6,9 @@ import PeopleIcon from '@material-ui/icons/People'
 import RestaurantIcon from '@material-ui/icons/Restaurant'
 import SpaIcon from '@material-ui/icons/Spa'
 import React from 'react'
-import { useMapContext } from '../context'
+import { useSelector } from 'react-redux'
 import { POICategory } from 'src/core/api'
+import { selectFeedFilters } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { BaseMarker } from './BaseMarker'
 
@@ -33,7 +34,7 @@ interface Props {
 
 export function POIMarker(props: Props) {
   const { category } = props
-  const { zoom } = useMapContext().value
+  const { zoom } = useSelector(selectFeedFilters)
   const { size, iconSize } = getSize(zoom)
   const color = colors.pois[category.id]
   const Icon = icons[category.id]

@@ -58,7 +58,7 @@ export const api: APIInstanceWithSSR = {
       const configWithToken = {
         ...config,
         params: {
-          // @ts-ignore
+          // @ts-expect-error
           ...(config.params || {}),
           token,
         },

@@ -6,3 +6,6 @@ export * from './asserts'
 export * from './plateform'
 export * from './initFacebookApp'
 export * from './GoogleMaps'
+export * from './uniqIntId'
+export * from './uniqStringId'
+

@@ -3,12 +3,12 @@ import React from 'react'
 import { EventMarker, /* POIMarker, */ MarkerWrapper } from 'src/components/Map'
 // import { useQueryPOIs } from 'src/core/store'
 import { useActionId } from './useActionId'
-import { useFeeds } from './useFeeds'
+import { useNextFeed } from './useNextFeed'
 
 export function useMarkers() {
   const actionId = useActionId()
   // const [POIs] = useQueryPOIs()
-  const { feeds, isLoading } = useFeeds()
+  const { feeds, isLoading } = useNextFeed()
 
   const feedsMarkersContent = feeds.map((feed) => {
     const { location, uuid } = feed

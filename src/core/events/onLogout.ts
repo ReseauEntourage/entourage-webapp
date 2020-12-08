@@ -1,32 +1,15 @@
-import { Subject } from 'rxjs'
 import { useEffect } from 'react'
-import { useQueryMe } from 'src/core/store'
-import { useMount, usePrevious } from 'src/utils/hooks'
+import { useSelector } from 'react-redux'
+import { selectIsLogged } from 'src/core/useCases/authUser'
+import { usePrevious } from 'src/utils/hooks'
 
-const logoutSubject = new Subject()
-
-function publish(me: NonNullable<ReturnType<typeof useQueryMe>['data']>) {
-  logoutSubject.next(me)
-}
-
-export function useOnLogout(onLogout: (me: Parameters<typeof publish>[0]) => void) {
-  useMount(() => {
-    // @ts-ignore
-    const subscription = logoutSubject.subscribe(onLogout)
-    return () => subscription.unsubscribe()
-  })
-}
-
-export function useOnLogoutDispatcher() {
-  const { data: meResponse } = useQueryMe()
-  const prevMeReponse = usePrevious(meResponse)
+export function useOnLogout(onLogout: () => void) {
+  const isLogged = useSelector(selectIsLogged)
+  const prevIsLogged = usePrevious(isLogged)
 
   useEffect(() => {
-    const prevMeReponseIsLogged = prevMeReponse && prevMeReponse.data && !prevMeReponse.data.user.anonymous
-    const meReponseIsNotLogged = meResponse && meResponse.data && meResponse.data.user.anonymous
-
-    if (prevMeReponseIsLogged && meReponseIsNotLogged) {
-      publish(meResponse as NonNullable<typeof meResponse>)
+    if (prevIsLogged && !isLogged) {
+      onLogout()
     }
-  }, [prevMeReponse, meResponse])
+  }, [isLogged, onLogout, prevIsLogged])
 }
