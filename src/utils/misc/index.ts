@@ -8,4 +8,4 @@ export * from './initFacebookApp'
 export * from './GoogleMaps'
 export * from './uniqIntId'
 export * from './uniqStringId'
-
+export * from './useScript'

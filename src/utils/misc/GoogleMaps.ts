@@ -1,7 +1,18 @@
-import { isSSR } from 'src/utils/misc'
+import { useMemo } from 'react'
+import { env } from 'src/core/env'
+import { isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
-export function getDetailPlacesService(placeId: string, sessionToken: string): Promise<google.maps.places.PlaceResult> {
-  const requestGetDetail = {
+const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`
+
+class GoogleMapApiNotLoaded extends Error {
+  name = 'Google Map Api is not loaded'
+}
+
+export function getDetailPlacesService(
+  placeId: string,
+  sessionToken: google.maps.places.AutocompleteSessionToken,
+): Promise<google.maps.places.PlaceResult> {
+  const requestGetDetail: google.maps.places.PlaceDetailsRequest = {
     placeId,
     sessionToken,
     fields: ['name', 'place_id', 'geometry', 'formatted_address'],
@@ -15,36 +26,40 @@ export function getDetailPlacesService(placeId: string, sessionToken: string): P
   })
 }
 
-type GoogleMapState = {
-  autoCompleteService: google.maps.places.AutocompleteService;
-  isReady: true;
-} | {
-  autoCompleteService: undefined;
-  isReady: false;
-}
+export function useLoadGoogleMapApi() {
+  const url = !isSSR
+    ? scriptUrl
+    : ''
 
-let instance: GoogleMapState = {
-  autoCompleteService: undefined,
-  isReady: false,
-}
+  const status = useScript(url)
 
-const onLoaded = () => {
-  if (!isSSR && !instance.isReady) {
-    const googleMapInst = window.google?.maps
-    instance = {
-      autoCompleteService: new googleMapInst.places.AutocompleteService(),
-      isReady: true,
-    }
+  if (status === 'idle' || status === 'loading') {
+    return false
   }
+
+  if (status === 'ready') {
+    return true
+  }
+
+  throw new Error('Error during Google map loading')
 }
 
-export const GoogleMapApi = {
-  onLoaded,
-  getInstance: () => instance,
+export function useAutocompleteSessionToken() {
+  if (!useScriptIsReady(scriptUrl)) {
+    throw new GoogleMapApiNotLoaded()
+  }
+
+  return useMemo(() => {
+    return new google.maps.places.AutocompleteSessionToken()
+  }, [])
 }
 
-export function createAutocompleteSessionToken(): { Rf: string; } | undefined {
-  const { isReady } = GoogleMapApi.getInstance()
-  // @ts-ignore
-  return isReady ? new google.maps.places.AutocompleteSessionToken() : undefined
+export function useAutocompleteServices() {
+  if (!useScriptIsReady(scriptUrl)) {
+    throw new GoogleMapApiNotLoaded()
+  }
+
+  return useMemo(() => {
+    return new google.maps.places.AutocompleteService()
+  }, [])
 }

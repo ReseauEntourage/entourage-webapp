@@ -5,9 +5,11 @@ import GpsFixedIcon from '@material-ui/icons/GpsFixed'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
-import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import { OverlayLoader } from '../OverlayLoader'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { GoogleMapApi, createAutocompleteSessionToken } from 'src/utils/misc'
+import { useDelayLoadingNext } from 'src/utils/hooks'
+import { useAutocompleteSessionToken, useAutocompleteServices, useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 import * as S from './GoogleMapLocation.styles'
 
@@ -25,7 +27,7 @@ export interface PlaceType {
 }
 
 export interface GoogleMapLocationValue {
-  googleSessionToken: string;
+  sessionToken: google.maps.places.AutocompleteSessionToken;
   place: PlaceType;
 }
 
@@ -36,21 +38,23 @@ export interface GoogleMapLocationProps {
   textFieldProps: TextFieldProps;
 }
 
-function useAutocompleteSessionToken(): { Rf: string; } | undefined {
-  const autocompleteSessionToken = useRef(createAutocompleteSessionToken())
-  const { isReady } = GoogleMapApi.getInstance()
-  useEffect(() => {
-    if (isReady) {
-      autocompleteSessionToken.current = createAutocompleteSessionToken()
-    }
-  }, [isReady])
-  return autocompleteSessionToken.current
+export function GoogleMapLocation(props: GoogleMapLocationProps) {
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
+  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
+
+  if (isLoading) {
+    return <OverlayLoader />
+  }
+
+  return googleMapApiIsLoaded
+    ? <GoogleMapLocationWithApi {...props} />
+    : null
 }
 
-export function GoogleMapLocation(props: GoogleMapLocationProps) {
+function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, defaultValue } = props
-  const googleMap = GoogleMapApi.getInstance()
   const sessionToken = useAutocompleteSessionToken()
+  const autocompletServices = useAutocompleteServices()
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
@@ -60,25 +64,24 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
   }, [])
 
   const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
-    if (onChange && googleMap.isReady && place && sessionToken) {
+    if (onChange && place) {
       onChange({
-        googleSessionToken: sessionToken.Rf,
+        sessionToken,
         place,
       })
     }
-  }, [onChange, googleMap, sessionToken])
+  }, [onChange, sessionToken])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {
-      if (googleMap.isReady && sessionToken) {
-        const data = {
-          input: input.input,
-          sessionToken,
-        }
-        googleMap.autoCompleteService.getPlacePredictions(data, callback)
+      const data = {
+        input: input.input,
+        sessionToken,
       }
+
+      autocompletServices.getPlacePredictions(data, callback)
     }, 200),
-    [googleMap, sessionToken],
+    [autocompletServices, sessionToken],
   )
 
   useEffect(() => {
