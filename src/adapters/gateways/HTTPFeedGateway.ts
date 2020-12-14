@@ -99,6 +99,41 @@ export class HTTPFeedGateway implements IFeedGateway {
     })
   }
 
+  closeEntourage(entourageUuid: string, success: boolean): Promise<void |null> {
+    return api.request({
+      name: '/entourages PATCH',
+      data: {
+        entourage: {
+          status: 'closed',
+          outcome: {
+            success,
+          },
+        },
+      },
+      pathParams: {
+        entourageUuid,
+      },
+    }).then(() => {
+      return null
+    })
+  }
+
+  reopenEntourage(entourageUuid: string): Promise<void |null> {
+    return api.request({
+      name: '/entourages PATCH',
+      data: {
+        entourage: {
+          status: 'open',
+        },
+      },
+      pathParams: {
+        entourageUuid,
+      },
+    }).then(() => {
+      return null
+    })
+  }
+
   retrieveFeedItem(data: { entourageUuid: string; }) {
     return api.request({
       name: '/entourages/:entourageId GET',

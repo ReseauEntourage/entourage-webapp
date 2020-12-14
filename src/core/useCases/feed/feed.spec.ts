@@ -279,70 +279,70 @@ describe('Feed', () => {
 
     expect(selectFeedItems(store.getState())).toEqual(previousSelectedFeedItems)
   })
-})
 
-it(`
-  Given feed items are fetching
-  When user want to retrieve feed items
-  Then the second request should never start
-`, async () => {
-  const feedGateway = new TestFeedGateway()
-  feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-  const store = configureStoreWithFeed({ feedGateway })
+  it(`
+    Given feed items are fetching
+    When user want to retrieve feed items
+    Then the second request should never start
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ feedGateway })
 
-  store.dispatch(publicActions.retrieveFeed())
+    store.dispatch(publicActions.retrieveFeed())
 
-  expect(selectFeedIsFetching(store.getState())).toEqual(true)
+    expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
-  store.dispatch(publicActions.retrieveFeed())
+    store.dispatch(publicActions.retrieveFeed())
 
-  feedGateway.retrieveFeedItems.resolveDeferredValue()
-  await store.waitForActionEnd()
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
 
-  expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-})
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
 
-it(`
-  Given feed items on next page are fetching
-  When user want to retrieve next page of feed items
-  Then the second request should never start
-`, async () => {
-  const feedGateway = new TestFeedGateway()
-  feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-  const initialState: FeedState = {
-    ...fakeFeedData,
-    nextPageToken: 'abc',
-  }
-  const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
+  it(`
+    Given feed items on next page are fetching
+    When user want to retrieve next page of feed items
+    Then the second request should never start
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const initialState: FeedState = {
+      ...fakeFeedData,
+      nextPageToken: 'abc',
+    }
+    const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
 
-  store.dispatch(publicActions.retrieveFeedNextPage())
-  store.dispatch(publicActions.retrieveFeedNextPage())
+    store.dispatch(publicActions.retrieveFeedNextPage())
+    store.dispatch(publicActions.retrieveFeedNextPage())
 
-  feedGateway.retrieveFeedItems.resolveDeferredValue()
-  await store.waitForActionEnd()
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
 
-  expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-})
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
 
-it(`
-  Given store has items
-  When user want to partially update an item that is not undefined
-  Then item should be partially updated
-`, () => {
-  const feedGateway = new TestFeedGateway()
-  const store = configureStoreWithFeed({ feedGateway }, { feed: fakeFeedData })
-  const firstItem = store.getState().feed.items.abc
+  it(`
+    Given store has items
+    When user want to partially update an item that is not undefined
+    Then item should be partially updated
+  `, () => {
+    const feedGateway = new TestFeedGateway()
+    const store = configureStoreWithFeed({ feedGateway }, { feed: fakeFeedData })
+    const firstItem = store.getState().feed.items.abc
 
-  store.dispatch(publicActions.updateItem({
-    uuid: 'abc',
-    title: 'feed title updated',
-  }))
+    store.dispatch(publicActions.updateItem({
+      uuid: 'abc',
+      title: 'feed title updated',
+    }))
 
-  const firstItemUpdated = store.getState().feed.items.abc
+    const firstItemUpdated = store.getState().feed.items.abc
 
-  expect(firstItem.title).toEqual('feed title')
-  expect(firstItem.description).toEqual('feed description')
+    expect(firstItem.title).toEqual('feed title')
+    expect(firstItem.description).toEqual('feed description')
 
-  expect(firstItemUpdated.title).toEqual('feed title updated')
-  expect(firstItemUpdated.description).toEqual('feed description')
+    expect(firstItemUpdated.title).toEqual('feed title updated')
+    expect(firstItemUpdated.description).toEqual('feed description')
+  })
 })

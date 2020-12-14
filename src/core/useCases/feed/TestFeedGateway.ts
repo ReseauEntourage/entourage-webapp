@@ -9,4 +9,8 @@ export class TestFeedGateway implements IFeedGateway {
   joinEntourage = jestFn<IFeedGateway['joinEntourage']>('joinEntourage')
 
   leaveEntourage = jestFn<IFeedGateway['leaveEntourage']>('leaveEntourage')
+
+  closeEntourage = jestFn<IFeedGateway['closeEntourage']>('closeEntourage')
+
+  reopenEntourage = jestFn<IFeedGateway['reopenEntourage']>('reopenEntourage')
 }

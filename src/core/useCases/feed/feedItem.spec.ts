@@ -1,17 +1,19 @@
 import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
-import { FeedJoinStatus } from 'src/core/api'
+import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { feedReducer, JoinRequestStatus, FeedState } from './feed.reducer'
+import { feedReducer, JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentItem,
   selectFeedItems,
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
+  selectIsUpdatingStatus,
+  selectStatus,
 } from './feed.selectors'
 
 const reducers = {
@@ -332,6 +334,102 @@ describe('Feed Item', () => {
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
       expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
+    })
+  })
+
+  describe('Status entourage', () => {
+    function configureStoreForStatus(status: FeedStatus) {
+      const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
+        items: {
+          abc: {
+            ...fakeFeedData.items.abc,
+            status,
+          },
+        },
+        selectedItemUuid: 'abc',
+      }
+
+      const feedGateway = new TestFeedGateway()
+      feedGateway.closeEntourage.mockDeferredValueOnce(null)
+      feedGateway.reopenEntourage.mockDeferredValueOnce(null)
+
+      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+
+      return {
+        store,
+        feedGateway,
+      }
+    }
+
+    it(`
+      Given state has items
+        And feed item status is open
+      When no action is triggered
+      Then updating status request should not be active
+        And status should be open
+  `, () => {
+      const { store } = configureStoreForStatus('open')
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
+
+      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.OPEN)
+    })
+
+    it(`
+      Given state has items
+        And the one feed item is not close
+      When user want to close an entourage
+      Then updating status request should be active
+        And close entourage gateway should be called with the entourage uuid and the success status
+        And updating status request should not be active after succeeded
+        And status should be updated to closed
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreForStatus('open')
+      const entourageUuid = 'abc'
+      const success = true
+
+      // When
+      store.dispatch(publicActions.closeEntourage({ entourageUuid, success }))
+
+      // Then
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(true)
+
+      expect(feedGateway.closeEntourage).toHaveBeenCalledWith(entourageUuid, success)
+
+      feedGateway.closeEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
+      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.CLOSED)
+    })
+
+    it(`
+      Given state has items
+        And the one feed item is closed
+      When user want to reopen an entourage
+      Then updating status request should be active
+        And reopen entourage gateway should be called with the entourage uuid
+        And updating status request should not be active after succeeded
+        And status should be updated to open
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreForStatus('closed')
+      const entourageUuid = 'abc'
+
+      // When
+      store.dispatch(publicActions.reopenEntourage({ entourageUuid }))
+
+      // Then
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(true)
+
+      expect(feedGateway.reopenEntourage).toHaveBeenCalledWith(entourageUuid)
+
+      feedGateway.reopenEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
+      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.OPEN)
     })
   })
 })
