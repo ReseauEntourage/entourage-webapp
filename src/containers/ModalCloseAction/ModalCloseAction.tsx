@@ -10,23 +10,23 @@ import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import * as S from './ModalCloseAction.styles'
 
-interface ModalCloseAction {
-  uuid: string;
+interface ModalCloseActionProps {
+  entourageUuid: string;
 }
 
-export function ModalCloseAction(props: ModalCloseAction) {
-  const { uuid } = props
+export function ModalCloseAction(props: ModalCloseActionProps) {
+  const { entourageUuid } = props
   const dispatch = useDispatch()
 
   const onValidate = useCallback((success: boolean, cb?: () => void) => {
-    dispatch(feedActions.closeEntourage({ entourageUuid: uuid, success }))
+    dispatch(feedActions.closeEntourage({ entourageUuid, success }))
 
     if (cb) {
       cb()
     }
 
     return true
-  }, [dispatch, uuid])
+  }, [dispatch, entourageUuid])
 
   const customActions = (close?: () => void) => (
     <>

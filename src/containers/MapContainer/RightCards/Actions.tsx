@@ -82,7 +82,7 @@ export function Actions(props: ActionsProps) {
   const onClickClose = useCallback(() => {
     openModal(
       <ModalCloseAction
-        uuid={feedItem.uuid}
+        entourageUuid={feedItem.uuid}
       />,
     )
   }, [feedItem.uuid])
@@ -100,9 +100,9 @@ export function Actions(props: ActionsProps) {
         </Button>
       </S.ReopenContainer>
     ) : (
-      <S.NoActionsSpan>
+      <S.NoActions>
         {texts.content.map.rightCards.hasBeenClosed}
-      </S.NoActionsSpan>
+      </S.NoActions>
     )
   }
 

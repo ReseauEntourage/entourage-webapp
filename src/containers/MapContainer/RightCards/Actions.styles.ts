@@ -1,5 +1,6 @@
+import { Typography } from '@material-ui/core'
 import styled from 'styled-components'
-import { theme, devices } from 'src/styles'
+import { theme, devices, variants } from 'src/styles'
 
 export const ActionsContainer = styled.div`
   display: flex;
@@ -15,10 +16,11 @@ export const ReopenContainer = styled.div`
   }
 `
 
-export const NoActionsSpan = styled.span`
+export const NoActions = styled(Typography).attrs(() => ({
+  variant: variants.footNote,
+}))`
   background-color: #F5F5F5;
   display: flex;
-  padding: 9px;
+  padding: ${theme.spacing(1)}px;
   border-radius: 5px;
-  font-size: 12px;
 `

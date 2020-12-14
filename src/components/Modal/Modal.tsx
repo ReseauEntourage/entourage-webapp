@@ -47,7 +47,7 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
     cancel,
     validateLabel,
     cancelLabel,
-    onValidate: onValidateProp,
+    onValidate,
     onClose: onCloseProp,
     showCloseButton,
     closeOnNextRender,
@@ -56,22 +56,6 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
 
   const modalContext = useModalContext()
   const onClose = modalContext ? modalContext.onClose : onCloseProp
-  const [loading, setLoading] = useDelayLoading(false)
-
-  const onValidate = useCallback(async () => {
-    if (onValidateProp) {
-      setLoading(true)
-      const onValidateRes = await onValidateProp()
-      await setLoading(false)
-      if (onValidateRes === false) {
-        return
-      }
-    }
-
-    if (onClose) {
-      onClose()
-    }
-  }, [onClose, onValidateProp, setLoading])
 
   useEffect(() => {
     if (closeOnNextRender && onClose) {
@@ -123,23 +107,70 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
           {customActions
             ? customActions(onClose)
             : (
-              <>
-                {cancel
-                  ? (
-                    <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
-                      {cancelLabel}
-                    </Button>
-                  ) : null}
-                {validate ? (
-                  <Button color="primary" loading={loading} onClick={onValidate}>
-                    {validateLabel}
-                  </Button>
-                ) : null }
-              </>
+              <DefaultActions
+                cancel={cancel}
+                cancelLabel={cancelLabel}
+                onClose={onClose}
+                onValidate={onValidate}
+                validate={validate}
+                validateLabel={validateLabel}
+              />
             )}
 
         </DialogActions>
       ) : null }
     </Dialog>
+  )
+}
+
+interface DefaultActionsProps {
+  onValidate?: () => void | boolean | Promise<void | boolean>;
+  onClose?: () => void;
+  cancel: boolean;
+  cancelLabel: string;
+  validate: boolean;
+  validateLabel: string;
+}
+
+function DefaultActions(props: DefaultActionsProps) {
+  const {
+    validate,
+    cancel,
+    validateLabel,
+    cancelLabel,
+    onClose,
+    onValidate: onValidateProp,
+  } = props
+
+  const [loading, setLoading] = useDelayLoading(false)
+
+  const onValidate = useCallback(async () => {
+    if (onValidateProp) {
+      setLoading(true)
+      const onValidateRes = await onValidateProp()
+      await setLoading(false)
+      if (onValidateRes === false) {
+        return
+      }
+    }
+
+    if (onClose) {
+      onClose()
+    }
+  }, [onClose, onValidateProp, setLoading])
+  return (
+    <>
+      {cancel
+        ? (
+          <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+            {cancelLabel}
+          </Button>
+        ) : null}
+      {validate ? (
+        <Button color="primary" loading={loading} onClick={onValidate}>
+          {validateLabel}
+        </Button>
+      ) : null }
+    </>
   )
 }
