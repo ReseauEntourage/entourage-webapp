@@ -1,4 +1,5 @@
 import React, { useCallback } from 'react'
+import { useDispatch, useStore } from 'react-redux'
 import { useCurrentFeedItem } from '../useCurrentFeedItem'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
@@ -7,7 +8,7 @@ import { constants } from 'src/constants'
 import { ModalCloseAction } from 'src/containers/ModalCloseAction'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
-import { useMutateReopenEntourages } from 'src/core/store'
+import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './Actions.styles'
@@ -20,9 +21,12 @@ interface ActionsProps {
 export function Actions(props: ActionsProps) {
   const { iAmCreator } = props
   const feedItem = useCurrentFeedItem()
+  const dispatch = useDispatch()
+  const store = useStore()
   assertIsDefined(feedItem)
 
-  const [reopenEntourage] = useMutateReopenEntourages()
+  const isUpdatingStatus = selectIsUpdatingStatus(store.getState())
+  const status = selectStatus(store.getState(), feedItem.uuid)
 
   const onClickReport = useCallback(() => {
     // eslint-disable-next-line no-useless-escape
@@ -78,22 +82,22 @@ export function Actions(props: ActionsProps) {
   const onClickClose = useCallback(() => {
     openModal(
       <ModalCloseAction
-        id={feedItem.id}
+        uuid={feedItem.uuid}
       />,
     )
-  }, [
-    feedItem.id,
-  ])
+  }, [feedItem.uuid])
 
-  const onClickReopen = useCallback(async () => {
-    await reopenEntourage({ id: feedItem.id })
+  const onClickReopen = useCallback(() => {
+    dispatch(feedActions.reopenEntourage({ entourageUuid: feedItem.uuid }))
   },
-  [feedItem.id, reopenEntourage])
+  [dispatch, feedItem.uuid])
 
-  if (feedItem.status === 'closed') {
+  if (status === RequestStatus.CLOSED) {
     return iAmCreator ? (
       <S.ReopenContainer>
-        <Button onClick={onClickReopen} variant="outlined">{texts.content.map.rightCards.reopen}</Button>
+        <Button loading={isUpdatingStatus} onClick={onClickReopen} variant="outlined">
+          {texts.content.map.rightCards.reopen}
+        </Button>
       </S.ReopenContainer>
     ) : (
       <S.NoActionsSpan>
@@ -114,7 +118,9 @@ export function Actions(props: ActionsProps) {
           >
             {texts.content.map.rightCards.edit}
           </Button>
-          <Button onClick={onClickClose} variant="outlined">{texts.content.map.rightCards.close}</Button>
+          <Button loading={isUpdatingStatus} onClick={onClickClose} variant="outlined">
+            {texts.content.map.rightCards.close}
+          </Button>
         </>
       ) : (
         <Button onClick={onClickReport} variant="outlined">{texts.content.map.rightCards.report}</Button>

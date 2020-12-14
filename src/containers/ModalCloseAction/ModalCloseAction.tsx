@@ -2,35 +2,31 @@ import Typography from '@material-ui/core/Typography'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import React, { useCallback } from 'react'
+import { useDispatch } from 'react-redux'
 import { Button } from 'src/components/Button'
 import { Modal } from 'src/components/Modal'
-import { useMutateCloseEntourages } from 'src/core/store'
+import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import * as S from './ModalCloseAction.styles'
 
 interface ModalCloseAction {
-  id: number;
+  uuid: string;
 }
 
 export function ModalCloseAction(props: ModalCloseAction) {
-  const { id } = props
+  const { uuid } = props
+  const dispatch = useDispatch()
 
-  const [closeEntourage] = useMutateCloseEntourages()
-
-  const onValidate = useCallback(async (success: boolean, cb?: () => void) => {
-    try {
-      await closeEntourage({ id, success })
-    } catch (error) {
-      return false
-    }
+  const onValidate = useCallback((success: boolean, cb?: () => void) => {
+    dispatch(feedActions.closeEntourage({ entourageUuid: uuid, success }))
 
     if (cb) {
       cb()
     }
 
     return true
-  }, [closeEntourage, id])
+  }, [dispatch, uuid])
 
   const customActions = (close?: () => void) => (
     <>
