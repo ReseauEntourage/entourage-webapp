@@ -2,12 +2,13 @@ import Typography from '@material-ui/core/Typography'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import React, { useCallback } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'src/components/Button'
-import { Modal } from 'src/components/Modal'
-import { feedActions } from 'src/core/useCases/feed'
+import { Modal, useModalContext } from 'src/components/Modal'
+import { feedActions, selectIsUpdatingStatus } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
+import { usePrevious } from 'src/utils/hooks'
 import * as S from './ModalCloseAction.styles'
 
 interface ModalCloseActionProps {
@@ -16,38 +17,32 @@ interface ModalCloseActionProps {
 
 export function ModalCloseAction(props: ModalCloseActionProps) {
   const { entourageUuid } = props
+  const { onClose } = useModalContext()
   const dispatch = useDispatch()
+  const isUpdatingStatus = useSelector(selectIsUpdatingStatus)
+  const wasUpdatingStatus = usePrevious(isUpdatingStatus)
+  const closeOnNextRender = wasUpdatingStatus && !isUpdatingStatus
 
-  const onValidate = useCallback((success: boolean, cb?: () => void) => {
+  const onValidate = useCallback((success: boolean) => {
     dispatch(feedActions.closeEntourage({ entourageUuid, success }))
 
-    if (cb) {
-      cb()
-    }
-
-    return true
+    return false
   }, [dispatch, entourageUuid])
 
-  const customActions = (close?: () => void) => (
-    <>
-      <Button color="primary" onClick={close} tabIndex={-1} variant="outlined">Annuler</Button>
-      <Button
-        onClick={() => onValidate(true, close)}
-        startIcon={<ThumbUpIcon />}
-      >
-        {texts.content.modalCloseAction.success}
-      </Button>
-      <Button
-        onClick={() => onValidate(false, close)}
-        startIcon={<ThumbDownIcon />}
-      >
-        {texts.content.modalCloseAction.fail}
-      </Button>
-    </>
-  )
   return (
     <Modal
-      customActions={customActions}
+      actions={(
+        <>
+          <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">Annuler</Button>
+          <Button onClick={() => onValidate(true)} startIcon={<ThumbUpIcon />}>
+            {texts.content.modalCloseAction.success}
+          </Button>
+          <Button onClick={() => onValidate(false)} startIcon={<ThumbDownIcon />}>
+            {texts.content.modalCloseAction.fail}
+          </Button>
+        </>
+      )}
+      closeOnNextRender={closeOnNextRender}
       showCloseButton={true}
     >
       <S.Title>{texts.content.modalCloseAction.subtitle}</S.Title>

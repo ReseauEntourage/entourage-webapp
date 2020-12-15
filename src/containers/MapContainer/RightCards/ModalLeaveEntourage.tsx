@@ -1,10 +1,11 @@
 import Typography from '@material-ui/core/Typography'
 import React, { useCallback } from 'react'
-import { useDispatch, useStore } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Modal } from 'src/components/Modal'
-import { selectJoinRequestStatus, feedActions } from 'src/core/useCases/feed'
+import { feedActions, selectIsUpdatingJoinStatus } from 'src/core/useCases/feed'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
+import { usePrevious } from 'src/utils/hooks'
 
 interface ModalLeaveEntourageProps {
   entourageUuid: string;
@@ -13,24 +14,20 @@ interface ModalLeaveEntourageProps {
 export function ModalLeaveEntourage(props: ModalLeaveEntourageProps) {
   const me = useMeNonNullable()
   const dispatch = useDispatch()
-  const store = useStore()
   const { entourageUuid } = props
+  const isUpdatingJoinStatus = useSelector(selectIsUpdatingJoinStatus)
+  const wasUpdatingJoinStatus = usePrevious(isUpdatingJoinStatus)
+  const closeOnNextRender = wasUpdatingJoinStatus && !isUpdatingJoinStatus
 
   const onValidate = useCallback(() => {
-    return new Promise<boolean>((resolve) => {
-      store.subscribe(() => {
-        const status = selectJoinRequestStatus(store.getState(), entourageUuid)
-        if (status === 'NOT_REQUEST') {
-          resolve(true)
-        }
-      })
+    dispatch(feedActions.leaveEntourage({ entourageUuid, userId: me.id }))
 
-      dispatch(feedActions.leaveEntourage({ entourageUuid, userId: me.id }))
-    })
-  }, [dispatch, entourageUuid, me.id, store])
+    return false
+  }, [dispatch, entourageUuid, me.id])
 
   return (
     <Modal
+      closeOnNextRender={closeOnNextRender}
       onValidate={onValidate}
       validateLabel="Oui, quitter"
     >

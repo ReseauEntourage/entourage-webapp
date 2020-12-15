@@ -14,7 +14,6 @@ import { useModalContext } from './ModalContext'
 
 interface BaseProps {
   children?: AnyToFix;
-  onClose?: () => void;
   onValidate?: () => void | boolean | Promise<void | boolean>;
   showCloseButton?: boolean;
   title?: string;
@@ -28,9 +27,11 @@ interface BasicModalProps extends BaseProps {
   closeOnNextRender?: boolean;
 }
 
-interface CustomModalProps extends BaseProps {
-  customActions: (close?: () => void) => JSX.Element;
+interface ModalActionsProps extends BaseProps {
+  actions: JSX.Element;
 }
+
+type ModalProps = BasicModalProps | ModalActionsProps
 
 const defaultProps = {
   validateLabel: 'Valider',
@@ -39,7 +40,7 @@ const defaultProps = {
   cancel: true,
 }
 
-export function Modal(props: BasicModalProps | CustomModalProps) {
+export function Modal(props: ModalProps) {
   const {
     title,
     children,
@@ -48,14 +49,12 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
     validateLabel,
     cancelLabel,
     onValidate,
-    onClose: onCloseProp,
     showCloseButton,
     closeOnNextRender,
-    customActions,
+    actions,
   } = { ...defaultProps, ...props }
 
-  const modalContext = useModalContext()
-  const onClose = modalContext ? modalContext.onClose : onCloseProp
+  const { onClose } = useModalContext()
 
   useEffect(() => {
     if (closeOnNextRender && onClose) {
@@ -63,7 +62,7 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
     }
   }, [closeOnNextRender, onClose])
 
-  const hasCTAButtons = validate || cancel || customActions
+  const hasCTAButtons = validate || cancel || actions
 
   return (
     <Dialog
@@ -104,19 +103,16 @@ export function Modal(props: BasicModalProps | CustomModalProps) {
       </Typography>
       {hasCTAButtons ? (
         <DialogActions>
-          {customActions
-            ? customActions(onClose)
-            : (
-              <DefaultActions
-                cancel={cancel}
-                cancelLabel={cancelLabel}
-                onClose={onClose}
-                onValidate={onValidate}
-                validate={validate}
-                validateLabel={validateLabel}
-              />
-            )}
-
+          {actions || (
+            <DefaultActions
+              cancel={cancel}
+              cancelLabel={cancelLabel}
+              onClose={onClose}
+              onValidate={onValidate}
+              validate={validate}
+              validateLabel={validateLabel}
+            />
+          )}
         </DialogActions>
       ) : null }
     </Dialog>
@@ -158,19 +154,23 @@ function DefaultActions(props: DefaultActionsProps) {
       onClose()
     }
   }, [onClose, onValidateProp, setLoading])
+
+  if (!validate && !cancel) {
+    return null
+  }
+
   return (
     <>
-      {cancel
-        ? (
-          <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
-            {cancelLabel}
-          </Button>
-        ) : null}
-      {validate ? (
+      {cancel && (
+        <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+          {cancelLabel}
+        </Button>
+      )}
+      {validate && (
         <Button color="primary" loading={loading} onClick={onValidate}>
           {validateLabel}
         </Button>
-      ) : null }
+      )}
     </>
   )
 }
