@@ -53,7 +53,7 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
 
 function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, defaultValue } = props
-  const sessionToken = useAutocompleteSessionToken()
+  const { getSessionToken, regenerateSessionToken } = useAutocompleteSessionToken()
   const autocompletServices = useAutocompleteServices()
 
   const [inputValue, setInputValue] = useState('')
@@ -65,23 +65,25 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
 
   const onChangeAutocomplete = useCallback(async (event, place: PlaceType) => {
     if (onChange && place) {
+      const sessionToken = getSessionToken()
+      regenerateSessionToken()
       onChange({
         sessionToken,
         place,
       })
     }
-  }, [onChange, sessionToken])
+  }, [onChange, getSessionToken, regenerateSessionToken])
 
   const fetch = useMemo(
     () => throttle((input: AnyToFix, callback: AnyToFix) => {
       const data = {
         input: input.input,
-        sessionToken,
+        sessionToken: getSessionToken(),
       }
 
       autocompletServices.getPlacePredictions(data, callback)
     }, 200),
-    [autocompletServices, sessionToken],
+    [autocompletServices, getSessionToken],
   )
 
   useEffect(() => {

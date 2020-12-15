@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
+import { useStateGetter } from '../hooks'
 import { env } from 'src/core/env'
 import { isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
@@ -49,9 +50,18 @@ export function useAutocompleteSessionToken() {
     throw new GoogleMapApiNotLoaded()
   }
 
+  const [, setSessionToken, getSessionToken] = useStateGetter(new google.maps.places.AutocompleteSessionToken())
+
+  const regenerateSessionToken = useCallback(() => {
+    setSessionToken(new google.maps.places.AutocompleteSessionToken())
+  }, [setSessionToken])
+
   return useMemo(() => {
-    return new google.maps.places.AutocompleteSessionToken()
-  }, [])
+    return {
+      getSessionToken,
+      regenerateSessionToken,
+    }
+  }, [getSessionToken, regenerateSessionToken])
 }
 
 export function useAutocompleteServices() {
