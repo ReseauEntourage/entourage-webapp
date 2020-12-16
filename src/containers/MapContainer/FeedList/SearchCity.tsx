@@ -15,7 +15,7 @@ export function SearchCity() {
   const defaultInputValue = filters.cityName
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
-    const placeDetail = await getDetailPlacesService(value.place.place_id, value.googleSessionToken)
+    const placeDetail = await getDetailPlacesService(value.place.place_id, value.sessionToken)
 
     const lat = placeDetail.geometry?.location.lat()
     const lng = placeDetail.geometry?.location.lng()

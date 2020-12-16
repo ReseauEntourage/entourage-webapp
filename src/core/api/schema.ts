@@ -456,7 +456,7 @@ export const schema = {
     data: {} as {
       address: {
         googlePlaceId: string;
-        googleSessionToken: string;
+        googleSessionToken: google.maps.places.AutocompleteSessionToken;
       };
     },
     response: {} as {},

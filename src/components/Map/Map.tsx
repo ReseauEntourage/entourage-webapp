@@ -1,9 +1,10 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
-import { env } from 'src/core/env'
 import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
+import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
 interface Props {
@@ -18,6 +19,7 @@ export function Map(props: Props) {
   const { children } = props
   const filters = useSelector(selectFeedFilters)
   const dispatch = useDispatch()
+  const googleMapIsLoaded = useLoadGoogleMapApi()
 
   function onChange(value: ChangeEventValue) {
     const filtersHasChanged = filters.center.lat !== value.center.lat
@@ -32,9 +34,12 @@ export function Map(props: Props) {
     }
   }
 
+  if (!googleMapIsLoaded) {
+    return <OverlayLoader />
+  }
+
   return (
     <GoogleMapReact
-      bootstrapURLKeys={{ key: env.GOOGLE_MAP_API_KEY }}
       center={filters.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}

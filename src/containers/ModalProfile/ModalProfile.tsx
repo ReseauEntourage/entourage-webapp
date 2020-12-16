@@ -98,7 +98,7 @@ export function ModalProfile() {
     try {
       if (autocompletePlace && autocompletePlace.place) {
         await mutateMeAddress({
-          googleSessionToken: autocompletePlace.googleSessionToken,
+          googleSessionToken: autocompletePlace.sessionToken,
           googlePlaceId: autocompletePlace.place.place_id,
         })
       }

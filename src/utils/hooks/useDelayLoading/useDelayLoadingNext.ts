@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 
-const MIN_DELAY_START_LOADING = 500
+const MIN_DELAY_START_LOADING = 300
 const MIN_DELAY_END_LOADING = 2000
 
 interface Options {
@@ -19,13 +19,15 @@ export function useDelayLoadingNext(loading: boolean, options: Options = default
   timeRef.current = time
 
   const externalLoadingRef = useRef(loading)
-  const loadingRef = useRef(loading)
+  const loadingRef = useRef(false)
 
   externalLoadingRef.current = loading
 
   useEffect(() => {
+    let timer: number
+
     if (loading && !loadingRef.current) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         if (externalLoadingRef.current) {
           loadingRef.current = true
           setTime(Date.now())
@@ -37,7 +39,7 @@ export function useDelayLoadingNext(loading: boolean, options: Options = default
       const lastUdateIsTooClosed = (Date.now() - timeRef.current) < options.minDelayEndLoading
 
       if (lastUdateIsTooClosed) {
-        setTimeout(() => {
+        timer = setTimeout(() => {
           loadingRef.current = false
           setTime(Date.now())
         }, options.minDelayEndLoading)
@@ -46,6 +48,8 @@ export function useDelayLoadingNext(loading: boolean, options: Options = default
         setTime(Date.now())
       }
     }
+
+    return () => clearTimeout(timer)
   }, [loading, options.minDelayEndLoading, options.minDelayStartLoading])
 
   return loadingRef.current

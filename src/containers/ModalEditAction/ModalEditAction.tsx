@@ -88,7 +88,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
     const getLocation = async () => {
       const placeDetail = await getDetailPlacesService(
         autocompletePlace.place.place_id,
-        autocompletePlace.googleSessionToken,
+        autocompletePlace.sessionToken,
       )
 
       const latitude = placeDetail.geometry?.location.lat()

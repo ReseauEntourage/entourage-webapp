@@ -2993,10 +2993,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/googlemaps@^3.39.4":
-  version "3.39.4"
-  resolved "https://registry.yarnpkg.com/@types/googlemaps/-/googlemaps-3.39.4.tgz#c32ec3bb1481e53a7282598f7fa96a75bc834139"
-  integrity sha512-R11RyCccERJhqSXlePFdoOXbWiTsY3H17Wl5e+JEpJFBXl8P+0Rm+JP8eqqSqOCtZjXDlYeKKnhE8a4VZlhtTw==
+"@types/googlemaps@^3.40.4":
+  version "3.40.4"
+  resolved "https://registry.yarnpkg.com/@types/googlemaps/-/googlemaps-3.40.4.tgz#3fe3d9d8eeb2b318679fabf0f540cab963c27dda"
+  integrity sha512-8dtcijQrU1vkvBHAfmtJZKfut2WXwLJH5EBRJfSISlv4xWptnCsiE9cVbw4FZWMRbweMMPxE6PzDV55NWiNlQQ==
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.3"

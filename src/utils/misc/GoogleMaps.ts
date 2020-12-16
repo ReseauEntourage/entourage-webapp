@@ -1,5 +1,19 @@
-export function getDetailPlacesService(placeId: string, sessionToken: string): Promise<google.maps.places.PlaceResult> {
-  const requestGetDetail = {
+import { useMemo, useCallback } from 'react'
+import { useStateGetter } from '../hooks'
+import { env } from 'src/core/env'
+import { isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
+
+const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`
+
+class GoogleMapApiNotLoaded extends Error {
+  name = 'Google Map Api is not loaded'
+}
+
+export function getDetailPlacesService(
+  placeId: string,
+  sessionToken: google.maps.places.AutocompleteSessionToken,
+): Promise<google.maps.places.PlaceResult> {
+  const requestGetDetail: google.maps.places.PlaceDetailsRequest = {
     placeId,
     sessionToken,
     fields: ['name', 'place_id', 'geometry', 'formatted_address'],
@@ -13,7 +27,49 @@ export function getDetailPlacesService(placeId: string, sessionToken: string): P
   })
 }
 
-export function createAutocompleteSessionToken(): { Rf: string; } {
-  // @ts-ignore
-  return new google.maps.places.AutocompleteSessionToken()
+export function useLoadGoogleMapApi() {
+  const url = !isSSR
+    ? scriptUrl
+    : ''
+
+  const status = useScript(url)
+
+  if (status === 'idle' || status === 'loading') {
+    return false
+  }
+
+  if (status === 'ready') {
+    return true
+  }
+
+  throw new Error('Error during Google map loading')
+}
+
+export function useAutocompleteSessionToken() {
+  if (!useScriptIsReady(scriptUrl)) {
+    throw new GoogleMapApiNotLoaded()
+  }
+
+  const [, setSessionToken, getSessionToken] = useStateGetter(new google.maps.places.AutocompleteSessionToken())
+
+  const regenerateSessionToken = useCallback(() => {
+    setSessionToken(new google.maps.places.AutocompleteSessionToken())
+  }, [setSessionToken])
+
+  return useMemo(() => {
+    return {
+      getSessionToken,
+      regenerateSessionToken,
+    }
+  }, [getSessionToken, regenerateSessionToken])
+}
+
+export function useAutocompleteServices() {
+  if (!useScriptIsReady(scriptUrl)) {
+    throw new GoogleMapApiNotLoaded()
+  }
+
+  return useMemo(() => {
+    return new google.maps.places.AutocompleteService()
+  }, [])
 }

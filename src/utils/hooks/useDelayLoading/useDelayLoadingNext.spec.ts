@@ -23,6 +23,12 @@ const defaultOptions = {
 }
 
 describe('useDelayLoading', () => {
+  it('should doesn\'t be loading at initial state', () => {
+    const { result } = renderHook(() => useDemo(true, defaultOptions))
+
+    expect(result.current.loading).toEqual(false)
+  })
+
   it('should doesn\'t change loading state before 500ms', async () => {
     const { result } = renderHook(() => useDemo(false, defaultOptions))
 

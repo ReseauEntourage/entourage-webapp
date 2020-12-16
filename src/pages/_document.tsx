@@ -2,7 +2,6 @@ import { ServerStyleSheets as MaterialUiServerStyleSheets } from '@material-ui/s
 import NextDocument, { DocumentContext, Html, Head, Main, NextScript } from 'next/document'
 import React from 'react'
 import { ServerStyleSheet as StyledComponentSheets } from 'styled-components'
-import { env } from 'src/core/env'
 
 export default class Document extends NextDocument {
   static async getInitialProps(ctx: DocumentContext) {
@@ -41,10 +40,6 @@ export default class Document extends NextDocument {
         <body>
           <Main />
           <NextScript />
-          <script
-            defer={true}
-            src={`https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`}
-          />
         </body>
       </Html>
     )
