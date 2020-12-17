@@ -1,4 +1,5 @@
-import { JoinRequestStatus, FeedState } from './feed.reducer'
+import { FeedStatus } from 'src/core/api'
+import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 
 interface AppState {
   feed: FeedState;
@@ -55,4 +56,19 @@ export function selectJoinRequestStatus(state: AppState, entourageUuid: string) 
       console.warn(`join status ${entourage.joinStatus} is not handled`)
       return null
   }
+}
+
+export function selectIsUpdatingStatus(state: AppState) {
+  return state.feed.isUpdatingStatus
+}
+
+const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {
+  closed: RequestStatus.CLOSED,
+  open: RequestStatus.OPEN,
+  suspended: RequestStatus.SUSPENDED,
+}
+
+export function selectStatus(state: AppState, entourageUuid: string) {
+  const entourage = state.feed.items[entourageUuid]
+  return MapFeedStatusToRequestStatus[entourage.status]
 }

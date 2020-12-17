@@ -33,6 +33,16 @@ export const texts = {
     validate: 'Valider',
   },
   content: {
+    map: {
+      rightCards: {
+        share: 'Partager',
+        edit: 'Modifier',
+        close: 'Clôturer',
+        report: 'Signaler',
+        reopen: 'Rouvrir',
+        hasBeenClosed: 'Cette action solidaire a été clôturée.',
+      },
+    },
     navActions: {
       mapButton: 'Carte',
       returnButton: 'Retour',
@@ -112,6 +122,12 @@ export const texts = {
       fieldDescriptionPlaceholder: 'Je crée cet événement pour...',
       validateLabelCreate: 'Créer mon événement',
       validateLabelUpdate: 'Mettre à jour mon événement',
+    },
+    modalCloseAction: {
+      subtitle: 'Je clôture mon action solidaire',
+      body: "Comment s'est-elle déroulée ?",
+      success: "C'est un succès",
+      fail: "Ça n'a pas marché",
     },
   },
 }

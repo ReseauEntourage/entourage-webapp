@@ -33,3 +33,5 @@ export type ActionsFromMapObject<Actions extends ActionsMapObject> = {
 export type ActionFromMapObject<Actions extends ActionsMapObject> = ValueOf<
 ActionsFromMapObject<Actions>
 >;
+
+export type ResolvedValue<T> = T extends PromiseLike<infer U> ? U | T : never;

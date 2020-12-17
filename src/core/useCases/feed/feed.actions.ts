@@ -16,6 +16,10 @@ export const ActionType = {
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
   LEAVE_ENTOURAGE: 'FEED/LEAVE_ENTOURAGE',
   LEAVE_ENTOURAGE_SUCCEEDED: 'FEED/LEAVE_ENTOURAGE_SUCCEEDED',
+  CLOSE_ENTOURAGE: 'FEED/CLOSE_ENTOURAGE',
+  CLOSE_ENTOURAGE_SUCCEEDED: 'FEED/CLOSE_ENTOURAGE_SUCCEEDED',
+  REOPEN_ENTOURAGE: 'FEED/REOPEN_ENTOURAGE',
+  REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
 } as const
 
 export type ActionType = keyof typeof ActionType;
@@ -120,6 +124,36 @@ function leaveEntourageSucceeded(payload: { entourageUuid: string; }) {
   }
 }
 
+function closeEntourage(payload: { entourageUuid: string; success: boolean; }) {
+  return {
+    type: ActionType.CLOSE_ENTOURAGE,
+    payload,
+  }
+}
+
+function closeEntourageSucceeded(payload: { entourageUuid: string; }) {
+  return {
+    type: ActionType.CLOSE_ENTOURAGE_SUCCEEDED,
+    payload,
+  }
+}
+
+function reopenEntourage(payload: { entourageUuid: string; }) {
+  return {
+    type: ActionType.REOPEN_ENTOURAGE,
+    payload,
+  }
+}
+
+function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
+  return {
+    type: ActionType.REOPEN_ENTOURAGE_SUCCEEDED,
+    payload,
+  }
+}
+
+// --------------------------------------------------------------------------------
+
 export const publicActions = {
   setFilters,
   retrieveFeed,
@@ -129,6 +163,8 @@ export const publicActions = {
   setCurrentItemUuid,
   joinEntourage,
   leaveEntourage,
+  closeEntourage,
+  reopenEntourage,
 }
 
 const privateActions = {
@@ -137,6 +173,8 @@ const privateActions = {
   retrieveFeedNextPageSuccess,
   joinEntourageSucceeded,
   leaveEntourageSucceeded,
+  closeEntourageSucceeded,
+  reopenEntourageSucceeded,
 }
 
 export const actions = {

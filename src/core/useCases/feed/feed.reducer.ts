@@ -5,7 +5,9 @@ import {
   FeedDisplayCategory,
   FeedGroupType,
   UserPartner,
-  FeedEntourageType, FeedJoinStatus,
+  FeedEntourageType,
+  FeedJoinStatus,
+  FeedStatus,
 } from 'src/core/api'
 import { Action, ActionType } from './feed.actions'
 
@@ -16,6 +18,14 @@ export const JoinRequestStatus = {
 } as const
 
 export type JoinRequestStatus = keyof typeof JoinRequestStatus
+
+export const RequestStatus = {
+  OPEN: 'OPEN',
+  CLOSED: 'CLOSED',
+  SUSPENDED: 'SUSPENDED',
+} as const
+
+export type RequestStatus = keyof typeof RequestStatus
 
 export interface FeedItem {
   author: {
@@ -39,6 +49,7 @@ export interface FeedItem {
   entourageType: FeedEntourageType;
   groupType: FeedGroupType;
   joinStatus: FeedJoinStatus;
+  status: FeedStatus;
 }
 
 export interface FeedState {
@@ -58,6 +69,7 @@ export interface FeedState {
   nextPageToken: string | null;
   selectedItemUuid: string | null;
   isUpdatingJoinStatus: boolean;
+  isUpdatingStatus: boolean;
   isIdle: boolean;
 }
 
@@ -73,6 +85,7 @@ export const defaultFeedState: FeedState = {
   items: {},
   selectedItemUuid: null,
   isUpdatingJoinStatus: false,
+  isUpdatingStatus: false,
   isIdle: true,
 }
 
@@ -189,6 +202,36 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
         items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
           item.joinStatus = 'not_requested'
+        }),
+      }
+    }
+
+    case ActionType.REOPEN_ENTOURAGE:
+    case ActionType.CLOSE_ENTOURAGE: {
+      return {
+        ...state,
+        isUpdatingStatus: true,
+      }
+    }
+
+    case ActionType.CLOSE_ENTOURAGE_SUCCEEDED: {
+      return {
+        ...state,
+        isUpdatingStatus: false,
+        items: produce(state.items, (cachedItems) => {
+          const item = cachedItems[action.payload.entourageUuid]
+          item.status = 'closed'
+        }),
+      }
+    }
+
+    case ActionType.REOPEN_ENTOURAGE_SUCCEEDED: {
+      return {
+        ...state,
+        isUpdatingStatus: false,
+        items: produce(state.items, (cachedItems) => {
+          const item = cachedItems[action.payload.entourageUuid]
+          item.status = 'open'
         }),
       }
     }

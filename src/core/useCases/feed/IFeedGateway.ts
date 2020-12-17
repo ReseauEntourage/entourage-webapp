@@ -20,4 +20,7 @@ export interface IFeedGateway {
 
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;
   leaveEntourage(entourageUuid: string, userId: number): Promise<void | null>;
+  closeEntourage(entourageUuid: string, success: boolean): Promise<void | null>;
+  reopenEntourage(entourageUuid: string): Promise<void | null>;
+
 }

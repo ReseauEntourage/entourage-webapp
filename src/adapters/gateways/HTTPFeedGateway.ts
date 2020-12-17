@@ -2,13 +2,13 @@ import { constants } from 'src/constants'
 import { api } from 'src/core/api'
 import { IFeedGateway } from 'src/core/useCases/feed'
 import { assertCondition } from 'src/utils/misc'
-import { AnyToFix } from 'src/utils/types'
+import { ResolvedValue } from 'src/utils/types'
 
 export class HTTPFeedGateway implements IFeedGateway {
   private cache: {
     [key: string]: {
       time: number;
-      content: AnyToFix;
+      content: ResolvedValue<ReturnType<IFeedGateway['retrieveFeedItems']>>;
     };
   } = {}
 
@@ -56,6 +56,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           groupType: item.data.groupType,
           displayCategory: item.data.displayCategory,
           joinStatus: item.data.joinStatus,
+          status: item.data.status,
         }
       })
 
@@ -91,6 +92,41 @@ export class HTTPFeedGateway implements IFeedGateway {
       name: '/entourages/:entourageId/users/:userId DELETE',
       pathParams: {
         userId,
+        entourageUuid,
+      },
+    }).then(() => {
+      return null
+    })
+  }
+
+  closeEntourage(entourageUuid: string, success: boolean): Promise<void |null> {
+    return api.request({
+      name: '/entourages PATCH',
+      data: {
+        entourage: {
+          status: 'closed',
+          outcome: {
+            success,
+          },
+        },
+      },
+      pathParams: {
+        entourageUuid,
+      },
+    }).then(() => {
+      return null
+    })
+  }
+
+  reopenEntourage(entourageUuid: string): Promise<void |null> {
+    return api.request({
+      name: '/entourages PATCH',
+      data: {
+        entourage: {
+          status: 'open',
+        },
+      },
+      pathParams: {
         entourageUuid,
       },
     }).then(() => {

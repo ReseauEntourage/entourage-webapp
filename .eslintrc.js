@@ -39,6 +39,9 @@ module.exports = {
     'import/extensions': [2, 'always', { 'ts': 'never', 'tsx': 'never', 'js': 'never' }],
     'import/no-default-export': 2,
     'import/prefer-default-export': 0,
+    // allow to use devDeps in test files.
+    // See options: https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/no-extraneous-dependencies.md#options
+    'import/no-extraneous-dependencies': ["error", {"devDependencies": ["**/*.spec.ts"]}],
     // 'sort-imports': 2,
     'import/order': [1, {
       'groups': ["builtin", "external", "internal", "parent", "sibling", "index"],

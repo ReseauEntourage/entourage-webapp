@@ -51,11 +51,7 @@ export function ParticipateButton() {
   }
 
   if (iAmCreator) {
-    return (
-      <Button disabled={true} startIcon={<DoneIcon />}>
-        Créateur
-      </Button>
-    )
+    return null
   }
 
   if (joinRequestStatus === 'PENDING') {
