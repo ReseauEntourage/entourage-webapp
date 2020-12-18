@@ -1,10 +1,11 @@
-import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
+import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
-import { feedReducer, FeedState, defaultFeedState } from './feed.reducer'
-import * as sagas from './feed.saga'
+import { FeedState, defaultFeedState } from './feed.reducer'
+import { feedSaga } from './feed.saga'
 import {
   selectFeedFilters,
   selectFeedIsFetching,
@@ -13,21 +14,22 @@ import {
   selectFeedIsIdle,
 } from './feed.selectors'
 
-const reducers = {
-  feed: feedReducer,
-}
-
 function configureStoreWithFeed(
-  dependencies: Parameters<typeof configureStore>[0]['dependencies'],
-  initialState?: PreloadedState<StateFromReducersMapObject<typeof reducers>>,
+  params: {
+    dependencies?: PatialAppDependencies;
+    initialAppState?: PartialAppState;
+  },
 ) {
+  const { initialAppState, dependencies } = params
+
   return configureStore({
     reducers,
-    sagas: Object.values(sagas),
-    dependencies: {
-      ...dependencies,
+    initialState: {
+      ...defaultInitialAppState,
+      ...initialAppState,
     },
-    initialState,
+    dependencies,
+    sagas: [feedSaga],
   })
 }
 
@@ -38,7 +40,7 @@ describe('Feed', () => {
     Then feed state should be at initial state
   `, () => {
     const feedGateway = new TestFeedGateway()
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     expect(store.getState().feed).toEqual(defaultFeedState)
   })
 
@@ -50,7 +52,7 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     const nextFilters: FeedState['filters'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
@@ -72,7 +74,7 @@ describe('Feed', () => {
     Then feed request should still be idle
   `, () => {
     const feedGateway = new TestFeedGateway()
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
     expect(selectFeedIsIdle(store.getState())).toEqual(true)
   })
@@ -84,7 +86,7 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
     store.dispatch(publicActions.retrieveFeed())
 
@@ -101,7 +103,7 @@ describe('Feed', () => {
   `, () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockResolvedValue({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     const filters: FeedState['filters'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
@@ -120,7 +122,7 @@ describe('Feed', () => {
   `, () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockResolvedValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     const filters: Partial<FeedState['filters']> = {
       center: { lat: 2, lng: 3 },
       zoom: 12,
@@ -146,7 +148,7 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
     store.dispatch(publicActions.retrieveFeed({
       filters: store.getState().feed.filters,
@@ -182,7 +184,7 @@ describe('Feed', () => {
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     const nextFilters = {
       cityName: 'Lyon',
       center: { lat: 5, lng: 6 },
@@ -234,11 +236,13 @@ describe('Feed', () => {
       ],
     }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(feedNextData)
-    const initialState = {
-      ...fakeFeedData,
-      nextPageToken: 'wyz',
+    const initialAppState = {
+      feed: {
+        ...fakeFeedData,
+        nextPageToken: 'wyz',
+      },
     }
-    const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
 
     store.dispatch(publicActions.retrieveFeedNextPage())
 
@@ -248,8 +252,8 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: initialState.filters.center,
-        zoom: initialState.filters.zoom,
+        center: initialAppState.feed.filters.center,
+        zoom: initialAppState.feed.filters.zoom,
       },
       nextPageToken: 'wyz',
     })
@@ -264,11 +268,13 @@ describe('Feed', () => {
       And store should be unchanged
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const initialState = {
-      ...fakeFeedData,
-      nextPageToken: null,
+    const initialAppState = {
+      feed: {
+        ...fakeFeedData,
+        nextPageToken: null,
+      },
     }
-    const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
     const previousSelectedFeedItems = selectFeedItems(store.getState())
 
     store.dispatch(publicActions.retrieveFeedNextPage())
@@ -287,7 +293,7 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ feedGateway })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
     store.dispatch(publicActions.retrieveFeed())
 
@@ -308,11 +314,13 @@ describe('Feed', () => {
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const initialState: FeedState = {
-      ...fakeFeedData,
-      nextPageToken: 'abc',
+    const initialAppState: PartialAppState = {
+      feed: {
+        ...fakeFeedData,
+        nextPageToken: 'abc',
+      },
     }
-    const store = configureStoreWithFeed({ feedGateway }, { feed: initialState })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
 
     store.dispatch(publicActions.retrieveFeedNextPage())
     store.dispatch(publicActions.retrieveFeedNextPage())
@@ -329,7 +337,10 @@ describe('Feed', () => {
     Then item should be partially updated
   `, () => {
     const feedGateway = new TestFeedGateway()
-    const store = configureStoreWithFeed({ feedGateway }, { feed: fakeFeedData })
+    const initialAppState: PartialAppState = {
+      feed: fakeFeedData,
+    }
+    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
     const firstItem = store.getState().feed.items.abc
 
     store.dispatch(publicActions.updateItem({

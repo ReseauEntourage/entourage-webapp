@@ -3,15 +3,10 @@ import { HTTPAuthUserGateway } from 'src/adapters/gateways/HTTPAuthUserGateway'
 import { HTTPFeedGateway } from 'src/adapters/gateways/HTTPFeedGateway'
 import { CookiesAuthUserTokenStorage } from 'src/adapters/tokenStorage/CookiesAuthUserTokenStorage'
 import { configureStore } from './configureStore'
-import { authUserReducer, authUserSaga, Dependencies as AuthUserDependencies } from './useCases/authUser'
-import { feedReducer, feedSaga, Dependencies as FeedDependencies } from './useCases/feed'
-
-interface Dependencies extends AuthUserDependencies, FeedDependencies {}
-
-const reducers = {
-  authUser: authUserReducer,
-  feed: feedReducer,
-}
+import { AppDependencies } from './useCases/Dependencies'
+import { authUserSaga } from './useCases/authUser'
+import { feedSaga } from './useCases/feed'
+import { reducers } from './useCases/reducers'
 
 export function bootstrapStore() {
   const sagas = [
@@ -19,7 +14,7 @@ export function bootstrapStore() {
     feedSaga,
   ]
 
-  const dependencies: Dependencies = {
+  const dependencies: AppDependencies = {
     authUserGateway: new HTTPAuthUserGateway(),
     feedGateway: new HTTPFeedGateway(),
     authUserTokenStorage: new CookiesAuthUserTokenStorage(),
