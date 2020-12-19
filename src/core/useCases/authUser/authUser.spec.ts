@@ -1,12 +1,13 @@
-import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
+import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
 import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
 import { createUser } from './__mocks__'
 import { publicActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
-import { authUserReducer, LoginSteps } from './authUser.reducer'
+import { LoginSteps } from './authUser.reducer'
 import { authUserSaga } from './authUser.saga'
 import {
   selectIsLogging,
@@ -23,10 +24,6 @@ import {
   SMSCodeValidationsError,
 } from './authUser.validations'
 
-const reducers = {
-  authUser: authUserReducer,
-}
-
 function createSilentAuthUserTokenStorage() {
   const authUserTokenStorage = new TestAuthUserTokenStorage()
   authUserTokenStorage.getToken.mockImplementation()
@@ -37,17 +34,24 @@ function createSilentAuthUserTokenStorage() {
 }
 
 function configureStoreWithAuthUser(
-  dependencies: Parameters<typeof configureStore>[0]['dependencies'],
-  initialState?: PreloadedState<StateFromReducersMapObject<typeof reducers>>,
+  params: {
+    dependencies?: PatialAppDependencies;
+    initialAppState?: PartialAppState;
+  },
 ) {
+  const { initialAppState, dependencies } = params
+
   return configureStore({
     reducers,
-    sagas: [authUserSaga],
+    initialState: {
+      ...defaultInitialAppState,
+      ...initialAppState,
+    },
     dependencies: {
       authUserTokenStorage: createSilentAuthUserTokenStorage(),
       ...dependencies,
     },
-    initialState,
+    sagas: [authUserSaga],
   })
 }
 
@@ -74,7 +78,7 @@ function configureStoreWithUserAccount() {
     authUserGateway.loginWithSMSCode.resolveDeferredValue()
   }
 
-  const store = configureStoreWithAuthUser({ authUserGateway })
+  const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
   return {
     store,
@@ -93,7 +97,7 @@ describe('Auth User', () => {
   `, () => {
     const authUserGateway = new TestAuthUserGateway()
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     expect(selectIsLogging(store.getState())).toEqual(false)
 
@@ -109,7 +113,7 @@ describe('Auth User', () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     store.dispatch(publicActions.phoneLookUp('0600000000'))
 
@@ -130,7 +134,7 @@ describe('Auth User', () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     store.dispatch(publicActions.phoneLookUp('0600000000'))
 
@@ -157,7 +161,7 @@ describe('Auth User', () => {
       authUserGateway.createAccount.resolveDeferredValue()
     }
 
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     store.dispatch(publicActions.phoneLookUp('0600000000'))
 
@@ -175,7 +179,7 @@ describe('Auth User', () => {
     Then a use account should be created
       And next step should be SMS Code
   `, async () => {
-    const testAuthUserGateway = new TestAuthUserGateway()
+    const authUserGateway = new TestAuthUserGateway()
 
     const deferredValues = {
       phoneLookup: PhoneLookUpResponse.PHONE_NOT_FOUND,
@@ -184,21 +188,21 @@ describe('Auth User', () => {
       definePassword: null,
     }
 
-    testAuthUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
-    testAuthUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
+    authUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
+    authUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
     // @ts-expect-error
-    testAuthUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
-    testAuthUserGateway.definePassword.mockDeferredValueOnce(deferredValues.definePassword)
+    authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+    authUserGateway.definePassword.mockDeferredValueOnce(deferredValues.definePassword)
 
     const resolveAllDeferredValue = () => {
-      testAuthUserGateway.phoneLookUp.resolveDeferredValue()
-      testAuthUserGateway.createAccount.resolveDeferredValue()
-      testAuthUserGateway.loginWithSMSCode.resolveDeferredValue()
-      testAuthUserGateway.definePassword.resolveDeferredValue()
+      authUserGateway.phoneLookUp.resolveDeferredValue()
+      authUserGateway.createAccount.resolveDeferredValue()
+      authUserGateway.loginWithSMSCode.resolveDeferredValue()
+      authUserGateway.definePassword.resolveDeferredValue()
     }
 
     const store = configureStoreWithAuthUser({
-      authUserGateway: testAuthUserGateway,
+      dependencies: { authUserGateway },
     })
     const phone = '0700000000'
 
@@ -207,10 +211,10 @@ describe('Auth User', () => {
     resolveAllDeferredValue()
     await store.waitForActionEnd()
 
-    expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
-    expect(testAuthUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
-    expect(testAuthUserGateway.createAccount).toHaveBeenCalledTimes(1)
-    expect(testAuthUserGateway.createAccount).toHaveBeenCalledWith({ phone })
+    expect(authUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
+    expect(authUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
+    expect(authUserGateway.createAccount).toHaveBeenCalledTimes(1)
+    expect(authUserGateway.createAccount).toHaveBeenCalledWith({ phone })
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
   })
@@ -220,10 +224,10 @@ describe('Auth User', () => {
     When user want to create password
     Then password should be created
   `, async () => {
-    const testAuthUserGateway = new TestAuthUserGateway()
-    testAuthUserGateway.definePassword.mockDeferredValueOnce(null)
+    const authUserGateway = new TestAuthUserGateway()
+    authUserGateway.definePassword.mockDeferredValueOnce(null)
 
-    const initialState = {
+    const initialAppState = {
       authUser: {
         step: LoginSteps.CREATE_PASSWORD,
         errors: {},
@@ -232,14 +236,19 @@ describe('Auth User', () => {
       },
     }
 
-    const store = configureStoreWithAuthUser({ authUserGateway: testAuthUserGateway }, initialState)
+    const store = configureStoreWithAuthUser({
+      dependencies: {
+        authUserGateway,
+      },
+      initialAppState,
+    })
 
     const password = 'abcdefghi'
     const passwordConfirmation = 'abcdefghi'
 
     store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
 
-    testAuthUserGateway.definePassword.resolveDeferredValue()
+    authUserGateway.definePassword.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(null)
@@ -250,15 +259,15 @@ describe('Auth User', () => {
     When user trigger phone lookup
     Then step should be SMS Code after request succeeded
   `, async () => {
-    const testAuthUserGateway = new TestAuthUserGateway()
-    testAuthUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
+    const authUserGateway = new TestAuthUserGateway()
+    authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
 
-    const store = configureStoreWithAuthUser({ authUserGateway: testAuthUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
     const phone = '0700000000'
 
     store.dispatch(publicActions.phoneLookUp(phone))
 
-    testAuthUserGateway.phoneLookUp.resolveDeferredValue()
+    authUserGateway.phoneLookUp.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
@@ -361,7 +370,7 @@ describe('Auth User', () => {
       const authUserGateway = new TestAuthUserGateway()
       authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
 
-      const store = configureStoreWithAuthUser({ authUserGateway })
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
       return {
         store,
@@ -426,7 +435,7 @@ describe('Auth User', () => {
       const authUserGateway = new TestAuthUserGateway()
       authUserGateway.resetPassword.mockDeferredValueOnce(null)
 
-      const store = configureStoreWithAuthUser({ authUserGateway })
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
       return {
         store,
@@ -491,7 +500,7 @@ describe('Auth User', () => {
       const authUserGateway = new TestAuthUserGateway()
       authUserGateway.definePassword.mockReturnValue(Promise.resolve(null))
 
-      const store = configureStoreWithAuthUser({ authUserGateway })
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
       return {
         store,
@@ -586,7 +595,7 @@ describe('Auth User', () => {
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.loginWithPassword.mockDeferredValueOnce(createUser())
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     const phone = '0600000000'
     const password = 'xxx'
@@ -606,7 +615,7 @@ describe('Auth User', () => {
   it('should show invalid SMS Code', async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.loginWithSMSCode.mockDeferredValueOnce(createUser())
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     const phone = '0600000000'
     let SMSCode = ''
@@ -630,7 +639,7 @@ describe('Auth User', () => {
   it('should catch server error on password creation', async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.definePassword.mockDeferredValueOnce(null)
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
 
     const password = 'abcdefghi'
 
@@ -651,7 +660,7 @@ describe('Auth User', () => {
   describe('reset', () => {
     it('should reset form', () => {
       const authUserGateway = new TestAuthUserGateway()
-      const initialState = {
+      const initialAppState = {
         authUser: {
           step: LoginSteps.PASSWORD,
           errors: { phone: PhoneValidationsError.REQUIRED },
@@ -659,11 +668,14 @@ describe('Auth User', () => {
           user: createUser(),
         },
       }
-      const store = configureStoreWithAuthUser({ authUserGateway }, initialState)
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway },
+        initialAppState,
+      })
       store.dispatch(publicActions.resetForm())
 
       expect(store.getState().authUser).toEqual({
-        ...initialState.authUser,
+        ...initialAppState.authUser,
         step: LoginSteps.PHONE,
         errors: {},
         isLogging: false,
@@ -674,7 +686,7 @@ describe('Auth User', () => {
   describe('step logging', () => {
     it('should be uncompleted', () => {
       const authUserGateway = new TestAuthUserGateway()
-      const initialState = {
+      const initialAppState = {
         authUser: {
           step: LoginSteps.PASSWORD,
           errors: { phone: PhoneValidationsError.REQUIRED },
@@ -683,14 +695,17 @@ describe('Auth User', () => {
         },
       }
 
-      const store = configureStoreWithAuthUser({ authUserGateway }, initialState)
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway },
+        initialAppState,
+      })
 
       expect(selectLoginStepIsCompleted(store.getState())).toBe(false)
     })
 
     it('should be completed', () => {
       const authUserGateway = new TestAuthUserGateway()
-      const initialState = {
+      const initialAppState = {
         authUser: {
           step: null,
           errors: { phone: PhoneValidationsError.REQUIRED },
@@ -699,7 +714,10 @@ describe('Auth User', () => {
         },
       }
 
-      const store = configureStoreWithAuthUser({ authUserGateway }, initialState)
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway },
+        initialAppState,
+      })
 
       expect(selectLoginStepIsCompleted(store.getState())).toBe(true)
     })
@@ -714,7 +732,12 @@ describe('Auth User', () => {
       authUserTokenStorage.setToken.mockReturnValueOnce()
       authUserGateway.loginWithPassword.mockDeferredValueOnce(user)
 
-      const store = configureStoreWithAuthUser({ authUserGateway, authUserTokenStorage })
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          authUserGateway,
+          authUserTokenStorage,
+        },
+      })
 
       const phone = '0600000000'
       const password = 'xxx'
@@ -736,7 +759,12 @@ describe('Auth User', () => {
       authUserTokenStorage.setToken.mockReturnValueOnce()
       authUserGateway.loginWithSMSCode.mockDeferredValueOnce(user)
 
-      const store = configureStoreWithAuthUser({ authUserGateway, authUserTokenStorage })
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          authUserGateway,
+          authUserTokenStorage,
+        },
+      })
 
       const phone = '0600000000'
       const SMSCode = 'xxx'
@@ -756,7 +784,7 @@ describe('Auth User', () => {
 
   describe('Giver user is not set', () => {
     const authUserGateway = new TestAuthUserGateway()
-    const store = configureStoreWithAuthUser({ authUserGateway })
+    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
     const user = createUser()
 
     store.dispatch(publicActions.setUser(user))

@@ -1,11 +1,12 @@
-import { PreloadedState, StateFromReducersMapObject } from 'redux'
 import { configureStore } from '../../configureStore'
+import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { feedReducer, JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentItem,
@@ -16,21 +17,22 @@ import {
   selectStatus,
 } from './feed.selectors'
 
-const reducers = {
-  feed: feedReducer,
-}
-
 function configureStoreWithFeed(
-  dependencies: Parameters<typeof configureStore>[0]['dependencies'],
-  initialState?: PreloadedState<StateFromReducersMapObject<typeof reducers>>,
+  params: {
+    dependencies?: PatialAppDependencies;
+    initialAppState?: PartialAppState;
+  },
 ) {
+  const { initialAppState, dependencies } = params
+
   return configureStore({
     reducers,
-    sagas: [feedSaga],
-    dependencies: {
-      ...dependencies,
+    initialState: {
+      ...defaultInitialAppState,
+      ...initialAppState,
     },
-    initialState,
+    dependencies,
+    sagas: [feedSaga],
   })
 }
 
@@ -48,14 +50,14 @@ function configureStoreWithSelectedItems() {
 
   const store = configureStoreWithFeed(
     {
-      feedGateway,
-    },
-    {
-      feed: {
-        ...fakeFeedData,
-        items: itemsEntities,
-        itemsUuids: Object.keys(itemsEntities),
-        selectedItemUuid: Object.keys(itemsEntities)[0],
+      dependencies: { feedGateway },
+      initialAppState: {
+        feed: {
+          ...fakeFeedData,
+          items: itemsEntities,
+          itemsUuids: Object.keys(itemsEntities),
+          selectedItemUuid: Object.keys(itemsEntities)[0],
+        },
       },
     },
   )
@@ -83,14 +85,13 @@ describe('Feed Item', () => {
     When user select and item
     Then should selected item be defined after to set item uuid
   `, () => {
-    const store = configureStoreWithFeed(
-      {},
-      {
+    const store = configureStoreWithFeed({
+      initialAppState: {
         feed: {
           ...fakeFeedData,
         },
       },
-    )
+    })
 
     store.dispatch(publicActions.setCurrentItemUuid('abc'))
 
@@ -175,14 +176,16 @@ describe('Feed Item', () => {
 
     const store = configureStoreWithFeed(
       {
-        feedGateway,
-      },
-      {
-        feed: {
-          ...fakeFeedData,
-          items: {},
-          itemsUuids: [],
-          selectedItemUuid: null,
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+          },
         },
       },
     )
@@ -223,7 +226,12 @@ describe('Feed Item', () => {
 
       const feedGateway = new TestFeedGateway()
 
-      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+      const store = configureStoreWithFeed({
+        dependencies: { feedGateway },
+        initialAppState: {
+          feed: defaultFeedDataJoinEntourage,
+        },
+      })
 
       return {
         store,
@@ -288,7 +296,10 @@ describe('Feed Item', () => {
       const feedGateway = new TestFeedGateway()
       feedGateway.leaveEntourage.mockDeferredValueOnce(null)
 
-      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+      const store = configureStoreWithFeed({
+        dependencies: { feedGateway },
+        initialAppState: { feed: defaultFeedDataJoinEntourage },
+      })
 
       return {
         store,
@@ -353,7 +364,10 @@ describe('Feed Item', () => {
       feedGateway.closeEntourage.mockDeferredValueOnce(null)
       feedGateway.reopenEntourage.mockDeferredValueOnce(null)
 
-      const store = configureStoreWithFeed({ feedGateway }, { feed: defaultFeedDataJoinEntourage })
+      const store = configureStoreWithFeed({
+        dependencies: { feedGateway },
+        initialAppState: { feed: defaultFeedDataJoinEntourage },
+      })
 
       return {
         store,
