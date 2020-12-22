@@ -1,8 +1,10 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
+import Linkify from 'linkifyjs/react'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { variants } from 'src/styles'
+import * as S from './Card.styles'
 
 interface ActionCardProps {
   actions: JSX.Element;
@@ -43,7 +45,9 @@ export function ActionCard(props: ActionCardProps) {
       <Box marginY={2}>
         {actions}
       </Box>
-      <Typography variant={variants.bodyRegular}>{description}</Typography>
+      <Linkify>
+        <S.Description>{description}</S.Description>
+      </Linkify>
       <Box marginY={1}>
         <Typography variant={variants.footNote}>
           {dateLabel}

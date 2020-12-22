@@ -95,6 +95,13 @@ export function Messages(props: MessageProps) {
   const { register, onSubmit, content } = useMessagesForm(onSendMessage)
   const { onScroll, messagesContainerRef } = useMessagesScroll(messages, fetchMore)
 
+  const onKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      onSubmit()
+      event.preventDefault()
+    }
+  }
+
   return (
     <S.Container>
       <S.MessageList ref={messagesContainerRef} onScroll={onScroll}>
@@ -115,6 +122,7 @@ export function Messages(props: MessageProps) {
           margin="none"
           multiline={true}
           name="content"
+          onKeyPress={onKeyPress}
           style={{
             flex: 1,
           }}

@@ -1,9 +1,10 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import CloseIcon from '@material-ui/icons/Close'
-import { formatDistance } from 'date-fns' // eslint-disable-line
+import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
+import capitalize from 'lodash/capitalize'
 import React, { useCallback } from 'react'
 import { useCurrentFeedItem } from '../useCurrentFeedItem'
 import { openModal } from 'src/components/Modal'
@@ -74,10 +75,10 @@ export function RightCards() {
 
   if (feedItem.groupType === 'outing') {
     const startDate = new Date(feedItem.metadata.startsAt)
-    const startHour = startDate.toLocaleTimeString().replace(/([0-9]*)?:([0-9]*)?:([0-9]*)?/g, '$1h$2')
     const endDate = new Date(feedItem.metadata.endsAt)
-    const endHour = endDate.toLocaleTimeString().replace(/([0-9]*)?:([0-9]*)?:([0-9]*)?/g, '$1h$2')
-    const dateLabel = `${startDate.toDateString()} de ${startHour} à ${endHour}`
+    const formattedEndHour = format(endDate, "H'h'mm", { locale: fr })
+    const formattedStartDate = format(startDate, "iiii d MMMM 'de' H'h'mm", { locale: fr })
+    const dateLabel = capitalize(`${formattedStartDate} à ${formattedEndHour}`)
 
     card = (
       <EventCard

@@ -77,11 +77,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
     throw new Error(`Entourage with joins status ${joinStatus} shouldn't be in /myfeeds`)
   }
 
-  let { title } = entourage
-
-  if (entourage.description) {
-    title += ` - ${entourage.description}`
-  }
+  const { title } = entourage
 
   return (
     <S.Container>
@@ -96,7 +92,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
       {!userIsAccepted ? (
         <S.Pending>
           Votre demande est en attente. Lorsque vous serez accepté.e,
-          vous verrez ici la conversation des participants à cette action/cet évènement.
+          vous verrez ici la conversation des participants à
+          {entourage.groupType === 'action' ? 'cette action' : 'cet évènement'}.
         </S.Pending>
       ) : (
         <S.MessagesContainer>
