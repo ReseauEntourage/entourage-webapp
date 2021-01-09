@@ -1,4 +1,5 @@
 import uniqid from 'uniqid'
+import { Entourage } from '../entities/models'
 import { uniqIntId } from 'src/utils/misc'
 import { FeedState, FeedItem, defaultFeedState } from './feed.reducer'
 
@@ -22,6 +23,39 @@ export function createFeedItem() {
     },
     metadata: {},
   } as FeedItem
+}
+
+export function createEntourage(): Entourage {
+  return {
+    author: uniqIntId(),
+    createdAt: new Date().toISOString(),
+    description: '',
+    displayCategory: 'event',
+    entourageType: 'contribution',
+    groupType: 'action',
+    id: uniqIntId(),
+    joinStatus: 'not_requested',
+    location: {
+      latitude: 12,
+      longitude: 14,
+    },
+    metadata: {
+      displayAddress: '',
+      streetAddress: '',
+      startsAt: '',
+      placeName: '',
+      googlePlaceId: '',
+      endsAt: '',
+    },
+    numberOfPeople: 12,
+    numberOfUnreadMessages: null,
+    public: false,
+    shareUrl: '',
+    status: 'closed',
+    title: '',
+    updatedAt: new Date().toISOString(),
+    uuid: uniqid(),
+  }
 }
 
 export function createFeedItemList(): FeedItem[] {

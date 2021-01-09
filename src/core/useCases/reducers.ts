@@ -1,9 +1,11 @@
 import { StateFromReducersMapObject } from 'redux'
 import { authUserReducer } from './authUser'
+import { entitiesReducer } from './entities'
 import { feedReducer } from './feed'
 
 export const reducers = {
   authUser: authUserReducer,
+  entities: entitiesReducer,
   feed: feedReducer,
 }
 

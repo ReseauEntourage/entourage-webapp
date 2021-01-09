@@ -1,4 +1,3 @@
-import produce from 'immer'
 import { constants } from 'src/constants'
 import {
   FeedMetadata,
@@ -63,9 +62,9 @@ export interface FeedState {
     zoom: number;
   };
   itemsUuids: string[];
-  items: {
-    [itemUuid: string]: FeedItem;
-  };
+  // items: {
+  //   [itemUuid: string]: FeedItem;
+  // };
   nextPageToken: string | null;
   selectedItemUuid: string | null;
   isUpdatingJoinStatus: boolean;
@@ -82,7 +81,7 @@ export const defaultFeedState: FeedState = {
     zoom: constants.DEFAULT_LOCATION.ZOOM,
   },
   nextPageToken: null,
-  items: {},
+  // items: {},
   selectedItemUuid: null,
   isUpdatingJoinStatus: false,
   isUpdatingStatus: false,
@@ -114,15 +113,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isIdle: false,
-        items: action.payload.items.reduce(
-          (acc: FeedState['items'], item: FeedState['items'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.items,
-        ),
-        itemsUuids: action.payload.items.map((item) => item.uuid),
+        itemsUuids: action.payload.itemsUuids,
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
       }
@@ -131,42 +122,13 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
     case ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
-        items: action.payload.items.reduce(
-          (acc: FeedState['items'], item: FeedState['items'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.items,
-        ),
         itemsUuids: [
           ...state.itemsUuids,
-          ...action.payload.items.map((item) => item.uuid),
+          ...action.payload.itemsUuids,
         ],
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
       }
-    }
-
-    case ActionType.UPDATE_ITEM: {
-      return produce(state, (draftState) => {
-        const { uuid } = action.payload
-        if (!uuid) {
-          throw new Error('UUID is required for item update')
-        }
-
-        const item = draftState.items[uuid]
-
-        if (!item) {
-          throw new Error(`item with uuid ${uuid} is not defined`)
-        }
-
-        // eslint-disable-next-line
-        draftState.items[uuid] = {
-          ...item,
-          ...action.payload,
-        }
-      })
     }
 
     case ActionType.SET_CURRENT_ITEM_UUID: {
@@ -188,10 +150,6 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingJoinStatus: false,
-        items: produce(state.items, (cachedItems) => {
-          const item = cachedItems[action.payload.entourageUuid]
-          item.joinStatus = action.payload.status
-        }),
       }
     }
 
@@ -199,10 +157,6 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingJoinStatus: false,
-        items: produce(state.items, (cachedItems) => {
-          const item = cachedItems[action.payload.entourageUuid]
-          item.joinStatus = 'not_requested'
-        }),
       }
     }
 
@@ -218,10 +172,6 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingStatus: false,
-        items: produce(state.items, (cachedItems) => {
-          const item = cachedItems[action.payload.entourageUuid]
-          item.status = 'closed'
-        }),
       }
     }
 
@@ -229,10 +179,6 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isUpdatingStatus: false,
-        items: produce(state.items, (cachedItems) => {
-          const item = cachedItems[action.payload.entourageUuid]
-          item.status = 'open'
-        }),
       }
     }
 

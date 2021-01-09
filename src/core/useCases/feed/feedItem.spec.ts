@@ -1,12 +1,13 @@
 import { configureStore } from '../../configureStore'
 import { PatialAppDependencies } from '../Dependencies'
+import { createEntourage } from '../mock'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
-import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { FeedStatus } from 'src/core/api'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, RequestStatus } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentItem,
@@ -54,9 +55,12 @@ function configureStoreWithSelectedItems() {
       initialAppState: {
         feed: {
           ...fakeFeedData,
-          items: itemsEntities,
           itemsUuids: Object.keys(itemsEntities),
           selectedItemUuid: Object.keys(itemsEntities)[0],
+        },
+        entities: {
+          ...defaultInitialAppState.entities,
+          entourages: itemsEntities,
         },
       },
     },
@@ -85,17 +89,24 @@ describe('Feed Item', () => {
     When user select and item
     Then should selected item be defined after to set item uuid
   `, () => {
+    const item = createEntourage()
     const store = configureStoreWithFeed({
       initialAppState: {
         feed: {
           ...fakeFeedData,
         },
+        entities: {
+          ...defaultInitialAppState.entities,
+          entourages: {
+            [item.uuid]: item,
+          },
+        },
       },
     })
 
-    store.dispatch(publicActions.setCurrentItemUuid('abc'))
+    store.dispatch(publicActions.setCurrentItemUuid(item.uuid))
 
-    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.items.abc)
+    expect(selectCurrentItem(store.getState())).toEqual(item)
   })
 
   it(`
@@ -182,7 +193,6 @@ describe('Feed Item', () => {
         initialAppState: {
           feed: {
             ...fakeFeedData,
-            items: {},
             itemsUuids: [],
             selectedItemUuid: null,
           },
@@ -213,29 +223,31 @@ describe('Feed Item', () => {
 
   describe('Join entourage', () => {
     function configureStoreWithJoinRequestNotRequested() {
-      const defaultFeedDataJoinEntourage: FeedState = {
-        ...fakeFeedData,
-        items: {
-          ...fakeFeedData.items,
-          abc: {
-            ...fakeFeedData.items.abc,
-            joinStatus: 'not_requested' as FeedJoinStatus,
-          },
-        },
-      }
-
       const feedGateway = new TestFeedGateway()
+
+      const item = createEntourage()
+      item.joinStatus = 'not_requested'
 
       const store = configureStoreWithFeed({
         dependencies: { feedGateway },
         initialAppState: {
-          feed: defaultFeedDataJoinEntourage,
+          feed: {
+            ...defaultInitialAppState.feed,
+            itemsUuids: [item.uuid],
+          },
+          entities: {
+            ...defaultInitialAppState.entities,
+            entourages: {
+              [item.uuid]: item,
+            },
+          },
         },
       })
 
       return {
         store,
         feedGateway,
+        item,
       }
     }
 
@@ -246,11 +258,11 @@ describe('Feed Item', () => {
         Then join request should not be sending
           And join status should be not requested
       `, () => {
-      const { store } = configureStoreWithJoinRequestNotRequested()
+      const { store, item } = configureStoreWithJoinRequestNotRequested()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
-      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
+      expect(selectJoinRequestStatus(store.getState(), item.uuid)).toEqual(JoinRequestStatus.NOT_REQUEST)
     })
 
     it(`
@@ -260,8 +272,8 @@ describe('Feed Item', () => {
           And join request should not be sending after succeeded
           And join request status should be updated
       `, async () => {
-      const { store, feedGateway } = configureStoreWithJoinRequestNotRequested()
-      const entourageUuid = 'abc'
+      const { store, feedGateway, item } = configureStoreWithJoinRequestNotRequested()
+      const entourageUuid = item.uuid
 
       feedGateway.joinEntourage.mockDeferredValueOnce({ status: 'accepted' })
 
@@ -276,34 +288,38 @@ describe('Feed Item', () => {
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
-      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.ACCEPTED)
+      expect(selectJoinRequestStatus(store.getState(), entourageUuid)).toEqual(JoinRequestStatus.ACCEPTED)
     })
   })
 
   describe('Leave entourage', () => {
     function configureStoreWithItemJoinRequestAccepted() {
-      const defaultFeedDataJoinEntourage: FeedState = {
-        ...fakeFeedData,
-        items: {
-          ...fakeFeedData.items,
-          abc: {
-            ...fakeFeedData.items.abc,
-            joinStatus: 'accepted' as FeedJoinStatus,
-          },
-        },
-      }
-
       const feedGateway = new TestFeedGateway()
       feedGateway.leaveEntourage.mockDeferredValueOnce(null)
 
+      const item = createEntourage()
+      item.joinStatus = 'accepted'
+
       const store = configureStoreWithFeed({
         dependencies: { feedGateway },
-        initialAppState: { feed: defaultFeedDataJoinEntourage },
+        initialAppState: {
+          feed: {
+            ...defaultInitialAppState.feed,
+            itemsUuids: [item.uuid],
+          },
+          entities: {
+            ...defaultInitialAppState.entities,
+            entourages: {
+              [item.uuid]: item,
+            },
+          },
+        },
       })
 
       return {
         store,
         feedGateway,
+        item,
       }
     }
 
@@ -314,11 +330,11 @@ describe('Feed Item', () => {
         Then leave request should not be sending
           And join status should be accepted
       `, () => {
-      const { store } = configureStoreWithItemJoinRequestAccepted()
+      const { store, item } = configureStoreWithItemJoinRequestAccepted()
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
-      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.ACCEPTED)
+      expect(selectJoinRequestStatus(store.getState(), item.uuid)).toEqual(JoinRequestStatus.ACCEPTED)
     })
 
     it(`
@@ -330,8 +346,8 @@ describe('Feed Item', () => {
           And leave request should not be sending after succeeded
           And leave request status should be updated
       `, async () => {
-      const { store, feedGateway } = configureStoreWithItemJoinRequestAccepted()
-      const entourageUuid = 'abc'
+      const { store, feedGateway, item } = configureStoreWithItemJoinRequestAccepted()
+      const entourageUuid = item.uuid
 
       store.dispatch(publicActions.leaveEntourage({ entourageUuid, userId: 1 }))
 
@@ -344,34 +360,39 @@ describe('Feed Item', () => {
 
       expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
 
-      expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
+      expect(selectJoinRequestStatus(store.getState(), entourageUuid)).toEqual(JoinRequestStatus.NOT_REQUEST)
     })
   })
 
   describe('Status entourage', () => {
     function configureStoreForStatus(status: FeedStatus) {
-      const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
-        items: {
-          abc: {
-            ...fakeFeedData.items.abc,
-            status,
-          },
-        },
-        selectedItemUuid: 'abc',
-      }
-
       const feedGateway = new TestFeedGateway()
       feedGateway.closeEntourage.mockDeferredValueOnce(null)
       feedGateway.reopenEntourage.mockDeferredValueOnce(null)
 
+      const item = createEntourage()
+      item.status = status
+
       const store = configureStoreWithFeed({
         dependencies: { feedGateway },
-        initialAppState: { feed: defaultFeedDataJoinEntourage },
+        initialAppState: {
+          feed: {
+            ...defaultInitialAppState.feed,
+            itemsUuids: [item.uuid],
+          },
+          entities: {
+            ...defaultInitialAppState.entities,
+            entourages: {
+              [item.uuid]: item,
+            },
+          },
+        },
       })
 
       return {
         store,
         feedGateway,
+        item,
       }
     }
 
@@ -382,11 +403,11 @@ describe('Feed Item', () => {
       Then updating status request should not be active
         And status should be open
   `, () => {
-      const { store } = configureStoreForStatus('open')
+      const { store, item } = configureStoreForStatus('open')
 
       expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
 
-      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.OPEN)
+      expect(selectStatus(store.getState(), item.uuid)).toEqual(RequestStatus.OPEN)
     })
 
     it(`
@@ -399,8 +420,8 @@ describe('Feed Item', () => {
         And status should be updated to closed
     `, async () => {
       // Given
-      const { store, feedGateway } = configureStoreForStatus('open')
-      const entourageUuid = 'abc'
+      const { store, feedGateway, item } = configureStoreForStatus('open')
+      const entourageUuid = item.uuid
       const success = true
 
       // When
@@ -415,7 +436,7 @@ describe('Feed Item', () => {
       await store.waitForActionEnd()
 
       expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
-      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.CLOSED)
+      expect(selectStatus(store.getState(), entourageUuid)).toEqual(RequestStatus.CLOSED)
     })
 
     it(`
@@ -428,8 +449,8 @@ describe('Feed Item', () => {
         And status should be updated to open
     `, async () => {
       // Given
-      const { store, feedGateway } = configureStoreForStatus('closed')
-      const entourageUuid = 'abc'
+      const { store, feedGateway, item } = configureStoreForStatus('closed')
+      const entourageUuid = item.uuid
 
       // When
       store.dispatch(publicActions.reopenEntourage({ entourageUuid }))
@@ -443,7 +464,7 @@ describe('Feed Item', () => {
       await store.waitForActionEnd()
 
       expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
-      expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.OPEN)
+      expect(selectStatus(store.getState(), entourageUuid)).toEqual(RequestStatus.OPEN)
     })
   })
 })

@@ -1,8 +1,10 @@
 import { configureStore } from '../../configureStore'
 import { PatialAppDependencies } from '../Dependencies'
-import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+
+import { createEntourage, createUser } from '../mock'
+import { PartialAppState, defaultInitialAppState, reducers, AppState } from '../reducers'
 import { TestFeedGateway } from './TestFeedGateway'
-import { fakeFeedData } from './__mocks__'
+import { fakeFeedData, createFeedItem } from './__mocks__'
 import { publicActions } from './feed.actions'
 import { FeedState, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
@@ -146,7 +148,8 @@ describe('Feed', () => {
       And should retrieve feed gateway method have been called with filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
+    const item = createFeedItem()
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [item] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
@@ -160,7 +163,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc])
+    expect(selectFeedItems(store.getState())).toEqual([item])
 
     expect(selectHasNextPageToken(store.getState())).toEqual(true)
 
@@ -181,7 +184,8 @@ describe('Feed', () => {
     Then should retrieve feed gateway method have been called the second time with next filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
+    const item = createFeedItem()
+    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [item] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
@@ -213,33 +217,39 @@ describe('Feed', () => {
       And new items should be concat with previous items
   `, async () => {
     const feedGateway = new TestFeedGateway()
+
+    const itemExisted = {
+      ...createEntourage(),
+      author: createUser(),
+    }
+    const itemCreated = {
+      ...createEntourage(),
+      author: createUser(),
+    }
+
     const feedNextData = {
       nextPageToken: null,
-      items: [
-        {
-          author: {
-            avatarUrl: 'http://image-2.com',
-            displayName: 'Jane',
-            id: 1,
-          },
-          createdAt: new Date().toISOString(),
-          description: 'feed description page 2',
-          id: 2,
-          uuid: '2',
-          title: 'feed title page 2',
-          location: {
-            latitude: 2,
-            longitude: 2,
-          },
-          metadata: {},
-        } as FeedState['items'][number],
-      ],
+      items: [itemCreated],
     }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(feedNextData)
-    const initialAppState = {
+    const initialAppState: AppState = {
+      ...defaultInitialAppState,
       feed: {
         ...fakeFeedData,
         nextPageToken: 'wyz',
+        itemsUuids: [itemExisted.uuid],
+      },
+      entities: {
+        ...defaultInitialAppState.entities,
+        entourages: {
+          [itemExisted.uuid]: {
+            ...itemExisted,
+            author: itemExisted.author.id,
+          },
+        },
+        users: {
+          [itemExisted.author.id]: itemExisted.author,
+        },
       },
     }
     const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
@@ -258,7 +268,7 @@ describe('Feed', () => {
       nextPageToken: 'wyz',
     })
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc, feedNextData.items[0]])
+    expect(selectFeedItems(store.getState())).toEqual([itemExisted, itemCreated])
   })
 
   it(`
@@ -268,10 +278,19 @@ describe('Feed', () => {
       And store should be unchanged
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const initialAppState = {
+    const item = createEntourage()
+    const initialAppState: AppState = {
+      ...defaultInitialAppState,
       feed: {
         ...fakeFeedData,
         nextPageToken: null,
+        itemsUuids: [item.uuid],
+      },
+      entities: {
+        ...defaultInitialAppState.entities,
+        entourages: {
+          [item.uuid]: item,
+        },
       },
     }
     const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
@@ -329,31 +348,5 @@ describe('Feed', () => {
     await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-  })
-
-  it(`
-    Given store has items
-    When user want to partially update an item that is not undefined
-    Then item should be partially updated
-  `, () => {
-    const feedGateway = new TestFeedGateway()
-    const initialAppState: PartialAppState = {
-      feed: fakeFeedData,
-    }
-    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
-    const firstItem = store.getState().feed.items.abc
-
-    store.dispatch(publicActions.updateItem({
-      uuid: 'abc',
-      title: 'feed title updated',
-    }))
-
-    const firstItemUpdated = store.getState().feed.items.abc
-
-    expect(firstItem.title).toEqual('feed title')
-    expect(firstItem.description).toEqual('feed description')
-
-    expect(firstItemUpdated.title).toEqual('feed title updated')
-    expect(firstItemUpdated.description).toEqual('feed description')
   })
 })

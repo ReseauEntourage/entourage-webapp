@@ -1,4 +1,6 @@
 import { validateSchema } from 'typescript-request-schema'
+// eslint-disable-next-line
+import { entourageSchema } from 'src/core/useCases/entities/entities.schemas'
 import { DateISO } from 'src/utils/types'
 
 import {
@@ -241,6 +243,9 @@ export const schema = {
       feeds: (FeedItemEntourage | FeedItemTour)[];
       nextPageToken?: string;
     },
+    normalizrSchema: (placeholder = [entourageSchema]) => ({
+      feeds: placeholder,
+    }),
   },
   '/login POST': {
     url: 'login',

@@ -48,7 +48,7 @@ function retrieveFeedStarted() {
 
 function retrieveFeedSuccess(
   payload: {
-    items: FeedState['items'][number][];
+    itemsUuids: string[];
     nextPageToken: FeedState['nextPageToken'];
   },
 ) {
@@ -72,19 +72,12 @@ function retrieveFeedNextPageStarted() {
 
 function retrieveFeedNextPageSuccess(
   payload: {
-    items: FeedState['items'][number][];
+    itemsUuids: string[];
     nextPageToken: FeedState['nextPageToken'];
   },
 ) {
   return {
     type: ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
-    payload,
-  }
-}
-
-function updateItem(payload: Partial<FeedState['items'][string]>) {
-  return {
-    type: ActionType.UPDATE_ITEM,
     payload,
   }
 }
@@ -159,7 +152,6 @@ export const publicActions = {
   retrieveFeed,
   retrieveFeedNextPageStarted,
   retrieveFeedNextPage,
-  updateItem,
   setCurrentItemUuid,
   joinEntourage,
   leaveEntourage,

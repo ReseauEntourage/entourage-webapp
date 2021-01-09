@@ -1,9 +1,7 @@
-import { FeedStatus } from 'src/core/api'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
-
-interface AppState {
-  feed: FeedState;
-}
+import { selectEntitiesFromRequest } from '../entities'
+import { AppState } from '../reducers'
+import { FeedStatus, FeedItemEntourage } from 'src/core/api'
+import { JoinRequestStatus, RequestStatus } from './feed.reducer'
 
 export function selectFeedIsIdle(state: AppState) {
   return state.feed.isIdle
@@ -22,9 +20,8 @@ export function selectFeedIsFetching(state: AppState) {
 }
 
 export function selectFeedItems(state: AppState) {
-  return state.feed.itemsUuids.map((itemUuid) => {
-    return state.feed.items[itemUuid]
-  })
+  // @ts-expect-error
+  return selectEntitiesFromRequest(state, state.feed.itemsUuids, '/feeds GET').feeds as FeedItemEntourage['data'][]
 }
 
 export function selectHasNextPageToken(state: AppState) {
@@ -32,9 +29,9 @@ export function selectHasNextPageToken(state: AppState) {
 }
 
 export function selectCurrentItem(state: AppState) {
-  const { selectedItemUuid, items } = state.feed
+  const { feed: { selectedItemUuid }, entities: { entourages } } = state
 
-  return selectedItemUuid ? items[selectedItemUuid] : null
+  return (selectedItemUuid ? entourages[selectedItemUuid] : null) as FeedItemEntourage['data'] | null
 }
 
 export function selectIsUpdatingJoinStatus(state: AppState) {
@@ -42,7 +39,7 @@ export function selectIsUpdatingJoinStatus(state: AppState) {
 }
 
 export function selectJoinRequestStatus(state: AppState, entourageUuid: string) {
-  const entourage = state.feed.items[entourageUuid]
+  const entourage = state.entities.entourages[entourageUuid]
 
   switch (entourage.joinStatus) {
     case 'cancelled':
@@ -69,6 +66,6 @@ const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {
 }
 
 export function selectStatus(state: AppState, entourageUuid: string) {
-  const entourage = state.feed.items[entourageUuid]
+  const entourage = state.entities.entourages[entourageUuid]
   return MapFeedStatusToRequestStatus[entourage.status]
 }

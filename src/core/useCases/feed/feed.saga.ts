@@ -1,5 +1,9 @@
+import { normalize } from 'normalizr'
 import { call, put, select, getContext } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
+import { entitiesActions } from '../entities'
+import { entourageSchema } from '../entities/entities.schemas'
+import { schema } from 'src/core/api'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { ActionType, actions, Actions } from './feed.actions'
@@ -32,7 +36,14 @@ function* retrieveFeed() {
       nextPageToken: nextPageToken || undefined,
     },
   )
-  yield put(actions.retrieveFeedSuccess(response))
+  const { entities, result } = normalize({ feeds: response.items }, schema['/feeds GET'].normalizrSchema())
+  yield put(entitiesActions.updateEntities({ entities }))
+
+  const payload = {
+    nextPageToken: response.nextPageToken,
+    itemsUuids: result.feeds,
+  }
+  yield put(actions.retrieveFeedSuccess(payload))
 }
 
 function* retrieveFeedNextPage() {
@@ -52,7 +63,14 @@ function* retrieveFeedNextPage() {
       nextPageToken: nextPageToken || undefined,
     },
   )
-  yield put(actions.retrieveFeedNextPageSuccess(response))
+  const { entities, result } = normalize(response.items, [entourageSchema])
+  yield put(entitiesActions.updateEntities({ entities }))
+
+  const payload = {
+    nextPageToken: response.nextPageToken,
+    itemsUuids: result,
+  }
+  yield put(actions.retrieveFeedNextPageSuccess(payload))
 }
 
 function* setCurrentItemUuid(action: Actions['setCurrentItemUuid']) {

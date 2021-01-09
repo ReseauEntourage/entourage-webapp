@@ -9,7 +9,7 @@ import {
   compose,
 } from 'redux'
 import createSagaMiddleware, { Saga } from 'redux-saga'
-import { all, call } from 'redux-saga/effects'
+import { all, call, spawn } from 'redux-saga/effects'
 import { AnyCantFix } from 'src/utils/types'
 
 interface ConfigureStoreParams<R> {
@@ -65,7 +65,18 @@ export function configureStore<
   )
 
   function* rootSaga() {
-    yield all(sagas.map(call))
+    yield all(
+      sagas.map((saga) => spawn(function* spawnSaga() {
+        while (true) {
+          try {
+            yield call(saga)
+            break
+          } catch (e) {
+            console.error(e)
+          }
+        }
+      })),
+    )
   }
 
   sagaMiddleware.run(rootSaga)
