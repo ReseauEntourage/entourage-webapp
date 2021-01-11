@@ -48,6 +48,8 @@ export const schema = {
     response: {} as {
       user: User;
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages POST': {
     url: 'entourages',
@@ -84,6 +86,8 @@ export const schema = {
         uuid: string;
       };
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages PATCH': {
     url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}`,
@@ -93,6 +97,8 @@ export const schema = {
       entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent | DTOCloseEntourage | DTOReopenEntourage;
     },
     response: {} as {},
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId GET': {
     url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}`,
@@ -127,6 +133,8 @@ export const schema = {
         uuid: string;
       };
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/chat_messages GET': {
     url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}/chat_messages`,
@@ -149,6 +157,8 @@ export const schema = {
         };
       }[];
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/chat_messages POST': {
     url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}/chat_messages`,
@@ -160,6 +170,8 @@ export const schema = {
       };
     },
     response: {} as {},
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/users GET': {
     url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}/users`,
@@ -184,6 +196,8 @@ export const schema = {
         status: FeedJoinStatus;
       }[];
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/users POST': {
     url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}/users`,
@@ -196,6 +210,8 @@ export const schema = {
         status: FeedJoinStatus;
       };
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/users/:userId PUT': {
     url: (params: EntourageIdOrUUIDParams & { userId: number; }) => {
@@ -209,6 +225,8 @@ export const schema = {
       };
     },
     response: null,
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/entourages/:entourageId/users/:userId DELETE': {
     url: (params: EntourageIdOrUUIDParams & { userId: number; }) => {
@@ -218,6 +236,8 @@ export const schema = {
     params: null,
     data: null,
     response: null,
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/feeds GET': {
     url: 'feeds',
@@ -246,6 +266,10 @@ export const schema = {
     normalizrSchema: (placeholder = [entourageSchema]) => ({
       feeds: placeholder,
     }),
+    error: {} as {
+      type: string;
+      message: string;
+    },
   },
   '/login POST': {
     url: 'login',
@@ -261,6 +285,8 @@ export const schema = {
       firstSignIn: boolean;
       user: User;
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/myfeeds GET': {
     url: 'myfeeds',
@@ -339,6 +365,8 @@ export const schema = {
         type: FeedType;
       }[];
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/pois GET': {
     url: 'pois',
@@ -368,6 +396,8 @@ export const schema = {
         website: string;
       }[];
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users POST': {
     url: 'users',
@@ -379,6 +409,8 @@ export const schema = {
       };
     },
     response: {} as {},
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/:id GET': {
     url: (params: { userId: number; }) => `users/${params.userId}`,
@@ -411,6 +443,8 @@ export const schema = {
         userType: 'pro';
       };
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/me GET': {
     url: 'users/me',
@@ -420,6 +454,8 @@ export const schema = {
     response: {} as {
       user: User;
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/me PATCH': {
     url: 'users/me',
@@ -438,6 +474,8 @@ export const schema = {
     response: {} as {
       user: User;
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/me/code PATCH': {
     url: 'users/me/code',
@@ -454,7 +492,8 @@ export const schema = {
     response: {} as {
       user: User;
     },
-
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/me/address POST': {
     url: 'users/me/address',
@@ -467,6 +506,8 @@ export const schema = {
       };
     },
     response: {} as {},
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/me/presigned_avatar_upload/ POST': {
     url: '/users/me/presigned_avatar_upload/',
@@ -479,6 +520,8 @@ export const schema = {
       avatarKey: string;
       presignedUrl: string;
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
   '/users/lookup POST': {
     url: 'users/lookup',
@@ -493,6 +536,8 @@ export const schema = {
       // présent uniquement si status = found
       // entre 8 et 256 caracters
     },
+    error: null,
+    normalizrSchema: () => { throw new Error('Not implemented') },
   },
 }
 

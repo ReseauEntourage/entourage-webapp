@@ -20,7 +20,6 @@ export function selectEntitiesFromRequest<R extends keyof typeof apiSchema>(
   ids: string[],
   requestName: R,
 ) {
-  // @ts-expect-error
   const schema = apiSchema[requestName].normalizrSchema
 
   if (!schema) {
@@ -29,5 +28,6 @@ export function selectEntitiesFromRequest<R extends keyof typeof apiSchema>(
 
   type Output = typeof apiSchema[R]['response']
 
+  // @ts-expect-error
   return denormalize(schema(ids), schema(), state.entities) as Output
 }

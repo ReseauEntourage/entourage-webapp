@@ -1,8 +1,10 @@
 import { FeedItemEntourage } from 'src/core/api'
 
 export type Entourage = {
-  author: number;
-} & Omit<FeedItemEntourage['data'], 'author'>
+  data: {
+    author: number;
+  } & Omit<FeedItemEntourage['data'], 'author'>;
+} & Omit<FeedItemEntourage, 'data'>
 
 export interface User {
   id: number;

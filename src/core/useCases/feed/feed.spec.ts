@@ -1,10 +1,11 @@
 import { configureStore } from '../../configureStore'
 import { PatialAppDependencies } from '../Dependencies'
 
-import { createEntourage, createUser } from '../mock'
+import { entitiesSaga, TestApiGateway } from '../entities'
+import { createEntourage, createEntourageWithAuthor } from '../mock'
 import { PartialAppState, defaultInitialAppState, reducers, AppState } from '../reducers'
-import { TestFeedGateway } from './TestFeedGateway'
-import { fakeFeedData, createFeedItem } from './__mocks__'
+
+import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
 import { FeedState, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
@@ -17,12 +18,12 @@ import {
 } from './feed.selectors'
 
 function configureStoreWithFeed(
-  params: {
+  params?: {
     dependencies?: PatialAppDependencies;
     initialAppState?: PartialAppState;
   },
 ) {
-  const { initialAppState, dependencies } = params
+  const { initialAppState, dependencies } = params || { }
 
   return configureStore({
     reducers,
@@ -30,8 +31,8 @@ function configureStoreWithFeed(
       ...defaultInitialAppState,
       ...initialAppState,
     },
-    dependencies,
-    sagas: [feedSaga],
+    dependencies: dependencies || {},
+    sagas: [feedSaga, entitiesSaga],
   })
 }
 
@@ -41,8 +42,7 @@ describe('Feed', () => {
     When no action is triggered
     Then feed state should be at initial state
   `, () => {
-    const feedGateway = new TestFeedGateway()
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const store = configureStoreWithFeed()
     expect(store.getState().feed).toEqual(defaultFeedState)
   })
 
@@ -52,9 +52,15 @@ describe('Feed', () => {
     Then items should be fetching during request
       And items should not be fetching after request succeeded
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        feeds: [],
+        nextPageToken: undefined,
+      },
+    })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
     const nextFilters: FeedState['filters'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
@@ -64,7 +70,7 @@ describe('Feed', () => {
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
@@ -75,8 +81,7 @@ describe('Feed', () => {
     When no action is trigger by user
     Then feed request should still be idle
   `, () => {
-    const feedGateway = new TestFeedGateway()
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const store = configureStoreWithFeed()
 
     expect(selectFeedIsIdle(store.getState())).toEqual(true)
   })
@@ -86,13 +91,17 @@ describe('Feed', () => {
     When user retrieve feed successfully
     Then feed request should not be idle
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        feeds: [],
+      },
+    })
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
 
     store.dispatch(publicActions.retrieveFeed())
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectFeedIsIdle(store.getState())).toEqual(false)
@@ -103,9 +112,10 @@ describe('Feed', () => {
     When user want to update all filters
     Then filters should be updated
   `, () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockResolvedValue({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockResolvedValue({ data: { feeds: [] } })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
     const filters: FeedState['filters'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
@@ -122,9 +132,10 @@ describe('Feed', () => {
     When user want to update partially update filters
     Then filters should be updated and merge with existing filters
   `, () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockResolvedValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockResolvedValue({ data: { feeds: [] } })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
     const filters: Partial<FeedState['filters']> = {
       center: { lat: 2, lng: 3 },
       zoom: 12,
@@ -147,11 +158,15 @@ describe('Feed', () => {
       And should pending state be false after server response
       And should retrieve feed gateway method have been called with filters values
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    const item = createFeedItem()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [item] }
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    const item = createEntourageWithAuthor()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        nextPageToken: fakeFeedData.nextPageToken || undefined,
+        feeds: [item],
+      },
+    })
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
 
     store.dispatch(publicActions.retrieveFeed({
       filters: store.getState().feed.filters,
@@ -160,22 +175,22 @@ describe('Feed', () => {
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(selectFeedItems(store.getState())).toEqual([item])
+    expect(selectFeedItems(store.getState())).toEqual([item.data])
 
     expect(selectHasNextPageToken(store.getState())).toEqual(true)
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-    expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
-      filters: {
-        center: defaultFeedState.filters.center,
-        zoom: defaultFeedState.filters.zoom,
-      },
-    })
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(1)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      params: expect.objectContaining({
+        latitude: defaultFeedState.filters.center.lat,
+        longitude: defaultFeedState.filters.center.lng,
+      }),
+    }))
   })
 
   it(`
@@ -183,12 +198,16 @@ describe('Feed', () => {
     When user changes filters
     Then should retrieve feed gateway method have been called the second time with next filters
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    const item = createFeedItem()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [item] }
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
+    const apiGateway = new TestApiGateway()
+    const item = createEntourageWithAuthor()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        nextPageToken: fakeFeedData.nextPageToken || undefined,
+        feeds: [item],
+      },
+    })
 
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
     const nextFilters = {
       cityName: 'Lyon',
       center: { lat: 5, lng: 6 },
@@ -197,17 +216,16 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.setFilters(nextFilters))
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-    expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
-      filters: {
-        center: nextFilters.center,
-        zoom: nextFilters.zoom,
-      },
-      nextPageToken: undefined,
-    })
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(1)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      params: expect.objectContaining({
+        latitude: nextFilters.center.lat,
+        longitude: nextFilters.center.lng,
+      }),
+    }))
   })
 
   it(`
@@ -216,59 +234,58 @@ describe('Feed', () => {
     Then should fetch second page with filters from the store and next page token
       And new items should be concat with previous items
   `, async () => {
-    const feedGateway = new TestFeedGateway()
+    const apiGateway = new TestApiGateway()
 
-    const itemExisted = {
-      ...createEntourage(),
-      author: createUser(),
-    }
-    const itemCreated = {
-      ...createEntourage(),
-      author: createUser(),
-    }
+    const itemExisted = createEntourageWithAuthor()
+    const itemCreated = createEntourageWithAuthor()
 
-    const feedNextData = {
-      nextPageToken: null,
-      items: [itemCreated],
-    }
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce(feedNextData)
     const initialAppState: AppState = {
       ...defaultInitialAppState,
       feed: {
         ...fakeFeedData,
         nextPageToken: 'wyz',
-        itemsUuids: [itemExisted.uuid],
+        itemsUuids: [itemExisted.data.uuid],
       },
       entities: {
         ...defaultInitialAppState.entities,
         entourages: {
-          [itemExisted.uuid]: {
+          [itemExisted.data.uuid]: {
             ...itemExisted,
-            author: itemExisted.author.id,
+            data: {
+              ...itemExisted.data,
+              author: itemExisted.data.author.id,
+            },
           },
         },
         users: {
-          [itemExisted.author.id]: itemExisted.author,
+          [itemExisted.data.author.id]: itemExisted.data.author,
         },
       },
     }
-    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
+
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        feeds: [itemCreated],
+      },
+    })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway }, initialAppState })
 
     store.dispatch(publicActions.retrieveFeedNextPage())
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-    expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
-      filters: {
-        center: initialAppState.feed.filters.center,
-        zoom: initialAppState.feed.filters.zoom,
-      },
-      nextPageToken: 'wyz',
-    })
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(1)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      params: expect.objectContaining({
+        latitude: initialAppState.feed.filters.center.lat,
+        longitude: initialAppState.feed.filters.center.lng,
+        pageToken: 'wyz',
+      }),
+    }))
 
-    expect(selectFeedItems(store.getState())).toEqual([itemExisted, itemCreated])
+    expect(selectFeedItems(store.getState())).toEqual([itemExisted.data, itemCreated.data])
   })
 
   it(`
@@ -277,30 +294,31 @@ describe('Feed', () => {
     Then feed items should never be retrieved
       And store should be unchanged
   `, async () => {
-    const feedGateway = new TestFeedGateway()
+    const apiGateway = new TestApiGateway()
     const item = createEntourage()
     const initialAppState: AppState = {
       ...defaultInitialAppState,
       feed: {
         ...fakeFeedData,
         nextPageToken: null,
-        itemsUuids: [item.uuid],
+        itemsUuids: [item.data.uuid],
       },
       entities: {
         ...defaultInitialAppState.entities,
         entourages: {
-          [item.uuid]: item,
+          [item.data.uuid]: item,
         },
       },
     }
-    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway }, initialAppState })
     const previousSelectedFeedItems = selectFeedItems(store.getState())
 
     store.dispatch(publicActions.retrieveFeedNextPage())
 
     await store.waitForActionEnd()
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(0)
 
     expect(selectFeedItems(store.getState())).toEqual(previousSelectedFeedItems)
   })
@@ -310,9 +328,14 @@ describe('Feed', () => {
     When user want to retrieve feed items
     Then the second request should never start
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        feeds: [],
+      },
+    })
+
+    const store = configureStoreWithFeed({ dependencies: { apiGateway } })
 
     store.dispatch(publicActions.retrieveFeed())
 
@@ -320,10 +343,10 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.retrieveFeed())
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(1)
   })
 
   it(`
@@ -331,22 +354,26 @@ describe('Feed', () => {
     When user want to retrieve next page of feed items
     Then the second request should never start
   `, async () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const apiGateway = new TestApiGateway()
+    apiGateway.mockRoute('/feeds GET').mockDeferredValueOnce({
+      data: {
+        feeds: [],
+      },
+    })
     const initialAppState: PartialAppState = {
       feed: {
         ...fakeFeedData,
         nextPageToken: 'abc',
       },
     }
-    const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
+    const store = configureStoreWithFeed({ dependencies: { apiGateway }, initialAppState })
 
     store.dispatch(publicActions.retrieveFeedNextPage())
     store.dispatch(publicActions.retrieveFeedNextPage())
 
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    apiGateway.mockRoute('/feeds GET').resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(apiGateway.mockRoute('/feeds GET')).toHaveBeenCalledTimes(1)
   })
 })

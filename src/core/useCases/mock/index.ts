@@ -13,33 +13,49 @@ export function createUser(): User {
 
 export function createEntourage(): Entourage {
   return {
-    author: uniqIntId(),
-    createdAt: new Date().toISOString(),
-    description: '',
-    displayCategory: 'event',
-    entourageType: 'contribution',
-    groupType: 'action',
-    id: uniqIntId(),
-    joinStatus: 'not_requested',
-    location: {
-      latitude: 12,
-      longitude: 14,
+    type: 'Entourage',
+    heatmapSize: 0,
+    data: {
+      author: uniqIntId(),
+      createdAt: new Date().toISOString(),
+      description: '',
+      displayCategory: 'event',
+      entourageType: 'contribution',
+      groupType: 'action',
+      id: uniqIntId(),
+      joinStatus: 'not_requested',
+      location: {
+        latitude: 12,
+        longitude: 14,
+      },
+      metadata: {
+        displayAddress: '',
+        streetAddress: '',
+        startsAt: '',
+        placeName: '',
+        googlePlaceId: '',
+        endsAt: '',
+      },
+      numberOfPeople: 12,
+      numberOfUnreadMessages: null,
+      public: false,
+      shareUrl: '',
+      status: 'closed',
+      title: '',
+      updatedAt: new Date().toISOString(),
+      uuid: uniqid(),
     },
-    metadata: {
-      displayAddress: '',
-      streetAddress: '',
-      startsAt: '',
-      placeName: '',
-      googlePlaceId: '',
-      endsAt: '',
+  }
+}
+
+export function createEntourageWithAuthor() {
+  const entourage = createEntourage()
+
+  return {
+    ...entourage,
+    data: {
+      ...entourage.data,
+      author: createUser(),
     },
-    numberOfPeople: 12,
-    numberOfUnreadMessages: null,
-    public: false,
-    shareUrl: '',
-    status: 'closed',
-    title: '',
-    updatedAt: new Date().toISOString(),
-    uuid: uniqid(),
   }
 }

@@ -113,8 +113,8 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       return {
         ...state,
         isIdle: false,
-        itemsUuids: action.payload.itemsUuids,
-        nextPageToken: action.payload.nextPageToken,
+        itemsUuids: action.response.data.feeds.map((item) => item.data.uuid),
+        nextPageToken: action.response.data.nextPageToken || null,
         fetching: false,
       }
     }
@@ -124,9 +124,9 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
         ...state,
         itemsUuids: [
           ...state.itemsUuids,
-          ...action.payload.itemsUuids,
+          ...action.response.data.feeds.map((item) => item.data.uuid),
         ],
-        nextPageToken: action.payload.nextPageToken,
+        nextPageToken: action.response.data.nextPageToken || null,
         fetching: false,
       }
     }
@@ -185,6 +185,4 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
     default:
       return state
   }
-
-  return state
 }

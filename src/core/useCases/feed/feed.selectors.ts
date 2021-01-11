@@ -1,6 +1,7 @@
 import { selectEntitiesFromRequest } from '../entities'
 import { AppState } from '../reducers'
-import { FeedStatus, FeedItemEntourage } from 'src/core/api'
+import { FeedStatus } from 'src/core/api'
+import { assertCondition } from 'src/utils/misc'
 import { JoinRequestStatus, RequestStatus } from './feed.reducer'
 
 export function selectFeedIsIdle(state: AppState) {
@@ -20,8 +21,12 @@ export function selectFeedIsFetching(state: AppState) {
 }
 
 export function selectFeedItems(state: AppState) {
-  // @ts-expect-error
-  return selectEntitiesFromRequest(state, state.feed.itemsUuids, '/feeds GET').feeds as FeedItemEntourage['data'][]
+  return selectEntitiesFromRequest(state, state.feed.itemsUuids, '/feeds GET')
+    .feeds
+    .map(((item) => {
+      assertCondition(item.type === 'Entourage')
+      return item.data
+    }))
 }
 
 export function selectHasNextPageToken(state: AppState) {
@@ -29,9 +34,18 @@ export function selectHasNextPageToken(state: AppState) {
 }
 
 export function selectCurrentItem(state: AppState) {
-  const { feed: { selectedItemUuid }, entities: { entourages } } = state
+  const { selectedItemUuid } = state.feed
 
-  return (selectedItemUuid ? entourages[selectedItemUuid] : null) as FeedItemEntourage['data'] | null
+  if (!selectedItemUuid) return null
+
+  return selectEntitiesFromRequest(state, [selectedItemUuid], '/feeds GET')
+    .feeds
+    .filter(Boolean)
+    .map(((item) => {
+      assertCondition(item.type === 'Entourage')
+      return item.data
+    }))
+    .find((item) => item.uuid === selectedItemUuid)
 }
 
 export function selectIsUpdatingJoinStatus(state: AppState) {

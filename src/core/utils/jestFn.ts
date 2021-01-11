@@ -3,6 +3,13 @@ import { Defer } from './Defer'
 
 type ResolvedValue<T> = T extends PromiseLike<infer U> ? U | T : never;
 
+export type JestFn<ReturnValue> = jest.Mock<ReturnValue, any> & {
+  mockDeferredValue(value: ResolvedValue<ReturnValue>): void;
+  mockDeferredValueOnce(value: ResolvedValue<ReturnValue>): void;
+  resolveDeferredValue(): void;
+  rejectDeferredValue(rejectedData?: AnyCantFix): void;
+}
+
 export function jestFn<Fn extends(...args: AnyCantFix) => AnyCantFix>(fnKey: string) {
   const baseOutput = jest.fn<ReturnType<Fn>, Parameters<Fn>>(() => {
     throw new Error(`Method ${fnKey} is not defined. Use mockReturnValue or other Jest mock`)

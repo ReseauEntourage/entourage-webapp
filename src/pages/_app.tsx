@@ -80,6 +80,11 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     if (!this.store) {
       this.store = bootstrapStore()
 
+      if (typeof window !== 'undefined') {
+        // @ts-expect-error
+        window.store = this.store
+      }
+
       if (authUserData && !authUserData.anonymous) {
         this.store.dispatch(authUserActions.setUser({
           id: authUserData.id,

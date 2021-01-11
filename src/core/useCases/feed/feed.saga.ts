@@ -3,7 +3,6 @@ import { call, put, select, getContext } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
 import { entitiesActions } from '../entities'
 import { entourageSchema } from '../entities/entities.schemas'
-import { schema } from 'src/core/api'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { ActionType, actions, Actions } from './feed.actions'
@@ -19,58 +18,33 @@ export interface Dependencies {
 }
 
 function* retrieveFeed() {
-  const dependencies: Dependencies = yield getContext('dependencies')
-  const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
-  const { filters: { zoom, center }, nextPageToken, fetching } = feedState
+  const { filters: { center }, nextPageToken, fetching } = feedState
 
   if (fetching) {
     return
   }
 
-  yield put(actions.retrieveFeedStarted())
-
-  const response: CallReturnType<typeof retrieveFeedItems> = yield call(
-    retrieveFeedItems,
-    { filters: { center, zoom },
-      nextPageToken: nextPageToken || undefined,
-    },
-  )
-  const { entities, result } = normalize({ feeds: response.items }, schema['/feeds GET'].normalizrSchema())
-  yield put(entitiesActions.updateEntities({ entities }))
-
-  const payload = {
-    nextPageToken: response.nextPageToken,
-    itemsUuids: result.feeds,
-  }
-  yield put(actions.retrieveFeedSuccess(payload))
+  yield put(actions.retrieveFeedStarted({
+    latitude: center.lat,
+    longitude: center.lng,
+    pageToken: nextPageToken,
+  }))
 }
 
 function* retrieveFeedNextPage() {
-  const dependencies: Dependencies = yield getContext('dependencies')
-  const { retrieveFeedItems } = dependencies.feedGateway
-  const { filters: { center, zoom }, nextPageToken, fetching }: ReturnType<typeof selectFeed> = yield select(selectFeed)
+  const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
+  const { filters: { center }, nextPageToken, fetching } = feedState
 
-  if (!nextPageToken || fetching) {
+  if (fetching || !nextPageToken) {
     return
   }
 
-  yield put(actions.retrieveFeedNextPageStarted())
-
-  const response: CallReturnType<typeof retrieveFeedItems> = yield call(
-    retrieveFeedItems,
-    { filters: { center, zoom },
-      nextPageToken: nextPageToken || undefined,
-    },
-  )
-  const { entities, result } = normalize(response.items, [entourageSchema])
-  yield put(entitiesActions.updateEntities({ entities }))
-
-  const payload = {
-    nextPageToken: response.nextPageToken,
-    itemsUuids: result,
-  }
-  yield put(actions.retrieveFeedNextPageSuccess(payload))
+  yield put(actions.retrieveFeedNextPageStarted({
+    latitude: center.lat,
+    longitude: center.lng,
+    pageToken: nextPageToken,
+  }))
 }
 
 function* setCurrentItemUuid(action: Actions['setCurrentItemUuid']) {

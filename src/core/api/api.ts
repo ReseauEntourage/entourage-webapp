@@ -7,12 +7,12 @@ import { AnyToFix } from 'src/utils/types'
 import { addAxiosInterceptors } from './interceptors'
 import { schema, TypeScriptRequestSchemaConf } from './schema'
 
-type Schema = typeof schema
-type RequestName = keyof Schema
-type ExtraConfig = AxiosRequestConfig
-type RequestConfig<T extends RequestName> = Config<T, Schema, ExtraConfig, TypeScriptRequestSchemaConf>
+export type Schema = typeof schema
+export type RequestName = keyof Schema
+export type ExtraConfig = AxiosRequestConfig
+export type RequestConfig<T extends RequestName> = Config<T, Schema, ExtraConfig, TypeScriptRequestSchemaConf>
 type RequestResponse<T extends RequestName> = AxiosPromise<Response<T, Schema>>
-type Request = <T extends RequestName>(config: RequestConfig<T>) => RequestResponse<T>
+export type Request = <T extends RequestName>(config: RequestConfig<T>) => RequestResponse<T>
 
 const axiosInstance = axios.create({ baseURL: env.API_V1_URL })
 
@@ -54,6 +54,8 @@ export const api: APIInstanceWithSSR = {
   ssr: (ctx) => ({
     request: async (config) => {
       const token = getTokenFromCookies(ctx) || await createAnonymousUser(ctx)
+
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       const configWithToken = {
         ...config,

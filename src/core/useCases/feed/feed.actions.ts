@@ -1,4 +1,6 @@
+import { constants } from 'src/constants'
 import { FeedJoinStatus } from 'src/core/api'
+import { createApiPayload, ActionFromApiAction } from 'src/core/utils/createApiPayload'
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
 import { FeedState } from './feed.reducer'
 
@@ -7,9 +9,11 @@ export const ActionType = {
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
+  RETRIEVE_FEED_FAILED: 'FEED/RETRIEVE_FEED_FAILED',
   RETRIEVE_FEED_NEXT_PAGE: 'FEED/RETRIEVE_FEED_NEXT_PAGE',
   RETRIEVE_FEED_NEXT_PAGE_STARTED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_STARTED',
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
+  RETRIEVE_FEED_NEXT_PAGE_FAILED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_FAILED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
@@ -23,8 +27,6 @@ export const ActionType = {
 } as const
 
 export type ActionType = keyof typeof ActionType;
-
-// ------------------------------------------------------------------------
 
 function setFilters(payload: Partial<FeedState['filters']>) {
   return {
@@ -40,21 +42,28 @@ function retrieveFeed(payload?: Pick<FeedState, 'filters' | 'nextPageToken'>) {
   }
 }
 
-function retrieveFeedStarted() {
-  return {
-    type: ActionType.RETRIEVE_FEED_STARTED,
-  }
-}
-
-function retrieveFeedSuccess(
+function retrieveFeedStarted(
   payload: {
-    itemsUuids: string[];
-    nextPageToken: FeedState['nextPageToken'];
+    latitude: number;
+    longitude: number;
+    pageToken: string | null;
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_SUCCEEDED,
-    payload,
+    type: ActionType.RETRIEVE_FEED_STARTED,
+    payload: createApiPayload({
+      name: '/feeds GET',
+      params: {
+        ...payload,
+        pageToken: payload.pageToken ?? undefined,
+        timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
+        types: 'as,ae,am,ar,ai,ak,ao,cs,ce,cm,cr,ci,ck,co,ou',
+      },
+    }),
+    types: [
+      ActionType.RETRIEVE_FEED_SUCCEEDED,
+      ActionType.RETRIEVE_FEED_FAILED,
+    ] as const,
   }
 }
 
@@ -64,21 +73,28 @@ function retrieveFeedNextPage() {
   }
 }
 
-function retrieveFeedNextPageStarted() {
-  return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED,
-  }
-}
-
-function retrieveFeedNextPageSuccess(
+function retrieveFeedNextPageStarted(
   payload: {
-    itemsUuids: string[];
-    nextPageToken: FeedState['nextPageToken'];
+    latitude: number;
+    longitude: number;
+    pageToken: string | null;
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
-    payload,
+    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED,
+    payload: createApiPayload({
+      name: '/feeds GET',
+      params: {
+        ...payload,
+        pageToken: payload.pageToken ?? undefined,
+        timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
+        types: 'as,ae,am,ar,ai,ak,ao,cs,ce,cm,cr,ci,ck,co,ou',
+      },
+    }),
+    types: [
+      ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
+      ActionType.RETRIEVE_FEED_NEXT_PAGE_FAILED,
+    ] as const,
   }
 }
 
@@ -161,8 +177,9 @@ export const publicActions = {
 
 const privateActions = {
   retrieveFeedStarted,
-  retrieveFeedSuccess,
-  retrieveFeedNextPageSuccess,
+  retrieveFeedNextPageStarted,
+  // retrieveFeedSuccess,
+  // retrieveFeedNextPageSuccess,
   joinEntourageSucceeded,
   leaveEntourageSucceeded,
   closeEntourageSucceeded,
@@ -172,7 +189,11 @@ const privateActions = {
 export const actions = {
   ...publicActions,
   ...privateActions,
+  // retrieveFeedDemo,
 }
 
 export type Actions = ActionsFromMapObject<typeof actions>
-export type Action = ActionFromMapObject<typeof actions>
+export type Action =
+  | ActionFromMapObject<typeof actions>
+  | ActionFromApiAction<typeof retrieveFeedStarted>
+  | ActionFromApiAction<typeof retrieveFeedNextPageStarted>

@@ -1,18 +1,29 @@
 import { schema } from 'normalizr'
-import { EntitiesState } from './entities.reducer'
+// import { EntitiesState } from './entities.reducer'
 
-// type EntityName = keyof EntitiesState
+export const entourageSchema = new schema.Entity('entourages', {}, {
+  idAttribute: (value) => value.data.uuid,
+  mergeStrategy: (entourageA, entourageB) => {
+    return {
+      ...entourageA,
+      ...entourageB,
+      data: {
+        ...entourageA?.data,
+        ...entourageB?.data,
+      },
+    }
+  },
+})
 
-function createEntity(
-  entityName: keyof EntitiesState,
-  idAttribute: 'uuid' | 'id',
-) {
-  return new schema.Entity(entityName, {}, { idAttribute })
-}
-
-export const entourageSchema = createEntity('entourages', 'uuid')
-export const userSchema = createEntity('users', 'id')
+export const userSchema = new schema.Entity('users', undefined, { idAttribute: 'id' })
 
 entourageSchema.define({
-  author: userSchema,
+  data: {
+    author: userSchema,
+  },
 })
+
+export const entitiesSchema = {
+  entourages: entourageSchema,
+  users: userSchema,
+}
