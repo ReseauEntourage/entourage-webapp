@@ -99,6 +99,17 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     return (
       <>
         <Head>
+          <script
+            {/* eslint-disable-next-line react/no-danger */}
+            dangerouslySetInnerHTML={{
+              // Force HTTPS redirection on client side because can't do it with Heroku nor Gandi
+              __html: `
+                if (window.location.protocol !== 'https:' && ${process.env.NODE_ENV !== 'development'}) {
+                  window.location.replace(\`https:\${window.location.href.substring(window.location.protocol.length)}\`)
+                }
+              `,
+            }}
+          />
           <title>Home</title>
           <link href="/favicon.ico" rel="icon" />
           <base href="/" />
