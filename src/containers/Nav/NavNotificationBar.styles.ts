@@ -22,10 +22,12 @@ export const NotificationItem = styled.div`
 
 export const WhiteOutlinedButton = styled(Button).attrs(() => ({
   variant: 'outlined',
+  style: {
+    textTransform: 'none',
+  },
 }))`
  && {
    color: ${colors.main.white};
    border-color: ${colors.main.white};
-   text-transform: none !important;
  }
 `

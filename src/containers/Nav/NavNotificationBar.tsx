@@ -5,6 +5,13 @@ import { texts } from '../../i18n'
 import * as Nav from './Nav.styles'
 import * as S from './NavNotificationBar.styles'
 
+const throwMockError = () => {
+  // Send false error to be caught by Sentry so we can open the feedback dialog
+  if (process.env.NODE_ENV !== 'development') {
+    throw new Error('user-feedback')
+  }
+}
+
 export function NotificationBar() {
   return (
     <S.NotificationBar variant="dense">
@@ -18,12 +25,7 @@ export function NotificationBar() {
       </S.NotificationItem>
       <S.NotificationItem>
         <S.WhiteOutlinedButton
-          onClick={() => {
-            // Send false error to be caught by Sentry so we can open the feedback dialog
-            if (process.env.NODE_ENV !== 'development') {
-              throw new Error('user-feedback')
-            }
-          }}
+          onClick={throwMockError}
           size="small"
         >
           {texts.nav.notificationBar.feedback}

@@ -7,11 +7,7 @@ export function initSentry() {
   Sentry.init({
     dsn: env.SENTRY_DSN,
     beforeSend(event) {
-      if (
-        !!(event?.exception?.values)
-        && event.exception.values.length > 0
-        && event.exception.values.some(((error) => error.value === 'user-feedback'))
-      ) {
+      if (event?.exception?.values?.some(((error) => error.value === 'user-feedback'))) {
         Sentry.showReportDialog({
           eventId: event.event_id,
           lang: texts.nav.notificationBar.dialogLang,
