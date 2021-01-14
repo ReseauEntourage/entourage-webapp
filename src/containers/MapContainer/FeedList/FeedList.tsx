@@ -1,5 +1,5 @@
 import Box from '@material-ui/core/Box'
-import LocalMallIcon from '@material-ui/icons/LocalMall'
+import { LocalMall, Event, LocalLaundryService, People, Help, MoreHoriz, Create } from '@material-ui/icons'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
@@ -21,21 +21,42 @@ interface FeedItemIconProps {
 
 function FeedItemIcon(props: FeedItemIconProps) {
   const { feedItem } = props
-  const { entourageType, displayCategory } = feedItem
+  const { entourageType, displayCategory, groupType } = feedItem
+
+  let backgroundColor = colors.main.grey
+
+  const getIconProps = () => ({
+    style: {
+      ...iconStyle, color: '#fff', backgroundColor,
+    },
+  })
+
+  if (groupType === 'outing') {
+    return (
+      <Event {...getIconProps()} />
+    )
+  }
   if (entourageType === 'contribution') {
-    const backgroundColor = colors.main.primary
-    if (displayCategory === 'mat_help') {
-      return <LocalMallIcon style={{ ...iconStyle, color: '#fff', backgroundColor }} />
-    } if (displayCategory === 'info') {
-      // TODO
-    }
+    backgroundColor = colors.main.primary
+  } else if (entourageType === 'ask_for_help') {
+    backgroundColor = colors.main.blue
   }
 
-  if (entourageType === 'ask_for_help') {
-    // TODO
+  switch (displayCategory) {
+    case 'resource':
+      return <LocalLaundryService {...getIconProps()} />
+    case 'skill':
+      return <Create {...getIconProps()} />
+    case 'social':
+      return <People {...getIconProps()} />
+    case 'mat_help':
+      return <LocalMall {...getIconProps()} />
+    case 'info':
+      return <Help {...getIconProps()} />
+    case 'other':
+    default:
+      return <MoreHoriz {...getIconProps()} />
   }
-
-  return null
 }
 
 export function FeedList() {
