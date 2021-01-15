@@ -17,4 +17,6 @@ export const constants = {
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
   ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
+  LEGACY_WEB_APP_URL: 'https://entourage.social/app',
+
 }

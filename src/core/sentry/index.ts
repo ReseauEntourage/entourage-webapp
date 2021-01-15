@@ -3,11 +3,12 @@ import { texts } from '../../i18n'
 import { env } from 'src/core/env'
 
 export function initSentry() {
-  if (process.env.NODE_ENV === 'development') return
+  if (process.env.NODE_ENV !== 'production') return
   Sentry.init({
     dsn: env.SENTRY_DSN,
     beforeSend(event) {
-      if (event?.exception?.values?.some(((error) => error.value === 'user-feedback'))) {
+      const isUserFeedbackFromBanner = event?.exception?.values?.some(((error) => error.value === 'user-feedback'))
+      if (isUserFeedbackFromBanner) {
         Sentry.showReportDialog({
           eventId: event.event_id,
           lang: texts.nav.notificationBar.dialogLang,
