@@ -1,10 +1,20 @@
 import Box from '@material-ui/core/Box'
-import { LocalMall, Event, LocalLaundryService, People, Help, MoreHoriz, Create } from '@material-ui/icons'
+import {
+  LocalMall,
+  Event,
+  LocalLaundryService,
+  People,
+  Help,
+  MoreHoriz,
+  Create,
+  SvgIconComponent,
+} from '@material-ui/icons'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
+import { FeedDisplayCategory } from '../../../core/api'
 import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
@@ -19,44 +29,48 @@ interface FeedItemIconProps {
   feedItem: FeedItemType;
 }
 
+const feedItemCategoryIconMap: Record<FeedDisplayCategory, SvgIconComponent> = {
+  info: Help,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  mat_help: LocalMall,
+  other: MoreHoriz,
+  skill: Create,
+  social: People,
+  resource: LocalLaundryService,
+}
+
 function FeedItemIcon(props: FeedItemIconProps) {
   const { feedItem } = props
   const { entourageType, displayCategory, groupType } = feedItem
 
-  let backgroundColor = colors.main.grey
-
-  const getIconProps = () => ({
+  const getIconProps = (backgroundColor: string) => ({
     style: {
       ...iconStyle, color: '#fff', backgroundColor,
     },
   })
 
+  let iconBackgroundColor = colors.main.grey
+
   if (groupType === 'outing') {
     return (
-      <Event {...getIconProps()} />
+      <Event {...getIconProps(iconBackgroundColor)} />
     )
   }
   if (entourageType === 'contribution') {
-    backgroundColor = colors.main.primary
+    iconBackgroundColor = colors.main.primary
   } else if (entourageType === 'ask_for_help') {
-    backgroundColor = colors.main.blue
+    iconBackgroundColor = colors.main.blue
   }
 
-  switch (displayCategory) {
-    case 'resource':
-      return <LocalLaundryService {...getIconProps()} />
-    case 'skill':
-      return <Create {...getIconProps()} />
-    case 'social':
-      return <People {...getIconProps()} />
-    case 'mat_help':
-      return <LocalMall {...getIconProps()} />
-    case 'info':
-      return <Help {...getIconProps()} />
-    case 'other':
-    default:
-      return <MoreHoriz {...getIconProps()} />
+  let IconComponent = feedItemCategoryIconMap.other
+
+  if (displayCategory) {
+    IconComponent = feedItemCategoryIconMap[displayCategory]
   }
+
+  return (
+    <IconComponent {...getIconProps(iconBackgroundColor)} />
+  )
 }
 
 export function FeedList() {
