@@ -1,4 +1,5 @@
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
+import { Locale } from './locale.reducer'
 
 export const ActionType = {
   SET_LOCALE: 'LOCALE/SET_LOCALE',
@@ -11,14 +12,14 @@ export type ActionType = keyof typeof ActionType;
 
 // ------------------------------------------------------------------------
 
-function setLocale(payload: { locale: string; }) {
+function setLocale(payload: { locale: Locale; }) {
   return {
     type: ActionType.SET_LOCALE,
     payload,
   }
 }
 
-function setLocaleSucceeded(payload: { locale: string; }) {
+function setLocaleSucceeded(payload: { locale: Locale; }) {
   return {
     type: ActionType.SET_LOCALE_SUCCEEDED,
     payload,

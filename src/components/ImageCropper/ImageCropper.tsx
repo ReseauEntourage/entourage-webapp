@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import ReactCrop, { ReactCropProps } from 'react-image-crop'
 import { Button } from 'src/components/Button'
 import 'react-image-crop/dist/ReactCrop.css'
-import { l18n } from 'src/i18n'
+import { l18n, useI18n } from 'src/i18n'
 
 const defaultCrop: ReactCropProps['crop'] = {
   unit: '%',
@@ -33,6 +33,7 @@ export function ImageCropper(props: ImageCropperProps) {
   const imageRef = useRef()
   const fileUrl = useRef<string>('')
   const inputRef = useRef<HTMLInputElement>(null)
+  const texts = useI18n()
 
   const onImageLoaded = useCallback((image) => {
     imageRef.current = image

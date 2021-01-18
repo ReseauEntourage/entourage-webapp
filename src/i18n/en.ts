@@ -1,6 +1,8 @@
 /* eslint-disable max-len  */
 /* eslint-disable @typescript-eslint/camelcase */
 
+import { texts as textsFr } from './fr'
+
 export const texts = {
   form: {
     REQUIRED: 'Champs requis',
@@ -131,5 +133,3 @@ export const texts = {
     },
   },
 }
-
-export type Texts = typeof texts

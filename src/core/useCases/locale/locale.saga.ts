@@ -30,29 +30,50 @@ function* getLocale() {
   }
 }
 
-function* getBrowserLocale() {
-  const dependencies: Dependencies = yield getContext('dependencies')
-  const { localeBrowser } = dependencies
+// function* getBrowserLocale() {
+//   const dependencies: Dependencies = yield getContext('dependencies')
+//   const { localeBrowser } = dependencies
 
-  const response: CallReturnType<typeof String> = yield call(
-    localeBrowser.getBrowserLocale,
-  )
-  yield put(actions.setLocale({ locale: response }))
+//   const response: CallReturnType<typeof String> = yield call(
+//     localeBrowser.getBrowserLocale,
+//   )
+//   yield put(actions.setLocale({ locale: response }))
+// }
+
+// function* setLocale(action: Actions['setLocale']) {
+//   const dependencies: Dependencies = yield getContext('dependencies')
+//   const { localeStorage } = dependencies
+//   const { payload: { locale } } = action
+//   yield call(localeStorage.storeLocale, locale)
+
+//   yield put(actions.setLocaleSucceeded({ locale }))
+// }
+
+// export function* localeSaga() {
+//   yield takeEvery(ActionType.GET_LOCALE, getLocale)
+
+//   yield takeEvery(ActionType.GET_BROWSER_LOCALE, getBrowserLocale)
+
+//   yield takeEvery(ActionType.SET_LOCALE, setLocale)
+// }
+
+function* initLocale() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { localeStorage } = dependencies
+
+  const locale: localeStorage.getSavedLocale() || localeBrowser.getBrowserLocale()
+
+  yield put(setLocale(locale))
 }
 
-function* setLocale(action: Actions['setLocale']) {
+function* saveLocalToColdStorage(action: Actions['setLocale']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { localeStorage } = dependencies
   const { payload: { locale } } = action
   yield call(localeStorage.storeLocale, locale)
-
-  yield put(actions.setLocaleSucceeded({ locale }))
 }
 
 export function* localeSaga() {
-  yield takeEvery(ActionType.GET_LOCALE, getLocale)
-
-  yield takeEvery(ActionType.GET_BROWSER_LOCALE, getBrowserLocale)
-
-  yield takeEvery(ActionType.SET_LOCALE, setLocale)
+  yield takeEvery(ActionType.INIT_LOCALE, initLocale)
+  yield takeEvery(ActionType.SET_LOCALE, saveLocalToColdStorage)
 }

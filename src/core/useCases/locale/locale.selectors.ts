@@ -9,5 +9,5 @@ export function selectLocale(state: AppState) {
 }
 
 export function selectLang(state: AppState) {
-  return state.locale.locale.substr(0, 2)
+  return state.locale.locale
 }
