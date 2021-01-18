@@ -1,6 +1,7 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles'
 import { useForm } from 'react-hook-form'
 import React, { useCallback } from 'react'
+import { useI18n } from '../../i18n'
 import { Button } from 'src/components/Button'
 import { TextField, validators } from 'src/components/Form'
 import { ThemeProvider, theme } from 'src/styles'
@@ -34,6 +35,8 @@ function FormModal() {
     console.log('value', getValues())
   }, [getValues, trigger])
 
+  const texts = useI18n()
+
   return (
     <Modal onValidate={onValidate} title="Form Demo">
       <TextField
@@ -51,7 +54,9 @@ function FormModal() {
           register({
             required: true,
             validate: {
-              email: validators.email,
+              email: (email) => {
+                return validators.email(email, texts)
+              },
             },
           })
         }

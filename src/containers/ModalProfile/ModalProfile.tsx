@@ -10,7 +10,7 @@ import { Modal } from 'src/components/Modal'
 import { api } from 'src/core/api'
 import { useMutateMe, useMutateMeAddress } from 'src/core/store'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { notifServerError } from 'src/utils/misc'
 
 type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
@@ -66,6 +66,7 @@ export function ModalProfile() {
   const [mutateMe] = useMutateMe()
   const [mutateMeAddress] = useMutateMeAddress(false)
   const [onValidateImageProfile, upload] = useUploadImageProfile()
+  const texts = useI18n()
 
   const user = me || {} as NonNullable<typeof me>
 
@@ -195,7 +196,9 @@ export function ModalProfile() {
           inputRef={register({
             required: true,
             validate: {
-              email: validators.email,
+              email: (email) => {
+                return validators.email(email, texts)
+              },
             },
           })}
           label={modalTexts.emailLabel}

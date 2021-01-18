@@ -11,7 +11,7 @@ import {
   selectErrors,
   selectLoginStepIsCompleted,
 } from 'src/core/useCases/authUser'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { useIsDesktop } from 'src/styles'
 import * as S from './ModalSignin.styles'
 
@@ -35,6 +35,7 @@ export function ModalSignIn(props: ModalSignInProps) {
   const phoneForm = useForm<FormFields>()
 
   const isDesktop = useIsDesktop()
+  const texts = useI18n()
 
   useEffect(() => {
     return () => {
@@ -151,7 +152,7 @@ export function ModalSignIn(props: ModalSignInProps) {
             errorText={errors?.code && texts.form[errors?.code]}
             fullWidth={true}
             inputRef={phoneForm.register}
-            label="Entrez le code d\'activation reçu"
+            label="Entrez le code d'activation reçu"
             name="SMSCode"
           />
         )}

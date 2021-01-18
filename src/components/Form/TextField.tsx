@@ -2,6 +2,7 @@ import TextFieldMUI, { TextFieldProps as TextFieldPropsBase } from '@material-ui
 import { useFormContext } from 'react-hook-form'
 import { FieldError } from 'react-hook-form/dist/types'
 import React from 'react'
+import { useI18n } from '../../i18n'
 import { helperTextError } from './helperTextErrors'
 
 type Errors = Partial<Record<string, FieldError>>
@@ -22,14 +23,14 @@ export function TextField(props: TextFieldProps) {
     name,
     ...restProps
   } = props
-
+  const texts = useI18n()
   const formContext = useFormContext()
   const formErrors = formErrorProps || (formContext && formContext.errors)
   const formError = (formErrors && name) ? formErrors[name] : null
 
   const hasError = !!formError || !!errorText
   const helperText = formError
-    ? helperTextError(formError)
+    ? helperTextError(texts, formError)
     : errorText
 
   return (

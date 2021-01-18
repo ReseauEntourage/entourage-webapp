@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'src/components/Button'
 import { Modal, useModalContext } from 'src/components/Modal'
 import { feedActions, selectIsUpdatingStatus } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { variants } from 'src/styles'
 import { usePrevious } from 'src/utils/hooks'
 import * as S from './ModalCloseAction.styles'
@@ -17,6 +17,8 @@ interface ModalCloseActionProps {
 
 export function ModalCloseAction(props: ModalCloseActionProps) {
   const { entourageUuid } = props
+  const texts = useI18n()
+
   const { onClose } = useModalContext()
   const dispatch = useDispatch()
   const isUpdatingStatus = useSelector(selectIsUpdatingStatus)

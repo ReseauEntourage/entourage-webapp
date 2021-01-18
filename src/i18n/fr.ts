@@ -131,3 +131,5 @@ export const texts = {
     },
   },
 }
+
+export type Texts = typeof texts

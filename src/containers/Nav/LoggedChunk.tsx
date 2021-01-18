@@ -6,12 +6,14 @@ import { openModal } from 'src/components/Modal'
 import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { useMeNonNullable } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
 export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const me = useMeNonNullable()
+  const texts = useI18n()
+
   const partnerName = me.partner?.name
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {

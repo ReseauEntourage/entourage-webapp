@@ -20,12 +20,14 @@ import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { theme } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
   const iAmLogged = !!useMe()
+  const texts = useI18n()
+
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
 
   useOpenModalProfileOnLogin()
