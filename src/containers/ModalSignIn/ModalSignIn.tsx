@@ -11,7 +11,7 @@ import {
   selectErrors,
   selectLoginStepIsCompleted,
 } from 'src/core/useCases/authUser'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { useIsDesktop } from 'src/styles'
 import * as S from './ModalSignin.styles'
 
@@ -96,11 +96,11 @@ export function ModalSignIn(props: ModalSignInProps) {
 
   const passwordError = errors?.password === 'UNKNOWN_SERVER_ERROR'
     ? errors?.passwordUnknowServerError
-    : errors?.password && texts.form[errors?.password]
+    : errors?.password && l18n().form[errors?.password]
 
   const passwordConfirmationError = errors?.passwordConfirmation === 'UNKNOWN_SERVER_ERROR'
     ? errors?.passwordUnknowServerError
-    : errors?.passwordConfirmation && texts.form[errors?.passwordConfirmation]
+    : errors?.passwordConfirmation && l18n().form[errors?.passwordConfirmation]
 
   return (
     <Modal
@@ -126,7 +126,7 @@ export function ModalSignIn(props: ModalSignInProps) {
         <TextField
           autoFocus={true}
           disabled={step !== 'PHONE'}
-          errorText={errors?.phone && texts.form[errors?.phone]}
+          errorText={errors?.phone && l18n().form[errors?.phone]}
           fullWidth={true}
           inputRef={phoneForm.register}
           label="Téléphone"
@@ -148,7 +148,7 @@ export function ModalSignIn(props: ModalSignInProps) {
           <TextFieldPassword
             autoFocus={true}
             disabled={step !== 'SMS_CODE'}
-            errorText={errors?.code && texts.form[errors?.code]}
+            errorText={errors?.code && l18n().form[errors?.code]}
             fullWidth={true}
             inputRef={phoneForm.register}
             label="Entrez le code d\'activation reçu"

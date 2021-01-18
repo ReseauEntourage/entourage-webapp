@@ -1,0 +1,8 @@
+export type { ILocaleStorage } from './ILocaleStorage'
+export type { ILocaleBrowser } from './ILocaleBrowser'
+export type { LocaleState } from './locale.reducer'
+export type { Dependencies } from './locale.saga'
+export { localeReducer } from './locale.reducer'
+export { localeSaga } from './locale.saga'
+export { publicActions as localeActions } from './locale.actions'
+export * from './locale.selectors'

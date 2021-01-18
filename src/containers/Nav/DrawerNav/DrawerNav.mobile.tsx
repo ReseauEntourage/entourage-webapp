@@ -20,7 +20,7 @@ import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { theme } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
@@ -64,7 +64,7 @@ export function DrawerNavMobile() {
           <NavItem
             href="/actions"
             icon={<MapIcon />}
-            label={texts.nav.actions}
+            label={l18n().nav.actions}
             onClick={onClickDrawerClose}
           />
         </ListItem>
@@ -75,7 +75,7 @@ export function DrawerNavMobile() {
               <NavItem
                 href="/messages"
                 icon={<ChatBubbleOutlineIcon />}
-                label={texts.nav.messages}
+                label={l18n().nav.messages}
                 onClick={onClickDrawerClose}
               />
             </ListItem>
@@ -83,7 +83,7 @@ export function DrawerNavMobile() {
               <NavTakeAction>
                 <NavItem
                   icon={<AddCircleIcon color="primary" />}
-                  label={texts.nav.takeAction}
+                  label={l18n().nav.takeAction}
                 />
               </NavTakeAction>
             </ListItem>
@@ -96,7 +96,7 @@ export function DrawerNavMobile() {
           <ListItem key="profil" button={true} onClick={openModalProfile}>
             <NavItem
               icon={<PersonIcon />}
-              label={texts.nav.profile}
+              label={l18n().nav.profile}
               onClick={onClickDrawerClose}
             />
           </ListItem>
@@ -105,7 +105,7 @@ export function DrawerNavMobile() {
         <ListItem key="connect" button={true} onClick={iAmLogged ? onClickLogout : onClickSignIn}>
           <NavItem
             icon={iAmLogged ? <ExitToAppIcon /> : <PersonIcon />}
-            label={iAmLogged ? texts.nav.logout : texts.nav.signIn}
+            label={iAmLogged ? l18n().nav.logout : l18n().nav.signIn}
             onClick={onClickDrawerClose}
           />
         </ListItem>

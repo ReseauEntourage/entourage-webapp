@@ -1,5 +1,5 @@
 import { FieldError } from 'react-hook-form/dist/types'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 
 export function helperTextError(error?: FieldError) {
   if (!error) {
@@ -7,7 +7,7 @@ export function helperTextError(error?: FieldError) {
   }
 
   if (error.type === 'required') {
-    return texts.form.FIELD_REQUIRED
+    return l18n().form.FIELD_REQUIRED
   }
 
   if (error.message) {

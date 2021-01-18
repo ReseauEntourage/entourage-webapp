@@ -9,7 +9,7 @@ import { ModalCloseAction } from 'src/containers/ModalCloseAction'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './Actions.styles'
 import { ParticipateButton } from './ParticipateButton'
@@ -96,12 +96,12 @@ export function Actions(props: ActionsProps) {
     return iAmCreator ? (
       <S.ReopenContainer>
         <Button loading={isUpdatingStatus} onClick={onClickReopen} variant="outlined">
-          {texts.content.map.rightCards.reopen}
+          {l18n().content.map.rightCards.reopen}
         </Button>
       </S.ReopenContainer>
     ) : (
       <S.NoActions>
-        {texts.content.map.rightCards.hasBeenClosed}
+        {l18n().content.map.rightCards.hasBeenClosed}
       </S.NoActions>
     )
   }
@@ -109,21 +109,21 @@ export function Actions(props: ActionsProps) {
   return (
     <S.ActionsContainer>
       <ParticipateButton />
-      <Button onClick={onClickShare} variant="outlined">{texts.content.map.rightCards.share}</Button>
+      <Button onClick={onClickShare} variant="outlined">{l18n().content.map.rightCards.share}</Button>
       {iAmCreator ? (
         <>
           <Button
             onClick={feedItem.groupType === 'action' ? onClickUpdateAction : onClickUpdateEvent}
             variant="outlined"
           >
-            {texts.content.map.rightCards.edit}
+            {l18n().content.map.rightCards.edit}
           </Button>
           <Button loading={isUpdatingStatus} onClick={onClickClose} variant="outlined">
-            {texts.content.map.rightCards.close}
+            {l18n().content.map.rightCards.close}
           </Button>
         </>
       ) : (
-        <Button onClick={onClickReport} variant="outlined">{texts.content.map.rightCards.report}</Button>
+        <Button onClick={onClickReport} variant="outlined">{l18n().content.map.rightCards.report}</Button>
       )}
     </S.ActionsContainer>
   )

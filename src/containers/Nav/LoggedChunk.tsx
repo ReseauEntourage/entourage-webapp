@@ -6,7 +6,7 @@ import { openModal } from 'src/components/Modal'
 import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { useMeNonNullable } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
 
 export function LoggedChunk() {
@@ -66,15 +66,15 @@ export function LoggedChunk() {
         }}
       >
         <MenuItem onClick={openModalProfile}>
-          {texts.nav.profile}
+          {l18n().nav.profile}
         </MenuItem>
         {partnerName && (
           <MenuItem onClick={openAdminAsso}>
-            {texts.nav.manage} {partnerName}
+            {l18n().nav.manage} {partnerName}
           </MenuItem>
         )}
         <MenuItem onClick={onClickLogout}>
-          {texts.nav.logout}
+          {l18n().nav.logout}
         </MenuItem>
       </Menu>
     </>

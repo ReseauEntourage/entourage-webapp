@@ -5,7 +5,7 @@ import React from 'react'
 import { Button } from 'src/components/Button'
 import { Modal } from 'src/components/Modal'
 import { constants } from 'src/constants'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import * as S from './ModalCharter.styles'
 
 interface ModalCharterProps {
@@ -14,7 +14,7 @@ interface ModalCharterProps {
 
 export function ModalCharter(props: ModalCharterProps) {
   const { onValidate } = props
-  const modalTexts = texts.content.modalCharter
+  const modalTexts = l18n().content.modalCharter
   const iconStyle = {
     fontSize: 30,
   }

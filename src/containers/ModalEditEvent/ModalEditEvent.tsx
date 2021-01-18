@@ -12,7 +12,7 @@ import { TextField, Label, RowFields, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
@@ -47,7 +47,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
   const form = useForm<FormField>({ defaultValues })
   const { register, trigger, getValues, setValue } = form
-  const modalTexts = texts.content.modalEditEvent
+  const modalTexts = l18n().content.modalEditEvent
 
   const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
   const defaultTime = existingEvent?.dateISO ? new Date(existingEvent.dateISO).toLocaleTimeString('fr-FR') : '12:00'

@@ -15,6 +15,7 @@ import { bootstrapStore } from 'src/core/boostrapStore'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
+import { localeActions } from 'src/core/useCases/locale'
 import { theme } from 'src/styles'
 import { isSSR, initFacebookApp } from 'src/utils/misc'
 
@@ -79,6 +80,8 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     if (!this.store) {
       this.store = bootstrapStore()
+
+      this.store.dispatch(localeActions.getLocale())
 
       if (authUserData && !authUserData.anonymous) {
         this.store.dispatch(authUserActions.setUser({

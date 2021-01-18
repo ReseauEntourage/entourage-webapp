@@ -10,7 +10,7 @@ import { Modal } from 'src/components/Modal'
 import { api } from 'src/core/api'
 import { useMutateMe, useMutateMeAddress } from 'src/core/store'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { notifServerError } from 'src/utils/misc'
 
 type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
@@ -80,7 +80,7 @@ export function ModalProfile() {
 
   const { register, trigger, setValue, getValues } = form
 
-  const modalTexts = texts.content.profilModal
+  const modalTexts = l18n().content.profilModal
 
   const onValidate = useCallback(async () => {
     if (!await trigger()) {
@@ -130,7 +130,7 @@ export function ModalProfile() {
       cancel={requiredInfoAreCompleted}
       onValidate={onValidate}
       title={modalTexts.modalTitle}
-      validateLabel={texts.labels.save}
+      validateLabel={l18n().labels.save}
     >
       <FormProvider {...form}>
         <Label>

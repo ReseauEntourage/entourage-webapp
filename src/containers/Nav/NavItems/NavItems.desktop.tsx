@@ -10,7 +10,7 @@ import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 
 export function NavItemsDeskTop() {
   const iAmLogged = !!useMe()
@@ -30,19 +30,19 @@ export function NavItemsDeskTop() {
       <S.NavItem
         href="/actions"
         icon={<MapIcon />}
-        label={texts.nav.actions}
+        label={l18n().nav.actions}
       />
       {iAmLogged && (
         <>
           <S.NavItem
             href="/messages"
             icon={<ChatBubbleOutlineIcon />}
-            label={texts.nav.messages}
+            label={l18n().nav.messages}
           />
           <NavTakeAction>
             <S.NavItem
               icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
-              label={texts.nav.takeAction}
+              label={l18n().nav.takeAction}
             />
           </NavTakeAction>
         </>
@@ -53,7 +53,7 @@ export function NavItemsDeskTop() {
         ) : (
           <S.ConnectButton onClick={onClickSignIn}>
             <PersonIcon />
-            {texts.nav.signIn}
+            {l18n().nav.signIn}
           </S.ConnectButton>
         )}
       </S.AccountContainer>

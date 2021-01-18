@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef } from 'react'
 import ReactCrop, { ReactCropProps } from 'react-image-crop'
 import { Button } from 'src/components/Button'
 import 'react-image-crop/dist/ReactCrop.css'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 
 const defaultCrop: ReactCropProps['crop'] = {
   unit: '%',
@@ -158,10 +158,10 @@ export function ImageCropper(props: ImageCropperProps) {
         margin={2}
       >
         <Button onClick={() => inputRef.current && inputRef.current.click()}>
-          {src ? texts.labels.changeImage : texts.labels.chooseImage}
+          {src ? l18n().labels.changeImage : l18n().labels.chooseImage}
         </Button>
         {editing && (
-          <Button onClick={internalOnValidate}>{texts.labels.validateImage}</Button>
+          <Button onClick={internalOnValidate}>{l18n().labels.validateImage}</Button>
         )}
       </Box>
       {!editing && (value || defaultSrc) && (

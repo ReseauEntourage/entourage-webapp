@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'src/components/Button'
 import { Modal, useModalContext } from 'src/components/Modal'
 import { feedActions, selectIsUpdatingStatus } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { variants } from 'src/styles'
 import { usePrevious } from 'src/utils/hooks'
 import * as S from './ModalCloseAction.styles'
@@ -35,18 +35,18 @@ export function ModalCloseAction(props: ModalCloseActionProps) {
         <>
           <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">Annuler</Button>
           <Button onClick={() => onValidate(true)} startIcon={<ThumbUpIcon />}>
-            {texts.content.modalCloseAction.success}
+            {l18n().content.modalCloseAction.success}
           </Button>
           <Button onClick={() => onValidate(false)} startIcon={<ThumbDownIcon />}>
-            {texts.content.modalCloseAction.fail}
+            {l18n().content.modalCloseAction.fail}
           </Button>
         </>
       )}
       closeOnNextRender={closeOnNextRender}
       showCloseButton={true}
     >
-      <S.Title>{texts.content.modalCloseAction.subtitle}</S.Title>
-      <Typography variant={variants.bodyRegular}>{texts.content.modalCloseAction.body}</Typography>
+      <S.Title>{l18n().content.modalCloseAction.subtitle}</S.Title>
+      <Typography variant={variants.bodyRegular}>{l18n().content.modalCloseAction.body}</Typography>
     </Modal>
   )
 }

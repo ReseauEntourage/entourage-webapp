@@ -9,7 +9,7 @@ import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/Google
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
 const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
@@ -68,7 +68,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
   const form = useForm<FormField>({ defaultValues })
   const { register, trigger, getValues, setValue } = form
-  const modalTexts = texts.content.modalEditAction
+  const modalTexts = l18n().content.modalEditAction
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()

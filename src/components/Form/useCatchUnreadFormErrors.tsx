@@ -2,7 +2,7 @@ import Typography from '@material-ui/core/Typography'
 import cogoToast from 'cogo-toast'
 import { useForm } from 'react-hook-form'
 import React, { useEffect, useRef } from 'react'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { variants } from 'src/styles'
 
 type Errors = ReturnType<typeof useForm>['errors']
@@ -24,7 +24,7 @@ export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
 
       if (!message) {
         if (error.type === 'required') {
-          message = `${key}: ${texts.form.FIELD_REQUIRED}`
+          message = `${key}: ${l18n().form.FIELD_REQUIRED}`
         } else {
           throw new Error('Unhandle')
         }

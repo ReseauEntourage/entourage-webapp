@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { feedActions } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { l18n } from 'src/i18n'
 import { useMount } from 'src/utils/hooks'
 import { FeedList } from './FeedList'
 import * as S from './MapContainer.styles'
@@ -44,7 +44,7 @@ export function MapContainerMobile() {
           {isLoading && <OverlayLoader />}
           <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
             <S.ReturnIcon />
-            {texts.content.navActions.returnButton}
+            {l18n().content.navActions.returnButton}
           </S.FabMap>
 
         </S.MapContainer>
@@ -53,7 +53,7 @@ export function MapContainerMobile() {
           <FeedList />
           <S.FabFeed color="primary" onClick={() => setIsMapOpen(true)} size="small" variant="extended">
             <S.NavIcon />
-            {texts.content.navActions.mapButton}
+            {l18n().content.navActions.mapButton}
           </S.FabFeed>
         </>
       ) }
