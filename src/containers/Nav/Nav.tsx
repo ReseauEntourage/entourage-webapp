@@ -1,6 +1,6 @@
 import Toolbar from '@material-ui/core/Toolbar'
 import React from 'react'
-import { useIsDesktop } from '../../styles'
+import { useIsDesktop } from 'src/styles'
 import * as S from './Nav.styles'
 import { NavItems } from './NavItems'
 import { NotificationBar } from './NavNotificationBar'

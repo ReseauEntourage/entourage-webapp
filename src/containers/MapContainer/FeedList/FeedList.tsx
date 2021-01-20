@@ -14,11 +14,11 @@ import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { FeedDisplayCategory } from '../../../core/api'
 import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { OverlayLoader } from 'src/components/OverlayLoader'
+import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
@@ -29,7 +29,7 @@ interface FeedItemIconProps {
   feedItem: FeedItemType;
 }
 
-const feedItemCategoryIconMap: Record<FeedDisplayCategory, SvgIconComponent> = {
+const feedItemCategoryIcons: Record<FeedDisplayCategory, SvgIconComponent> = {
   info: Help,
   // eslint-disable-next-line @typescript-eslint/camelcase
   mat_help: LocalMall,
@@ -43,33 +43,36 @@ function FeedItemIcon(props: FeedItemIconProps) {
   const { feedItem } = props
   const { entourageType, displayCategory, groupType } = feedItem
 
-  const getIconProps = (backgroundColor: string) => ({
-    style: {
-      ...iconStyle, color: '#fff', backgroundColor,
-    },
-  })
-
-  let iconBackgroundColor = colors.main.grey
-
   if (groupType === 'outing') {
     return (
-      <Event {...getIconProps(iconBackgroundColor)} />
+      <Event
+        style={{
+          ...iconStyle,
+          color: '#fff',
+          backgroundColor: colors.main.grey,
+        }}
+      />
     )
   }
-  if (entourageType === 'contribution') {
-    iconBackgroundColor = colors.main.primary
-  } else if (entourageType === 'ask_for_help') {
-    iconBackgroundColor = colors.main.blue
+
+  const backgroundColors: Record<FeedEntourageType, string> = {
+    contribution: colors.main.primary,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    ask_for_help: colors.main.blue,
   }
 
-  let IconComponent = feedItemCategoryIconMap.other
-
-  if (displayCategory) {
-    IconComponent = feedItemCategoryIconMap[displayCategory]
+  const iconProps = {
+    style: {
+      ...iconStyle,
+      color: '#fff',
+      backgroundColor: backgroundColors[entourageType],
+    },
   }
+
+  const IconComponent = feedItemCategoryIcons[displayCategory] || feedItemCategoryIcons.other
 
   return (
-    <IconComponent {...getIconProps(iconBackgroundColor)} />
+    <IconComponent {...iconProps} />
   )
 }
 
