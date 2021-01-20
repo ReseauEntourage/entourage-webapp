@@ -1,6 +1,5 @@
 import ToolbarMUI from '@material-ui/core/Toolbar'
 import styled from 'styled-components'
-import { Button } from 'src/components/Button'
 import { theme, colors } from 'src/styles'
 
 // TODO: Remove the ampersand (&) character in styled-components after removing of ThemeProvider of MUI.
@@ -9,7 +8,7 @@ import { theme, colors } from 'src/styles'
 
 export const NotificationBar = styled(ToolbarMUI)`
   && {
-    background-color: ${colors.main.primary};
+    background-color: ${colors.main.greyishBrown};
     color: ${colors.main.white};
   }
 `
@@ -18,16 +17,4 @@ export const NotificationItem = styled.div`
   margin-left: ${theme.spacing(2)}px;
   display: flex;
   align-items: center;
-`
-
-export const WhiteOutlinedButton = styled(Button).attrs(() => ({
-  variant: 'outlined',
-  style: {
-    textTransform: 'none',
-  },
-}))`
- && {
-   color: ${colors.main.white};
-   border-color: ${colors.main.white};
- }
 `

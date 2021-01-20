@@ -1,6 +1,7 @@
 import { Typography } from '@material-ui/core'
 import { History } from '@material-ui/icons'
 import React from 'react'
+import { Button } from '../../components/Button'
 import { constants } from '../../constants'
 import { texts } from '../../i18n'
 import * as Nav from './Nav.styles'
@@ -25,12 +26,16 @@ export function NotificationBar() {
         </Typography>
       </S.NotificationItem>
       <S.NotificationItem>
-        <S.WhiteOutlinedButton
+        <Button
+          color="primary"
           onClick={throwMockError}
           size="small"
+          style={{
+            textTransform: 'none',
+          }}
         >
           {texts.nav.notificationBar.feedback}
-        </S.WhiteOutlinedButton>
+        </Button>
       </S.NotificationItem>
 
       <Nav.Grow />
