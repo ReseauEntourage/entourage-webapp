@@ -12,7 +12,7 @@ import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/s
 import { texts } from 'src/i18n'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
-const categories: FeedDisplayCategory[] = ['info', 'mat_help', 'other', 'resource', 'skill', 'social']
+const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other'/* , 'info', 'skill' */]
 
 function createCategoryValue(entourageType: FeedEntourageType, displayCategory: FeedDisplayCategory) {
   return `${entourageType}:${displayCategory}`

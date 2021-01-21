@@ -1,5 +1,14 @@
 import Box from '@material-ui/core/Box'
-import LocalMallIcon from '@material-ui/icons/LocalMall'
+import {
+  LocalMall,
+  Event,
+  LocalLaundryService,
+  People,
+  Help,
+  MoreHoriz,
+  Create,
+  SvgIconComponent,
+} from '@material-ui/icons'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
@@ -9,6 +18,7 @@ import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { OverlayLoader } from 'src/components/OverlayLoader'
+import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
@@ -19,23 +29,51 @@ interface FeedItemIconProps {
   feedItem: FeedItemType;
 }
 
+const feedItemCategoryIcons: Record<FeedDisplayCategory, SvgIconComponent> = {
+  info: Help,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  mat_help: LocalMall,
+  other: MoreHoriz,
+  skill: Create,
+  social: People,
+  resource: LocalLaundryService,
+}
+
 function FeedItemIcon(props: FeedItemIconProps) {
   const { feedItem } = props
-  const { entourageType, displayCategory } = feedItem
-  if (entourageType === 'contribution') {
-    const backgroundColor = colors.main.primary
-    if (displayCategory === 'mat_help') {
-      return <LocalMallIcon style={{ ...iconStyle, color: '#fff', backgroundColor }} />
-    } if (displayCategory === 'info') {
-      // TODO
-    }
+  const { entourageType, displayCategory, groupType } = feedItem
+
+  if (groupType === 'outing') {
+    return (
+      <Event
+        style={{
+          ...iconStyle,
+          color: '#fff',
+          backgroundColor: colors.main.grey,
+        }}
+      />
+    )
   }
 
-  if (entourageType === 'ask_for_help') {
-    // TODO
+  const backgroundColors: Record<FeedEntourageType, string> = {
+    contribution: colors.main.primary,
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    ask_for_help: colors.main.blue,
   }
 
-  return null
+  const iconProps = {
+    style: {
+      ...iconStyle,
+      color: '#fff',
+      backgroundColor: backgroundColors[entourageType],
+    },
+  }
+
+  const IconComponent = feedItemCategoryIcons[displayCategory] || feedItemCategoryIcons.other
+
+  return (
+    <IconComponent {...iconProps} />
+  )
 }
 
 export function FeedList() {

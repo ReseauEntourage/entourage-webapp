@@ -17,6 +17,18 @@ export const texts = {
     INCORRECT_VALUE: 'Valeur incorrecte',
   },
   nav: {
+    notificationBar: {
+      welcome: 'Bienvenue sur la nouvelle version de l\'application Entourage !',
+      feedback: 'Donnez-nous votre avis !',
+      back: 'Revenir sur l\'ancienne version',
+      dialogLang: 'fr',
+      dialogTitle: 'Votre avis nous intéresse !',
+      dialogSubtitle: 'Nous sommes toujours à l\'écoute de vos remarques.',
+      dialogSubtitle2: 'Si vous identifiez des bugs ou voulez juste nous partager vos suggestions, n\'hésitez pas à remplir le formulaire !',
+      dialogLabelComments: 'Vos remarques et suggestions',
+      dialogLabelSubmit: 'Envoyer',
+
+    },
     actions: 'Actions',
     messages: 'Messages',
     takeAction: 'Passer à l\'action',
