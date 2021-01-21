@@ -2,7 +2,7 @@ import Typography from '@material-ui/core/Typography'
 import cogoToast from 'cogo-toast'
 import { useForm } from 'react-hook-form'
 import React, { useEffect, useRef } from 'react'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { variants } from 'src/styles'
 
 type Errors = ReturnType<typeof useForm>['errors']
@@ -10,6 +10,7 @@ type Errors = ReturnType<typeof useForm>['errors']
 export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
   const readErrors = useRef<{ [key: string]: boolean; }>({})
   readErrors.current = {}
+  const texts = useI18n()
 
   useEffect(() => {
     const keyUnhandled = Object.keys(errors).filter((key) => !readErrors.current[key])
@@ -40,7 +41,7 @@ export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
       </Typography>,
       { hideAfter: 5 },
     )
-  }, [errors])
+  }, [texts, errors])
 
   // eslint-disable-next-line
   return new Proxy(errors, {

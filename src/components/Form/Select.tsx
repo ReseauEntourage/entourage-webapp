@@ -5,6 +5,7 @@ import SelectBase, { SelectProps as SelectBaseProps } from '@material-ui/core/Se
 import { useFormContext } from 'react-hook-form'
 import { FieldError } from 'react-hook-form/dist/types'
 import React, { useEffect } from 'react'
+import { useI18n } from '../../i18n'
 import { helperTextError } from './helperTextErrors'
 
 interface OptionWithoutGroup {
@@ -39,7 +40,7 @@ export function Select(props: SelectProps) {
     formErrors: formErrorProps,
     ...restProps
   } = props
-
+  const texts = useI18n()
   const formContext = useFormContext()
   const formErrors = formErrorProps || (formContext && formContext.errors)
   const formError = (formErrors && name) ? formErrors[name] : null
@@ -84,7 +85,7 @@ export function Select(props: SelectProps) {
         })}
       </SelectBase>
       {formError && (
-        <FormHelperText>{helperTextError(formError)}</FormHelperText>
+        <FormHelperText>{helperTextError(texts, formError)}</FormHelperText>
       )}
     </FormControl>
   )

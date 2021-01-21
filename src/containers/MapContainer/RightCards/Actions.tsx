@@ -9,7 +9,7 @@ import { ModalCloseAction } from 'src/containers/ModalCloseAction'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './Actions.styles'
 import { ParticipateButton } from './ParticipateButton'
@@ -20,6 +20,8 @@ interface ActionsProps {
 
 export function Actions(props: ActionsProps) {
   const { iAmCreator } = props
+  const texts = useI18n()
+
   const feedItem = useCurrentFeedItem()
   const dispatch = useDispatch()
   const store = useStore()

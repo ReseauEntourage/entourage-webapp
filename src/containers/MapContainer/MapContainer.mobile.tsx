@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { feedActions } from 'src/core/useCases/feed'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { useMount } from 'src/utils/hooks'
 import { FeedList } from './FeedList'
 import * as S from './MapContainer.styles'
@@ -13,6 +13,8 @@ import { useCurrentFeedItem } from './useCurrentFeedItem'
 import { useMarkers } from './useMarkers'
 
 export function MapContainerMobile() {
+  const texts = useI18n()
+
   const dispatch = useDispatch()
   const actionId = useActionId()
   const { feedsMarkersContent, POIsMarkersContent, isLoading } = useMarkers()

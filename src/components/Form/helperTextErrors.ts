@@ -1,7 +1,7 @@
 import { FieldError } from 'react-hook-form/dist/types'
-import { texts } from 'src/i18n'
+import { Texts } from '../../i18n/fr'
 
-export function helperTextError(error?: FieldError) {
+export function helperTextError(texts: Texts, error?: FieldError) {
   if (!error) {
     return null
   }

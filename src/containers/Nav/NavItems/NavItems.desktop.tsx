@@ -10,10 +10,11 @@ import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 
 export function NavItemsDeskTop() {
   const iAmLogged = !!useMe()
+  const texts = useI18n()
 
   useOpenModalProfileOnLogin()
 

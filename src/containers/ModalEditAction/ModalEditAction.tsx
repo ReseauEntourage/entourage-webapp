@@ -9,7 +9,7 @@ import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/Google
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 
 const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other'/* , 'info', 'skill' */]
@@ -57,6 +57,8 @@ interface ModalEditActionProps {
 
 export function ModalEditAction(props: ModalEditActionProps) {
   const { action: existedAction } = props
+
+  const texts = useI18n()
 
   const isCreation = !existedAction
 

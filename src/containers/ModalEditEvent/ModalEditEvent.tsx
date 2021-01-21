@@ -12,7 +12,7 @@ import { TextField, Label, RowFields, useForm } from 'src/components/Form'
 import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { texts } from 'src/i18n'
+import { useI18n } from 'src/i18n'
 import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
@@ -37,6 +37,7 @@ interface ModalEditEventProps {
 
 export function ModalEditEvent(props: ModalEditEventProps) {
   const { event: existingEvent } = props
+  const texts = useI18n()
 
   const isCreation = !existingEvent
 
