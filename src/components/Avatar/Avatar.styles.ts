@@ -1,8 +1,15 @@
 import AvatarMUI from '@material-ui/core/Avatar'
+import { SvgIconProps } from '@material-ui/core/SvgIcon'
+import { Person } from '@material-ui/icons'
 import styled, { css } from 'styled-components'
 import { colors, theme } from 'src/styles'
 
 export type Size = 'small' | 'large'
+
+export const iconSizes: Record<Size, SvgIconProps['fontSize']> = {
+  small: 'default',
+  large: 'large',
+}
 
 function CSSGetSize() {
   return (props: { size: Size; }) => {
@@ -18,12 +25,8 @@ function CSSGetSize() {
   }
 }
 
-export const NoProfilePicture = styled.div<{ size: Size; }>`
-  ${CSSGetSize()}
-  border-radius: 100%;
-  background-color: ${colors.main.primary};
-  max-width: 100%;
-  max-height: 100%;
+export const NoProfilePicture = styled(Person)`
+  color: ${colors.main.greyishBrown};
 `
 
 export const Container = styled.div`
@@ -35,4 +38,5 @@ export const AvatarPicture = styled(AvatarMUI)<{ size: Size; }>`
   ${CSSGetSize()}
   max-width: 100%;
   max-height: 100%;
+  background-color: ${colors.main.greyLight} !important;
 `

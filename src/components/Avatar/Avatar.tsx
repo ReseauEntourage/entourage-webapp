@@ -32,7 +32,9 @@ export function Avatar(props: AvatarProps) {
         border: !borderColor ? undefined : `solid 1px ${borderColor}`,
       }}
     >
-      {src ? <S.AvatarPicture alt={alt} size={size} src={src} /> : <S.NoProfilePicture size={size} />}
+      <S.AvatarPicture alt={alt} size={size} src={src || undefined}>
+        <S.NoProfilePicture fontSize={S.iconSizes[size]} />
+      </S.AvatarPicture>
     </S.Container>
   )
 }
