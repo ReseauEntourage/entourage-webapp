@@ -1,9 +1,8 @@
 import { Typography } from '@material-ui/core'
-import { History } from '@material-ui/icons'
 import React from 'react'
 import { Button } from '../../components/Button'
-import { constants } from '../../constants'
 import { texts } from '../../i18n'
+import { variants } from 'src/styles'
 import * as Nav from './Nav.styles'
 import * as S from './NavNotificationBar.styles'
 
@@ -14,37 +13,32 @@ const throwMockError = () => {
   }
 }
 
+export const FeedBackButton = () => {
+  return (
+    <Button
+      onClick={throwMockError}
+      size="small"
+    >
+      {texts.nav.notificationBar.feedback}
+    </Button>
+  )
+}
+
 export function NotificationBar() {
   return (
     <S.NotificationBar variant="dense">
       <S.NotificationItem>
         <Typography
           color="textSecondary"
-          variant="body1"
+          variant={variants.bodyBold}
         >
           {texts.nav.notificationBar.welcome}
         </Typography>
       </S.NotificationItem>
-      <S.NotificationItem>
-        <Button
-          color="primary"
-          onClick={throwMockError}
-          size="small"
-          style={{
-            textTransform: 'none',
-          }}
-        >
-          {texts.nav.notificationBar.feedback}
-        </Button>
-      </S.NotificationItem>
-
       <Nav.Grow />
-      <Nav.NavItem
-        color="textSecondary"
-        href={constants.LEGACY_WEB_APP_URL}
-        icon={<History fontSize="small" />}
-        label={texts.nav.notificationBar.back}
-      />
+      <S.NotificationItem>
+        <FeedBackButton />
+      </S.NotificationItem>
     </S.NotificationBar>
   )
 }

@@ -13,12 +13,12 @@ export function Nav() {
       <S.AppBar
         position="static"
       >
-        {
-          isDesktop && <NotificationBar />
-        }
         <Toolbar>
           <NavItems />
         </Toolbar>
+        {
+          isDesktop && <NotificationBar />
+        }
       </S.AppBar>
     </S.Grow>
   )
