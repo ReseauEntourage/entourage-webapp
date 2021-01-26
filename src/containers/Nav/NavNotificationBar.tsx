@@ -13,8 +13,8 @@ const throwMockError = () => {
   }
 }
 
-type FeedBackButtonProps = {
-  closeDrawer?: Function;
+interface FeedBackButtonProps {
+  closeDrawer?(): void;
 }
 
 export const FeedBackButton = (props: FeedBackButtonProps) => {
