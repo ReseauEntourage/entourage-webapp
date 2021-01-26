@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
@@ -12,6 +13,7 @@ import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
 import { NavItem } from '../NavItem'
+import { FeedBackButton } from '../NavNotificationBar'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
 import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
@@ -21,7 +23,7 @@ import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
-import { theme } from 'src/styles'
+import { theme, variants } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
@@ -108,6 +110,25 @@ export function DrawerNavMobile() {
             label={iAmLogged ? texts.nav.logout : texts.nav.signIn}
             onClick={onClickDrawerClose}
           />
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem>
+          <S.DrawerNotificationItem>
+            <Typography
+              align="center"
+              color="textPrimary"
+              variant={variants.bodyBold}
+            >
+              {texts.nav.notificationBar.welcome}
+            </Typography>
+          </S.DrawerNotificationItem>
+        </ListItem>
+        <ListItem>
+          <S.DrawerNotificationItem>
+            <FeedBackButton />
+          </S.DrawerNotificationItem>
         </ListItem>
       </List>
     </Drawer>
