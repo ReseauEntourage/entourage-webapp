@@ -11,6 +11,7 @@ export const LoginSteps = {
   PASSWORD: 'PASSWORD',
   SMS_CODE: 'SMS_CODE',
   CREATE_PASSWORD: 'CREATE_PASSWORD',
+  CREATE_ACCOUNT: 'CREATE_ACCOUNT',
 } as const
 
 export type LoginSteps = keyof typeof LoginSteps
@@ -60,6 +61,13 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
+    case ActionType.CREATE_ACCOUNT: {
+      return {
+        ...state,
+        isLogging: true,
+      }
+    }
+
     case ActionType.CREATE_ACCOUNT_SUCCEEDED: {
       return {
         ...state,
@@ -80,6 +88,14 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         step: null,
+      }
+    }
+
+    case ActionType.ASK_CREATE_ACCOUNT: {
+      return {
+        ...state,
+        step: LoginSteps.CREATE_ACCOUNT,
+        isLogging: false,
       }
     }
 

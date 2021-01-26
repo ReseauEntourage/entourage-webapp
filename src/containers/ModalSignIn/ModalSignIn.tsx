@@ -1,3 +1,4 @@
+import { Typography } from '@material-ui/core'
 import Box from '@material-ui/core/Box'
 import { useForm } from 'react-hook-form'
 import React, { useEffect } from 'react'
@@ -12,7 +13,7 @@ import {
   selectLoginStepIsCompleted,
 } from 'src/core/useCases/authUser'
 import { texts } from 'src/i18n'
-import { useIsDesktop } from 'src/styles'
+import { useIsDesktop, variants } from 'src/styles'
 import * as S from './ModalSignin.styles'
 
 type FormFields = {
@@ -53,6 +54,8 @@ export function ModalSignIn(props: ModalSignInProps) {
 
     if (step === 'PHONE') {
       dispatch(authUserActions.phoneLookUp(phone))
+    } else if (step === 'CREATE_ACCOUNT') {
+      dispatch(authUserActions.createAccount(phone))
     } else if (step === 'PASSWORD') {
       dispatch(authUserActions.loginWithPassword({ phone, password }))
     } else if (step === 'SMS_CODE') {
@@ -73,6 +76,8 @@ export function ModalSignIn(props: ModalSignInProps) {
     switch (step) {
       case 'PHONE':
         return 'Valider le numéro'
+      case 'CREATE_ACCOUNT':
+        return 'Créer un compte'
       case 'SMS_CODE':
         return 'Valider le code SMS'
       case 'CREATE_PASSWORD':
@@ -89,6 +94,7 @@ export function ModalSignIn(props: ModalSignInProps) {
   })()
 
   const allowCancel = step !== 'CREATE_PASSWORD'
+  const showAskCreateAccount = step === 'CREATE_ACCOUNT'
   const showPasswordField = step === 'PASSWORD'
   const showSMSCodeField = step === 'SMS_CODE' || step === 'CREATE_PASSWORD'
   const showForgottenPasswordLink = step === 'PASSWORD' || step === 'SMS_CODE'
@@ -133,6 +139,11 @@ export function ModalSignIn(props: ModalSignInProps) {
           name="phone"
           type="text"
         />
+        {showAskCreateAccount && (
+          <Typography variant={variants.bodyRegular}>
+            {texts.content.login.askAccountCreation}
+          </Typography>
+        )}
         {showPasswordField && (
           <TextFieldPassword
             autoFocus={true}

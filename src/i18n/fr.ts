@@ -141,5 +141,8 @@ export const texts = {
       success: "C'est un succès",
       fail: "Ça n'a pas marché",
     },
+    login: {
+      askAccountCreation: "Vous n'avez pas encore de compte. Voulez-vous en créer un avec ce numero ?",
+    },
   },
 }

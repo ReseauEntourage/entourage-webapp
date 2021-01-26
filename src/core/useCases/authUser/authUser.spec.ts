@@ -176,29 +176,18 @@ describe('Auth User', () => {
   it(`
     Given user hasn't any account and server return not found on phone lookup
     When user trigger phone lookup
-    Then a use account should be created
-      And next step should be SMS Code
+    Then next step should be create account
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
 
     const deferredValues = {
       phoneLookup: PhoneLookUpResponse.PHONE_NOT_FOUND,
-      createAccount: null,
-      loginWithSMSCode: null,
-      definePassword: null,
     }
 
     authUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
-    authUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
-    // @ts-expect-error
-    authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
-    authUserGateway.definePassword.mockDeferredValueOnce(deferredValues.definePassword)
 
     const resolveAllDeferredValue = () => {
       authUserGateway.phoneLookUp.resolveDeferredValue()
-      authUserGateway.createAccount.resolveDeferredValue()
-      authUserGateway.loginWithSMSCode.resolveDeferredValue()
-      authUserGateway.definePassword.resolveDeferredValue()
     }
 
     const store = configureStoreWithAuthUser({
@@ -213,6 +202,42 @@ describe('Auth User', () => {
 
     expect(authUserGateway.phoneLookUp).toHaveBeenCalledTimes(1)
     expect(authUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
+
+    expect(selectStep(store.getState())).toEqual(LoginSteps.CREATE_ACCOUNT)
+  })
+
+  it(`
+    Given user hasn't any account and server return not found on phone lookup
+    When user trigger account creation
+    Then user should be logging during request
+      And user should not be logging after request
+      And a user account creation should have been called with phone number
+      And next step should be SMS Code
+  `, async () => {
+    const authUserGateway = new TestAuthUserGateway()
+
+    const deferredValues = {
+      createAccount: null,
+      loginWithSMSCode: null,
+      definePassword: null,
+    }
+
+    authUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
+
+    const store = configureStoreWithAuthUser({
+      dependencies: { authUserGateway },
+    })
+    const phone = '0700000000'
+
+    store.dispatch(publicActions.createAccount(phone))
+
+    expect(selectIsLogging(store.getState())).toEqual(true)
+
+    authUserGateway.createAccount.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectIsLogging(store.getState())).toEqual(false)
+
     expect(authUserGateway.createAccount).toHaveBeenCalledTimes(1)
     expect(authUserGateway.createAccount).toHaveBeenCalledWith({ phone })
 
