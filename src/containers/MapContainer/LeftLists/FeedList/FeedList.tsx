@@ -10,6 +10,7 @@ import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
+import { assertCondition } from 'src/utils/misc'
 import { FilterEntourageType } from 'src/utils/types'
 
 export function FeedList() {
@@ -26,6 +27,8 @@ export function FeedList() {
   })
 
   const feedsListContent = feeds.map((feedItem) => {
+    assertCondition(feedItem.itemType === 'Entourage')
+
     let secondText = ''
     let label = ''
     if (feedItem.groupType === 'action') {

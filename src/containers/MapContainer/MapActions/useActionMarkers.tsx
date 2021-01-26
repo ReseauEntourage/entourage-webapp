@@ -5,6 +5,7 @@ import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
 import { EventMarker, MarkerWrapper, ActionMarker } from 'src/components/Map'
 import { useFirebase } from 'src/utils/hooks'
+import { assertCondition } from 'src/utils/misc'
 
 export function useActionMarkers() {
   const actionId = useActionId()
@@ -12,6 +13,8 @@ export function useActionMarkers() {
   const { sendEvent } = useFirebase()
 
   const feedsMarkersContent = feeds.map((feed) => {
+    assertCondition(feed.itemType === 'Entourage')
+
     const { location, uuid, groupType } = feed
     return (
       <MarkerWrapper

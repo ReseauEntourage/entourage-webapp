@@ -10,6 +10,7 @@ import {
   FeedJoinStatus,
   FeedStatus,
 } from 'src/core/api'
+import { assertCondition } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { FeedAction, FeedActionType } from './feed.actions'
 
@@ -29,7 +30,8 @@ export const RequestStatus = {
 
 export type RequestStatus = keyof typeof RequestStatus
 
-export interface FeedItem {
+export interface FeedEntourage {
+  itemType: 'Entourage';
   author: {
     id: number;
     avatarUrl?: string;
@@ -54,6 +56,18 @@ export interface FeedItem {
   status: FeedStatus;
 }
 
+export interface FeedAnnouncement {
+  itemType: 'Announcement';
+  id: number;
+  uuid: string;
+  title: string;
+  body?: string;
+  imageUrl?: string;
+  action?: string;
+  url?: string;
+  iconUrl: string;
+}
+
 export interface FeedState {
   fetching: boolean;
   filters: {
@@ -63,7 +77,7 @@ export interface FeedState {
   };
   itemsUuids: string[];
   items: {
-    [itemUuid: string]: FeedItem;
+    [itemUuid: string]: FeedEntourage | FeedAnnouncement;
   };
   nextPageToken: string | null;
   selectedItemUuid: string | null;
@@ -130,7 +144,7 @@ export function feedReducer(
             }
           }, state.items,
         ),
-        itemsUuids: action.payload.items.map((item: FeedItem) => item.uuid),
+        itemsUuids: action.payload.items.map((item: FeedEntourage | FeedAnnouncement) => item.uuid),
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
       }
@@ -169,11 +183,13 @@ export function feedReducer(
           throw new Error(`item with uuid ${uuid} is not defined`)
         }
 
+        assertCondition(item.itemType === 'Entourage')
+
         // eslint-disable-next-line
         draftState.items[uuid] = {
           ...item,
           ...action.payload,
-        }
+        } as FeedEntourage
       })
     }
 
@@ -212,6 +228,7 @@ export function feedReducer(
         isUpdatingJoinStatus: false,
         items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
+          assertCondition(item.itemType === 'Entourage')
           item.joinStatus = action.payload.status
         }),
       }
@@ -223,6 +240,7 @@ export function feedReducer(
         isUpdatingJoinStatus: false,
         items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
+          assertCondition(item.itemType === 'Entourage')
           item.joinStatus = 'not_requested'
         }),
       }
@@ -242,6 +260,7 @@ export function feedReducer(
         isUpdatingStatus: false,
         items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
+          assertCondition(item.itemType === 'Entourage')
           item.status = 'closed'
         }),
       }
@@ -253,6 +272,7 @@ export function feedReducer(
         isUpdatingStatus: false,
         items: produce(state.items, (cachedItems) => {
           const item = cachedItems[action.payload.entourageUuid]
+          assertCondition(item.itemType === 'Entourage')
           item.status = 'open'
         }),
       }

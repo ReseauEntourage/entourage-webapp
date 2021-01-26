@@ -262,6 +262,21 @@ export interface FeedItemEntourage {
   type: 'Entourage';
 }
 
+export interface FeedItemAnnouncement {
+  data: {
+    id: number;
+    uuid: string;
+    title: string;
+    body?: string;
+    image_url?: string;
+    action?: string;
+    url?: string;
+    icon_url: string;
+    author?: null;
+  };
+  type: 'Announcement';
+}
+
 export interface FeedItemTour {
   data: {
     author: {

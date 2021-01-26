@@ -3,7 +3,6 @@ import Box from '@material-ui/core/Box'
 import { useForm } from 'react-hook-form'
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { useFirebase, useMount } from '../../utils/hooks'
 import { TextField, TextFieldPassword } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
 import { useOnLogin } from 'src/core/events'
@@ -15,6 +14,7 @@ import {
 } from 'src/core/useCases/authUser'
 import { texts } from 'src/i18n'
 import { useIsDesktop, variants } from 'src/styles'
+import { useFirebase, useMount } from 'src/utils/hooks'
 import * as S from './ModalSignin.styles'
 
 type FormFields = {

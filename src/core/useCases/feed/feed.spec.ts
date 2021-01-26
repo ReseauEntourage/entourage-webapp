@@ -9,7 +9,7 @@ import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } fr
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
-import { FeedState, defaultFeedState } from './feed.reducer'
+import { FeedState, defaultFeedState, FeedEntourage } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectFeedIsFetching,
@@ -634,14 +634,14 @@ describe('Feed', () => {
       feed: fakeFeedData,
     }
     const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
-    const firstItem = store.getState().feed.items.abc
+    const firstItem = store.getState().feed.items.abc as FeedEntourage
 
     store.dispatch(publicActions.updateItem({
       uuid: 'abc',
       title: 'feed title updated',
     }))
 
-    const firstItemUpdated = store.getState().feed.items.abc
+    const firstItemUpdated = store.getState().feed.items.abc as FeedEntourage
 
     expect(firstItem.title).toEqual('feed title')
     expect(firstItem.description).toEqual('feed description')

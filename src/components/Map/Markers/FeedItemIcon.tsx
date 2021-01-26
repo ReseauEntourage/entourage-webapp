@@ -4,7 +4,7 @@ import SvgIcon from '@material-ui/core/SvgIcon'
 import React, { CSSProperties } from 'react'
 import { Event } from 'src/assets'
 import { FeedEntourageType } from 'src/core/api'
-import { FeedItem as FeedItemType } from 'src/core/useCases/feed'
+import { FeedEntourage as FeedItemType } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { feedItemCategoryIcons, roundToEven } from 'src/utils/misc'
 
