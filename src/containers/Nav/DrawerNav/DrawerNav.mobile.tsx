@@ -127,7 +127,7 @@ export function DrawerNavMobile() {
         </ListItem>
         <ListItem>
           <S.DrawerNotificationItem>
-            <FeedBackButton />
+            <FeedBackButton closeDrawer={onClickDrawerClose} />
           </S.DrawerNotificationItem>
         </ListItem>
       </List>
