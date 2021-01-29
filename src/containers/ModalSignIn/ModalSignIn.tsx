@@ -72,18 +72,20 @@ export function ModalSignIn(props: ModalSignInProps) {
     dispatch(authUserActions.resetPassword({ phone }))
   }
 
+  const { buttonLabels, fieldLabels } = texts.content.modalLogin
+
   const validateLabel = (() => {
     switch (step) {
       case 'PHONE':
-        return 'Valider le numéro'
+        return buttonLabels.validateNumber
       case 'CREATE_ACCOUNT':
-        return 'Créer un compte'
+        return buttonLabels.createAccount
       case 'SMS_CODE':
-        return 'Valider le code SMS'
+        return buttonLabels.validateSMSCode
       case 'CREATE_PASSWORD':
-        return 'Valider le mot de passe'
+        return buttonLabels.validatePassword
       case 'PASSWORD':
-        return 'Connexion'
+        return buttonLabels.login
       case null:
         // do nothing, login is completed
         return ''
@@ -113,7 +115,7 @@ export function ModalSignIn(props: ModalSignInProps) {
       cancel={allowCancel}
       closeOnNextRender={closeOnNextRender}
       onValidate={onValidate}
-      title="Connexion / Inscription"
+      title={texts.content.modalLogin.title}
       validateLabel={validateLabel}
     >
       <Box style={{ paddingLeft: isDesktop ? 250 : 0 }}>
@@ -135,13 +137,13 @@ export function ModalSignIn(props: ModalSignInProps) {
           errorText={errors?.phone && texts.form[errors?.phone]}
           fullWidth={true}
           inputRef={phoneForm.register}
-          label="Téléphone"
+          label={fieldLabels.phone}
           name="phone"
           type="text"
         />
         {showAskCreateAccount && (
           <Typography variant={variants.bodyRegular}>
-            {texts.content.login.askAccountCreation}
+            {texts.content.modalLogin.askAccountCreation}
           </Typography>
         )}
         {showPasswordField && (
@@ -151,7 +153,7 @@ export function ModalSignIn(props: ModalSignInProps) {
             errorText={passwordError}
             fullWidth={true}
             inputRef={phoneForm.register}
-            label="Entre votre mot de passe (au moins 8 caractères)"
+            label={fieldLabels.enterYourPassword}
             name="password"
           />
         )}
@@ -162,13 +164,13 @@ export function ModalSignIn(props: ModalSignInProps) {
             errorText={errors?.code && texts.form[errors?.code]}
             fullWidth={true}
             inputRef={phoneForm.register}
-            label="Entrez le code d\'activation reçu"
+            label={fieldLabels.SMSCode}
             name="SMSCode"
           />
         )}
         {showForgottenPasswordLink && (
           <S.ForgottenPasswordLink onClick={resetPassword}>
-            {step === 'PASSWORD' ? 'Mot de passe oublié ?' : "Renvoyer le code d'activation"}
+            {step === 'PASSWORD' ? fieldLabels.passwordForgotten : fieldLabels.resendActivationCode}
           </S.ForgottenPasswordLink>
         )}
         {showDefinePasswordFields && (
@@ -178,14 +180,14 @@ export function ModalSignIn(props: ModalSignInProps) {
               errorText={passwordError}
               fullWidth={true}
               inputRef={phoneForm.register}
-              label="Choisissez votre mot de passe"
+              label={fieldLabels.chooseYourPassword}
               name="password"
             />
             <TextFieldPassword
               errorText={passwordConfirmationError}
               fullWidth={true}
               inputRef={phoneForm.register}
-              label="Confirmez votre mot de passe"
+              label={fieldLabels.confirmYourPassword}
               name="passwordConfirmation"
             />
           </>
