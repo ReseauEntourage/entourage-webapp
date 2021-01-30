@@ -1,1 +1,1 @@
-export * from './RightCards'
+export * from './RightCard'

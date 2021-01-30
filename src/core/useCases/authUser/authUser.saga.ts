@@ -4,7 +4,7 @@ import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
 import { IAuthUserSensitizationStorage } from './IAuthUserSensitizationStorage'
 import { IAuthUserTokenStorage } from './IAuthUserTokenStorage'
-import { ActionType, actions, Actions } from './authUser.actions'
+import { AuthUserActionType, actions, AuthUserActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
 import { selectUser } from './authUser.selectors'
 import {
@@ -54,7 +54,7 @@ function* hideSensitizationPopupSaga() {
   authUserSensitizationStorage.setHasSeenPopup(user.id)
 }
 
-function* phoneLookUpSaga(action: Actions['phoneLookUp']) {
+function* phoneLookUpSaga(action: AuthUserActions['phoneLookUp']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { phoneLookUp } = dependencies.authUserGateway
   const { phone } = action.payload
@@ -78,7 +78,7 @@ function* phoneLookUpSaga(action: Actions['phoneLookUp']) {
   }
 }
 
-function* createAccountSaga(action: Actions['createAccount']) {
+function* createAccountSaga(action: AuthUserActions['createAccount']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { createAccount: createAccountGateway } = dependencies.authUserGateway
   const { phone } = action.payload
@@ -87,7 +87,7 @@ function* createAccountSaga(action: Actions['createAccount']) {
   yield put(actions.createAccountSuccess())
 }
 
-function* loginWithPasswordSaga(action: Actions['loginWithPassword']) {
+function* loginWithPasswordSaga(action: AuthUserActions['loginWithPassword']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserGateway, authUserTokenStorage } = dependencies
   const { phone, password } = action.payload
@@ -118,7 +118,7 @@ function* loginWithPasswordSaga(action: Actions['loginWithPassword']) {
   }
 }
 
-function* loginWithSMSCodeSaga(action: Actions['loginWithSMSCode']) {
+function* loginWithSMSCodeSaga(action: AuthUserActions['loginWithSMSCode']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserGateway, authUserTokenStorage } = dependencies
   const { phone, SMSCode } = action.payload
@@ -150,7 +150,7 @@ function* loginWithSMSCodeSaga(action: Actions['loginWithSMSCode']) {
   }
 }
 
-function* createPasswordSaga(action: Actions['createPassword']) {
+function* createPasswordSaga(action: AuthUserActions['createPassword']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserGateway } = dependencies
   const { password, passwordConfirmation } = action.payload
@@ -184,7 +184,7 @@ function* createPasswordSaga(action: Actions['createPassword']) {
   }
 }
 
-function* resetPasswordSaga(action: Actions['resetPassword']) {
+function* resetPasswordSaga(action: AuthUserActions['resetPassword']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserGateway } = dependencies
   const { phone } = action.payload
@@ -203,15 +203,15 @@ function* resetPasswordSaga(action: Actions['resetPassword']) {
 }
 
 export function* authUserSaga() {
-  yield takeEvery(ActionType.PHONE_LOOK_UP, phoneLookUpSaga)
-  yield takeEvery(ActionType.CREATE_ACCOUNT, createAccountSaga)
-  yield takeEvery(ActionType.LOGIN_WITH_PASSWORD, loginWithPasswordSaga)
-  yield takeEvery(ActionType.LOGIN_WITH_SMS_CODE, loginWithSMSCodeSaga)
-  yield takeEvery(ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
-  yield takeEvery(ActionType.CREATE_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
-  yield takeEvery(ActionType.CREATE_PASSWORD, createPasswordSaga)
-  yield takeEvery(ActionType.RESET_PASSWORD, resetPasswordSaga)
-  yield takeEvery(ActionType.SET_USER, showSensitizationPopupSaga)
-  yield takeEvery(ActionType.HIDE_SENSITIZATION_POPUP, hideSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.PHONE_LOOK_UP, phoneLookUpSaga)
+  yield takeEvery(AuthUserActionType.CREATE_ACCOUNT, createAccountSaga)
+  yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD, loginWithPasswordSaga)
+  yield takeEvery(AuthUserActionType.LOGIN_WITH_SMS_CODE, loginWithSMSCodeSaga)
+  yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.CREATE_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.CREATE_PASSWORD, createPasswordSaga)
+  yield takeEvery(AuthUserActionType.RESET_PASSWORD, resetPasswordSaga)
+  yield takeEvery(AuthUserActionType.SET_USER, showSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.HIDE_SENSITIZATION_POPUP, hideSensitizationPopupSaga)
 }
 

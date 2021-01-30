@@ -1,9 +1,10 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { MapActions } from '../containers/MapContainer/MapActions'
 import { useActionId } from '../containers/MapContainer/useActionId'
-import { MapContainer } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
+import { texts } from 'src/i18n'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -19,9 +20,9 @@ const Actions: StatelessPage<Props> = () => {
   return (
     <>
       <Head>
-        <title>Actions</title>
+        <title>{texts.nav.pageTitles.actions} - {texts.nav.pageTitles.main}</title>
       </Head>
-      <MapContainer />
+      <MapActions />
     </>
   )
 }

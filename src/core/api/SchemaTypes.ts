@@ -37,24 +37,73 @@ export type Location = {
 export type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
 
 export type POICategory =
+  | { id: 0; name: 'Autre'; }
   | { id: 1; name: 'Se nourrir'; }
   | { id: 2; name: 'Se loger'; }
   | { id: 3; name: 'Se soigner'; }
-  | { id: 4; name: 'Se rafraîchir'; }
   | { id: 5; name: 'S\'orienter'; }
-  | { id: 6; name: 'S\'occuper de soi'; }
   | { id: 7; name: 'Se réinsérer'; }
+  | { id: 8; name: 'Partenaires'; }
+  | { id: 40; name: 'Toilettes'; }
+  | { id: 41; name: 'Fontaines'; }
+  | { id: 42; name: 'Douches'; }
+  | { id: 43; name: 'Laveries'; }
+  | { id: 6; name: 'Bien-être & activités'; }
+  | { id: 61; name: 'Vêtements & matériels'; }
+  | { id: 63; name: 'Bagageries'; }
+  | { id: 62; name: 'Boîtes à dons & lire'; }
+
+export type POISource = 'entourage' | 'soliguide'
+
+export interface POIItem {
+  uuid: string;
+  name: string;
+  longitude: number;
+  latitude: number;
+  address: string;
+  phone: string | null;
+  categoryId: POICategory['id'];
+  partnerId: string | null;
+}
+
+export interface POIDetailsItem {
+  uuid: string;
+  name: string;
+  longitude: number;
+  latitude: number;
+  address: string;
+  phone: string | null;
+  description: string | null;
+  categoryIds: POICategory['id'][];
+  partnerId: string | null;
+  website: string | null;
+  email: string | null;
+  hours: string | null;
+  languages: string | null;
+  audience: string | null;
+  source: POISource;
+  sourceUrl: string | null;
+}
 
 /**
  * Values splited by coma: 1,2,3,4,5,6,7
  *
- * 1 = Se nourrir
- * 2 = Se loger
- * 3 = Se soigner
- * 4 = Se rafraîchir
- * 5 = S'orienter
- * 6 = S'occuper de soi
- * 7 = Se réinsérer
+ * 0 = 'Autre'
+ * 1 = 'Se nourrir'
+ * 2 = 'Se loger'
+ * 3 = 'Se soigner'
+ * 5 = 'S'orienter'
+ * 7 = 'Se réinsérer'
+ * 8 = 'Partenaires'
+ * 40 = 'Toilettes'
+ * 41 = 'Fontaines'
+ * 42 = 'Douches'
+ * 43 = 'Laveries'
+ * 6 = 'Bien-être & activités'
+ * 61 = 'Vêtements & matériels'
+ * 63 = 'Bagageries'
+ * 62 = 'Boîtes à dons & lire'
+ *
  */
 export type POICategoriesIds = string
 

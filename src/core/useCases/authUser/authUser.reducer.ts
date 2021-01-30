@@ -1,5 +1,5 @@
 import { UserStats } from 'src/core/api'
-import { Action, ActionType } from './authUser.actions'
+import { AuthUserAction, AuthUserActionType } from './authUser.actions'
 import {
   PhoneValidationsError,
   PasswordValidationsError,
@@ -57,23 +57,23 @@ export const authuserDefaultState: AuthUserState = {
   showSensitizationPopup: false,
 }
 
-export function authUserReducer(state: AuthUserState = authuserDefaultState, action: Action): AuthUserState {
+export function authUserReducer(state: AuthUserState = authuserDefaultState, action: AuthUserAction): AuthUserState {
   switch (action.type) {
-    case ActionType.PHONE_LOOK_UP: {
+    case AuthUserActionType.PHONE_LOOK_UP: {
       return {
         ...state,
         isLogging: true,
       }
     }
 
-    case ActionType.CREATE_ACCOUNT: {
+    case AuthUserActionType.CREATE_ACCOUNT: {
       return {
         ...state,
         isLogging: true,
       }
     }
 
-    case ActionType.CREATE_ACCOUNT_SUCCEEDED: {
+    case AuthUserActionType.CREATE_ACCOUNT_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
@@ -81,7 +81,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED: {
+    case AuthUserActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.CREATE_PASSWORD,
@@ -89,7 +89,14 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.ASK_CREATE_ACCOUNT: {
+    case AuthUserActionType.CREATE_PASSWORD_SUCCEEDED: {
+      return {
+        ...state,
+        step: null,
+      }
+    }
+
+    case AuthUserActionType.ASK_CREATE_ACCOUNT: {
       return {
         ...state,
         step: LoginSteps.CREATE_ACCOUNT,
@@ -97,7 +104,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.ASK_SMS_CODE: {
+    case AuthUserActionType.ASK_SMS_CODE: {
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
@@ -105,7 +112,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.ASK_PASSWORD: {
+    case AuthUserActionType.ASK_PASSWORD: {
       return {
         ...state,
         step: LoginSteps.PASSWORD,
@@ -113,28 +120,28 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.RESET_PASSWORD_SUCCEEDED: {
+    case AuthUserActionType.RESET_PASSWORD_SUCCEEDED: {
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
       }
     }
 
-    case ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED: {
+    case AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED: {
       return {
         ...state,
         user: action.payload.user,
       }
     }
 
-    case ActionType.SET_ERRORS: {
+    case AuthUserActionType.SET_ERRORS: {
       return {
         ...state,
         errors: action.payload,
       }
     }
 
-    case ActionType.RESET_FORM: {
+    case AuthUserActionType.RESET_FORM: {
       return {
         ...state,
         step: LoginSteps.PHONE,
@@ -143,7 +150,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.SET_USER: {
+    case AuthUserActionType.SET_USER: {
       return {
         ...state,
         user: action.payload,
@@ -151,7 +158,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.SHOW_SENSITIZATION_POPUP: {
+    case AuthUserActionType.SHOW_SENSITIZATION_POPUP: {
       return {
         ...state,
         showSensitizationPopup: action.payload,
@@ -159,7 +166,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.HIDE_SENSITIZATION_POPUP: {
+    case AuthUserActionType.HIDE_SENSITIZATION_POPUP: {
       return {
         ...state,
         showSensitizationPopup: false,

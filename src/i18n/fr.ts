@@ -17,6 +17,12 @@ export const texts = {
     INCORRECT_VALUE: 'Valeur incorrecte',
   },
   nav: {
+    pageTitles: {
+      main: 'Entourage, le réseau solidaire',
+      actions: 'Actions solidaires',
+      pois: 'Lieux solidaires',
+      messages: 'Messages',
+    },
     notificationBar: {
       welcome: 'Bienvenue sur la nouvelle version de l\'application Entourage !',
       feedback: 'Donnez-nous votre avis !',
@@ -30,6 +36,7 @@ export const texts = {
 
     },
     actions: 'Actions',
+    pois: 'Lieux solidaires',
     messages: 'Messages',
     takeAction: 'Passer à l\'action',
     profile: 'Mon Profil',
@@ -53,6 +60,13 @@ export const texts = {
         report: 'Signaler',
         reopen: 'Rouvrir',
         hasBeenClosed: 'Cette action solidaire a été clôturée.',
+      },
+      pois: {
+        directions: 'Itinéraire',
+        hours: 'Horaires',
+        audience: 'Public',
+        languages: 'Langues',
+        contact: 'Contact',
       },
     },
     navActions: {

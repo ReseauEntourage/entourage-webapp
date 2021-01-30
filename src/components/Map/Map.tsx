@@ -1,9 +1,9 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { positionActions, selectPosition } from '../../core/useCases/position'
 import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
-import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
@@ -17,17 +17,17 @@ interface Props {
 
 export function Map(props: Props) {
   const { children } = props
-  const filters = useSelector(selectFeedFilters)
+  const position = useSelector(selectPosition)
   const dispatch = useDispatch()
   const googleMapIsLoaded = useLoadGoogleMapApi()
 
   function onChange(value: ChangeEventValue) {
-    const filtersHasChanged = filters.center.lat !== value.center.lat
-      || filters.center.lng !== value.center.lng
-      || filters.zoom !== value.zoom
+    const positionHasChanged = position.center.lat !== value.center.lat
+      || position.center.lng !== value.center.lng
+      || position.zoom !== value.zoom
 
-    if (filtersHasChanged) {
-      dispatch(feedActions.setFilters({
+    if (positionHasChanged) {
+      dispatch(positionActions.setPosition({
         center: value.center,
         zoom: value.zoom,
       }))
@@ -40,7 +40,7 @@ export function Map(props: Props) {
 
   return (
     <GoogleMapReact
-      center={filters.center}
+      center={position.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
       onChange={(nextValue) => onChange(nextValue)}
