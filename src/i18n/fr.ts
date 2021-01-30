@@ -141,5 +141,25 @@ export const texts = {
       success: "C'est un succès",
       fail: "Ça n'a pas marché",
     },
+    modalLogin: {
+      title: 'Connexion / Inscription',
+      askAccountCreation: "Vous n'avez pas encore de compte. Voulez-vous en créer un avec ce numero ?",
+      buttonLabels: {
+        createAccount: 'Créer un compte',
+        login: 'Connexion',
+        validateNumber: 'Valider le numéro',
+        validateSMSCode: 'Valider le code SMS',
+        validatePassword: 'Valider le mot de passe',
+      },
+      fieldLabels: {
+        phone: 'Téléphone',
+        enterYourPassword: 'Entre votre mot de passe (au moins 8 caractères)',
+        SMSCode: "Entrez le code d'activation reçu",
+        passwordForgotten: 'Mot de passe oublié ?',
+        resendActivationCode: "Renvoyer le code d'activation",
+        chooseYourPassword: 'Choisissez votre mot de passe',
+        confirmYourPassword: 'Confirmez votre mot de passe',
+      },
+    },
   },
 }
