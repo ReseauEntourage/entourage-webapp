@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import * as NavStyles from './Nav.styles'
 import * as S from './NavItem.styles'
 
 interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
@@ -10,14 +11,16 @@ interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 export function NavItem(props: NavItemProps) {
-  const { label, icon, href, ...restProps } = props
+  const { label, icon, href, isActive, ...restProps } = props
 
   const content = (
     <S.Container {...restProps}>
-      {icon}
-      <S.Label>
-        {label}
-      </S.Label>
+      <NavStyles.ActiveContainer isActive={isActive}>
+        {icon}
+        <S.Label>
+          {label}
+        </S.Label>
+      </NavStyles.ActiveContainer>
     </S.Container>
   )
 

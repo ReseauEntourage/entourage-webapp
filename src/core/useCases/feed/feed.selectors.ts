@@ -13,10 +13,6 @@ export function selectFeed(state: AppState) {
   return state.feed
 }
 
-export function selectFeedFilters(state: AppState) {
-  return state.feed.filters
-}
-
 export function selectFeedIsFetching(state: AppState) {
   return state.feed.fetching
 }

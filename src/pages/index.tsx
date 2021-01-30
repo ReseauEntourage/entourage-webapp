@@ -1,5 +1,6 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
+import { texts } from '../i18n'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -13,7 +14,7 @@ const Home: StatelessPage<Props> = () => {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>{texts.nav.pageTitles.main}</title>
       </Head>
     </>
   )

@@ -15,6 +15,7 @@ import { bootstrapStore } from 'src/core/boostrapStore'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
+import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
 import { isSSR, initFacebookApp } from 'src/utils/misc'
 
@@ -99,7 +100,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     return (
       <>
         <Head>
-          <title>Home</title>
+          <title>{texts.nav.pageTitles.main}</title>
           <link href="/favicon.ico" rel="icon" />
           <base href="/" />
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />

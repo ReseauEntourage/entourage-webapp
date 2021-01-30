@@ -1,10 +1,14 @@
 import { StateFromReducersMapObject } from 'redux'
 import { authUserReducer } from './authUser'
 import { feedReducer } from './feed'
+import { poisReducer } from './pois'
+import { positionReducer } from './position'
 
 export const reducers = {
   authUser: authUserReducer,
   feed: feedReducer,
+  pois: poisReducer,
+  position: positionReducer,
 }
 
 export type AppState = StateFromReducersMapObject<typeof reducers>

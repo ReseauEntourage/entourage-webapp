@@ -1,5 +1,5 @@
 import { configureStore } from '../../configureStore'
-import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppDependencies } from '../Dependencies'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
@@ -35,7 +35,7 @@ function createSilentAuthUserTokenStorage() {
 
 function configureStoreWithAuthUser(
   params: {
-    dependencies?: PatialAppDependencies;
+    dependencies?: PartialAppDependencies;
     initialAppState?: PartialAppState;
   },
 ) {

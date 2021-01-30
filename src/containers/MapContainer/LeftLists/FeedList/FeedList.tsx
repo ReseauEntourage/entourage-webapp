@@ -1,4 +1,3 @@
-import Box from '@material-ui/core/Box'
 import {
   LocalMall,
   Event,
@@ -14,16 +13,14 @@ import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { useActionId } from '../useActionId'
-import { useNextFeed } from '../useNextFeed'
+import { useActionId } from '../../useActionId'
+import { useNextFeed } from '../../useNextFeed'
+import * as S from '../LeftList.styles'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { useOnScroll } from 'src/utils/hooks'
-import * as S from './FeedList.styles'
-import { SearchCity } from './SearchCity'
 
 interface FeedItemIconProps {
   feedItem: FeedItemType;
@@ -79,7 +76,7 @@ function FeedItemIcon(props: FeedItemIconProps) {
 export function FeedList() {
   const actionId = useActionId()
   const dispatch = useDispatch()
-  const { feeds, isLoading } = useNextFeed()
+  const { feeds } = useNextFeed()
 
   const { onScroll } = useOnScroll({
     onScrollBottomEnd: () => {
@@ -102,7 +99,7 @@ export function FeedList() {
     }
 
     return (
-      <li key={feedItem.uuid}>
+      <S.ListItem key={feedItem.uuid}>
         <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
           <a style={{ textDecoration: 'none' }}>
             <FeedItem
@@ -115,28 +112,17 @@ export function FeedList() {
             />
           </a>
         </Link>
-      </li>
+      </S.ListItem>
     )
   })
 
   return (
-    <S.Container>
-      <S.SearchContainer>
-        <SearchCity />
-      </S.SearchContainer>
-      <S.FeedContainer
-        boxShadow={4}
-        width={350}
-        zIndex={2}
-      >
-        <S.Scroll
-          onScroll={onScroll}
-        >
-          <ul>{feedsListContent}</ul>
-        </S.Scroll>
-        {isLoading && <OverlayLoader />}
-      </S.FeedContainer>
-      <Box />
-    </S.Container>
+    <S.Scroll
+      onScroll={onScroll}
+    >
+      <ul>
+        {feedsListContent}
+      </ul>
+    </S.Scroll>
   )
 }
