@@ -47,6 +47,85 @@ describe('Feed', () => {
   })
 
   it(`
+    Given the feed saga has not been initialized
+    When user set position filters
+    Then items should not be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given the feed saga has initialized
+    When user set position filters
+    Then items should be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given the feed saga has been cancelled
+    When user set position filters
+    Then items should not be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(publicActions.init())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+
+    store.dispatch(publicActions.cancel())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
     Given user has not any items
     When user set position filters
     Then items should be fetching during request
@@ -60,6 +139,7 @@ describe('Feed', () => {
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
+
     store.dispatch(publicActions.init())
     store.dispatch(positionActions.setPosition(nextPosition))
 
@@ -91,6 +171,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.retrieveFeed())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()

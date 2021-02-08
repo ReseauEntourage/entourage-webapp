@@ -84,7 +84,7 @@ describe('Feed Item', () => {
 
   it(`
     Given feed has cached items and selected item to null
-    When user select and item
+    When user selects an item
     Then should selected item be defined after to set item uuid
      And selected POI should be null
   `, () => {
