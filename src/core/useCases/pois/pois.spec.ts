@@ -42,6 +42,85 @@ describe('POIs', () => {
   })
 
   it(`
+    Given the POIs saga has not been initialized
+    When user set position filters
+    Then POIs should not be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given the POIs saga has initialized
+    When user set position filters
+    Then POIs should be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given the POIs saga has been cancelled
+    When user set position filters
+    Then POIs should not be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+    const nextPosition: PositionState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(publicActions.init())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+    store.dispatch(publicActions.cancel())
+
+    store.dispatch(positionActions.setPosition(nextPosition))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
     Given user has not any POIs
     When user set position filters
     Then POIs should be fetching during request
