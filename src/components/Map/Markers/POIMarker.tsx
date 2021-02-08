@@ -87,6 +87,7 @@ export function POIIcon({ poiCategory, size = 22, isActive = false, tooltip }: P
     <Tooltip title={tooltip || label}>
       <div
         style={{
+          position: 'relative',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -96,6 +97,7 @@ export function POIIcon({ poiCategory, size = 22, isActive = false, tooltip }: P
           backgroundColor: color,
           border: 'solid 1px #fff',
           cursor: 'pointer',
+          zIndex: isActive ? 2 : 1,
         }}
       >
         <Icon
