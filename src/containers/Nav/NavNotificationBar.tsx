@@ -13,10 +13,18 @@ const throwMockError = () => {
   }
 }
 
-export const FeedBackButton = () => {
+interface FeedBackButtonProps {
+  closeDrawer?(): void;
+}
+
+export const FeedBackButton = (props: FeedBackButtonProps) => {
+  const { closeDrawer } = props
   return (
     <Button
-      onClick={throwMockError}
+      onClick={() => {
+        if (closeDrawer) closeDrawer()
+        throwMockError()
+      }}
       size="small"
     >
       {texts.nav.notificationBar.feedback}

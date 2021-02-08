@@ -111,7 +111,7 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
       defaultValue={defaultValue}
       disableOpenOnFocus={true}
       filterOptions={(x) => x}
-      freeSolo={true}
+      freeSolo={false}
       getOptionLabel={(option) => (typeof option === 'string' ? option : option.description)}
       id="google-map-demo"
       includeInputInList={true}

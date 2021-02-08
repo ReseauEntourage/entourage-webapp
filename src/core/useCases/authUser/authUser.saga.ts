@@ -36,7 +36,7 @@ function* phoneLookUpSaga(action: Actions['phoneLookUp']) {
 
   const phoneLookuResponse: CallReturnType<typeof phoneLookUp> = yield call(phoneLookUp, { phone })
   if (phoneLookuResponse === PhoneLookUpResponse.PHONE_NOT_FOUND) {
-    yield put(actions.createAccount(phone))
+    yield put(actions.askCreateAccount())
   } else if (phoneLookuResponse === PhoneLookUpResponse.SMS_CODE_NEEDED) {
     yield put(actions.askSMSCode())
   } else if (phoneLookuResponse === PhoneLookUpResponse.PASSWORD_NEEDED) {

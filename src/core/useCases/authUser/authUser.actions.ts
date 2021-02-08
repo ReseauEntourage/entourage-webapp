@@ -5,6 +5,7 @@ export const ActionType = {
   PHONE_LOOK_UP: 'AUTH/PHONE_LOOK_UP',
   CREATE_ACCOUNT: 'AUTH/CREATE_ACCOUNT',
   CREATE_ACCOUNT_SUCCEEDED: 'AUTH/CREATE_ACCOUNT_SUCCEEDED',
+  ASK_CREATE_ACCOUNT: 'AUTH/ASK_CREATE_ACCOUNT',
   ASK_SMS_CODE: 'AUTH/ASK_SMS_CODE',
   ASK_PASSWORD: 'AUTH/ASK_PASSWORD',
   LOGIN_WITH_PASSWORD: 'AUTH/LOGIN_WITH_PASSWORD',
@@ -43,6 +44,12 @@ function createAccount(phone: string) {
 function createAccountSuccess() {
   return {
     type: ActionType.CREATE_ACCOUNT_SUCCEEDED,
+  }
+}
+
+function askCreateAccount() {
+  return {
+    type: ActionType.ASK_CREATE_ACCOUNT,
   }
 }
 
@@ -148,6 +155,7 @@ export const publicActions = {
 }
 
 const privateActions = {
+  askCreateAccount,
   createAccountSuccess,
   loginWithSMSCodeSuccess,
   createPasswordSuccess,
