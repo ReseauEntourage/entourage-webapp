@@ -14,6 +14,8 @@ export const constants = {
     ZOOM: 13,
   },
   POI_MAX_DISTANCE: 5,
+  POI_MIN_DISTANCE: 1,
+  POI_DISTANCE_BREAKPOINT: 15,
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
   ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
