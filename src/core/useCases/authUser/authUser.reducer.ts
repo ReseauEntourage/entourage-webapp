@@ -1,3 +1,4 @@
+import { UserStats } from 'src/core/api'
 import { Action, ActionType } from './authUser.actions'
 import {
   PhoneValidationsError,
@@ -34,7 +35,10 @@ export interface AuthUserState {
       name: string;
     };
     token: string;
+    stats: UserStats;
+    firstSignIn: boolean;
   };
+  showSensitizationPopup: boolean;
   errors: {
     phone?: PhoneValidationsError;
     password?: PasswordValidationsError;
@@ -50,6 +54,7 @@ export const authuserDefaultState: AuthUserState = {
   step: 'PHONE',
   user: null,
   errors: {},
+  showSensitizationPopup: false,
 }
 
 export function authUserReducer(state: AuthUserState = authuserDefaultState, action: Action): AuthUserState {
@@ -150,6 +155,20 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         user: action.payload,
+      }
+    }
+
+    case ActionType.SHOW_SENSITIZATION_POPUP: {
+      return {
+        ...state,
+        showSensitizationPopup: action.payload,
+      }
+    }
+
+    case ActionType.HIDE_SENSITIZATION_POPUP: {
+      return {
+        ...state,
+        showSensitizationPopup: false,
       }
     }
 

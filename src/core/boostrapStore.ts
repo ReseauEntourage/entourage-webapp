@@ -1,7 +1,8 @@
 import { StateFromReducersMapObject } from 'redux'
 import { HTTPAuthUserGateway } from 'src/adapters/gateways/HTTPAuthUserGateway'
 import { HTTPFeedGateway } from 'src/adapters/gateways/HTTPFeedGateway'
-import { CookiesAuthUserTokenStorage } from 'src/adapters/tokenStorage/CookiesAuthUserTokenStorage'
+import { CookiesAuthUserTokenStorage } from 'src/adapters/storage/CookiesAuthUserTokenStorage'
+import { LocalAuthUserSensitizationStorage } from 'src/adapters/storage/LocalAuthUserSensitizationStorage'
 import { configureStore } from './configureStore'
 import { AppDependencies } from './useCases/Dependencies'
 import { authUserSaga } from './useCases/authUser'
@@ -18,6 +19,7 @@ export function bootstrapStore() {
     authUserGateway: new HTTPAuthUserGateway(),
     feedGateway: new HTTPFeedGateway(),
     authUserTokenStorage: new CookiesAuthUserTokenStorage(),
+    authUserSensitizationStorage: new LocalAuthUserSensitizationStorage(),
   }
 
   return configureStore({

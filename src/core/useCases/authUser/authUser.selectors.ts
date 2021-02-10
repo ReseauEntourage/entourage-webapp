@@ -27,3 +27,8 @@ export function selectErrors(state: AppState) {
 export function selectLoginStepIsCompleted(state: AppState) {
   return !state.authUser.step
 }
+
+export function selectShowSensitizationPopup(state: AppState) {
+  return state.authUser.showSensitizationPopup
+}
+

@@ -3,11 +3,12 @@ import { PatialAppDependencies } from '../Dependencies'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
+import { TestAuthUserSensitizationStorage } from './TestAuthUserSensitizationStorage'
 import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
 import { createUser } from './__mocks__'
 import { publicActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
-import { LoginSteps } from './authUser.reducer'
+import { LoginSteps, authuserDefaultState } from './authUser.reducer'
 import { authUserSaga } from './authUser.saga'
 import {
   selectIsLogging,
@@ -16,6 +17,7 @@ import {
   selectUser,
   selectErrors,
   selectLoginStepIsCompleted,
+  selectShowSensitizationPopup,
 } from './authUser.selectors'
 import {
   PhoneValidationsError,
@@ -55,9 +57,10 @@ function configureStoreWithAuthUser(
   })
 }
 
-function configureStoreWithUserAccount() {
+function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: boolean) {
   const authUserGateway = new TestAuthUserGateway()
-  const user = createUser()
+  const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+  const user = createUser(isFirstSignIn, isActiveUser)
 
   const deferredValues = {
     phoneLookup: PhoneLookUpResponse.PASSWORD_NEEDED,
@@ -78,11 +81,12 @@ function configureStoreWithUserAccount() {
     authUserGateway.loginWithSMSCode.resolveDeferredValue()
   }
 
-  const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+  const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
 
   return {
     store,
     authUserGateway,
+    authUserSensitizationStorage,
     resolveAllDeferredValue,
     user,
   }
@@ -258,6 +262,7 @@ describe('Auth User', () => {
         errors: {},
         isLogging: false,
         user: createUser(),
+        showSensitizationPopup: false,
       },
     }
 
@@ -342,9 +347,12 @@ describe('Auth User', () => {
       And user data should be equal to server response
       And there should not be a next step
   `, async () => {
-    const { store, resolveAllDeferredValue, user } = configureStoreWithUserAccount()
+    const { store, resolveAllDeferredValue, user, authUserSensitizationStorage } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const password = 'abcdefghi'
+
+    authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+    authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
     store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
@@ -369,9 +377,17 @@ describe('Auth User', () => {
       And user data should be equal to server response
       And next step should be password creation
   `, async () => {
-    const { store, resolveAllDeferredValue, user, authUserGateway } = configureStoreWithUserAccount()
+    const {
+      store,
+      resolveAllDeferredValue,
+      user, authUserGateway,
+      authUserSensitizationStorage,
+    } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const SMSCode = 'abc'
+
+    authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+    authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
     store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
@@ -691,6 +707,7 @@ describe('Auth User', () => {
           errors: { phone: PhoneValidationsError.REQUIRED },
           isLogging: false,
           user: createUser(),
+          showSensitizationPopup: false,
         },
       }
       const store = configureStoreWithAuthUser({
@@ -717,6 +734,7 @@ describe('Auth User', () => {
           errors: { phone: PhoneValidationsError.REQUIRED },
           isLogging: false,
           user: createUser(),
+          showSensitizationPopup: false,
         },
       }
 
@@ -736,6 +754,7 @@ describe('Auth User', () => {
           errors: { phone: PhoneValidationsError.REQUIRED },
           isLogging: false,
           user: createUser(),
+          showSensitizationPopup: false,
         },
       }
 
@@ -753,6 +772,7 @@ describe('Auth User', () => {
       const user = createUser()
 
       const authUserTokenStorage = new TestAuthUserTokenStorage()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
       const authUserGateway = new TestAuthUserGateway()
       authUserTokenStorage.setToken.mockReturnValueOnce()
       authUserGateway.loginWithPassword.mockDeferredValueOnce(user)
@@ -761,11 +781,15 @@ describe('Auth User', () => {
         dependencies: {
           authUserGateway,
           authUserTokenStorage,
+          authUserSensitizationStorage,
         },
       })
 
       const phone = '0600000000'
       const password = 'xxx'
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
       store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
@@ -780,6 +804,7 @@ describe('Auth User', () => {
       const user = createUser()
 
       const authUserTokenStorage = new TestAuthUserTokenStorage()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
       const authUserGateway = new TestAuthUserGateway()
       authUserTokenStorage.setToken.mockReturnValueOnce()
       authUserGateway.loginWithSMSCode.mockDeferredValueOnce(user)
@@ -788,12 +813,15 @@ describe('Auth User', () => {
         dependencies: {
           authUserGateway,
           authUserTokenStorage,
+          authUserSensitizationStorage,
         },
       })
 
       const phone = '0600000000'
       const SMSCode = 'xxx'
 
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
       store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
       authUserGateway.loginWithSMSCode.resolveDeferredValue()
@@ -808,15 +836,270 @@ describe('Auth User', () => {
   })
 
   describe('Giver user is not set', () => {
-    const authUserGateway = new TestAuthUserGateway()
-    const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
-    const user = createUser()
+    it('should set user', async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const user = createUser()
 
-    store.dispatch(publicActions.setUser(user))
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
-    it('should set user', () => {
+      store.dispatch(publicActions.setUser(user))
+      await store.waitForActionEnd()
       expect(selectUser(store.getState())).toBeTruthy()
       expect(selectUser(store.getState())).toEqual(user)
+    })
+  })
+
+  // --------------------------------------------------
+
+  describe('Sensitization workshop popup for non active users', () => {
+    it(`
+      Given initial state
+      When no action is triggered
+      Then sensitization workshop popup should not appear
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway },
+      })
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(false)
+    })
+
+    it(`
+      Given initial state
+        And user has successfully created his account
+      When user has successfully logged in using the SMS Code
+      Then sensitization workshop popup should appear
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const user = createUser(true, false)
+
+      const deferredValues = {
+        createAccount: null,
+        loginWithSMSCode: user,
+        definePassword: null,
+      }
+
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway, authUserSensitizationStorage },
+      })
+      const phone = '0700000000'
+      const SMSCode = 'XXXX'
+
+      authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+
+      store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+
+      authUserGateway.loginWithSMSCode.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(true)
+    })
+
+    it(`
+      Given initial state
+      When the user has successfully logged in
+        And the user has logged in for the first time
+      Then the sensitization workshop popup should appear
+    `, async () => {
+      const {
+        store,
+        resolveAllDeferredValue,
+        authUserSensitizationStorage,
+      } = configureStoreWithUserAccount(true, false)
+      const phone = '0700000000'
+      const password = 'abcdefghi'
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      resolveAllDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(true)
+    })
+
+    it(`
+      Given initial state
+      When the user has successfully logged in
+        And the user has already logged in before
+        And the user is not considered an active user
+        And the user has not already seen the sensitization popup
+      The sensitization workshop popup should appear
+    `, async () => {
+      const {
+        store,
+        resolveAllDeferredValue,
+        authUserSensitizationStorage,
+      } = configureStoreWithUserAccount(false, false)
+      const phone = '0700000000'
+      const password = 'abcdefghi'
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+
+      resolveAllDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(true)
+    })
+
+    it(`
+      Given initial state
+      When user is automatically logged in
+        And the user is not considered an active user
+        And the user has not already seen the sensitization popup
+      Then sensitization workshop popup should appear
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const user = createUser(false, false)
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+
+      store.dispatch(publicActions.setUser(user))
+
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(true)
+    })
+
+    it(`
+      Given initial state
+      When the user has successfully logged in
+        And the user has already logged in before
+        And the user is not considered an active user
+        And the user has already seen the sensitization popup
+      The sensitization workshop popup should not appear
+    `, async () => {
+      const {
+        store,
+        resolveAllDeferredValue,
+        authUserSensitizationStorage,
+      } = configureStoreWithUserAccount(false, false)
+      const phone = '0700000000'
+      const password = 'abcdefghi'
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(true)
+
+      resolveAllDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(false)
+    })
+
+    it(`
+      Given initial state
+      When user is automatically logged in
+        And the user is not considered an active user
+        And the user has already seen the sensitization popup
+      Then sensitization workshop popup should not appear
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const user = createUser(false, false)
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(true)
+
+      store.dispatch(publicActions.setUser(user))
+
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(false)
+    })
+
+    it(`
+      Given initial state
+      When the user has successfully logged in
+        And the user is considered an active user
+      The sensitization workshop popup should not appear
+        And the local storage value hasSeenPopup for this specific user should be set to true
+    `, async () => {
+      const {
+        store,
+        resolveAllDeferredValue,
+        authUserSensitizationStorage,
+        user,
+      } = configureStoreWithUserAccount(false, true)
+      const phone = '0700000000'
+      const password = 'abcdefghi'
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      resolveAllDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(authUserSensitizationStorage.setHasSeenPopup).toHaveBeenNthCalledWith(1, user.id)
+    })
+
+    it(`
+      Given initial state
+      When user is automatically logged in
+        And the user is considered an active user
+      Then sensitization workshop popup should not appear
+        And the local storage value hasSeenPopup for this specific user should be set to true
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const user = createUser(false, true)
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      store.dispatch(publicActions.setUser(user))
+
+      await store.waitForActionEnd()
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(false)
+      expect(authUserSensitizationStorage.setHasSeenPopup).toHaveBeenNthCalledWith(1, user.id)
+    })
+
+    it(`
+      Given initial state
+        And the user is logged in
+        And sensitization workshop popup has appeared
+      When the user has interacted with it
+      Then the popup should hide itself
+        And the local storage value hasSeenPopup for this specific user should be set to true
+    `, async () => {
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+
+      const user = createUser(false, false)
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...authuserDefaultState,
+            user,
+            showSensitizationPopup: true,
+          },
+        },
+        dependencies: { authUserSensitizationStorage },
+
+      })
+
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      store.dispatch(publicActions.hideSensitizationPopup())
+      await store.waitForActionEnd()
+
+      expect(authUserSensitizationStorage.setHasSeenPopup).toHaveBeenNthCalledWith(1, user.id)
+
+      expect(selectShowSensitizationPopup(store.getState())).toBe(false)
     })
   })
 })

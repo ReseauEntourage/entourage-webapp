@@ -1,10 +1,12 @@
-import { call, put, getContext } from 'redux-saga/effects'
+import { call, put, getContext, select } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
+import { IAuthUserSensitizationStorage } from './IAuthUserSensitizationStorage'
 import { IAuthUserTokenStorage } from './IAuthUserTokenStorage'
 import { ActionType, actions, Actions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
+import { selectUser } from './authUser.selectors'
 import {
   validatePhone,
   validatePassword,
@@ -18,6 +20,34 @@ import {
 export interface Dependencies {
   authUserGateway: IAuthUserGateway;
   authUserTokenStorage: IAuthUserTokenStorage;
+  authUserSensitizationStorage: IAuthUserSensitizationStorage;
+}
+
+function* showSensitizationPopupSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { authUserSensitizationStorage } = dependencies
+  const user = yield select(selectUser)
+
+  const hasSeenSensitizationPopup = authUserSensitizationStorage.getHasSeenPopup(user.id)
+
+  const { entourageCount, actionsCount, eventsCount } = user.stats
+
+  const userIsActive = entourageCount + actionsCount + eventsCount > 0
+
+  if (userIsActive) {
+    authUserSensitizationStorage.setHasSeenPopup(user.id)
+  }
+
+  const showSensitizationPopup = (!userIsActive && !hasSeenSensitizationPopup) || user.firstSignIn
+
+  yield put(actions.setShowSensitizationPopup(showSensitizationPopup))
+}
+
+function* hideSensitizationPopupSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { authUserSensitizationStorage } = dependencies
+  const user = yield select(selectUser)
+  authUserSensitizationStorage.setHasSeenPopup(user.id)
 }
 
 function* phoneLookUpSaga(action: Actions['phoneLookUp']) {
@@ -173,7 +203,11 @@ export function* authUserSaga() {
   yield takeEvery(ActionType.CREATE_ACCOUNT, createAccountSaga)
   yield takeEvery(ActionType.LOGIN_WITH_PASSWORD, loginWithPasswordSaga)
   yield takeEvery(ActionType.LOGIN_WITH_SMS_CODE, loginWithSMSCodeSaga)
+  yield takeEvery(ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
+  yield takeEvery(ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED, showSensitizationPopupSaga)
   yield takeEvery(ActionType.CREATE_PASSWORD, createPasswordSaga)
   yield takeEvery(ActionType.RESET_PASSWORD, resetPasswordSaga)
+  yield takeEvery(ActionType.SET_USER, showSensitizationPopupSaga)
+  yield takeEvery(ActionType.HIDE_SENSITIZATION_POPUP, hideSensitizationPopupSaga)
 }
 
