@@ -88,6 +88,20 @@ export const texts = {
         content: 'La position précise des actions ne sera pas diffusée: elle est remplacée par les zones orange sur la carte',
       },
     },
+    modalSensitization: {
+      title: 'Bienvenue sur le réseau Entourage !',
+      quote: {
+        content: 'Avant, j’avais peur, j’étais mal à l’aise. Aujourd’hui j’ai changé mon regard, j’ai arrêté d’esquiver. Je parle aux personnes SDF comme à n’importe quel voisin, ça fait du bien',
+        author: 'Théo',
+      },
+      content: 'Participez à un atelier de sensibilisation en ligne et apprenez comment aider les personnes en situation de précarité. Découvrez des moyens concrets d\'agir et des conseils pour entrer en relation avec les personnes que vous croisez !',
+      participate: 'Je m\'inscris',
+      dismiss: 'Non merci',
+      send: 'Envoyer',
+      close: 'Fermer',
+      error: 'Veuillez renseigner une raison',
+      reason: 'Je ne suis pas intéressé car ...',
+    },
     modalEditAction: {
       titleCreate: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
       titleUpdate: 'Mise à jour de votre action',

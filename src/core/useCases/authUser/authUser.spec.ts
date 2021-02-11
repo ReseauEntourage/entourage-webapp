@@ -254,6 +254,7 @@ describe('Auth User', () => {
     Then password should be created
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
+    const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
     authUserGateway.definePassword.mockDeferredValueOnce(null)
 
     const initialAppState = {
@@ -269,12 +270,16 @@ describe('Auth User', () => {
     const store = configureStoreWithAuthUser({
       dependencies: {
         authUserGateway,
+        authUserSensitizationStorage,
       },
       initialAppState,
     })
 
     const password = 'abcdefghi'
     const passwordConfirmation = 'abcdefghi'
+
+    authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+    authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
     store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
 
@@ -380,14 +385,11 @@ describe('Auth User', () => {
     const {
       store,
       resolveAllDeferredValue,
-      user, authUserGateway,
-      authUserSensitizationStorage,
+      user,
+      authUserGateway,
     } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const SMSCode = 'abc'
-
-    authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
-    authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
     store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
 
@@ -872,32 +874,39 @@ describe('Auth User', () => {
     it(`
       Given initial state
         And user has successfully created his account
-      When user has successfully logged in using the SMS Code
+      When user has successfully created his password
       Then sensitization workshop popup should appear
     `, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const user = createUser(true, false)
+      authUserGateway.definePassword.mockDeferredValueOnce(null)
 
-      const deferredValues = {
-        createAccount: null,
-        loginWithSMSCode: user,
-        definePassword: null,
+      const initialAppState = {
+        authUser: {
+          step: LoginSteps.CREATE_PASSWORD,
+          errors: {},
+          isLogging: false,
+          user: createUser(true, false),
+          showSensitizationPopup: false,
+        },
       }
 
       const store = configureStoreWithAuthUser({
-        dependencies: { authUserGateway, authUserSensitizationStorage },
+        dependencies: {
+          authUserGateway,
+          authUserSensitizationStorage,
+        },
+        initialAppState,
       })
-      const phone = '0700000000'
-      const SMSCode = 'XXXX'
 
-      authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+      const password = 'abcdefghi'
+      const passwordConfirmation = 'abcdefghi'
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
 
-      store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+      store.dispatch(publicActions.createPassword({ password, passwordConfirmation }))
 
-      authUserGateway.loginWithSMSCode.resolveDeferredValue()
+      authUserGateway.definePassword.resolveDeferredValue()
       await store.waitForActionEnd()
 
       expect(selectShowSensitizationPopup(store.getState())).toBe(true)

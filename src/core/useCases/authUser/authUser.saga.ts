@@ -28,19 +28,23 @@ function* showSensitizationPopupSaga() {
   const { authUserSensitizationStorage } = dependencies
   const user = yield select(selectUser)
 
-  const hasSeenSensitizationPopup = authUserSensitizationStorage.getHasSeenPopup(user.id)
+  if (user) {
+    const hasSeenSensitizationPopup = authUserSensitizationStorage.getHasSeenPopup(user.id)
 
-  const { entourageCount, actionsCount, eventsCount } = user.stats
+    const { entourageCount, actionsCount, eventsCount } = user.stats
 
-  const userIsActive = entourageCount + actionsCount + eventsCount > 0
+    const userIsActive = entourageCount + actionsCount + eventsCount > 0
 
-  if (userIsActive) {
-    authUserSensitizationStorage.setHasSeenPopup(user.id)
+    if (userIsActive) {
+      authUserSensitizationStorage.setHasSeenPopup(user.id)
+    }
+
+    const showSensitizationPopup = (!userIsActive && !hasSeenSensitizationPopup) || user.firstSignIn
+
+    yield put(actions.setShowSensitizationPopup(showSensitizationPopup))
+  } else {
+    yield put(actions.setShowSensitizationPopup(false))
   }
-
-  const showSensitizationPopup = (!userIsActive && !hasSeenSensitizationPopup) || user.firstSignIn
-
-  yield put(actions.setShowSensitizationPopup(showSensitizationPopup))
 }
 
 function* hideSensitizationPopupSaga() {
@@ -204,7 +208,7 @@ export function* authUserSaga() {
   yield takeEvery(ActionType.LOGIN_WITH_PASSWORD, loginWithPasswordSaga)
   yield takeEvery(ActionType.LOGIN_WITH_SMS_CODE, loginWithSMSCodeSaga)
   yield takeEvery(ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
-  yield takeEvery(ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED, showSensitizationPopupSaga)
+  yield takeEvery(ActionType.CREATE_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
   yield takeEvery(ActionType.CREATE_PASSWORD, createPasswordSaga)
   yield takeEvery(ActionType.RESET_PASSWORD, resetPasswordSaga)
   yield takeEvery(ActionType.SET_USER, showSensitizationPopupSaga)

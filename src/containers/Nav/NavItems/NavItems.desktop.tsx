@@ -6,7 +6,7 @@ import React, { useCallback } from 'react'
 import { LoggedChunk } from '../LoggedChunk'
 import * as S from '../Nav.styles'
 import { NavTakeAction } from '../NavTakeAction'
-import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
+import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useMe } from 'src/hooks/useMe'
@@ -15,7 +15,7 @@ import { texts } from 'src/i18n'
 export function NavItemsDeskTop() {
   const iAmLogged = !!useMe()
 
-  useOpenModalProfileOnLogin()
+  useOpenModalsOnLogin()
 
   const onClickSignIn = useCallback(() => {
     openModal(<ModalSignIn />)

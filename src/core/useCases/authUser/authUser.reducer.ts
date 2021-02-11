@@ -89,13 +89,6 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.CREATE_PASSWORD_SUCCEEDED: {
-      return {
-        ...state,
-        step: null,
-      }
-    }
-
     case ActionType.ASK_CREATE_ACCOUNT: {
       return {
         ...state,
@@ -131,7 +124,6 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         user: action.payload.user,
-        step: null,
       }
     }
 
@@ -155,6 +147,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         user: action.payload,
+        step: action.payload ? null : LoginSteps.PHONE,
       }
     }
 
@@ -162,6 +155,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         showSensitizationPopup: action.payload,
+        step: null,
       }
     }
 
