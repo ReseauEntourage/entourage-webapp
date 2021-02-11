@@ -10,23 +10,37 @@ const routeTitles: Record<Path, string> = {
   '/': '',
 }
 
-export function useCurrentRoute() {
-  const router = useRouter()
-  let currentRoute: Path
-  let routeTitle
-  if (router.pathname.includes('/actions')) {
-    currentRoute = '/actions'
-    routeTitle = routeTitles[currentRoute]
-  } else if (router.pathname.includes('/pois')) {
-    currentRoute = '/pois'
-    routeTitle = routeTitles[currentRoute]
-  } else if (router.pathname.includes('/messages')) {
-    currentRoute = '/messages'
-    routeTitle = routeTitles[currentRoute]
-  } else {
-    currentRoute = '/'
-    routeTitle = routeTitles[currentRoute]
-  }
+interface CurrentRoute {
+  currentRoute: Path;
+  routeTitle: string;
+}
 
-  return { currentRoute, routeTitle }
+export function useCurrentRoute(): CurrentRoute {
+  const router = useRouter()
+
+  if (router.pathname.includes('/actions')) {
+    return {
+      currentRoute: '/actions',
+      routeTitle: routeTitles[currentRoute]  
+    }
+  }
+  
+  if (router.pathname.includes('/pois')) {
+    return {
+      currentRoute: '/pois',
+      routeTitle: routeTitles[currentRoute],
+    }
+  }
+  
+  if (router.pathname.includes('/messages')) {
+    return {
+      currentRoute: '/messages',
+      routeTitle: routeTitles[currentRoute],
+    }
+  }
+  
+  return {
+    currentRoute: '/'
+    routeTitle: routeTitles[currentRoute]
+  }
 }

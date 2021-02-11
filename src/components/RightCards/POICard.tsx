@@ -74,10 +74,9 @@ export function POICard(props: POICardProps) {
 
   return (
     <Box>
-      {
-        source === 'soliguide' && sourceUrl
-         && <SoliguideCard url={sourceUrl} />
-      }
+      {source === 'soliguide' && sourceUrl && (
+        <SoliguideCard url={sourceUrl} />
+      )}
       <Typography variant={variants.title1}>{name}</Typography>
       <S.Container>
         <Box alignItems="center" display="flex" justifyContent="flex-start" marginY={1}>

@@ -1,8 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { positionActions, PositionState } from '../position'
+import { positionActions, PositionState, defaultPositionState } from '../position'
 import { fakePositionData } from '../position/__mocks__'
-import { defaultPositionState } from '../position/position.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
@@ -68,8 +67,9 @@ describe('Feed', () => {
   })
 
   it(`
-    Given the feed saga has initialized
-    When user set position filters
+    Given initial state
+    When user init feed
+      And user set position filters
     Then items should be fetched
   `, async () => {
     const feedGateway = new TestFeedGateway()
@@ -92,9 +92,12 @@ describe('Feed', () => {
   })
 
   it(`
-    Given the feed saga has been cancelled
-    When user set position filters
-    Then items should not be fetched
+    Given initial state
+    When user init feed
+      And user set position filters
+      And user cancel feed
+      And user set a new position filters again
+    Then items should be fetched only once
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })

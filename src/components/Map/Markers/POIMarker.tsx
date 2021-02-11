@@ -12,8 +12,8 @@ import {
 } from '@material-ui/icons'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectPosition } from '../../../core/useCases/position'
-import { colors } from '../../../styles'
+import { selectPosition } from 'src/core/useCases/position'
+import { colors } from 'src/styles'
 import { POICategory } from 'src/core/api'
 import { BaseMarker } from './BaseMarker'
 

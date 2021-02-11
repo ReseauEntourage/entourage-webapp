@@ -97,4 +97,4 @@ export const actions = {
 }
 
 export type POIsActions = ActionsFromMapObject<typeof actions>
-export type POIAction = ActionFromMapObject<typeof actions>
+export type POIsAction = ActionFromMapObject<typeof actions>

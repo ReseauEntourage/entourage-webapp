@@ -1,7 +1,5 @@
 import { FeedAction, FeedActionType } from '../feed/feed.actions'
-import {
-  POICategory, POISource,
-} from 'src/core/api'
+import { POICategory, POISource } from 'src/core/api'
 import { POIAction, POIsActionType } from './pois.actions'
 
 export interface POI {

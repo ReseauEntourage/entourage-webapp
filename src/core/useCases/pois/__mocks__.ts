@@ -1,7 +1,7 @@
 import { uniqStringId } from 'src/utils/misc'
 import { POIsState, POI, defaultPOIsState, POIDetails } from './pois.reducer'
 
-export function createPOI() {
+export function createPOI(): POI {
   return {
     uuid: uniqStringId(),
     name: 'POI Name',
@@ -11,7 +11,7 @@ export function createPOI() {
     phone: '',
     categoryId: 63,
     partnerId: null,
-  } as POI
+  }
 }
 
 export function createPOIList(): POI[] {
@@ -31,22 +31,13 @@ export const fakePOIsData = {
   },
   poisUuids: ['abc'],
   pois: {
-    abc: {
-      uuid: 'abc',
-      name: 'POI Name',
-      longitude: 12,
-      latitude: 14,
-      address: 'Rue de la Tour Eiffel',
-      phone: '',
-      categoryId: 63,
-      partnerId: null,
-    } as POI,
+    abc: createPOI()
   },
   detailedPOIs: {},
   selectedItemUuid: null,
 } as POIsState
 
-export const createPOIDetails = () => {
+export function createPOIDetails(): POIDetails {
   return {
     uuid: uniqStringId(),
     name: 'POI Name',
@@ -64,5 +55,5 @@ export const createPOIDetails = () => {
     audience: '',
     source: 'entourage',
     sourceUrl: null,
-  } as POIDetails
+  }
 }

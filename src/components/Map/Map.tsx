@@ -1,7 +1,7 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { positionActions, selectPosition } from '../../core/useCases/position'
+import { positionActions, selectPosition } from 'src/core/useCases/position'
 import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
