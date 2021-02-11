@@ -25,7 +25,7 @@ export function MapPOIs() {
     }
   })
 
-  const cards = poiDetailsFetching || currentPOI ? <POICards key={poiId} /> : undefined
+  const cards = (poiDetailsFetching || currentPOI) ? <POICards key={poiId} /> : undefined
 
   return (
     <MapContainer

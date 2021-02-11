@@ -5,9 +5,9 @@ import MapIcon from '@material-ui/icons/Map'
 import PhoneIcon from '@material-ui/icons/Phone'
 import RoomIcon from '@material-ui/icons/Room'
 import React from 'react'
-import { texts } from '../../i18n'
-import { colors, variants } from '../../styles'
-import { getUrlFromAddress } from '../../utils/misc'
+import { texts } from 'src/i18n'
+import { colors, variants } from 'src/styles'
+import { getUrlFromAddress } from 'src/utils/misc'
 import { ContactLink } from 'src/components/ContactLink'
 import * as S from './POI.styles'
 
@@ -53,9 +53,7 @@ export function POI(props: POIProps) {
           info={address}
           link={getUrlFromAddress(address)}
         />
-        {
-          phone
-          && (
+        {phone && (
             <ContactLink
               icon={(
                 <Box display="flex" marginLeft={0.5}>
@@ -64,7 +62,6 @@ export function POI(props: POIProps) {
                     opacity={0.6}
                   />
                 </Box>
-
               )}
               info={phone}
               link={`tel:${phone}`}

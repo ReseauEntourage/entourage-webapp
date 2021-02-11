@@ -18,7 +18,7 @@ export function MapContainerDesktop(props: MapContainerProps) {
         {isLoading && <OverlayLoader />}
       </S.MapContainer>
       {
-        (cards) && (
+        cards && (
           <S.RightCardsContainer boxShadow={4}>
             {cards}
           </S.RightCardsContainer>

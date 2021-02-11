@@ -26,6 +26,7 @@ export const ListContainer = styled(Box)`
 export const ListItem = styled.li`
   border-bottom: 1px ${colors.borderColor} solid;
 `
+
 export const Scroll = styled.div`
   position: relative;
   height: 100%;

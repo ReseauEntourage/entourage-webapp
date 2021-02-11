@@ -142,7 +142,7 @@ describe('POIs', () => {
   it(`
     Given POIs have been retrieved from gateway
     When user selects a POI that has already been selected before
-    Then POI should be retrieved from the store
+    Then POI should not be retrieved from gateway
       And selected POI be defined with these POI details
       And selected feed item should be null
   `, async () => {

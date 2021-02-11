@@ -23,7 +23,9 @@ import {
   DTOUpdateEntourageAsAction,
   UserPartnerWithDetails,
   DTOCloseEntourage,
-  DTOReopenEntourage, POIItem, POIDetailsItem,
+  DTOReopenEntourage,
+  POIItem,
+  POIDetailsItem,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {

@@ -8,9 +8,6 @@ import { POIsActionType, actions, POIsActions } from './pois.actions'
 import { POIsState } from './pois.reducer'
 import { selectCurrentPOI, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
 
-interface AppState {
-  pois: POIsState;
-}
 
 export interface Dependencies {
   poisGateway: IPOIsGateway;
