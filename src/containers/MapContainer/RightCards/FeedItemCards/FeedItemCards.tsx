@@ -4,7 +4,7 @@ import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import capitalize from 'lodash/capitalize'
 import React, { useCallback } from 'react'
-import { useCurrentFeedItem } from '../../MapActions/useCurrentFeedItem'
+import { useCurrentFeedItem } from '../../MapActions'
 import { RightCard } from '../RightCard'
 import { openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'

@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { positionActions, selectPosition } from '../../../core/useCases/position'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { selectFeedIsIdle } from 'src/core/useCases/feed'
+import { locationActions, selectPosition } from 'src/core/useCases/location'
 import { selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 import * as S from './SearchCity.styles'
@@ -27,7 +27,7 @@ export function SearchCity() {
     assertIsNumber(lng)
 
     dispatch(
-      positionActions.setPosition({
+      locationActions.setPosition({
         ...position,
         center: {
           lat,

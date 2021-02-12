@@ -1,13 +1,13 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { selectCurrentItem } from '../feed'
-import { selectPosition } from '../position'
+import { selectCurrentFeedItem } from '../feed'
+import { selectPosition } from '../location'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
-import { poisSaga } from './pois.saga'
+import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
 import {
   selectPOIList,
   selectCurrentPOI,
@@ -136,7 +136,7 @@ describe('POIs', () => {
     expect(selectCurrentPOI(store.getState())).toEqual(poiDetailsFromGateway)
     expect(selectPOIDetailsIsFetching(store.getState())).toEqual(false)
 
-    expect(selectCurrentItem(store.getState())).toEqual(null)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
@@ -181,7 +181,7 @@ describe('POIs', () => {
 
     expect(selectCurrentPOI(store.getState())).toEqual(poiDetailsFromGateway)
 
-    expect(selectCurrentItem(store.getState())).toEqual(null)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
@@ -235,7 +235,7 @@ describe('POIs', () => {
     expect(nextSelectedItem).toBeTruthy()
 
     expect(prevSelectedItem).not.toEqual(nextSelectedItem)
-    expect(selectCurrentItem(store.getState())).toEqual(null)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
@@ -294,7 +294,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOI).toHaveBeenCalledWith({ poiUuid: selectedPOIId })
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        zoom: selectPosition(store.getState()).zoom,
+        zoom: calculateDistanceFromZoom(selectPosition(store.getState()).zoom),
         center: {
           lat: poiDetailsFromGateway.latitude,
           lng: poiDetailsFromGateway.longitude,

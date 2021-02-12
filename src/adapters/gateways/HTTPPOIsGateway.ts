@@ -1,21 +1,7 @@
-import { IPOIsGateway } from '../../core/useCases/pois'
-import { ResolvedValue } from '../../utils/types'
 import { constants } from 'src/constants'
 import { api } from 'src/core/api'
-
-const calculateDistanceFromZoom = (zoom: number) => {
-  let calculatedDistance
-
-  if (zoom <= constants.DEFAULT_LOCATION.ZOOM) {
-    calculatedDistance = constants.POI_MAX_DISTANCE
-  } else if (zoom >= constants.POI_DISTANCE_BREAKPOINT) {
-    calculatedDistance = constants.POI_MIN_DISTANCE
-  } else {
-    calculatedDistance = (constants.POI_MAX_DISTANCE - constants.POI_MIN_DISTANCE) / 2
-  }
-
-  return calculatedDistance
-}
+import { IPOIsGateway } from 'src/core/useCases/pois'
+import { ResolvedValue } from 'src/utils/types'
 
 export class HTTPPOIsGateway implements IPOIsGateway {
   private cache: {
@@ -40,7 +26,7 @@ export class HTTPPOIsGateway implements IPOIsGateway {
       name: '/pois GET',
       params: {
         v: 2,
-        distance: calculateDistanceFromZoom(data.filters.zoom),
+        distance: data.filters.zoom,
         longitude: data.filters.center.lng,
         latitude: data.filters.center.lat,
         categoryIds: '0,1,2,3,5,7,8,40,41,42,43,6,61,63,62',

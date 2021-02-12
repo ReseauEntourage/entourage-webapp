@@ -1,6 +1,6 @@
 import { FeedAction, FeedActionType } from '../feed/feed.actions'
 import { POICategory, POISource } from 'src/core/api'
-import { POIAction, POIsActionType } from './pois.actions'
+import { POIsAction, POIsActionType } from './pois.actions'
 
 export interface POI {
   uuid: string;
@@ -56,7 +56,7 @@ export const defaultPOIsState: POIsState = {
   isIdle: true,
 }
 
-export function poisReducer(state: POIsState = defaultPOIsState, action: POIAction | FeedAction): POIsState {
+export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAction | FeedAction): POIsState {
   switch (action.type) {
     case POIsActionType.RETRIEVE_POIS_STARTED:
       return {

@@ -3,8 +3,7 @@ import DoneIcon from '@material-ui/icons/Done'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 import React, { useCallback, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { assertIsDefined } from 'src/utils/misc'
-import { useCurrentFeedItem } from '../../MapActions/useCurrentFeedItem'
+import { useCurrentFeedItem } from '../../MapActions'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
@@ -13,6 +12,7 @@ import { selectIsUpdatingJoinStatus, selectJoinRequestStatus, feedActions } from
 import { useMe } from 'src/hooks/useMe'
 import { colors } from 'src/styles'
 import { useDelayLoadingNext } from 'src/utils/hooks'
+import { assertIsDefined } from 'src/utils/misc'
 import { ModalLeaveEntourage } from './ModalLeaveEntourage'
 
 export function ParticipateButton() {

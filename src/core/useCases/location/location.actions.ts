@@ -1,17 +1,17 @@
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
-import { PositionState } from './position.reducer'
+import { LocationState } from './location.reducer'
 
-export const PositionActionType = {
+export const LocationActionType = {
   SET_POSITION: 'POSITION/SET_POSITION',
 } as const
 
-export type PositionActionType = keyof typeof PositionActionType;
+export type LocationActionType = keyof typeof LocationActionType;
 
 // ------------------------------------------------------------------------
 
-function setPosition(payload: Partial<PositionState['position']>) {
+function setPosition(payload: Partial<LocationState['position']>) {
   return {
-    type: PositionActionType.SET_POSITION,
+    type: LocationActionType.SET_POSITION,
     payload,
   }
 }
@@ -30,5 +30,5 @@ export const actions = {
   ...privateActions,
 }
 
-export type PositionActions = ActionsFromMapObject<typeof actions>
-export type PositionAction = ActionFromMapObject<typeof actions>
+export type LocationActions = ActionsFromMapObject<typeof actions>
+export type LocationAction = ActionFromMapObject<typeof actions>

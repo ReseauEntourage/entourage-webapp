@@ -21,26 +21,26 @@ export function useCurrentRoute(): CurrentRoute {
   if (router.pathname.includes('/actions')) {
     return {
       currentRoute: '/actions',
-      routeTitle: routeTitles[currentRoute]  
+      routeTitle: routeTitles['/actions'],
     }
   }
-  
+
   if (router.pathname.includes('/pois')) {
     return {
       currentRoute: '/pois',
-      routeTitle: routeTitles[currentRoute],
+      routeTitle: routeTitles['/pois'],
     }
   }
-  
+
   if (router.pathname.includes('/messages')) {
     return {
       currentRoute: '/messages',
-      routeTitle: routeTitles[currentRoute],
+      routeTitle: routeTitles['/messages'],
     }
   }
-  
+
   return {
-    currentRoute: '/'
-    routeTitle: routeTitles[currentRoute]
+    currentRoute: '/',
+    routeTitle: routeTitles['/'],
   }
 }

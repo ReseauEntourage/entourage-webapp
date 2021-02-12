@@ -5,10 +5,10 @@ import MapIcon from '@material-ui/icons/Map'
 import PhoneIcon from '@material-ui/icons/Phone'
 import RoomIcon from '@material-ui/icons/Room'
 import React from 'react'
+import { ContactLink } from 'src/components/ContactLink'
 import { texts } from 'src/i18n'
 import { colors, variants } from 'src/styles'
 import { getUrlFromAddress } from 'src/utils/misc'
-import { ContactLink } from 'src/components/ContactLink'
 import * as S from './POI.styles'
 
 const stopPropagation = (event: React.SyntheticEvent) => event.stopPropagation()
@@ -54,20 +54,19 @@ export function POI(props: POIProps) {
           link={getUrlFromAddress(address)}
         />
         {phone && (
-            <ContactLink
-              icon={(
-                <Box display="flex" marginLeft={0.5}>
-                  <PhoneIcon
-                    fontSize="small"
-                    opacity={0.6}
-                  />
-                </Box>
-              )}
-              info={phone}
-              link={`tel:${phone}`}
-            />
-          )
-        }
+          <ContactLink
+            icon={(
+              <Box display="flex" marginLeft={0.5}>
+                <PhoneIcon
+                  fontSize="small"
+                  opacity={0.6}
+                />
+              </Box>
+            )}
+            info={phone}
+            link={`tel:${phone}`}
+          />
+        )}
 
       </S.LeftContainer>
       <Box flexGrow="1" />

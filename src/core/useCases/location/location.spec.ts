@@ -2,11 +2,11 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
-import { publicActions } from './position.actions'
-import { defaultPositionState, PositionState } from './position.reducer'
-import { selectPosition } from './position.selectors'
+import { publicActions } from './location.actions'
+import { defaultLocationState, LocationState } from './location.reducer'
+import { selectPosition } from './location.selectors'
 
-function configureStoreWithPosition(
+function configureStoreWithLocation(
   params: {
     dependencies?: PartialAppDependencies;
     initialAppState?: PartialAppState;
@@ -29,18 +29,18 @@ describe('POIs', () => {
   it(`
     Given initial state
     When no action is triggered
-    Then position state should be at initial state
+    Then location state should be at initial state
   `, () => {
-    const store = configureStoreWithPosition({})
-    expect(store.getState().position).toEqual(defaultPositionState)
+    const store = configureStoreWithLocation({})
+    expect(store.getState().location).toEqual(defaultLocationState)
   })
   it(`
     Given the initial state
     When user want to update all filters
     Then filters should be updated
   `, () => {
-    const store = configureStoreWithPosition({})
-    const position: PositionState['position'] = {
+    const store = configureStoreWithLocation({})
+    const position: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
@@ -56,8 +56,8 @@ describe('POIs', () => {
     When user want to update partially update filters
     Then filters should be updated and merge with existing filters
   `, () => {
-    const store = configureStoreWithPosition({})
-    const position: Partial<PositionState['position']> = {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState['position']> = {
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
@@ -65,7 +65,7 @@ describe('POIs', () => {
     store.dispatch(publicActions.setPosition(position))
 
     expect(selectPosition(store.getState())).toEqual({
-      ...defaultPositionState.position,
+      ...defaultLocationState.position,
       ...position,
     })
   })

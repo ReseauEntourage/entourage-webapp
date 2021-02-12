@@ -1,4 +1,4 @@
-import { jestFn } from 'src/utils/jestFn'
+import { jestFn } from '../../utils/jestFn'
 import { IPOIsGateway } from './IPOIsGateway'
 
 export class TestPOIsGateway implements IPOIsGateway {

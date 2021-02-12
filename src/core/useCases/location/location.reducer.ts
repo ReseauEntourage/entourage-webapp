@@ -1,7 +1,7 @@
-import { constants } from '../../../constants'
-import { PositionAction, PositionActionType } from './position.actions'
+import { constants } from 'src/constants'
+import { LocationAction, LocationActionType } from './location.actions'
 
-export interface PositionState {
+export interface LocationState {
   position: {
     cityName: string;
     center: {
@@ -12,7 +12,7 @@ export interface PositionState {
   };
 }
 
-export const defaultPositionState: PositionState = {
+export const defaultLocationState: LocationState = {
   position: {
     cityName: constants.DEFAULT_LOCATION.CITY_NAME,
     center: constants.DEFAULT_LOCATION.CENTER,
@@ -22,15 +22,16 @@ export const defaultPositionState: PositionState = {
 
 /*
   TODO listen to AUTH_USER/LOGIN_WITH_PASSWORD_SUCCEEDED OR AUTH_USER/LOGIN_WITH_SMS_CODE_SUCCEEDED
-  to update position with users default position after login
+    to update position with users default position after login
+    https://entourage-asso.atlassian.net/browse/EN-3487
 */
 
-export function positionReducer(
-  state: PositionState = defaultPositionState,
-  action: PositionAction /* | AuthUserAction */,
-): PositionState {
+export function locationReducer(
+  state: LocationState = defaultLocationState,
+  action: LocationAction /* | AuthUserAction */,
+): LocationState {
   switch (action.type) {
-    case PositionActionType.SET_POSITION: {
+    case LocationActionType.SET_POSITION: {
       return {
         ...state,
         position: {

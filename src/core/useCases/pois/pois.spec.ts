@@ -1,14 +1,14 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { positionActions, PositionState } from '../position'
-import { defaultPositionState } from '../position/position.reducer'
+import { locationActions, LocationState, selectPosition } from '../location'
+import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
 import { defaultPOIsState } from './pois.reducer'
-import { poisSaga } from './pois.saga'
+import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
 import { selectPOIsIsFetching, selectPOIsIsIdle, selectPOIList } from './pois.selectors'
 
 function configureStoreWithPOIs(
@@ -42,19 +42,20 @@ describe('POIs', () => {
   })
 
   it(`
-    Given the POIs saga has not been initialized
-    When user set position filters
+   Given initial state
+     When user hasn't init POIs
+      And user sets position filters
     Then POIs should not be fetched
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextPosition: PositionState['position'] = {
+    const nextLocation: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
-    store.dispatch(positionActions.setPosition(nextPosition))
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -63,14 +64,15 @@ describe('POIs', () => {
   })
 
   it(`
-    Given the POIs saga has initialized
-    When user set position filters
+    Given initial state
+    When user init POIs
+      And user sets position filters
     Then POIs should be fetched
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextPosition: PositionState['position'] = {
+    const nextLocation: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
@@ -78,7 +80,7 @@ describe('POIs', () => {
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(positionActions.setPosition(nextPosition))
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -87,37 +89,43 @@ describe('POIs', () => {
   })
 
   it(`
-    Given the POIs saga has been cancelled
-    When user set position filters
-    Then POIs should not be fetched
+    Given initial state
+    When user init POIs
+      And user sets position filters
+      And user cancels POIs
+      And user sets a new position filter again
+    Then items should be fetched only once
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextPosition: PositionState['position'] = {
+    const nextLocation: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
     store.dispatch(publicActions.init())
 
-    store.dispatch(positionActions.setPosition(nextPosition))
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
-
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
 
     store.dispatch(publicActions.cancel())
 
-    store.dispatch(positionActions.setPosition(nextPosition))
+    const nextNextLocation: LocationState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 5, lng: 6 },
+      zoom: 65,
+    }
+
+    store.dispatch(locationActions.setPosition(nextNextLocation))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(selectPosition(store.getState())).toStrictEqual(nextNextLocation)
   })
 
   it(`
@@ -130,13 +138,13 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
 
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextPosition: PositionState['position'] = {
+    const nextLocation: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
     store.dispatch(publicActions.init())
-    store.dispatch(positionActions.setPosition(nextPosition))
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     expect(selectPOIsIsFetching(store.getState())).toEqual(true)
 
@@ -200,8 +208,8 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: defaultPositionState.position.center,
-        zoom: defaultPositionState.position.zoom,
+        center: defaultLocationState.position.center,
+        zoom: calculateDistanceFromZoom(defaultLocationState.position.zoom),
       },
     })
   })
@@ -217,14 +225,14 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextPosition = {
+    const nextLocation = {
       cityName: 'Lyon',
       center: { lat: 5, lng: 6 },
       zoom: 13,
     }
 
     store.dispatch(publicActions.init())
-    store.dispatch(positionActions.setPosition(nextPosition))
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -232,8 +240,8 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: nextPosition.center,
-        zoom: nextPosition.zoom,
+        center: nextLocation.center,
+        zoom: calculateDistanceFromZoom(nextLocation.zoom),
       },
     })
   })
