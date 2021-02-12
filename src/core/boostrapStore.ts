@@ -2,7 +2,8 @@ import { StateFromReducersMapObject } from 'redux'
 import { HTTPPOIsGateway } from '../adapters/gateways/HTTPPOIsGateway'
 import { HTTPAuthUserGateway } from 'src/adapters/gateways/HTTPAuthUserGateway'
 import { HTTPFeedGateway } from 'src/adapters/gateways/HTTPFeedGateway'
-import { CookiesAuthUserTokenStorage } from 'src/adapters/tokenStorage/CookiesAuthUserTokenStorage'
+import { CookiesAuthUserTokenStorage } from 'src/adapters/storage/CookiesAuthUserTokenStorage'
+import { LocalAuthUserSensitizationStorage } from 'src/adapters/storage/LocalAuthUserSensitizationStorage'
 import { configureStore } from './configureStore'
 import { AppDependencies } from './useCases/Dependencies'
 import { authUserSaga } from './useCases/authUser'
@@ -22,6 +23,7 @@ export function bootstrapStore() {
     feedGateway: new HTTPFeedGateway(),
     poisGateway: new HTTPPOIsGateway(),
     authUserTokenStorage: new CookiesAuthUserTokenStorage(),
+    authUserSensitizationStorage: new LocalAuthUserSensitizationStorage(),
   }
 
   return configureStore({

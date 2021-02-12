@@ -17,7 +17,7 @@ import { NavItem } from '../NavItem'
 import { FeedBackButton } from '../NavNotificationBar'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
-import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
+import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
@@ -33,7 +33,7 @@ export function DrawerNavMobile() {
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
   const { currentRoute } = useCurrentRoute()
 
-  useOpenModalProfileOnLogin()
+  useOpenModalsOnLogin()
 
   const onClickDrawerClose = useCallback(() => {
     setOpen(false)

@@ -9,7 +9,7 @@ import React, { useCallback } from 'react'
 import { LoggedChunk } from '../LoggedChunk'
 import * as S from '../Nav.styles'
 import { NavTakeAction } from '../NavTakeAction'
-import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
+import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useCurrentRoute } from 'src/hooks/useCurrentRoute'
@@ -19,10 +19,9 @@ import { variants } from 'src/styles'
 
 export function NavItemsDeskTop() {
   const iAmLogged = !!useMe()
-
   const { routeTitle, currentRoute } = useCurrentRoute()
 
-  useOpenModalProfileOnLogin()
+  useOpenModalsOnLogin()
 
   const onClickSignIn = useCallback(() => {
     openModal(<ModalSignIn />)

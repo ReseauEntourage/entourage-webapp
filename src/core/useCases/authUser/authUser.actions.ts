@@ -19,6 +19,8 @@ export const AuthUserActionType = {
   SET_ERRORS: 'AUTH/SET_ERRORS',
   RESET_FORM: 'AUTH/RESET_FORM',
   SET_USER: 'AUTH/SET_USER',
+  SHOW_SENSITIZATION_POPUP: 'AUTH/SHOW_SENSITIZATION_POPUP',
+  HIDE_SENSITIZATION_POPUP: 'AUTH/HIDE_SENSITIZATION_POPUP',
 } as const
 
 export type AuthUserActionType = keyof typeof AuthUserActionType;
@@ -139,6 +141,19 @@ function setUser(payload: AuthUserState['user']) {
   }
 }
 
+function hideSensitizationPopup() {
+  return {
+    type: ActionType.HIDE_SENSITIZATION_POPUP,
+  }
+}
+
+function setShowSensitizationPopup(payload: AuthUserState['showSensitizationPopup']) {
+  return {
+    type: ActionType.SHOW_SENSITIZATION_POPUP,
+    payload,
+  }
+}
+
 // ------------------------------------------------------------------------
 
 export const publicActions = {
@@ -152,6 +167,7 @@ export const publicActions = {
   resetPassword,
   resetForm,
   setUser,
+  hideSensitizationPopup,
 }
 
 const privateActions = {
@@ -162,6 +178,7 @@ const privateActions = {
   resetPasswordSuccess,
   loginWithPasswordSuccess,
   setErrors,
+  setShowSensitizationPopup,
 }
 
 export const actions = {
@@ -170,4 +187,4 @@ export const actions = {
 }
 
 export type AuthUserActions = ActionsFromMapObject<typeof actions>
-export type AuthUserAction = ActionFromMapObject<typeof actions>;
+export type AuthUserAction = ActionFromMapObject<typeof actions>
