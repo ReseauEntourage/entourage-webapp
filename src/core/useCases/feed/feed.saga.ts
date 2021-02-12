@@ -1,16 +1,11 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
 import { CallReturnType } from '../../utils/CallReturnType'
-import { positionActions, selectPosition } from '../position'
-import { PositionActionType } from '../position/position.actions'
+import { locationActions, selectPosition } from '../location'
+import { LocationActionType } from '../location/location.actions'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
-import { FeedState } from './feed.reducer'
-import { selectCurrentItem, selectFeed } from './feed.selectors'
-
-interface AppState {
-  feed: FeedState;
-}
+import { selectCurrentFeedItem, selectFeed } from './feed.selectors'
 
 export interface Dependencies {
   feedGateway: IFeedGateway;
@@ -65,14 +60,14 @@ function* retrieveFeedNextPage() {
 }
 
 function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
-  const currentItem: ReturnType<typeof selectCurrentItem> = yield select(selectCurrentItem)
+  const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
   const entourageUuid = action.payload
 
   if (!currentItem && entourageUuid) {
     const dependencies: Dependencies = yield getContext('dependencies')
     const { retrieveFeedItem } = dependencies.feedGateway
     const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
-    yield put(positionActions.setPosition({ center: response.center, cityName: response.cityName }))
+    yield put(locationActions.setPosition({ center: response.center, cityName: response.cityName }))
   }
 }
 
@@ -123,7 +118,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgRetrieveFeed = yield takeEvery(PositionActionType.SET_POSITION, retrieveFeed)
+    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_POSITION, retrieveFeed)
     yield take(FeedActionType.CANCEL_FEED)
     yield cancel(bgRetrieveFeed)
   }

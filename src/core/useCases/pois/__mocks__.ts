@@ -31,7 +31,7 @@ export const fakePOIsData = {
   },
   poisUuids: ['abc'],
   pois: {
-    abc: createPOI()
+    abc: createPOI(),
   },
   detailedPOIs: {},
   selectedItemUuid: null,

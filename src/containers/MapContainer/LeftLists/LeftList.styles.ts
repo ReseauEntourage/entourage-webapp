@@ -23,7 +23,7 @@ export const ListContainer = styled(Box)`
   }
 `
 
-export const ListItem = styled.li`
+export const ListItem = styled.div`
   border-bottom: 1px ${colors.borderColor} solid;
 `
 

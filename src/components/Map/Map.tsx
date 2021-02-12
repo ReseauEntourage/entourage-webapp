@@ -1,9 +1,9 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { positionActions, selectPosition } from 'src/core/useCases/position'
 import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
+import { locationActions, selectPosition } from 'src/core/useCases/location'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
@@ -27,7 +27,7 @@ export function Map(props: Props) {
       || position.zoom !== value.zoom
 
     if (positionHasChanged) {
-      dispatch(positionActions.setPosition({
+      dispatch(locationActions.setPosition({
         center: value.center,
         zoom: value.zoom,
       }))

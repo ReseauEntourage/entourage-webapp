@@ -27,7 +27,7 @@ export function selectHasNextPageToken(state: AppState) {
   return !!state.feed.nextPageToken
 }
 
-export function selectCurrentItem(state: AppState) {
+export function selectCurrentFeedItem(state: AppState) {
   const { selectedItemUuid, items } = state.feed
 
   return selectedItemUuid ? items[selectedItemUuid] : null

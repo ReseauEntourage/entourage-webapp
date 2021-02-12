@@ -1,7 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
+import { selectPosition } from '../location'
 import { selectCurrentPOI } from '../pois'
-import { selectPosition } from '../position'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -11,7 +11,7 @@ import { publicActions } from './feed.actions'
 import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
-  selectCurrentItem,
+  selectCurrentFeedItem,
   selectFeedItems,
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
@@ -79,7 +79,7 @@ describe('Feed Item', () => {
   `, () => {
     const store = configureStoreWithFeed({})
 
-    expect(selectCurrentItem(store.getState())).toEqual(null)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
@@ -98,7 +98,7 @@ describe('Feed Item', () => {
 
     store.dispatch(publicActions.setCurrentItemUuid('abc'))
 
-    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.items.abc)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(fakeFeedData.items.abc)
     expect(selectCurrentPOI(store.getState())).toEqual(null)
   })
 
@@ -110,7 +110,7 @@ describe('Feed Item', () => {
     const { store, feedGateway } = configureStoreWithSelectedItems()
 
     const prevItems = selectFeedItems(store.getState())
-    const prevSelectedItem = selectCurrentItem(store.getState())
+    const prevSelectedItem = selectCurrentFeedItem(store.getState())
 
     store.dispatch(publicActions.retrieveFeed())
 
@@ -118,7 +118,7 @@ describe('Feed Item', () => {
     await store.waitForActionEnd()
 
     const nextItems = selectFeedItems(store.getState())
-    const nextSelectedItem = selectCurrentItem(store.getState())
+    const nextSelectedItem = selectCurrentFeedItem(store.getState())
 
     expect(nextItems).toBeTruthy()
     expect(prevItems).not.toEqual(nextItems)
@@ -136,14 +136,14 @@ describe('Feed Item', () => {
   `, async () => {
     const { store, feedGateway, itemsEntities } = configureStoreWithSelectedItems()
 
-    const prevSelectedItem = selectCurrentItem(store.getState())
+    const prevSelectedItem = selectCurrentFeedItem(store.getState())
 
     store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const nextSelectedItem = selectCurrentItem(store.getState())
+    const nextSelectedItem = selectCurrentFeedItem(store.getState())
 
     expect(prevSelectedItem).toBeTruthy()
     expect(nextSelectedItem).toBeTruthy()

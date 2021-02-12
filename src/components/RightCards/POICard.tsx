@@ -6,36 +6,14 @@ import PhoneIcon from '@material-ui/icons/Phone'
 import RoomIcon from '@material-ui/icons/Room'
 import Linkify from 'linkifyjs/react'
 import React from 'react'
-import { POICategory, POISource } from '../../core/api'
 import { POIIcon } from '../Map'
 import { ContactLink } from 'src/components/ContactLink'
-import { constants } from 'src/constants'
+import { POICategory, POISource } from 'src/core/api'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
+import { getUrlFromAddress } from 'src/utils/misc'
 import * as S from './Card.styles'
-
-interface SoliguideCardProps {
-  url?: string;
-}
-
-function SoliguideCard(props: SoliguideCardProps) {
-  const { url } = props
-  return (
-    <Box marginBottom={2}>
-      <S.SoliguideCard href={url ?? constants.SOLIGUIDE_URL} style={{ textDecoration: 'none' }}>
-        <Box marginBottom={1}>
-          <img alt="Soliguide" src="/logo-soliguide.png" />
-        </Box>
-        <Typography align="center" color="textSecondary" variant={variants.bodyBold}>
-          Les informations sur ce lieu sont fournies par Soliguide, la cartographie solidaire.
-        </Typography>
-        <Typography align="center" color="textSecondary">
-          Pour des informations encore plus complètes et disponibles en plusieurs langues, cliquez-ici
-        </Typography>
-      </S.SoliguideCard>
-    </Box>
-  )
-}
+import { SoliguideCard } from './SoliguideCard'
 
 interface POICardProps {
   name: string;
@@ -69,8 +47,6 @@ export function POICard(props: POICardProps) {
     source,
     sourceUrl,
   } = props
-
-  const googleMapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURI(address)}`
 
   return (
     <Box>
@@ -178,7 +154,7 @@ export function POICard(props: POICardProps) {
                 color="primary"
                 icon={<RoomIcon />}
                 info={address}
-                link={googleMapLink}
+                link={getUrlFromAddress(address)}
               />
             )
           }

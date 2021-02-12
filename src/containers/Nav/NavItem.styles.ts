@@ -1,6 +1,8 @@
-import { styled } from '@material-ui/core/styles'
+import { styled as materialStyled } from '@material-ui/core/styles'
+import styled from 'styled-components'
+import { colors } from 'src/styles'
 
-export const Container = styled('div')(({ theme }) => ({
+export const Container = materialStyled('div')(({ theme }) => ({
   margin: theme.spacing(2),
   textDecoration: 'none',
   display: 'flex',
@@ -8,10 +10,17 @@ export const Container = styled('div')(({ theme }) => ({
   cursor: 'pointer',
 }))
 
-export const Label = styled('div')(({ theme }) => ({
+export const Label = materialStyled('div')(({ theme }) => ({
   marginLeft: theme.spacing(1),
 }))
 
-export const InternalLink = styled('a')(() => ({
+export const InternalLink = materialStyled('a')(() => ({
   textDecoration: 'none',
 }))
+
+export const ActiveContainer = styled.div<{ isActive?: boolean; }>`
+  color: ${(props) => props.isActive && colors.main.primary};
+  font-weight: ${(props) => props.isActive && 'bold'};
+  display: flex;
+  align-items: center;
+`

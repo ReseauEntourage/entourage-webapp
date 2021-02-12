@@ -25,13 +25,6 @@ export const NavItem = styled(NotStyledNavItem)`
   margin-right: ${theme.spacing(2)}px;
 `
 
-export const ActiveContainer = styled.div<{ isActive?: boolean; }>`
-  color: ${(props) => props.isActive && colors.main.primary};
-  font-weight: ${(props) => props.isActive && 'bold'};
-  display: flex;
-  align-items: center;
-`
-
 export const AppBar = styled(AppBarMUI)`
   && {
     background-color: #fff;

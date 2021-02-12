@@ -2,16 +2,21 @@ import Box from '@material-ui/core/Box'
 import CloseIcon from '@material-ui/icons/Close'
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import * as S from './RightCard.styles'
 
 type RightCardProps = {
   href: string;
-  card: ReactNode;
+  card?: ReactNode;
   footer?: JSX.Element;
+  isLoading?: boolean;
 }
 
 export function RightCard(props: RightCardProps) {
-  const { href, card, footer } = props
+  const { href, card, footer, isLoading = false } = props
+
+  const cardComponent = (isLoading || !card) ? <OverlayLoader /> : card
+
   return (
     <S.Container>
       <S.Scroll>
@@ -23,7 +28,7 @@ export function RightCard(props: RightCardProps) {
           </Link>
         </Box>
         <Box marginX={4}>
-          {card}
+          {cardComponent}
         </Box>
         {footer}
       </S.Scroll>

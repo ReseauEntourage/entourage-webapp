@@ -1,6 +1,6 @@
 import produce from 'immer'
-import { POIsActionType, POIAction } from '../pois/pois.actions'
-import { PositionAction, PositionActionType } from '../position/position.actions'
+import { LocationAction, LocationActionType } from '../location/location.actions'
+import { POIsActionType, POIsAction } from '../pois/pois.actions'
 import {
   FeedMetadata,
   FeedDisplayCategory,
@@ -79,10 +79,10 @@ export const defaultFeedState: FeedState = {
 
 export function feedReducer(
   state: FeedState = defaultFeedState,
-  action: FeedAction | POIAction | PositionAction,
+  action: FeedAction | POIsAction | LocationAction,
 ): FeedState {
   switch (action.type) {
-    case PositionActionType.SET_POSITION: {
+    case LocationActionType.SET_POSITION: {
       return {
         ...state,
         nextPageToken: null,

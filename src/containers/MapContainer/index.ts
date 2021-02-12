@@ -2,6 +2,9 @@ import { plateform } from 'src/utils/misc'
 import { MapContainerDesktop } from './MapContainer.desktop'
 import { MapContainerMobile } from './MapContainer.mobile'
 
+export * from './useActionId'
+export * from './useNextFeed'
+
 export interface MapContainerProps {
   markers: JSX.Element[];
   cards?: JSX.Element;
