@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosPromise } from 'axios'
+import axios, { AxiosRequestConfig, AxiosPromise, Method } from 'axios'
 import { NextPageContext } from 'next'
 import { Config, Response } from 'typescript-request-schema'
 import { env } from 'src/core/env'
@@ -35,7 +35,7 @@ const request: Request = (config) => {
 
   return axiosInstance.request({
     url: urlWithPathParams,
-    method,
+    method: method as Method,
     data,
     params,
     ...restConfig,
