@@ -20,6 +20,16 @@ export function selectUser(state: AppState) {
   return state.authUser.user
 }
 
+export function selectUserInfosAreIncomplete(state: AppState) {
+  const { user } = state.authUser
+  if (user) {
+    const { firstName, lastName, address } = user
+
+    return !firstName || !lastName || !address
+  }
+  return true
+}
+
 export function selectErrors(state: AppState) {
   return state.authUser.errors
 }
@@ -27,3 +37,8 @@ export function selectErrors(state: AppState) {
 export function selectLoginStepIsCompleted(state: AppState) {
   return !state.authUser.step
 }
+
+export function selectShowSensitizationPopup(state: AppState) {
+  return state.authUser.showSensitizationPopup
+}
+

@@ -90,6 +90,15 @@ export interface FeedOutingMetadata {
 
 export type FeedMetadata = FeedOutingMetadata
 
+export interface UserStats {
+  encounterCount: number;
+  entourageCount: number;
+  tourCount: number;
+  actionsCount: number;
+  eventsCount: number;
+  goodWavesParticipation: boolean;
+}
+
 export interface UserPartner {
   default: boolean;
   id: string;
@@ -122,11 +131,6 @@ export interface AnonymousUser {
   organization: null;
   partner: null;
   roles: unknown[];
-  stats: {
-    encounterCount: number;
-    entourageCount: number;
-    tourCount: number;
-  };
   token: string;
   userType: UserType;
   uuid: string;
@@ -161,14 +165,11 @@ export interface LoggedUser {
   organization: null;
   partner: UserPartner;
   roles: unknown[];
-  stats: {
-    encounterCount: number;
-    entourageCount: number;
-    tourCount: number;
-  };
+  stats: UserStats;
   token: string;
   userType: UserType;
   uuid: string;
+  firstSignIn: boolean;
 }
 
 export type User = AnonymousUser | LoggedUser;

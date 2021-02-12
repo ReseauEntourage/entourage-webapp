@@ -92,6 +92,8 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
           address: authUserData.address || undefined,
           about: authUserData.about || undefined,
           token: authUserData.token,
+          stats: authUserData.stats,
+          firstSignIn: authUserData.firstSignIn || false,
         }))
       }
     }
