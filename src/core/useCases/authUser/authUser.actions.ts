@@ -134,7 +134,7 @@ function resetForm() {
   }
 }
 
-function setUser(payload: AuthUserState['user']) {
+function setUser(payload: { user: AuthUserState['user']; }) {
   return {
     type: AuthUserActionType.SET_USER,
     payload,
@@ -143,13 +143,13 @@ function setUser(payload: AuthUserState['user']) {
 
 function hideSensitizationPopup() {
   return {
-    type: ActionType.HIDE_SENSITIZATION_POPUP,
+    type: AuthUserActionType.HIDE_SENSITIZATION_POPUP,
   }
 }
 
 function setShowSensitizationPopup(payload: AuthUserState['showSensitizationPopup']) {
   return {
-    type: ActionType.SHOW_SENSITIZATION_POPUP,
+    type: AuthUserActionType.SHOW_SENSITIZATION_POPUP,
     payload,
   }
 }

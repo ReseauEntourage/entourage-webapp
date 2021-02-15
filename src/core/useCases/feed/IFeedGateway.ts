@@ -4,7 +4,7 @@ import { FeedState, FeedItem } from './feed.reducer'
 
 export interface IFeedGateway {
   retrieveFeedItems(data: {
-    filters: Pick<LocationState['position'], 'center' | 'zoom'>;
+    filters: Pick<LocationState, 'center' | 'zoom'>;
     nextPageToken?: FeedState['nextPageToken'];
   }): Promise<{
     items: FeedItem[];
@@ -16,7 +16,7 @@ export interface IFeedGateway {
       lat: number;
       lng: number;
     };
-    cityName: string;
+    displayAddress: string;
   }>;
 
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;

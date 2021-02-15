@@ -8,7 +8,7 @@ import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
 import { createUser } from './__mocks__'
 import { publicActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
-import { LoginSteps, authuserDefaultState } from './authUser.reducer'
+import { LoginSteps, defaultAuthUserState } from './authUser.reducer'
 import { authUserSaga } from './authUser.saga'
 import {
   selectIsLogging,
@@ -847,7 +847,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
-      store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.setUser({ user }))
       await store.waitForActionEnd()
       expect(selectUser(store.getState())).toBeTruthy()
       expect(selectUser(store.getState())).toEqual(user)
@@ -975,7 +975,7 @@ describe('Auth User', () => {
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
 
-      store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.setUser({ user }))
 
       await store.waitForActionEnd()
 
@@ -1021,7 +1021,7 @@ describe('Auth User', () => {
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(true)
 
-      store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.setUser({ user }))
 
       await store.waitForActionEnd()
 
@@ -1069,7 +1069,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
-      store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.setUser({ user }))
 
       await store.waitForActionEnd()
 
@@ -1092,7 +1092,7 @@ describe('Auth User', () => {
       const store = configureStoreWithAuthUser({
         initialAppState: {
           authUser: {
-            ...authuserDefaultState,
+            ...defaultAuthUserState,
             user,
             showSensitizationPopup: true,
           },

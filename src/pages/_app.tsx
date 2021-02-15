@@ -1,6 +1,7 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
 import Head from 'next/head'
+import { PersistGate } from 'redux-persist/integration/react'
 import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
@@ -8,6 +9,7 @@ import { ReactQueryConfigProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api, LoggedUser } from 'src/core/api'
@@ -32,7 +34,9 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  store: ReturnType<typeof bootstrapStore> | null = null
+  store: ReturnType<typeof bootstrapStore>['store'] | null = null;
+
+  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null;
 
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
     const { req } = appContext.ctx
@@ -79,25 +83,52 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     const SSRDataValue = { me, userAgent }
 
     if (!this.store) {
-      this.store = bootstrapStore()
+      const { store, persistor } = bootstrapStore()
+      this.store = store
+      this.persistor = persistor
 
       if (authUserData && !authUserData.anonymous) {
         this.store.dispatch(authUserActions.setUser({
-          id: authUserData.id,
-          email: authUserData.email || undefined,
-          hasPassword: authUserData.hasPassword,
-          avatarUrl: authUserData.avatarUrl || undefined,
-          partner: authUserData.partner,
-          lastName: authUserData.lastName || undefined,
-          firstName: authUserData.firstName || undefined,
-          address: authUserData.address || undefined,
-          about: authUserData.about || undefined,
-          token: authUserData.token,
-          stats: authUserData.stats,
-          firstSignIn: authUserData.firstSignIn || false,
+          user: {
+            id: authUserData.id,
+            email: authUserData.email || undefined,
+            hasPassword: authUserData.hasPassword,
+            avatarUrl: authUserData.avatarUrl || undefined,
+            partner: authUserData.partner,
+            lastName: authUserData.lastName || undefined,
+            firstName: authUserData.firstName || undefined,
+            address: authUserData.address || undefined,
+            about: authUserData.about || undefined,
+            token: authUserData.token,
+            stats: authUserData.stats,
+            firstSignIn: authUserData.firstSignIn || false,
+          },
         }))
       }
     }
+
+    const content = (
+      <ReactQueryConfigProvider config={queryConfig}>
+        <Layout>
+          <>
+            <Layout.Nav>
+              <Nav />
+            </Layout.Nav>
+            <Layout.Page>
+              <Component {...pageProps} />
+              <ModalsListener />
+            </Layout.Page>
+          </>
+        </Layout>
+      </ReactQueryConfigProvider>
+    )
+
+    const persistorWrappedContent = this.persistor ? (
+      <PersistGate loading={<OverlayLoader />} persistor={this.persistor}>
+        {content}
+      </PersistGate>
+    )
+      : content
 
     return (
       <>
@@ -113,19 +144,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
             <StylesProvider injectFirst={true}>
               <ThemeProvider theme={theme}>
                 <Provider store={this.store}>
-                  <ReactQueryConfigProvider config={queryConfig}>
-                    <Layout>
-                      <>
-                        <Layout.Nav>
-                          <Nav />
-                        </Layout.Nav>
-                        <Layout.Page>
-                          <Component {...pageProps} />
-                          <ModalsListener />
-                        </Layout.Page>
-                      </>
-                    </Layout>
-                  </ReactQueryConfigProvider>
+                  {persistorWrappedContent}
                 </Provider>
               </ThemeProvider>
             </StylesProvider>

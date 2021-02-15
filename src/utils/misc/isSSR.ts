@@ -1,1 +1,1 @@
-export const isSSR = !process.browser
+export const isSSR = (typeof window === 'undefined')

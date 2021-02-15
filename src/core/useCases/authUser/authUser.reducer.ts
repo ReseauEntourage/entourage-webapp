@@ -30,6 +30,8 @@ export interface AuthUserState {
     avatarUrl?: string;
     address?: {
       displayAddress: string;
+      latitude: number;
+      longitude: number;
     };
     partner?: {
       name: string;
@@ -49,7 +51,7 @@ export interface AuthUserState {
   };
 }
 
-export const authuserDefaultState: AuthUserState = {
+export const defaultAuthUserState: AuthUserState = {
   isLogging: false,
   step: 'PHONE',
   user: null,
@@ -57,7 +59,7 @@ export const authuserDefaultState: AuthUserState = {
   showSensitizationPopup: false,
 }
 
-export function authUserReducer(state: AuthUserState = authuserDefaultState, action: AuthUserAction): AuthUserState {
+export function authUserReducer(state: AuthUserState = defaultAuthUserState, action: AuthUserAction): AuthUserState {
   switch (action.type) {
     case AuthUserActionType.PHONE_LOOK_UP: {
       return {
@@ -153,12 +155,12 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
     case AuthUserActionType.SET_USER: {
       return {
         ...state,
-        user: action.payload,
-        step: action.payload ? null : LoginSteps.PHONE,
+        user: action.payload.user,
+        step: action.payload.user ? null : LoginSteps.PHONE,
       }
     }
 
-    case ActionType.SHOW_SENSITIZATION_POPUP: {
+    case AuthUserActionType.SHOW_SENSITIZATION_POPUP: {
       return {
         ...state,
         showSensitizationPopup: action.payload,
@@ -166,7 +168,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       }
     }
 
-    case ActionType.HIDE_SENSITIZATION_POPUP: {
+    case AuthUserActionType.HIDE_SENSITIZATION_POPUP: {
       return {
         ...state,
         showSensitizationPopup: false,

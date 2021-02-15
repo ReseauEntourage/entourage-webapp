@@ -9,6 +9,6 @@ export function useOnClickLogout() {
   return useCallback(async () => {
     setTokenIntoCookies('')
     await createAnonymousUser()
-    dispatch(authUserActions.setUser(null))
+    dispatch(authUserActions.setUser({ user: null }))
   }, [dispatch])
 }

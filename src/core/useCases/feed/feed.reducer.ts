@@ -82,7 +82,7 @@ export function feedReducer(
   action: FeedAction | POIsAction | LocationAction,
 ): FeedState {
   switch (action.type) {
-    case LocationActionType.SET_POSITION: {
+    case LocationActionType.SET_LOCATION: {
       return {
         ...state,
         nextPageToken: null,
@@ -162,6 +162,13 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.REMOVE_CURRENT_ITEM_UUID: {
+      return {
+        ...state,
+        selectedItemUuid: null,
+      }
+    }
+
     case POIsActionType.SET_CURRENT_POI_UUID: {
       return {
         ...state,
@@ -232,6 +239,4 @@ export function feedReducer(
     default:
       return state
   }
-
-  return state
 }

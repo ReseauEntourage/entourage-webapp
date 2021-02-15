@@ -105,6 +105,13 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       }
     }
 
+    case POIsActionType.REMOVE_CURRENT_POI_UUID: {
+      return {
+        ...state,
+        selectedPOIUuid: null,
+      }
+    }
+
     case FeedActionType.SET_CURRENT_ITEM_UUID: {
       return {
         ...state,
@@ -115,6 +122,4 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
     default:
       return state
   }
-
-  return state
 }

@@ -32,7 +32,7 @@ export const fakeFeedData = {
   ...defaultFeedState,
   fetching: false,
   filters: {
-    cityName: 'New York',
+    displayAddress: 'New York',
     center: {
       lat: 0,
       lng: 0,

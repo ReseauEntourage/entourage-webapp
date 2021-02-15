@@ -1,5 +1,5 @@
 import { call, put, getContext, select } from 'redux-saga/effects'
-import { CallReturnType } from '../../utils/CallReturnType'
+import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
 import { IAuthUserSensitizationStorage } from './IAuthUserSensitizationStorage'

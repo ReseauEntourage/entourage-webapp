@@ -7,7 +7,7 @@ export const constants = {
   MAIL_TO_REPORT: 'guillaume@entourage.social',
   FB_APP_ID: '280727035774134',
   DEFAULT_LOCATION: {
-    CITY_NAME: 'Paris',
+    DISPLAY_ADDRESS: 'Paris',
     CENTER: {
       lat: 48.856491799999986,
       lng: 2.334808400000014,
@@ -21,5 +21,7 @@ export const constants = {
   WORKSHOP_LINK: 'https://bit.ly/2O7naY7',
   ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
+  GEOLOCATION_TTL: 1000 * 60,
+  GEOLOCATION_TIMEOUT: 1000 * 5,
   SOLIGUIDE_URL: 'https://soliguide.fr/',
 }
