@@ -2,8 +2,9 @@ import { FeedJoinStatus } from 'src/core/api'
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
 import { FeedState } from './feed.reducer'
 
-export const ActionType = {
-  SET_FILTERS: 'FEED/SET_FILTERS',
+export const FeedActionType = {
+  INIT_FEED: 'FEED/INIT_FEED',
+  CANCEL_FEED: 'FEED/CANCEL_FEED',
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
@@ -22,27 +23,31 @@ export const ActionType = {
   REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
 } as const
 
-export type ActionType = keyof typeof ActionType;
+export type FeedActionType = keyof typeof FeedActionType;
 
 // ------------------------------------------------------------------------
 
-function setFilters(payload: Partial<FeedState['filters']>) {
+function init() {
   return {
-    type: ActionType.SET_FILTERS,
-    payload,
+    type: FeedActionType.INIT_FEED,
   }
 }
 
-function retrieveFeed(payload?: Pick<FeedState, 'filters' | 'nextPageToken'>) {
+function cancel() {
   return {
-    type: ActionType.RETRIEVE_FEED,
-    payload,
+    type: FeedActionType.CANCEL_FEED,
+  }
+}
+
+function retrieveFeed() {
+  return {
+    type: FeedActionType.RETRIEVE_FEED,
   }
 }
 
 function retrieveFeedStarted() {
   return {
-    type: ActionType.RETRIEVE_FEED_STARTED,
+    type: FeedActionType.RETRIEVE_FEED_STARTED,
   }
 }
 
@@ -53,20 +58,20 @@ function retrieveFeedSuccess(
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_SUCCEEDED,
+    type: FeedActionType.RETRIEVE_FEED_SUCCEEDED,
     payload,
   }
 }
 
 function retrieveFeedNextPage() {
   return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE,
+    type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE,
   }
 }
 
 function retrieveFeedNextPageStarted() {
   return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED,
+    type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED,
   }
 }
 
@@ -77,77 +82,77 @@ function retrieveFeedNextPageSuccess(
   },
 ) {
   return {
-    type: ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
+    type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
     payload,
   }
 }
 
 function updateItem(payload: Partial<FeedState['items'][string]>) {
   return {
-    type: ActionType.UPDATE_ITEM,
+    type: FeedActionType.UPDATE_ITEM,
     payload,
   }
 }
 
 function setCurrentItemUuid(payload: string | null) {
   return {
-    type: ActionType.SET_CURRENT_ITEM_UUID,
+    type: FeedActionType.SET_CURRENT_ITEM_UUID,
     payload,
   }
 }
 
 function joinEntourage(payload: { entourageUuid: string; }) {
   return {
-    type: ActionType.JOIN_ENTOURAGE,
+    type: FeedActionType.JOIN_ENTOURAGE,
     payload,
   }
 }
 
 function joinEntourageSucceeded(payload: { entourageUuid: string; status: FeedJoinStatus; }) {
   return {
-    type: ActionType.JOIN_ENTOURAGE_SUCCEEDED,
+    type: FeedActionType.JOIN_ENTOURAGE_SUCCEEDED,
     payload,
   }
 }
 
 function leaveEntourage(payload: { entourageUuid: string; userId: number; }) {
   return {
-    type: ActionType.LEAVE_ENTOURAGE,
+    type: FeedActionType.LEAVE_ENTOURAGE,
     payload,
   }
 }
 
 function leaveEntourageSucceeded(payload: { entourageUuid: string; }) {
   return {
-    type: ActionType.LEAVE_ENTOURAGE_SUCCEEDED,
+    type: FeedActionType.LEAVE_ENTOURAGE_SUCCEEDED,
     payload,
   }
 }
 
 function closeEntourage(payload: { entourageUuid: string; success: boolean; }) {
   return {
-    type: ActionType.CLOSE_ENTOURAGE,
+    type: FeedActionType.CLOSE_ENTOURAGE,
     payload,
   }
 }
 
 function closeEntourageSucceeded(payload: { entourageUuid: string; }) {
   return {
-    type: ActionType.CLOSE_ENTOURAGE_SUCCEEDED,
+    type: FeedActionType.CLOSE_ENTOURAGE_SUCCEEDED,
     payload,
   }
 }
 
 function reopenEntourage(payload: { entourageUuid: string; }) {
   return {
-    type: ActionType.REOPEN_ENTOURAGE,
+    type: FeedActionType.REOPEN_ENTOURAGE,
     payload,
   }
 }
 
 function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
   return {
-    type: ActionType.REOPEN_ENTOURAGE_SUCCEEDED,
+    type: FeedActionType.REOPEN_ENTOURAGE_SUCCEEDED,
     payload,
   }
 }
@@ -155,7 +160,8 @@ function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
-  setFilters,
+  init,
+  cancel,
   retrieveFeed,
   retrieveFeedNextPageStarted,
   retrieveFeedNextPage,
@@ -182,5 +188,5 @@ export const actions = {
   ...privateActions,
 }
 
-export type Actions = ActionsFromMapObject<typeof actions>
-export type Action = ActionFromMapObject<typeof actions>
+export type FeedActions = ActionsFromMapObject<typeof actions>
+export type FeedAction = ActionFromMapObject<typeof actions>

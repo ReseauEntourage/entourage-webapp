@@ -1,6 +1,6 @@
 import Box from '@material-ui/core/Box'
 import styled from 'styled-components'
-import { devices } from 'src/styles'
+import { devices, colors } from 'src/styles'
 
 export const Container = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ export const SearchContainer = styled.div`
   flex: 0;
 `
 
-export const FeedContainer = styled(Box)`
+export const ListContainer = styled(Box)`
   flex: 1;
   overflow: hidden;
   position: relative;
@@ -22,6 +22,11 @@ export const FeedContainer = styled(Box)`
     width: 100%;
   }
 `
+
+export const ListItem = styled.div`
+  border-bottom: 1px ${colors.borderColor} solid;
+`
+
 export const Scroll = styled.div`
   position: relative;
   height: 100%;

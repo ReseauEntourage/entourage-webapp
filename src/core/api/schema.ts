@@ -14,7 +14,6 @@ import {
   FeedType,
   FeedTypesFilter,
   Location,
-  POICategory,
   POICategoriesIds,
   User,
   UserPartner,
@@ -25,6 +24,8 @@ import {
   UserPartnerWithDetails,
   DTOCloseEntourage,
   DTOReopenEntourage,
+  POIItem,
+  POIDetailsItem,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -339,6 +340,7 @@ export const schema = {
     url: 'pois',
     method: 'GET',
     params: {} as {
+      v: 2;
       categoryIds: POICategoriesIds;
       distance: number;
       latitude: number;
@@ -346,22 +348,18 @@ export const schema = {
     },
     data: null,
     response: {} as {
-      categories: POICategory[];
-      pois: {
-        adress: string;
-        audience: string;
-        category: POICategory;
-        categoryId: number;
-        description: string;
-        email: string;
-        id: number;
-        latitude: number;
-        longitude: number;
-        name: string;
-        phone: string;
-        validated: boolean;
-        website: string;
-      }[];
+      pois: POIItem[];
+    },
+  },
+  '/pois/:poiUuid GET': {
+    url: (params: { poiUuid: string; }) => `/pois/${params.poiUuid}`,
+    method: 'GET',
+    data: null,
+    params: {} as {
+      v: 2;
+    },
+    response: {} as {
+      poi: POIDetailsItem;
     },
   },
   '/users POST': {

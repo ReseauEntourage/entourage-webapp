@@ -7,6 +7,7 @@ export const Container = styled.div<{ isActive: boolean; }>`
   padding: ${theme.spacing(3, 2)};
   align-items: center;
   background-color: ${(props) => props.isActive && colors.main.greyLight};
+
 `
 
 export const Picture = styled.div`

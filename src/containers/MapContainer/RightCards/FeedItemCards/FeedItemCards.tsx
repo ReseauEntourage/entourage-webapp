@@ -1,12 +1,11 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import CloseIcon from '@material-ui/icons/Close'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import Link from 'next/link'
 import capitalize from 'lodash/capitalize'
 import React, { useCallback } from 'react'
-import { useCurrentFeedItem } from '../useCurrentFeedItem'
+import { useCurrentFeedItem } from '../../MapActions'
+import { RightCard } from '../RightCard'
 import { openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
@@ -16,9 +15,8 @@ import { useMe } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
 import { Actions } from './Actions'
-import * as S from './RightCards.styles'
 
-export function RightCards() {
+export function FeedItemCards() {
   const feedItem = useCurrentFeedItem()
   assertIsDefined(feedItem)
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
@@ -94,18 +92,9 @@ export function RightCards() {
   }
 
   return (
-    <S.Container>
-      <S.Scroll>
-        <Box display="flex" justifyContent="flex-end" marginRight={1}>
-          <Link href="/actions">
-            <a>
-              <CloseIcon color="primary" fontSize="large" />
-            </a>
-          </Link>
-        </Box>
-        <Box marginX={4}>
-          {card}
-        </Box>
+    <RightCard
+      card={card}
+      footer={(
         <Box
           display="flex"
           flexDirection="column"
@@ -128,8 +117,8 @@ export function RightCards() {
             }))}
           />
         </Box>
-      </S.Scroll>
-    </S.Container>
-
+      )}
+      href="/actions"
+    />
   )
 }

@@ -1,7 +1,6 @@
 export const queryKeys = {
   me: 'me',
   feeds: 'feeds',
-  POIs: 'POIs',
   entourageUsers: 'entourageUsers',
   myFeeds: 'myFeeds',
   entourage: 'entourage',

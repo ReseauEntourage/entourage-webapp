@@ -11,6 +11,7 @@ export const Container = styled.div`
 `
 
 export const Scroll = styled.div`
+  height: 100%;
   position: relative;
   overflow: auto;
 `

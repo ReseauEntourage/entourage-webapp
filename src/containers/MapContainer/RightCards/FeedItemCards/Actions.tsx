@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useDispatch, useStore } from 'react-redux'
-import { useCurrentFeedItem } from '../useCurrentFeedItem'
+import { useCurrentFeedItem } from '../../MapActions'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalShare } from 'src/components/ModalShare'

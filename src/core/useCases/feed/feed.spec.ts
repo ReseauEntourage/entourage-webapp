@@ -1,5 +1,8 @@
 import { configureStore } from '../../configureStore'
-import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppDependencies } from '../Dependencies'
+import { locationActions, LocationState, selectPosition } from '../location'
+import { fakeLocationData } from '../location/__mocks__'
+import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
@@ -7,7 +10,6 @@ import { publicActions } from './feed.actions'
 import { FeedState, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
-  selectFeedFilters,
   selectFeedIsFetching,
   selectFeedItems,
   selectHasNextPageToken,
@@ -16,7 +18,7 @@ import {
 
 function configureStoreWithFeed(
   params: {
-    dependencies?: PatialAppDependencies;
+    dependencies?: PartialAppDependencies;
     initialAppState?: PartialAppState;
   },
 ) {
@@ -45,20 +47,109 @@ describe('Feed', () => {
   })
 
   it(`
+    Given initial state
+     When user hasn't init feed
+      And user sets position filters
+    Then items should not be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextLocation: LocationState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(locationActions.setPosition(nextLocation))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user sets position filters
+    Then items should be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextLocation: LocationState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(locationActions.setPosition(nextLocation))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user set position filters
+      And user cancels feed
+      And user sets a new position filter again
+    Then items should be fetched only once
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const nextLocation: LocationState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+    store.dispatch(publicActions.init())
+
+    store.dispatch(locationActions.setPosition(nextLocation))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    store.dispatch(publicActions.cancel())
+
+    const nextNextLocation: LocationState['position'] = {
+      cityName: 'Nantes',
+      center: { lat: 5, lng: 6 },
+      zoom: 65,
+    }
+
+    store.dispatch(locationActions.setPosition(nextNextLocation))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(selectPosition(store.getState())).toStrictEqual(nextNextLocation)
+  })
+
+  it(`
     Given user has not any items
-    When user set filters
+    When user set position filters
     Then items should be fetching during request
       And items should not be fetching after request succeeded
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextFilters: FeedState['filters'] = {
+    const nextLocation: LocationState['position'] = {
       cityName: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
-    store.dispatch(publicActions.setFilters(nextFilters))
+
+    store.dispatch(publicActions.init())
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
@@ -88,6 +179,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.retrieveFeed())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
@@ -97,63 +189,21 @@ describe('Feed', () => {
   })
 
   it(`
-    Given the initial state
-    When user want to update all filters
-    Then filters should be updated
-  `, () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockResolvedValue({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const filters: FeedState['filters'] = {
-      cityName: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
-
-    store.dispatch(publicActions.setFilters(filters))
-
-    expect(selectFeedFilters(store.getState())).toEqual(filters)
-  })
-
-  it(`
-    Given the initial state
-    When user want to update partially update filters
-    Then filters should be updated and merge with existing filters
-  `, () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockResolvedValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const filters: Partial<FeedState['filters']> = {
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
-
-    store.dispatch(publicActions.setFilters(filters))
-
-    expect(selectFeedFilters(store.getState())).toEqual({
-      ...defaultFeedState.filters,
-      ...filters,
-    })
-  })
-
-  it(`
     Given there is feed items return by the server
     When user retrieve feed for the first time
     Then feed items should be fetching until request is succeeded
       And should retrieve feed successfully with items and next page token
       And should have next page token
       And should pending state be false after server response
-      And should retrieve feed gateway method have been called with filters values
+      And should retrieve feed gateway method have been called with position filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
-    store.dispatch(publicActions.retrieveFeed({
-      filters: store.getState().feed.filters,
-      nextPageToken: store.getState().feed.nextPageToken,
-    }))
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.retrieveFeed())
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
@@ -169,29 +219,30 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: defaultFeedState.filters.center,
-        zoom: defaultFeedState.filters.zoom,
+        center: defaultLocationState.position.center,
+        zoom: defaultLocationState.position.zoom,
       },
     })
   })
 
   it(`
     Given there is feed items return by the server
-    When user changes filters
-    Then should retrieve feed gateway method have been called the second time with next filters
+    When user changes position filters
+    Then should retrieve feed gateway method have been called the second time with next position filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
     const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextFilters = {
+    const nextLocation = {
       cityName: 'Lyon',
       center: { lat: 5, lng: 6 },
       zoom: 13,
     }
 
-    store.dispatch(publicActions.setFilters(nextFilters))
+    store.dispatch(publicActions.init())
+    store.dispatch(locationActions.setPosition(nextLocation))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -199,8 +250,8 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: nextFilters.center,
-        zoom: nextFilters.zoom,
+        center: nextLocation.center,
+        zoom: nextLocation.zoom,
       },
       nextPageToken: undefined,
     })
@@ -209,7 +260,7 @@ describe('Feed', () => {
   it(`
     Given there is feed items return by the server
     When user fetch the second page and the server return a null next page token
-    Then should fetch second page with filters from the store and next page token
+    Then should fetch second page with position filters from the store and next page token
       And new items should be concat with previous items
   `, async () => {
     const feedGateway = new TestFeedGateway()
@@ -241,9 +292,13 @@ describe('Feed', () => {
         ...fakeFeedData,
         nextPageToken: 'wyz',
       },
+      location: {
+        ...fakeLocationData,
+      },
     }
     const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
 
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.retrieveFeedNextPage())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
@@ -252,8 +307,8 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: initialAppState.feed.filters.center,
-        zoom: initialAppState.feed.filters.zoom,
+        center: initialAppState.location.position.center,
+        zoom: initialAppState.location.position.zoom,
       },
       nextPageToken: 'wyz',
     })

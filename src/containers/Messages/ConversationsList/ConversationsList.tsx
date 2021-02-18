@@ -1,3 +1,4 @@
+import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Link from 'next/link'
 import React from 'react'
@@ -27,7 +28,13 @@ export function ConversationsList(props: ConversationsListProps) {
   }
 
   if (!entouragesWithMembersPending) {
-    return <CircularProgress variant="indeterminate" />
+    return (
+      <S.Container>
+        <Box alignItems="center" display="flex" height="100%" justifyContent="center">
+          <CircularProgress variant="indeterminate" />
+        </Box>
+      </S.Container>
+    )
   }
 
   return (
@@ -44,27 +51,29 @@ export function ConversationsList(props: ConversationsListProps) {
           const pendingMembers = entourageWithMembers?.members ?? []
 
           return (
-            <Link
-              key={feedUuid}
-              as={`/messages/${feedUuid}`}
-              href="/messages/[messageId]"
-            >
-              <a>
-                <ConversationItem
-                  excerpt={(
-                    <ConversationItemExcerpt
-                      feedJoinStatus={feed.data.joinStatus}
-                      iAmAuthor={feed.data.author.id === me.id}
-                      pendingMembers={pendingMembers}
-                      text={feed.data.lastMessage?.text ?? ''}
-                    />
-                  )}
-                  isActive={feedUuid === entourageUuid}
-                  profilePictureURL={feed.data.author.avatarUrl}
-                  title={feed.data.title}
-                />
-              </a>
-            </Link>
+            <S.ListItem>
+              <Link
+                key={feedUuid}
+                as={`/messages/${feedUuid}`}
+                href="/messages/[messageId]"
+              >
+                <a>
+                  <ConversationItem
+                    excerpt={(
+                      <ConversationItemExcerpt
+                        feedJoinStatus={feed.data.joinStatus}
+                        iAmAuthor={feed.data.author.id === me.id}
+                        pendingMembers={pendingMembers}
+                        text={feed.data.lastMessage?.text ?? ''}
+                      />
+                    )}
+                    isActive={feedUuid === entourageUuid}
+                    profilePictureURL={feed.data.author.avatarUrl}
+                    title={feed.data.title}
+                  />
+                </a>
+              </Link>
+            </S.ListItem>
           )
         })}
     </S.Container>

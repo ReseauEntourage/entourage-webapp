@@ -1,5 +1,7 @@
 import { configureStore } from '../../configureStore'
-import { PatialAppDependencies } from '../Dependencies'
+import { PartialAppDependencies } from '../Dependencies'
+import { selectPosition } from '../location'
+import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -9,7 +11,7 @@ import { publicActions } from './feed.actions'
 import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
-  selectCurrentItem,
+  selectCurrentFeedItem,
   selectFeedItems,
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
@@ -19,7 +21,7 @@ import {
 
 function configureStoreWithFeed(
   params: {
-    dependencies?: PatialAppDependencies;
+    dependencies?: PartialAppDependencies;
     initialAppState?: PartialAppState;
   },
 ) {
@@ -77,13 +79,14 @@ describe('Feed Item', () => {
   `, () => {
     const store = configureStoreWithFeed({})
 
-    expect(selectCurrentItem(store.getState())).toEqual(null)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
     Given feed has cached items and selected item to null
-    When user select and item
+    When user selects an item
     Then should selected item be defined after to set item uuid
+     And selected POI should be null
   `, () => {
     const store = configureStoreWithFeed({
       initialAppState: {
@@ -95,7 +98,8 @@ describe('Feed Item', () => {
 
     store.dispatch(publicActions.setCurrentItemUuid('abc'))
 
-    expect(selectCurrentItem(store.getState())).toEqual(fakeFeedData.items.abc)
+    expect(selectCurrentFeedItem(store.getState())).toEqual(fakeFeedData.items.abc)
+    expect(selectCurrentPOI(store.getState())).toEqual(null)
   })
 
   it(`
@@ -106,7 +110,7 @@ describe('Feed Item', () => {
     const { store, feedGateway } = configureStoreWithSelectedItems()
 
     const prevItems = selectFeedItems(store.getState())
-    const prevSelectedItem = selectCurrentItem(store.getState())
+    const prevSelectedItem = selectCurrentFeedItem(store.getState())
 
     store.dispatch(publicActions.retrieveFeed())
 
@@ -114,7 +118,7 @@ describe('Feed Item', () => {
     await store.waitForActionEnd()
 
     const nextItems = selectFeedItems(store.getState())
-    const nextSelectedItem = selectCurrentItem(store.getState())
+    const nextSelectedItem = selectCurrentFeedItem(store.getState())
 
     expect(nextItems).toBeTruthy()
     expect(prevItems).not.toEqual(nextItems)
@@ -128,22 +132,24 @@ describe('Feed Item', () => {
     When user select a new current item uuid
     Then prev and next selected item should be truthy
       And prev and next selected items should be different
+       And selected POI should be null
   `, async () => {
     const { store, feedGateway, itemsEntities } = configureStoreWithSelectedItems()
 
-    const prevSelectedItem = selectCurrentItem(store.getState())
+    const prevSelectedItem = selectCurrentFeedItem(store.getState())
 
     store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const nextSelectedItem = selectCurrentItem(store.getState())
+    const nextSelectedItem = selectCurrentFeedItem(store.getState())
 
     expect(prevSelectedItem).toBeTruthy()
     expect(nextSelectedItem).toBeTruthy()
 
     expect(prevSelectedItem).not.toEqual(nextSelectedItem)
+    expect(selectCurrentPOI(store.getState())).toEqual(null)
   })
 
   it(`
@@ -194,6 +200,7 @@ describe('Feed Item', () => {
 
     // --------------------------------------------------
 
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
@@ -202,7 +209,7 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: store.getState().feed.filters.zoom,
+        zoom: selectPosition(store.getState()).zoom,
         center: {
           lat: 1,
           lng: 2,

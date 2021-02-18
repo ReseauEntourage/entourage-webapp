@@ -1,43 +1,29 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { feedActions } from 'src/core/useCases/feed'
-import { useMount } from 'src/utils/hooks'
-import { FeedList } from './FeedList'
+import { LeftList } from './LeftLists/LeftList'
 import * as S from './MapContainer.styles'
-import { RightCards } from './RightCards'
-import { useActionId } from './useActionId'
-import { useCurrentFeedItem } from './useCurrentFeedItem'
-import { useMarkers } from './useMarkers'
+import { MapContainerProps } from './index'
 
-export function MapContainerDesktop() {
-  const dispatch = useDispatch()
-  const actionId = useActionId()
-  const { feedsMarkersContent, POIsMarkersContent, isLoading } = useMarkers()
-  const currentFeedItem = useCurrentFeedItem()
-
-  useMount(() => {
-    if (!actionId) {
-      dispatch(feedActions.retrieveFeed())
-    }
-  })
+export function MapContainerDesktop(props: MapContainerProps) {
+  const { markers, cards, list, isLoading } = props
 
   return (
     <S.Container>
-      <FeedList />
+      <LeftList isLoading={isLoading} list={list} />
       <S.MapContainer>
         <Map>
-          {POIsMarkersContent}
-          {feedsMarkersContent}
+          {markers}
         </Map>
         {isLoading && <OverlayLoader />}
       </S.MapContainer>
-      {currentFeedItem && (
-        <S.RightCardsContainer boxShadow={4}>
-          <RightCards key={actionId} />
-        </S.RightCardsContainer>
-      )}
+      {
+        cards && (
+          <S.RightCardsContainer boxShadow={4}>
+            {cards}
+          </S.RightCardsContainer>
+        )
+      }
     </S.Container>
   )
 }

@@ -2,17 +2,20 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
-import { selectFeedFilters, feedActions, selectFeedIsIdle } from 'src/core/useCases/feed'
+import { selectFeedIsIdle } from 'src/core/useCases/feed'
+import { locationActions, selectPosition } from 'src/core/useCases/location'
+import { selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
 import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
 
 export function SearchCity() {
-  const filters = useSelector(selectFeedFilters)
+  const position = useSelector(selectPosition)
   const dispatch = useDispatch()
   const feedIsIdle = useSelector(selectFeedIsIdle)
-  const defaultInputValue = filters.cityName
+  const poisIsIdle = useSelector(selectPOIsIsIdle)
+  const defaultInputValue = position.cityName
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
     const placeDetail = await getDetailPlacesService(value.place.place_id, value.sessionToken)
@@ -24,17 +27,17 @@ export function SearchCity() {
     assertIsNumber(lng)
 
     dispatch(
-      feedActions.setFilters({
-        ...filters,
+      locationActions.setPosition({
+        ...position,
         center: {
           lat,
           lng,
         },
       }),
     )
-  }, [dispatch, filters])
+  }, [dispatch, position])
 
-  if (feedIsIdle) {
+  if (feedIsIdle && poisIsIdle) {
     return null
   }
 

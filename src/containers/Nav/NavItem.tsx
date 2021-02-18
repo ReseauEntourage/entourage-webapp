@@ -10,14 +10,16 @@ interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
 }
 
 export function NavItem(props: NavItemProps) {
-  const { label, icon, href, ...restProps } = props
+  const { label, icon, href, isActive, ...restProps } = props
 
   const content = (
     <S.Container {...restProps}>
-      {icon}
-      <S.Label>
-        {label}
-      </S.Label>
+      <S.ActiveContainer isActive={isActive}>
+        {icon}
+        <S.Label>
+          {label}
+        </S.Label>
+      </S.ActiveContainer>
     </S.Container>
   )
 
