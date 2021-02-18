@@ -18,8 +18,6 @@ export function MapPOIs() {
   const { poisMarkersContent, isLoading } = usePOIMarkers()
 
   useMount(() => {
-    dispatch(poisActions.init())
-    dispatch(poisActions.retrievePOIs())
     return () => {
       dispatch(poisActions.cancel())
     }

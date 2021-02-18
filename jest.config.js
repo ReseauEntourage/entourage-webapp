@@ -8,4 +8,7 @@ module.exports = {
   testEnvironment: 'node',
   testRegex: '.spec.tsx?$',
   moduleDirectories: ["node_modules", "."],
+  setupFiles: [
+    '<rootDir>/jest.setupTests.js',
+  ],
 }

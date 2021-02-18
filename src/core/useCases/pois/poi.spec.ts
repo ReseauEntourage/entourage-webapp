@@ -1,7 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { selectCurrentFeedItem } from '../feed'
-import { selectPosition } from '../location'
+import { entourageCities, selectLocation } from '../location'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
@@ -294,12 +294,69 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOI).toHaveBeenCalledWith({ poiUuid: selectedPOIId })
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        zoom: calculateDistanceFromZoom(selectPosition(store.getState()).zoom),
+        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
         center: {
           lat: poiDetailsFromGateway.latitude,
           lng: poiDetailsFromGateway.longitude,
         },
       },
     })
+  })
+
+  it(`
+    Given POIs have no cached items
+      And has selected POI uuid
+    When POI uuid is a city id
+    Then POI details should not be retrieved from gateway
+      And POIs should not be retrieved
+  `, async () => {
+    const poisFromGateway = createPOIList()
+    const poiDetailsFromGateway = createPOIDetails()
+
+    const deferredValueRetrievePOIs = {
+      pois: poisFromGateway,
+    }
+    const deferredValueRetrievePOI = {
+      poiDetails: poiDetailsFromGateway,
+    }
+
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
+    poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
+
+    const resolveAllDeferredValue = () => {
+      poisGateway.retrievePOIs.resolveDeferredValue()
+      poisGateway.retrievePOI.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithPOIs(
+      {
+        dependencies: {
+          poisGateway,
+        },
+        initialAppState: {
+          pois: {
+            ...fakePOIsData,
+            pois: {},
+            poisUuids: [],
+            selectedPOIUuid: null,
+            isIdle: true,
+          },
+        },
+      },
+    )
+
+    const selectedPOIId = Object.keys(entourageCities)[0]
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
   })
 })

@@ -142,7 +142,7 @@ export class HTTPFeedGateway implements IFeedGateway {
       },
     }).then((res) => {
       return {
-        cityName: res.data.entourage.metadata.city,
+        displayAddress: res.data.entourage.metadata.city,
         center: {
           lat: res.data.entourage.location.latitude,
           lng: res.data.entourage.location.longitude,

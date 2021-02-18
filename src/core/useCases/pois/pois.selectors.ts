@@ -26,6 +26,10 @@ export function selectPOIList(state: AppState) {
   })
 }
 
+export function selectCurrentPOIUuid(state: AppState) {
+  return state.pois.selectedPOIUuid
+}
+
 export function selectCurrentPOI(state: AppState) {
   const { selectedPOIUuid, detailedPOIs } = state.pois
 

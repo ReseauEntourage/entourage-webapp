@@ -1,8 +1,8 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useActionId } from '../containers/MapContainer'
 import { MapActions } from '../containers/MapContainer/MapActions'
-import { useActionId } from '../containers/MapContainer/useActionId'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { StatelessPage } from 'src/utils/types'
@@ -14,6 +14,7 @@ const Actions: StatelessPage<Props> = () => {
   const actionId = useActionId()
 
   useEffect(() => {
+    dispatch(feedActions.init())
     dispatch(feedActions.setCurrentItemUuid(actionId || null))
   }, [actionId, dispatch])
 

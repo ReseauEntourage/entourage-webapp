@@ -17,8 +17,6 @@ export function MapActions() {
   const { feedsMarkersContent, isLoading } = useActionMarkers()
 
   useMount(() => {
-    dispatch(feedActions.init())
-    dispatch(feedActions.retrieveFeed())
     return () => {
       dispatch(feedActions.cancel())
     }
