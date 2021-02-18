@@ -8,6 +8,7 @@ import Linkify from 'linkifyjs/react'
 import React from 'react'
 import { POIIcon } from '../Map'
 import { ContactLink } from 'src/components/ContactLink'
+import { constants } from 'src/constants'
 import { POICategory, POISource } from 'src/core/api'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
@@ -48,6 +49,9 @@ export function POICard(props: POICardProps) {
     sourceUrl,
   } = props
 
+  // TODO change URLs in database
+  const transformedDescription = description?.replace(constants.GUS_LYON_2019_URL, constants.GUS_LYON_2021_URL)
+
   return (
     <Box>
       {source === 'soliguide' && sourceUrl && (
@@ -70,7 +74,7 @@ export function POICard(props: POICardProps) {
         </Box>
         <Box marginY={1}>
           <Linkify>
-            <S.Description>{description}</S.Description>
+            <S.Description>{transformedDescription}</S.Description>
           </Linkify>
         </Box>
         <Box marginY={1}>

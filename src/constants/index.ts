@@ -22,4 +22,7 @@ export const constants = {
   ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
   SOLIGUIDE_URL: 'https://soliguide.fr/',
+  GUS_LYON_2019_URL:
+    'https://www.lyon.fr/sites/lyonfr/files/content/documents/2019-01/Guide%20de%20l%20urgence%20sociale%202019_0.pdf',
+  GUS_LYON_2021_URL: 'https://www.lyon.fr/sites/lyonfr/files/content/documents/2021-01/LYON_GUS_2021.pdf',
 }
