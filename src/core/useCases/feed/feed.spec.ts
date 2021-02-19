@@ -15,6 +15,7 @@ import {
   selectFeedItems,
   selectHasNextPageToken,
   selectFeedIsIdle,
+  selectFeedFilters,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -213,6 +214,52 @@ describe('Feed', () => {
     await store.waitForActionEnd()
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user toogle feed filters
+    Then store should be update with new feed filters values
+    And items should be fetched
+    And should retrieve feed gateway method have been called with feed filters values
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.RESOURCE,
+        FilterFeedCategory.SOCIAL,
+      ],
+    }
+
+    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: expectedFeedFilters,
+      },
+      nextPageToken: undefined,
+    })
   })
 
   it(`
