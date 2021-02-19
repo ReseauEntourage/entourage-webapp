@@ -42,8 +42,6 @@ function* showSensitizationPopupSaga() {
     const showSensitizationPopup = (!userIsActive && !hasSeenSensitizationPopup) || user.firstSignIn
 
     yield put(actions.setShowSensitizationPopup(showSensitizationPopup))
-  } else {
-    yield put(actions.setShowSensitizationPopup(false))
   }
 }
 
@@ -51,7 +49,7 @@ function* hideSensitizationPopupSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserSensitizationStorage } = dependencies
   const user = yield select(selectUser)
-  authUserSensitizationStorage.setHasSeenPopup(user.id)
+  if (user) authUserSensitizationStorage.setHasSeenPopup(user.id)
 }
 
 function* phoneLookUpSaga(action: AuthUserActions['phoneLookUp']) {

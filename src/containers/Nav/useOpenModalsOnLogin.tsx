@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import { ModalSensitization } from '../ModalSensitization'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
-import { useOnLoginStepsCompleted, useOnSensitizationPopupHidden } from 'src/core/events'
+import { useOnLoginCompleted, useOnSensitizationPopupHidden } from 'src/core/events'
 import {
   selectIsLogged,
   selectShowSensitizationPopup,
@@ -16,7 +16,7 @@ export function useOpenModalsOnLogin() {
   const showSensitizationPopup = useSelector(selectShowSensitizationPopup)
 
   // TODO when react-query removed: change order to show ProfileModal first
-  useOnLoginStepsCompleted(() => {
+  useOnLoginCompleted(() => {
     if (isLogged) {
       if (showSensitizationPopup) {
         openModal(<ModalSensitization />)
