@@ -2,9 +2,13 @@ import { LocationState } from '../location'
 import { FeedJoinStatus } from 'src/core/api'
 import { FeedState, FeedItem } from './feed.reducer'
 
+interface FeedItemsFilter {
+  position: Pick<LocationState['position'], 'center' | 'zoom'>;
+  types: FeedState['filters'];
+}
 export interface IFeedGateway {
   retrieveFeedItems(data: {
-    filters: Pick<LocationState['position'], 'center' | 'zoom'>;
+    filters: FeedItemsFilter;
     nextPageToken?: FeedState['nextPageToken'];
   }): Promise<{
     items: FeedItem[];

@@ -1,7 +1,7 @@
 import { constants } from 'src/constants'
 import { api } from 'src/core/api'
 import { IFeedGateway } from 'src/core/useCases/feed'
-import { assertCondition } from 'src/utils/misc'
+import { assertCondition, formatTypes } from 'src/utils/misc'
 import { ResolvedValue } from 'src/utils/types'
 
 export class HTTPFeedGateway implements IFeedGateway {
@@ -23,14 +23,16 @@ export class HTTPFeedGateway implements IFeedGateway {
       }
     }
 
+    const types = formatTypes(data.filters.types)
+
     return api.request({
       name: '/feeds GET',
       params: {
+        types,
         timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
-        latitude: data.filters.center.lat,
-        longitude: data.filters.center.lng,
+        latitude: data.filters.position.center.lat,
+        longitude: data.filters.position.center.lng,
         pageToken: data.nextPageToken ?? undefined,
-        types: 'as,ae,am,ar,ai,ak,ao,cs,ce,cm,cr,ci,ck,co,ou',
       },
     }).then((res) => {
       const { nextPageToken, feeds } = res.data

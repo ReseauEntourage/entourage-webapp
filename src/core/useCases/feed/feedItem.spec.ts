@@ -8,7 +8,7 @@ import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentFeedItem,
@@ -209,11 +209,14 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: selectPosition(store.getState()).zoom,
-        center: {
-          lat: 1,
-          lng: 2,
+        position: {
+          zoom: selectPosition(store.getState()).zoom,
+          center: {
+            lat: 1,
+            lng: 2,
+          },
         },
+        types: defaultFeedState.filters,
       },
     })
   })

@@ -31,14 +31,6 @@ export function createFeedItemList(): FeedItem[] {
 export const fakeFeedData = {
   ...defaultFeedState,
   fetching: false,
-  filters: {
-    cityName: 'New York',
-    center: {
-      lat: 0,
-      lng: 0,
-    },
-    zoom: 12,
-  },
   nextPageToken: 'abc',
   itemsUuids: ['abc'],
   items: {
