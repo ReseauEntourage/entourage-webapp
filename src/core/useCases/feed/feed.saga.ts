@@ -16,7 +16,7 @@ function* retrieveFeed() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching } = feedState
+  const { nextPageToken, fetching, filters: typeFilters } = feedState
   const { zoom, center } = positionState
 
   if (fetching) {
@@ -28,7 +28,7 @@ function* retrieveFeed() {
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { center, zoom },
+      filters: { types: typeFilters, location: { center, zoom } },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -40,7 +40,7 @@ function* retrieveFeedNextPage() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching } = feedState
+  const { nextPageToken, fetching, filters: typeFilters } = feedState
   const { zoom, center } = positionState
 
   if (!nextPageToken || fetching) {
@@ -52,7 +52,7 @@ function* retrieveFeedNextPage() {
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { center, zoom },
+      filters: { types: typeFilters, location: { center, zoom } },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -92,6 +92,10 @@ function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
       yield put(locationActions.initLocation())
     }
   }
+}
+
+function* toggleFeedFilter() {
+  yield put(actions.retrieveFeed())
 }
 
 function* joinEntourage(action: FeedActions['joinEntourage']) {
@@ -134,6 +138,7 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
+  yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, toggleFeedFilter)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)

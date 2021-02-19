@@ -25,3 +25,23 @@ export interface Partner extends BaseModel {}
 export interface Poi extends BaseModel {}
 
 export interface User extends BaseModel {}
+
+/**
+ * FeedFilter enums
+ */
+
+export const FilterFeedCategory = {
+  SOCIAL: 'SOCIAL',
+  MAT_HELP: 'MAT_HELP',
+  RESOURCE: 'RESOURCE',
+  OTHER: 'OTHER',
+} as const
+
+export type FilterFeedCategory = keyof typeof FilterFeedCategory
+
+export const FilterEntourageType = {
+  CONTRIBUTION: 'CONTRIBUTION',
+  ASK_FOR_HELP: 'ASK_FOR_HELP',
+} as const
+
+export type FilterEntourageType = keyof typeof FilterEntourageType

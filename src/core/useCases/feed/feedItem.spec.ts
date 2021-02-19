@@ -11,7 +11,7 @@ import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentFeedItem,
@@ -213,11 +213,14 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: selectLocation(store.getState()).zoom,
-        center: {
-          lat: 1,
-          lng: 2,
+        location: {
+          zoom: selectLocation(store.getState()).zoom,
+          center: {
+            lat: 1,
+            lng: 2,
+          },
         },
+        types: defaultFeedState.filters,
       },
     })
   })
@@ -333,11 +336,14 @@ describe('Feed Item', () => {
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: selectLocation(store.getState()).zoom,
-        center: {
-          lat: selectLocation(store.getState()).center.lat,
-          lng: selectLocation(store.getState()).center.lng,
+        location: {
+          zoom: selectLocation(store.getState()).zoom,
+          center: {
+            lat: selectLocation(store.getState()).center.lat,
+            lng: selectLocation(store.getState()).center.lng,
+          },
         },
+        types: defaultFeedState.filters,
       },
     })
   })
@@ -400,8 +406,11 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledTimes(0)
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-        zoom: selectLocation(store.getState()).zoom,
+        location: {
+          center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+          zoom: selectLocation(store.getState()).zoom,
+        },
+        types: defaultFeedState.filters,
       },
     })
   })
