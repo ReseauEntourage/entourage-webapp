@@ -1,5 +1,6 @@
 import { FeedAction, FeedActionType } from '../feed/feed.actions'
 import { POICategory, POISource } from 'src/core/api'
+import { FilterPOICategory } from 'src/utils/types'
 import { POIsAction, POIsActionType } from './pois.actions'
 
 export interface POI {
@@ -44,6 +45,7 @@ export interface POIsState {
   };
   selectedPOIUuid: string | null;
   isIdle: boolean;
+  filters: FilterPOICategory[];
 }
 
 export const defaultPOIsState: POIsState = {
@@ -54,6 +56,23 @@ export const defaultPOIsState: POIsState = {
   detailedPOIs: {},
   selectedPOIUuid: null,
   isIdle: true,
+  filters: [
+    FilterPOICategory.OTHER,
+    FilterPOICategory.EATING,
+    FilterPOICategory.SLEEPING,
+    FilterPOICategory.HEALING,
+    FilterPOICategory.ORIENTATION,
+    FilterPOICategory.REINTEGRATION,
+    FilterPOICategory.PARTNERS,
+    FilterPOICategory.TOILETS,
+    FilterPOICategory.FOUNTAINS,
+    FilterPOICategory.SHOWERS,
+    FilterPOICategory.LAUNDRIES,
+    FilterPOICategory.WELL_BEING,
+    FilterPOICategory.CLOTHES,
+    FilterPOICategory.DONATION_BOX,
+    FilterPOICategory.CLOAKROOM,
+  ],
 }
 
 export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAction | FeedAction): POIsState {
@@ -116,6 +135,17 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       return {
         ...state,
         selectedPOIUuid: null,
+      }
+    }
+
+    case POIsActionType.TOGGLE_POIS_FILTER: {
+      const currentFeedFilters = state.filters
+
+      return {
+        ...state,
+        filters: currentFeedFilters.includes(action.payload.category)
+          ? currentFeedFilters.filter((i) => i !== action.payload.category)
+          : [...currentFeedFilters, action.payload.category],
       }
     }
 

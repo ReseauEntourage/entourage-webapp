@@ -1,3 +1,4 @@
+import { FilterPOICategory } from 'src/utils/types'
 import { POIsState } from './pois.reducer'
 
 interface AppState {
@@ -35,3 +36,15 @@ export function selectCurrentPOI(state: AppState) {
 
   return selectedPOIUuid ? detailedPOIs[selectedPOIUuid] : null
 }
+
+export function selectPOIsFilters(state: AppState) {
+  return state.pois.filters
+}
+
+export function selectIsActiveFilter(state: AppState, category: FilterPOICategory) {
+  if (category) {
+    return state.pois.filters.includes(category)
+  }
+  return state.pois.filters.length > 0
+}
+

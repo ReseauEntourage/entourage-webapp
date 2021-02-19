@@ -1,8 +1,13 @@
 import { LocationState } from '../location'
 import { POI, POIDetails } from './pois.reducer'
 
+interface FeedPOIsFilter {
+  location: Pick<LocationState, 'center' | 'zoom'>;
+  categories: string;
+}
+
 export interface IPOIsGateway {
-  retrievePOIs(data: { filters: Pick<LocationState, 'center' | 'zoom'>; }): Promise<{
+  retrievePOIs(data: { filters: FeedPOIsFilter; }): Promise<{
     pois: POI[];
   }>;
 

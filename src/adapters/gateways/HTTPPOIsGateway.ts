@@ -26,10 +26,10 @@ export class HTTPPOIsGateway implements IPOIsGateway {
       name: '/pois GET',
       params: {
         v: 2,
-        distance: data.filters.zoom,
-        longitude: data.filters.center.lng,
-        latitude: data.filters.center.lat,
-        categoryIds: '0,1,2,3,5,7,8,40,41,42,43,6,61,63,62',
+        distance: data.filters.location.zoom,
+        longitude: data.filters.location.center.lng,
+        latitude: data.filters.location.center.lat,
+        categoryIds: data.filters.categories,
       },
     }).then((res) => {
       const { pois } = res.data

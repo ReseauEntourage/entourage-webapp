@@ -50,8 +50,8 @@ export type POICategory =
   | { id: 43; name: 'Laveries'; }
   | { id: 6; name: 'Bien-être & activités'; }
   | { id: 61; name: 'Vêtements & matériels'; }
-  | { id: 63; name: 'Bagageries'; }
   | { id: 62; name: 'Boîtes à dons & lire'; }
+  | { id: 63; name: 'Bagageries'; }
 
 export type POISource = 'entourage' | 'soliguide'
 
@@ -101,8 +101,8 @@ export interface POIDetailsItem {
  * 43 = 'Laveries'
  * 6 = 'Bien-être & activités'
  * 61 = 'Vêtements & matériels'
- * 63 = 'Bagageries'
  * 62 = 'Boîtes à dons & lire'
+ * 63 = 'Bagageries'
  *
  */
 export type POICategoriesIds = string

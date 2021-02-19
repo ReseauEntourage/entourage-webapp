@@ -3,13 +3,21 @@ import { PartialAppDependencies } from '../Dependencies'
 import { locationActions, LocationState, selectLocation } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { formatPOIsCategories } from 'src/utils/misc'
+import { FilterPOICategory } from 'src/utils/types'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
 import { defaultPOIsState } from './pois.reducer'
 import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
-import { selectPOIsIsFetching, selectPOIsIsIdle, selectPOIList } from './pois.selectors'
+import {
+  selectPOIsFilters,
+  selectIsActiveFilter,
+  selectPOIsIsFetching,
+  selectPOIsIsIdle,
+  selectPOIList,
+} from './pois.selectors'
 
 function configureStoreWithPOIs(
   params: {
@@ -63,6 +71,81 @@ describe('POIs', () => {
     await store.waitForActionEnd()
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given initial state
+    When user init POIs
+      And user toggles POI filters
+    Then POIs should be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.togglePOIsFilter({
+      category: FilterPOICategory.OTHER,
+    }))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    const expectedPOIsFilters = defaultPOIsState.filters.filter((i) => i !== FilterPOICategory.OTHER)
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories(expectedPOIsFilters),
+      },
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init POIs
+      And user toggles an already toggled POI filter
+    Then store should be update with new POIs filters values
+      And isActiveFilter selector should be disabled for the specific filter
+      And POIs should be fetched
+      And should retrieve POIs gateway method have been called with POIs filters values
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.togglePOIsFilter({
+      category: FilterPOICategory.OTHER,
+    }))
+
+    const expectedPOIsFilters = defaultPOIsState.filters.filter((i) => i !== FilterPOICategory.OTHER)
+
+    expect(selectPOIsFilters(store.getState())).toEqual(expectedPOIsFilters)
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.OTHER,
+    )).toBeFalsy()
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories(expectedPOIsFilters),
+      },
+    })
   })
 
   it(`
@@ -218,8 +301,11 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: defaultLocationState.center,
-        zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories(defaultPOIsState.filters),
       },
     })
   })
@@ -252,8 +338,11 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: nextLocation.center,
-        zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
+        location: {
+          center: nextLocation.center,
+          zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
+        },
+        categories: formatPOIsCategories(defaultPOIsState.filters),
       },
     })
   })
