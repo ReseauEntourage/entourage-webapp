@@ -1,6 +1,6 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { locationActions, LocationState, selectPosition } from '../location'
+import { locationActions, LocationState, selectLocation } from '../location'
 import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
@@ -55,12 +55,14 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState['position'] = {
-      cityName: 'Nantes',
+    const nextLocation: LocationState = {
+      displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
-    store.dispatch(locationActions.setPosition(nextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -77,15 +79,17 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState['position'] = {
-      cityName: 'Nantes',
+    const nextLocation: LocationState = {
+      displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(locationActions.setPosition(nextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -104,33 +108,37 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState['position'] = {
-      cityName: 'Nantes',
+    const nextLocation: LocationState = {
+      displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
     store.dispatch(publicActions.init())
 
-    store.dispatch(locationActions.setPosition(nextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
     store.dispatch(publicActions.cancel())
 
-    const nextNextLocation: LocationState['position'] = {
-      cityName: 'Nantes',
+    const nextNextLocation: LocationState = {
+      displayAddress: 'Nantes',
       center: { lat: 5, lng: 6 },
       zoom: 65,
     }
 
-    store.dispatch(locationActions.setPosition(nextNextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextNextLocation,
+    }))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-    expect(selectPosition(store.getState())).toStrictEqual(nextNextLocation)
+    expect(selectLocation(store.getState())).toStrictEqual(nextNextLocation)
   })
 
   it(`
@@ -142,14 +150,16 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState['position'] = {
-      cityName: 'Nantes',
+    const nextLocation: LocationState = {
+      displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
 
     store.dispatch(publicActions.init())
-    store.dispatch(locationActions.setPosition(nextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
@@ -219,8 +229,8 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: defaultLocationState.position.center,
-        zoom: defaultLocationState.position.zoom,
+        center: defaultLocationState.center,
+        zoom: defaultLocationState.zoom,
       },
     })
   })
@@ -236,13 +246,15 @@ describe('Feed', () => {
 
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
     const nextLocation = {
-      cityName: 'Lyon',
+      displayAddress: 'Lyon',
       center: { lat: 5, lng: 6 },
       zoom: 13,
     }
 
     store.dispatch(publicActions.init())
-    store.dispatch(locationActions.setPosition(nextLocation))
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -294,7 +306,7 @@ describe('Feed', () => {
       },
       location: {
         ...fakeLocationData,
-      },
+      } as PartialAppState['location'],
     }
     const store = configureStoreWithFeed({ dependencies: { feedGateway }, initialAppState })
 
@@ -307,8 +319,8 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: initialAppState.location.position.center,
-        zoom: initialAppState.location.position.zoom,
+        center: initialAppState?.location?.center,
+        zoom: initialAppState?.location?.zoom,
       },
       nextPageToken: 'wyz',
     })

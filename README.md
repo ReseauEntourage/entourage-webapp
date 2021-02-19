@@ -183,6 +183,40 @@ Composant React servant de Page NextJS. [Plus d'infos](https://nextjs.org/docs#r
 
 Dépendances: toutes
 
+### Actions
+`/actions`: les actions ou événements autour d'une zone par défaut
+
+`/actions/[actionId]`: les détails d'une action ou d'un événement, et les actions ou événements autour de l'élément en question
+
+### POIs
+`/pois`: les POIs autour d'une zone par défaut
+
+`/pois/[poiId]`: les détails d'un POI et les POIs autour de l'élément en question
+
+### Routes spéciales
+`/actions/[cityId]`: les actions ou événements de la ville en question 
+`/pois/[cityId]`: les POIs de la ville en question
+
+***cityId*** peut prendre une des valeurs suivantes :
+
+```'paris' | 'lyon' | 'rennes' | 'lille' | 'hauts-de-seine' | 'seine-saint-denis'```
+
+#### Liste des routes "statiques" existantes
+- https://app.entourage.social/actions
+- https://app.entourage.social/actions/paris
+- https://app.entourage.social/actions/lyon
+- https://app.entourage.social/actions/rennes
+- https://app.entourage.social/actions/lille
+- https://app.entourage.social/actions/hauts-de-seine
+- https://app.entourage.social/actions/seine-saint-denis
+- https://app.entourage.social/pois
+- https://app.entourage.social/pois/paris
+- https://app.entourage.social/pois/lyon
+- https://app.entourage.social/pois/rennes
+- https://app.entourage.social/pois/lille
+- https://app.entourage.social/pois/hauts-de-seine
+- https://app.entourage.social/pois/seine-saint-denis
+
 ## styles
 Données relatives au style de l'application: thème Matérial UI, liste des couleurs utilisé, etc...  
 

@@ -8,7 +8,7 @@ import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
 import { createUser } from './__mocks__'
 import { publicActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
-import { LoginSteps, authuserDefaultState } from './authUser.reducer'
+import { LoginSteps, defaultAuthUserState } from './authUser.reducer'
 import { authUserSaga } from './authUser.saga'
 import {
   selectIsLogging,
@@ -1105,7 +1105,7 @@ describe('Auth User', () => {
       const store = configureStoreWithAuthUser({
         initialAppState: {
           authUser: {
-            ...authuserDefaultState,
+            ...defaultAuthUserState,
             user,
             showSensitizationPopup: true,
           },

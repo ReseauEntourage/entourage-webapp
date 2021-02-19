@@ -29,6 +29,21 @@ export function getDetailPlacesService(
   })
 }
 
+export function getDetailPlacesFromCoordinatesService(
+  coordinates: google.maps.LatLngLiteral,
+): Promise<google.maps.GeocoderResult[]> {
+  const requestGetDetail: google.maps.GeocoderRequest = {
+    location: coordinates,
+  }
+
+  return new Promise((resolve) => {
+    new google.maps.Geocoder()
+      .geocode(requestGetDetail, (res) => {
+        resolve(res)
+      })
+  })
+}
+
 export function useLoadGoogleMapApi() {
   const url = !isSSR
     ? scriptUrl

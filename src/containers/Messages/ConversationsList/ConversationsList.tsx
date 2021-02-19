@@ -51,9 +51,10 @@ export function ConversationsList(props: ConversationsListProps) {
           const pendingMembers = entourageWithMembers?.members ?? []
 
           return (
-            <S.ListItem>
+            <S.ListItem
+              key={feedUuid}
+            >
               <Link
-                key={feedUuid}
                 as={`/messages/${feedUuid}`}
                 href="/messages/[messageId]"
               >

@@ -30,6 +30,8 @@ export interface AuthUserState {
     avatarUrl?: string;
     address?: {
       displayAddress: string;
+      latitude: number;
+      longitude: number;
     };
     partner?: {
       name: string;
@@ -50,7 +52,7 @@ export interface AuthUserState {
   loginIsCompleted: boolean;
 }
 
-export const authuserDefaultState: AuthUserState = {
+export const defaultAuthUserState: AuthUserState = {
   isLogging: false,
   step: 'PHONE',
   user: null,
@@ -59,7 +61,7 @@ export const authuserDefaultState: AuthUserState = {
   loginIsCompleted: false,
 }
 
-export function authUserReducer(state: AuthUserState = authuserDefaultState, action: AuthUserAction): AuthUserState {
+export function authUserReducer(state: AuthUserState = defaultAuthUserState, action: AuthUserAction): AuthUserState {
   switch (action.type) {
     case AuthUserActionType.PHONE_LOOK_UP: {
       return {

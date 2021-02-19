@@ -11,6 +11,7 @@ export class LocalAuthUserSensitizationStorage implements IAuthUserSensitization
         assertCondition(Array.isArray(userIds))
         return userIds
       }
+      return []
     }
     return null
   }
@@ -24,10 +25,10 @@ export class LocalAuthUserSensitizationStorage implements IAuthUserSensitization
   }
 
   setHasSeenPopup(userId: number): void {
-    const userIds = LocalAuthUserSensitizationStorage.getAndParseUserIds() ?? []
-    if (!userIds.includes(userId.toString())) {
+    const userIds = LocalAuthUserSensitizationStorage.getAndParseUserIds()
+    if (userIds && !userIds.includes(userId.toString())) {
       userIds.push(userId.toString())
-      localStorage.setItem(constants.SENSITIZATION_POPUP_KEY, JSON.stringify(userIds))
+      if (!isSSR) localStorage.setItem(constants.SENSITIZATION_POPUP_KEY, JSON.stringify(userIds))
     }
   }
 }

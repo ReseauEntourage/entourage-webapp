@@ -9,11 +9,12 @@ import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
-const Actions: StatelessPage<Props> = () => {
+const POIs: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const poiId = usePOIId()
 
   useEffect(() => {
+    dispatch(poisActions.init())
     dispatch(poisActions.setCurrentPOIUuid(poiId || null))
   }, [poiId, dispatch])
 
@@ -32,4 +33,4 @@ const Actions: StatelessPage<Props> = () => {
 //    see https://github.com/tannerlinsley/react-query/issues/14
 // }
 
-export default Actions
+export default POIs

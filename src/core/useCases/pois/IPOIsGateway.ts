@@ -2,9 +2,7 @@ import { LocationState } from '../location'
 import { POI, POIDetails } from './pois.reducer'
 
 export interface IPOIsGateway {
-  retrievePOIs(data: {
-    filters: { center: LocationState['position']['center']; zoom: LocationState['position']['zoom']; };
-  }): Promise<{
+  retrievePOIs(data: { filters: Pick<LocationState, 'center' | 'zoom'>; }): Promise<{
     pois: POI[];
   }>;
 

@@ -1,61 +1,93 @@
 import { constants } from 'src/constants'
+import { persistReducer } from 'src/core/utils/persistReducer'
 import { LocationAction, LocationActionType } from './location.actions'
 
-export interface LocationState {
-  position: {
-    cityName: string;
-    center: {
-      lat: number;
-      lng: number;
-    };
-    zoom: number;
-  };
-}
+type CityLocation = Pick<LocationState, 'center' | 'displayAddress'>
 
-export const defaultLocationState: LocationState = {
-  position: {
-    cityName: constants.DEFAULT_LOCATION.CITY_NAME,
-    center: constants.DEFAULT_LOCATION.CENTER,
-    zoom: constants.DEFAULT_LOCATION.ZOOM,
+export type Cities = 'paris' | 'lyon' | 'rennes' | 'lille' | 'hauts-de-seine' | 'seine-saint-denis'
+
+export const entourageCities: Record<Cities, CityLocation> = {
+  paris: {
+    displayAddress: 'Paris, France',
+    center: {
+      lat: 48.856614,
+      lng: 2.3522219,
+    },
+  },
+  lyon: {
+    displayAddress: 'Lyon, France',
+    center: {
+      lat: 45.764043,
+      lng: 4.835659,
+    },
+  },
+  lille: {
+    displayAddress: 'Lille, France',
+    center: {
+      lat: 50.62925,
+      lng: 3.057256,
+    },
+  },
+  rennes: {
+    displayAddress: 'Rennes, France',
+    center: {
+      lat: 48.117266,
+      lng: -1.6777926,
+    },
+  },
+  'hauts-de-seine': {
+    displayAddress: 'Hauts-de-Seine, France',
+    center: {
+      lat: 48.828508,
+      lng: 2.2188068,
+    },
+  },
+  'seine-saint-denis': {
+    displayAddress: 'Seine-Saint-Denis, France',
+    center: {
+      lat: 48.9137455,
+      lng: 2.4845729,
+    },
   },
 }
 
-/*
-  TODO listen to AUTH_USER/LOGIN_WITH_PASSWORD_SUCCEEDED OR AUTH_USER/LOGIN_WITH_SMS_CODE_SUCCEEDED
-    to update position with users default position after login
-    https://entourage-asso.atlassian.net/browse/EN-3487
-*/
+export interface LocationState {
+  displayAddress: string;
+  center: {
+    lat: number;
+    lng: number;
+  };
+  zoom: number;
+}
 
-export function locationReducer(
+export const defaultLocationState: LocationState = {
+  displayAddress: constants.DEFAULT_LOCATION.DISPLAY_ADDRESS,
+  center: constants.DEFAULT_LOCATION.CENTER,
+  zoom: constants.DEFAULT_LOCATION.ZOOM,
+}
+
+function locationPureReducer(
   state: LocationState = defaultLocationState,
-  action: LocationAction /* | AuthUserAction */,
+  action: LocationAction,
 ): LocationState {
   switch (action.type) {
-    case LocationActionType.SET_POSITION: {
+    case LocationActionType.SET_LOCATION: {
       return {
         ...state,
-        position: {
-          ...state.position,
-          ...action.payload,
-        },
+        ...action.payload.location,
       }
     }
-    /*
 
-    case AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED:
-    case AuthUserActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED:
+    case LocationActionType.SET_DISPLAY_ADDRESS: {
       return {
         ...state,
-        position: {
-          ...state.position,
-          cityName: action.payload.user?.address?.displayAddress ?? state.position.cityName,
-        },
+        displayAddress: action.payload.displayAddress,
       }
-*/
+    }
 
     default:
       return state
   }
-
-  return state
 }
+
+export const locationReducer = persistReducer('location', locationPureReducer)

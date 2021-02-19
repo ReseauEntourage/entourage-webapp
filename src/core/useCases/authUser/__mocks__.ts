@@ -7,9 +7,11 @@ export function createUser(isFirstSignIn = false, isActiveUser = true) {
     about: 'about',
     hasPassword: true,
     avatarUrl: 'http://url.com',
-    address: {
-      displayAddress: 'Paris',
-    },
+    address: !isFirstSignIn ? {
+      displayAddress: 'Lyon',
+      latitude: 45.7712736,
+      longitude: 4.8844514,
+    } : undefined,
     partner: {
       name: 'Entourage',
     },

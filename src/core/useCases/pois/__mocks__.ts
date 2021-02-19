@@ -22,7 +22,7 @@ export const fakePOIsData = {
   ...defaultPOIsState,
   fetching: false,
   filters: {
-    cityName: 'New York',
+    displayAddress: 'New York',
     center: {
       lat: 0,
       lng: 0,
