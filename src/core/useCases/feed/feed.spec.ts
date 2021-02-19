@@ -15,6 +15,7 @@ import {
   selectFeedItems,
   selectHasNextPageToken,
   selectFeedIsIdle,
+  selectFeedFilters,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -97,46 +98,6 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
-      And user toogle feed filters
-    Then items should be fetched
-  `, async () => {
-    const feedGateway = new TestFeedGateway()
-    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
-    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-
-    store.dispatch(publicActions.init())
-
-    store.dispatch(publicActions.toggleFeedFilter({
-      type: FilterEntourageType.CONTRIBUTION,
-      category: FilterFeedCategory.OTHER,
-    }))
-
-    feedGateway.retrieveFeedItems.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
-      filters: {
-        position: {
-          center: defaultLocationState.position.center,
-          zoom: defaultLocationState.position.zoom,
-        },
-        types: {
-          ...defaultFeedState.filters,
-          [FilterEntourageType.CONTRIBUTION]: [
-            FilterFeedCategory.MAT_HELP,
-            FilterFeedCategory.RESOURCE,
-            FilterFeedCategory.SOCIAL,
-          ],
-        },
-      },
-      nextPageToken: undefined,
-    })
-  })
-
-  it(`
-    Given initial state
-    When user init feed
       And user set position filters
       And user cancels feed
       And user sets a new position filter again
@@ -198,6 +159,116 @@ describe('Feed', () => {
     await store.waitForActionEnd()
 
     expect(selectFeedIsFetching(store.getState())).toEqual(false)
+  })
+
+  it(`
+  Given initial state
+   When user hasn't init feed
+    And user sets position filters
+  Then items should not be fetched
+`, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user toogle feed filters
+    Then store should be update with new feed filters values
+    And items should be fetched
+    And should retrieve feed gateway method have been called with feed filters values
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.RESOURCE,
+        FilterFeedCategory.SOCIAL,
+      ],
+    }
+
+    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        position: {
+          center: defaultLocationState.position.center,
+          zoom: defaultLocationState.position.zoom,
+        },
+        types: expectedFeedFilters,
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user set feed filters
+      And user cancels feed
+      And user sets a new feed filter again
+    Then items should be fetched only once
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.RESOURCE,
+      ],
+    }
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    store.dispatch(publicActions.cancel())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.SOCIAL,
+    }))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(selectFeedFilters(store.getState())).toStrictEqual(expectedFeedFilters)
   })
 
   it(`

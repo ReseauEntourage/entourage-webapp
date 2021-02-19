@@ -58,6 +58,10 @@ export function selectIsUpdatingStatus(state: AppState) {
   return state.feed.isUpdatingStatus
 }
 
+export function selectFeedFilters(state: AppState) {
+  return state.feed.filters
+}
+
 const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {
   closed: RequestStatus.CLOSED,
   open: RequestStatus.OPEN,

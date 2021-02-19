@@ -71,10 +71,6 @@ function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
   }
 }
 
-function* toggleFeedFilter() {
-  yield put(actions.retrieveFeed())
-}
-
 function* joinEntourage(action: FeedActions['joinEntourage']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { feedGateway } = dependencies
@@ -115,7 +111,6 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
-  yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, toggleFeedFilter)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
@@ -123,8 +118,11 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_POSITION, retrieveFeed)
+    const bgSetPositionRetrieveFeed = yield takeEvery(LocationActionType.SET_POSITION, retrieveFeed)
+    const bgToggleFeedFilterRetrieveFeed = yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, retrieveFeed)
+
     yield take(FeedActionType.CANCEL_FEED)
-    yield cancel(bgRetrieveFeed)
+    yield cancel(bgSetPositionRetrieveFeed)
+    yield cancel(bgToggleFeedFilterRetrieveFeed)
   }
 }
