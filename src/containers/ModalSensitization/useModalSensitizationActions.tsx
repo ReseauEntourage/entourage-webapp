@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
-import { authUserActions } from '../../core/useCases/authUser'
 import { useModalContext } from 'src/components/Modal'
+import { authUserActions } from 'src/core/useCases/authUser'
 
 export function useModalSensitizationActions() {
   const { onClose } = useModalContext()

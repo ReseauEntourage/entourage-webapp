@@ -58,12 +58,14 @@ export interface LocationState {
     lng: number;
   };
   zoom: number;
+  isInit: boolean;
 }
 
 export const defaultLocationState: LocationState = {
   displayAddress: constants.DEFAULT_LOCATION.DISPLAY_ADDRESS,
   center: constants.DEFAULT_LOCATION.CENTER,
   zoom: constants.DEFAULT_LOCATION.ZOOM,
+  isInit: false,
 }
 
 function locationPureReducer(
@@ -75,6 +77,7 @@ function locationPureReducer(
       return {
         ...state,
         ...action.payload.location,
+        isInit: true,
       }
     }
 
@@ -90,4 +93,6 @@ function locationPureReducer(
   }
 }
 
-export const locationReducer = persistReducer('location', locationPureReducer)
+export const locationReducer = persistReducer('location', locationPureReducer, {
+  blacklist: ['isInit'],
+})

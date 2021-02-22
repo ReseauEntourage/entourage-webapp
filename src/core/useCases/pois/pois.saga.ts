@@ -1,5 +1,5 @@
 import { call, put, select, getContext, take, cancel } from 'redux-saga/effects'
-import { Cities, entourageCities, locationActions, selectLocation } from '../location'
+import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
 import { LocationActionType } from '../location/location.actions'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
@@ -47,6 +47,7 @@ function* retrieveLocalizedPOIs() {
 function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
   const currentPOI: ReturnType<typeof selectCurrentPOI> = yield select(selectCurrentPOI)
   const poisIsIdle: ReturnType<typeof selectPOIsIsIdle> = yield select(selectPOIsIsIdle)
+  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
   const poiUuid = action.payload
 
   if (!currentPOI && poiUuid) {
@@ -70,13 +71,18 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
               lat: response.poiDetails.latitude,
               lng: response.poiDetails.longitude,
             },
+            displayAddress: response.poiDetails.address,
           },
         }))
       }
     }
   } else {
-    if (!poiUuid && poisIsIdle) {
-      yield put(locationActions.initLocation())
+    if (!poiUuid) {
+      if (locationIsInit) {
+        yield put(actions.retrievePOIs())
+      } else {
+        yield put(locationActions.initLocation())
+      }
     }
     yield put(actions.retrievePOIDetailsEnded())
   }

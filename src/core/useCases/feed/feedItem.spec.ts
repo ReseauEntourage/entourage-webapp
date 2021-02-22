@@ -1,6 +1,10 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { entourageCities, selectLocation } from '../location'
+import { createUser } from '../authUser/__mocks__'
+import { defaultAuthUserState } from '../authUser/authUser.reducer'
+import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { defaultLocationState } from '../location/location.reducer'
+import { locationSaga } from '../location/location.saga'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
@@ -34,7 +38,7 @@ function configureStoreWithFeed(
       ...initialAppState,
     },
     dependencies,
-    sagas: [feedSaga],
+    sagas: [feedSaga, locationSaga],
   })
 }
 
@@ -153,7 +157,8 @@ describe('Feed Item', () => {
   })
 
   it(`
-    Given feed has no cached items but a selected item uuid
+    Given feed has no cached items
+       And has selected item uuid
     When user set selected item uuid
     Then item should be retrieved from gateway
       And feed should be retrieved with position of item
@@ -220,10 +225,130 @@ describe('Feed Item', () => {
 
   it(`
     Given feed has no cached items
+      And has no selected item uuid
+      And location has not been initialized
+    When item uuid is set to null
+    Then location should be initialized
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+
+    const deferredValueRetrieveFeedItems = {
+      nextPageToken: null,
+      items: itemsFromGateway,
+    }
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
+
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithFeed(
+      {
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            isInit: false,
+          },
+          authUser: {
+            ...defaultAuthUserState,
+            user: createUser(),
+          },
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+          },
+        },
+      },
+    )
+
+    const selectedItemUuid = null
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectLocationIsInit(store.getState())).toBe(true)
+  })
+
+  it(`
+    Given feed has no cached items
+      And has no selected item uuid
+      And location has been initialized
+    When item uuid is set to null
+    Then feed should be retrieved from gateway
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+
+    const deferredValueRetrieveFeedItems = {
+      nextPageToken: null,
+      items: itemsFromGateway,
+    }
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithFeed(
+      {
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            isInit: true,
+          },
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+            nextPageToken: null,
+          },
+        },
+      },
+    )
+
+    const selectedItemUuid = null
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        zoom: selectLocation(store.getState()).zoom,
+        center: {
+          lat: selectLocation(store.getState()).center.lat,
+          lng: selectLocation(store.getState()).center.lng,
+        },
+      },
+    })
+  })
+
+  it(`
+    Given feed has no cached items
       And has selected item uuid
     When item uuid is a city id
     Then item should not be retrieved from gateway
-      And feed should not be retrieved
+      And feed should be retrieved from the gateway with city coordinates
   `, async () => {
     const itemsFromGateway = createFeedItemList()
 
@@ -274,7 +399,12 @@ describe('Feed Item', () => {
     await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledTimes(0)
-    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+        zoom: selectLocation(store.getState()).zoom,
+      },
+    })
   })
 
   describe('Join entourage', () => {

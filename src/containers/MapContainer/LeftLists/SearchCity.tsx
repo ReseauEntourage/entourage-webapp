@@ -31,7 +31,6 @@ export function SearchCity() {
     dispatch(
       locationActions.setLocation({
         location: {
-          ...position,
           center: {
             lat,
             lng,
@@ -40,7 +39,7 @@ export function SearchCity() {
         },
       }),
     )
-  }, [dispatch, position])
+  }, [dispatch])
 
   if (feedIsIdle && poisIsIdle) {
     return null

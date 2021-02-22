@@ -59,6 +59,7 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
     store.dispatch(locationActions.setLocation({
       location: nextLocation,
@@ -83,6 +84,7 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
 
     store.dispatch(publicActions.init())
@@ -112,6 +114,7 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
     store.dispatch(publicActions.init())
 
@@ -128,6 +131,7 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 5, lng: 6 },
       zoom: 65,
+      isInit: true,
     }
 
     store.dispatch(locationActions.setLocation({
@@ -154,6 +158,7 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
 
     store.dispatch(publicActions.init())

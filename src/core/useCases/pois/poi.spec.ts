@@ -1,7 +1,11 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
+import { createUser } from '../authUser/__mocks__'
+import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import { selectCurrentFeedItem } from '../feed'
-import { entourageCities, selectLocation } from '../location'
+import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { defaultLocationState } from '../location/location.reducer'
+import { locationSaga } from '../location/location.saga'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
@@ -29,7 +33,7 @@ function configureStoreWithPOIs(
       ...initialAppState,
     },
     dependencies,
-    sagas: [poisSaga],
+    sagas: [poisSaga, locationSaga],
   })
 }
 
@@ -305,10 +309,130 @@ describe('POIs', () => {
 
   it(`
     Given POIs have no cached items
+      And has no selected POI uuid
+      And location has not been initialized
+    When POI uuid is set to null
+    Then location should be initialized
+  `, async () => {
+    const poisFromGateway = createPOIList()
+
+    const deferredValueRetrievePOIs = {
+      pois: poisFromGateway,
+    }
+
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
+
+    const resolveAllDeferredValue = () => {
+      poisGateway.retrievePOIs.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithPOIs(
+      {
+        dependencies: {
+          poisGateway,
+        },
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            isInit: false,
+          },
+          authUser: {
+            ...defaultAuthUserState,
+            user: createUser(),
+          },
+          pois: {
+            ...fakePOIsData,
+            pois: {},
+            poisUuids: [],
+            selectedPOIUuid: null,
+            isIdle: true,
+          },
+        },
+      },
+    )
+
+    const selectedPOIId = null
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectLocationIsInit(store.getState())).toBe(true)
+  })
+
+  it(`
+    Given POIs have no cached items
+      And has no selected POI uuid
+      And location has been initialized
+    When POI uuid is set to null
+    Then POIs should be retrieved from gateway
+  `, async () => {
+    const poisFromGateway = createPOIList()
+
+    const deferredValueRetrievePOIs = {
+      pois: poisFromGateway,
+    }
+
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
+
+    const resolveAllDeferredValue = () => {
+      poisGateway.retrievePOIs.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithPOIs(
+      {
+        dependencies: {
+          poisGateway,
+        },
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            isInit: true,
+          },
+          pois: {
+            ...fakePOIsData,
+            pois: {},
+            poisUuids: [],
+            selectedPOIUuid: null,
+            isIdle: true,
+          },
+        },
+      },
+    )
+
+    const selectedPOIId = null
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+        center: {
+          lat: selectLocation(store.getState()).center.lat,
+          lng: selectLocation(store.getState()).center.lng,
+        },
+      },
+    })
+  })
+
+  it(`
+    Given POIs have no cached items
       And has selected POI uuid
     When POI uuid is a city id
     Then POI details should not be retrieved from gateway
-      And POIs should not be retrieved
+      And POIs should be retrieved from the gateway with city coordinates
   `, async () => {
     const poisFromGateway = createPOIList()
     const poiDetailsFromGateway = createPOIDetails()
@@ -357,6 +481,11 @@ describe('POIs', () => {
     await store.waitForActionEnd()
 
     expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+      },
+    })
   })
 })

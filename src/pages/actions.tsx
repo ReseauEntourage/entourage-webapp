@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { useActionId } from '../containers/MapContainer'
-import { MapActions } from '../containers/MapContainer/MapActions'
+import { useActionId, MapActions } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
+import { useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -13,8 +13,14 @@ const Actions: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const actionId = useActionId()
 
-  useEffect(() => {
+  useMount(() => {
     dispatch(feedActions.init())
+    return () => {
+      dispatch(feedActions.cancel())
+    }
+  })
+
+  useEffect(() => {
     dispatch(feedActions.setCurrentItemUuid(actionId || null))
   }, [actionId, dispatch])
 

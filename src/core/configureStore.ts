@@ -12,6 +12,8 @@ import createSagaMiddleware, { Saga } from 'redux-saga'
 import { all, call } from 'redux-saga/effects'
 import { AnyCantFix } from 'src/utils/types'
 
+const dev = process.env.NODE_ENV !== 'production'
+
 interface ConfigureStoreParams<R> {
   dependencies?: {
     [key: string]: AnyCantFix;
@@ -50,7 +52,7 @@ export function configureStore<
 
   const rootReducer = combineReducers(reducers)
 
-  const composeEnhancers = typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+  const composeEnhancers = dev && typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})
     : compose
 

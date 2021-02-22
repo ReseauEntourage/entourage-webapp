@@ -7,3 +7,7 @@ interface AppState {
 export function selectLocation(state: AppState) {
   return state.location
 }
+
+export function selectLocationIsInit(state: AppState) {
+  return state.location.isInit
+}

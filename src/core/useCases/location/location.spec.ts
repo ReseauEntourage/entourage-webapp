@@ -14,7 +14,7 @@ import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
 import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
-import { selectLocation } from './location.selectors'
+import { selectLocation, selectLocationIsInit } from './location.selectors'
 
 function configureStoreWithLocation(
   params: {
@@ -55,6 +55,7 @@ describe('Location', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
 
     store.dispatch(publicActions.setLocation({
@@ -82,6 +83,7 @@ describe('Location', () => {
     expect(selectLocation(store.getState())).toStrictEqual({
       ...defaultLocationState,
       ...position,
+      isInit: true,
     })
   })
 
@@ -106,6 +108,7 @@ describe('Location', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      isInit: true,
     }
 
     store.dispatch(publicActions.setLocation({
@@ -148,6 +151,7 @@ describe('Location', () => {
     expect(selectLocation(store.getState())).toStrictEqual({
       ...fakeLocationData,
       zoom: defaultLocationState.zoom,
+      isInit: true,
     })
   })
 
@@ -170,7 +174,10 @@ describe('Location', () => {
     geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
     await store.waitForActionEnd()
 
-    expect(selectLocation(store.getState())).toStrictEqual(defaultLocationState)
+    expect(selectLocation(store.getState())).toStrictEqual({
+      ...defaultLocationState,
+      isInit: true,
+    })
   })
 
   // --------------------------------------------------
@@ -179,8 +186,9 @@ describe('Location', () => {
     it(`
       Given initial state
       When the default position is initialized
-        And the select feed item uuid is a city
+        And the selected feed item uuid is a city
       The position filter should be set to the cities coordinates
+        And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -201,14 +209,16 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...entourageCities.lyon,
         zoom: defaultLocationState.zoom,
+        isInit: true,
       })
       expect(selectCurrentFeedItemUuid(store.getState())).toBe(null)
+      expect(selectLocationIsInit(store.getState())).toBe(true)
     })
 
     it(`
       Given initial state
       When the default position is initialized
-        And the select POI uuid is a city
+        And the selected POI uuid is a city
       The position filter should be set to the cities coordinates
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -230,8 +240,10 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...entourageCities.lyon,
         zoom: defaultLocationState.zoom,
+        isInit: true,
       })
       expect(selectCurrentPOIUuid(store.getState())).toBe(null)
+      expect(selectLocationIsInit(store.getState())).toBe(true)
     })
 
     it(`
@@ -240,6 +252,7 @@ describe('Location', () => {
         And no query id is present
         And the user is logged in and has a default address
       The position filter should be set to the user's default coordinates
+        And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -265,9 +278,11 @@ describe('Location', () => {
           lng: user.address?.longitude,
         },
         zoom: defaultLocationState.zoom,
+        isInit: true,
       }
 
       expect(selectLocation(store.getState())).toStrictEqual(defaultPosition)
+      expect(selectLocationIsInit(store.getState())).toBe(true)
     })
 
     it(`
@@ -277,6 +292,7 @@ describe('Location', () => {
         And the user is not logged in or doesn't have a default address
         And the user has activated his geolocation
       The position filter should be set to the user's geolocation
+        And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -302,32 +318,39 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...fakeLocationData,
         zoom: defaultLocationState.zoom,
+        isInit: true,
       })
+      expect(selectLocationIsInit(store.getState())).toBe(true)
     })
-  })
 
-  it(`
+    it(`
       Given initial state
       When the default position is initialized
         And no query id is present
         And the user is not logged in or doesn't have a default address
         And the user has blocked his geolocation
       The position filter should be set to the default state position
+        And the location should be initialized
     `, async () => {
-    const geolocationService = new TestGeolocationService()
+      const geolocationService = new TestGeolocationService()
 
-    const store = configureStoreWithLocation({ dependencies: { geolocationService } })
+      const store = configureStoreWithLocation({ dependencies: { geolocationService } })
 
-    geolocationService.getGeolocation.mockDeferredValueOnce({
-      coordinates: fakeLocationData.center,
+      geolocationService.getGeolocation.mockDeferredValueOnce({
+        coordinates: fakeLocationData.center,
+      })
+
+      store.dispatch(publicActions.initLocation())
+
+      geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+
+      await store.waitForActionEnd()
+
+      expect(selectLocation(store.getState())).toStrictEqual({
+        ...defaultLocationState,
+        isInit: true,
+      })
+      expect(selectLocationIsInit(store.getState())).toBe(true)
     })
-
-    store.dispatch(publicActions.initLocation())
-
-    geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
-
-    await store.waitForActionEnd()
-
-    expect(selectLocation(store.getState())).toStrictEqual(defaultLocationState)
   })
 })
