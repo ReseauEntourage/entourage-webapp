@@ -1,5 +1,5 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
-import { Cities, entourageCities, locationActions, selectLocation } from '../location'
+import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
 import { LocationActionType } from '../location/location.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
@@ -62,6 +62,7 @@ function* retrieveFeedNextPage() {
 function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
   const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
   const feedIsIdle: ReturnType<typeof selectFeedIsIdle> = yield select(selectFeedIsIdle)
+  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
   const entourageUuid = action.payload
 
   if (!currentItem && entourageUuid) {
@@ -75,15 +76,21 @@ function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
 
       const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
-      yield put(locationActions.setLocation({
-        location: {
-          center: response.center,
-          displayAddress: response.displayAddress,
-        },
-      }))
+      if (feedIsIdle) {
+        yield put(locationActions.setLocation({
+          location: {
+            center: response.center,
+            displayAddress: response.displayAddress,
+          },
+        }))
+      }
     }
-  } else if (!entourageUuid && feedIsIdle) {
-    yield put(locationActions.initLocation())
+  } else if (!entourageUuid) {
+    if (locationIsInit) {
+      yield put(actions.retrieveFeed())
+    } else {
+      yield put(locationActions.initLocation())
+    }
   }
 }
 

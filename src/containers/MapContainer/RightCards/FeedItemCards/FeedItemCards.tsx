@@ -4,11 +4,11 @@ import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import capitalize from 'lodash/capitalize'
 import React, { useCallback } from 'react'
-import { useCurrentFeedItem } from '../../MapActions'
 import { RightCard } from '../RightCard'
 import { openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
+import { useCurrentFeedItem } from 'src/containers/MapContainer'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import { useQueryEntourageUsers } from 'src/core/store'
 import { useMe } from 'src/hooks/useMe'

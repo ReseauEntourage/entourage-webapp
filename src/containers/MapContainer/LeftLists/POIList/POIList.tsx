@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import React from 'react'
-import { usePOIId } from '../../usePOIId'
-import { usePOIs } from '../../usePOIs'
 import * as S from '../LeftList.styles'
 import { POIIcon } from 'src/components/Map'
 import { POI } from 'src/components/POI'
+import { usePOIId, usePOIs } from 'src/containers/MapContainer'
 
 export function POIList() {
   const poiId = usePOIId()

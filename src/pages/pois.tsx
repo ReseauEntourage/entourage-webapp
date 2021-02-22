@@ -1,10 +1,10 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { MapPOIs } from '../containers/MapContainer/MapPOIs'
-import { usePOIId } from '../containers/MapContainer/usePOIId'
-import { poisActions } from '../core/useCases/pois'
+import { MapPOIs, usePOIId } from 'src/containers/MapContainer'
+import { poisActions } from 'src/core/useCases/pois'
 import { texts } from 'src/i18n'
+import { useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -13,8 +13,15 @@ const POIs: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const poiId = usePOIId()
 
-  useEffect(() => {
+  useMount(() => {
     dispatch(poisActions.init())
+
+    return () => {
+      dispatch(poisActions.cancel())
+    }
+  })
+
+  useEffect(() => {
     dispatch(poisActions.setCurrentPOIUuid(poiId || null))
   }, [poiId, dispatch])
 

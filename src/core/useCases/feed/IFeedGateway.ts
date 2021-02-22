@@ -11,13 +11,7 @@ export interface IFeedGateway {
     nextPageToken: FeedState['nextPageToken'];
   }>;
 
-  retrieveFeedItem(data: { entourageUuid: string; }): Promise<{
-    center: {
-      lat: number;
-      lng: number;
-    };
-    displayAddress: string;
-  }>;
+  retrieveFeedItem(data: { entourageUuid: string; }): Promise<Pick<LocationState, 'center' | 'displayAddress'>>;
 
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;
   leaveEntourage(entourageUuid: string, userId: number): Promise<void | null>;

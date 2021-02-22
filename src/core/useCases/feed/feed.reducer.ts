@@ -236,6 +236,13 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.CANCEL_FEED: {
+      return {
+        ...state,
+        nextPageToken: null,
+      }
+    }
+
     default:
       return state
   }
