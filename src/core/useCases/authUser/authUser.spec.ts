@@ -8,7 +8,7 @@ import { TestAuthUserTokenStorage } from './TestAuthUserTokenStorage'
 import { createUser } from './__mocks__'
 import { publicActions } from './authUser.actions'
 import { AuthUserErrorUnauthorized, AuthUserErrorUnkownPasswordError } from './authUser.errors'
-import { LoginSteps, authuserDefaultState } from './authUser.reducer'
+import { LoginSteps, defaultAuthUserState } from './authUser.reducer'
 import { authUserSaga } from './authUser.saga'
 import {
   selectIsLogging,
@@ -16,7 +16,7 @@ import {
   selectIsLogged,
   selectUser,
   selectErrors,
-  selectLoginStepIsCompleted,
+  selectLoginIsCompleted,
   selectShowSensitizationPopup,
 } from './authUser.selectors'
 import {
@@ -98,6 +98,7 @@ describe('Auth User', () => {
     When no action is triggered
     Then the user should not be logging
       And first step should be "phone"
+      And login should not be completed
   `, () => {
     const authUserGateway = new TestAuthUserGateway()
 
@@ -106,6 +107,8 @@ describe('Auth User', () => {
     expect(selectIsLogging(store.getState())).toEqual(false)
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.PHONE)
+
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -113,6 +116,7 @@ describe('Auth User', () => {
     When user trigger phone lookup
     Then the user should be logging during phone lookup
       And the user should not be logging after request succeeded
+      And login should not be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
@@ -127,6 +131,7 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -134,6 +139,8 @@ describe('Auth User', () => {
     When user trigger phone lookup
     Then user should be logging during phone lookup
       And user should not be logging after request succeeded
+      And login should not be completed
+
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
@@ -148,6 +155,7 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -155,6 +163,7 @@ describe('Auth User', () => {
     When user trigger phone lookup
     Then user should be logging during phone lookup
       And user should not be logging after request succeeded
+      And login should not be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PHONE_NOT_FOUND)
@@ -175,12 +184,14 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectIsLogging(store.getState())).toEqual(false)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
     Given user hasn't any account and server return not found on phone lookup
     When user trigger phone lookup
     Then next step should be create account
+      And login should not be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
 
@@ -208,6 +219,7 @@ describe('Auth User', () => {
     expect(authUserGateway.phoneLookUp).toHaveBeenCalledWith({ phone })
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.CREATE_ACCOUNT)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -217,6 +229,7 @@ describe('Auth User', () => {
       And user should not be logging after request
       And a user account creation should have been called with phone number
       And next step should be SMS Code
+      And login should not be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
 
@@ -246,12 +259,14 @@ describe('Auth User', () => {
     expect(authUserGateway.createAccount).toHaveBeenCalledWith({ phone })
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
     Given user must define password
     When user want to create password
     Then password should be created
+      And login should be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
@@ -264,6 +279,7 @@ describe('Auth User', () => {
         isLogging: false,
         user: createUser(),
         showSensitizationPopup: false,
+        loginIsCompleted: false,
       },
     }
 
@@ -287,12 +303,14 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(null)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(true)
   })
 
   it(`
     Given server return SMS Code needed on phone lookup
     When user trigger phone lookup
     Then step should be SMS Code after request succeeded
+      And login should not be completed
   `, async () => {
     const authUserGateway = new TestAuthUserGateway()
     authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.SMS_CODE_NEEDED)
@@ -306,12 +324,14 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
     Given user as an account
     When user trigger phone lookup
     Then step should be password after request succeeded
+      And login should not be completed
   `, async () => {
     const { store, resolveAllDeferredValue } = configureStoreWithUserAccount()
 
@@ -322,6 +342,7 @@ describe('Auth User', () => {
     await store.waitForActionEnd()
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.PASSWORD)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -329,6 +350,7 @@ describe('Auth User', () => {
     When user want to reset password
     Then password reset request should be called once with phone number
       And next step should be SMS Code
+      And login should not be completed
   `, async () => {
     const { store, resolveAllDeferredValue, authUserGateway } = configureStoreWithUserAccount()
 
@@ -342,6 +364,7 @@ describe('Auth User', () => {
     expect(authUserGateway.resetPassword).toHaveBeenCalledWith({ phone })
 
     expect(selectStep(store.getState())).toEqual(LoginSteps.SMS_CODE)
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   it(`
@@ -351,6 +374,7 @@ describe('Auth User', () => {
       And user should be logged after request succeeded
       And user data should be equal to server response
       And there should not be a next step
+      And login should be completed
   `, async () => {
     const { store, resolveAllDeferredValue, user, authUserSensitizationStorage } = configureStoreWithUserAccount()
     const phone = '0700000000'
@@ -372,6 +396,8 @@ describe('Auth User', () => {
     expect(selectUser(store.getState())).toEqual(user)
 
     expect(selectStep(store.getState())).toEqual(null)
+
+    expect(selectLoginIsCompleted(store.getState())).toEqual(true)
   })
 
   it(`
@@ -381,6 +407,7 @@ describe('Auth User', () => {
       And user should be logged after request succeeded
       And user data should be equal to server response
       And next step should be password creation
+      And login should not be completed
   `, async () => {
     const {
       store,
@@ -406,6 +433,7 @@ describe('Auth User', () => {
     expect(selectStep(store.getState())).toEqual(LoginSteps.CREATE_PASSWORD)
     expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledTimes(1)
     expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledWith({ phone, SMSCode })
+    expect(selectLoginIsCompleted(store.getState())).toEqual(false)
   })
 
   describe('Phone validation: phone look up', () => {
@@ -710,6 +738,7 @@ describe('Auth User', () => {
           isLogging: false,
           user: createUser(),
           showSensitizationPopup: false,
+          loginIsCompleted: false,
         },
       }
       const store = configureStoreWithAuthUser({
@@ -724,48 +753,6 @@ describe('Auth User', () => {
         errors: {},
         isLogging: false,
       })
-    })
-  })
-
-  describe('step logging', () => {
-    it('should be uncompleted', () => {
-      const authUserGateway = new TestAuthUserGateway()
-      const initialAppState = {
-        authUser: {
-          step: LoginSteps.PASSWORD,
-          errors: { phone: PhoneValidationsError.REQUIRED },
-          isLogging: false,
-          user: createUser(),
-          showSensitizationPopup: false,
-        },
-      }
-
-      const store = configureStoreWithAuthUser({
-        dependencies: { authUserGateway },
-        initialAppState,
-      })
-
-      expect(selectLoginStepIsCompleted(store.getState())).toBe(false)
-    })
-
-    it('should be completed', () => {
-      const authUserGateway = new TestAuthUserGateway()
-      const initialAppState = {
-        authUser: {
-          step: null,
-          errors: { phone: PhoneValidationsError.REQUIRED },
-          isLogging: false,
-          user: createUser(),
-          showSensitizationPopup: false,
-        },
-      }
-
-      const store = configureStoreWithAuthUser({
-        dependencies: { authUserGateway },
-        initialAppState,
-      })
-
-      expect(selectLoginStepIsCompleted(store.getState())).toBe(true)
     })
   })
 
@@ -838,7 +825,9 @@ describe('Auth User', () => {
   })
 
   describe('Giver user is not set', () => {
-    it('should set user', async () => {
+    it(`
+      Should set user
+        And login should be completed`, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
       const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
@@ -851,6 +840,29 @@ describe('Auth User', () => {
       await store.waitForActionEnd()
       expect(selectUser(store.getState())).toBeTruthy()
       expect(selectUser(store.getState())).toEqual(user)
+      expect(selectLoginIsCompleted(store.getState())).toEqual(true)
+    })
+
+    it(`
+      When logout
+        And user set to null
+      Then login should not be completed
+      `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const user = createUser()
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      store.dispatch(publicActions.setUser(user))
+
+      store.dispatch(publicActions.setUser(null))
+      await store.waitForActionEnd()
+      expect(selectUser(store.getState())).toBeFalsy()
+      expect(selectUser(store.getState())).toEqual(null)
+      expect(selectLoginIsCompleted(store.getState())).toEqual(false)
     })
   })
 
@@ -888,6 +900,7 @@ describe('Auth User', () => {
           isLogging: false,
           user: createUser(true, false),
           showSensitizationPopup: false,
+          loginIsCompleted: false,
         },
       }
 
@@ -1092,7 +1105,7 @@ describe('Auth User', () => {
       const store = configureStoreWithAuthUser({
         initialAppState: {
           authUser: {
-            ...authuserDefaultState,
+            ...defaultAuthUserState,
             user,
             showSensitizationPopup: true,
           },

@@ -10,6 +10,7 @@ export const POIsActionType = {
   RETRIEVE_POI_DETAILS_ENDED: 'POIS/RETRIEVE_POI_DETAILS_ENDED',
   RETRIEVE_POI_DETAILS_SUCCEEDED: 'POIS/RETRIEVE_POI_DETAILS_SUCCEEDED',
   SET_CURRENT_POI_UUID: 'POIS/SET_CURRENT_POI_UUID',
+  REMOVE_CURRENT_POI_UUID: 'POIS/REMOVE_CURRENT_POI_UUID',
 } as const
 
 export type POIsActionType = keyof typeof POIsActionType;
@@ -75,6 +76,12 @@ function setCurrentPOIUuid(payload: string | null) {
   }
 }
 
+function removeCurrentPOIUuid() {
+  return {
+    type: POIsActionType.REMOVE_CURRENT_POI_UUID,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -82,6 +89,7 @@ export const publicActions = {
   cancel,
   retrievePOIs,
   setCurrentPOIUuid,
+  removeCurrentPOIUuid,
 }
 
 const privateActions = {

@@ -27,6 +27,10 @@ export function selectHasNextPageToken(state: AppState) {
   return !!state.feed.nextPageToken
 }
 
+export function selectCurrentFeedItemUuid(state: AppState) {
+  return state.feed.selectedItemUuid
+}
+
 export function selectCurrentFeedItem(state: AppState) {
   const { selectedItemUuid, items } = state.feed
 

@@ -1,6 +1,6 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { selectPosition } from '../location'
+import { entourageCities, selectLocation } from '../location'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
@@ -169,7 +169,7 @@ describe('Feed Item', () => {
         lat: 1,
         lng: 2,
       },
-      cityName: 'Marseille',
+      displayAddress: 'Marseille',
     }
 
     const feedGateway = new TestFeedGateway()
@@ -210,7 +210,7 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
         position: {
-          zoom: selectPosition(store.getState()).zoom,
+          zoom: selectLocation(store.getState()).zoom,
           center: {
             lat: 1,
             lng: 2,
@@ -219,6 +219,65 @@ describe('Feed Item', () => {
         types: defaultFeedState.filters,
       },
     })
+  })
+
+  it(`
+    Given feed has no cached items
+      And has selected item uuid
+    When item uuid is a city id
+    Then item should not be retrieved from gateway
+      And feed should not be retrieved
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+
+    const deferredValueRetrieveFeedItems = {
+      nextPageToken: null,
+      items: itemsFromGateway,
+    }
+    const deferredValueRetrieveFeedItem = {
+      center: {
+        lat: 1,
+        lng: 2,
+      },
+      displayAddress: 'Marseille',
+    }
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
+    feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+      feedGateway.retrieveFeedItem.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithFeed(
+      {
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+          },
+        },
+      },
+    )
+
+    const selectedItemUuid = Object.keys(entourageCities)[0]
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItem).toHaveBeenCalledTimes(0)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
   })
 
   describe('Join entourage', () => {

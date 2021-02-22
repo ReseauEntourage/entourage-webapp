@@ -42,6 +42,7 @@ export function POI(props: POIProps) {
           </Typography>
         </S.TitleContainer>
         <ContactLink
+          disabled={true}
           icon={(
             <Box display="flex" marginLeft={0.5}>
               <RoomIcon

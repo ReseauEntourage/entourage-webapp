@@ -13,6 +13,7 @@ export const FeedActionType = {
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
+  REMOVE_CURRENT_ITEM_UUID: 'FEED/REMOVE_CURRENT_ITEM_UUID',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
   LEAVE_ENTOURAGE: 'FEED/LEAVE_ENTOURAGE',
@@ -102,6 +103,12 @@ function setCurrentItemUuid(payload: string | null) {
   }
 }
 
+function removeCurrentItemUuid() {
+  return {
+    type: FeedActionType.REMOVE_CURRENT_ITEM_UUID,
+  }
+}
+
 function joinEntourage(payload: { entourageUuid: string; }) {
   return {
     type: FeedActionType.JOIN_ENTOURAGE,
@@ -180,6 +187,7 @@ export const publicActions = {
   closeEntourage,
   reopenEntourage,
   toggleFeedFilter,
+  removeCurrentItemUuid,
 }
 
 const privateActions = {

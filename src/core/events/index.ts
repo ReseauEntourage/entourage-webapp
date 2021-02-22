@@ -1,4 +1,4 @@
 export { useOnLogin } from './onLogin'
 export { useOnLogout } from './onLogout'
-export { useOnLoginStepsCompleted } from './onLoginStepsCompleted'
+export { useOnLoginCompleted } from './onLoginCompleted'
 export { useOnSensitizationPopupHidden } from './onSensitizationPopupHidden'

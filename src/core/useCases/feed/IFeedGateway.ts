@@ -3,7 +3,7 @@ import { FeedJoinStatus } from 'src/core/api'
 import { FeedState, FeedItem } from './feed.reducer'
 
 interface FeedItemsFilter {
-  position: Pick<LocationState['position'], 'center' | 'zoom'>;
+  position: Pick<LocationState, 'center' | 'zoom'>;
   types: FeedState['filters'];
 }
 export interface IFeedGateway {
@@ -20,7 +20,7 @@ export interface IFeedGateway {
       lat: number;
       lng: number;
     };
-    cityName: string;
+    displayAddress: string;
   }>;
 
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;

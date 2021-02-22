@@ -30,6 +30,8 @@ export interface AuthUserState {
     avatarUrl?: string;
     address?: {
       displayAddress: string;
+      latitude: number;
+      longitude: number;
     };
     partner?: {
       name: string;
@@ -47,17 +49,19 @@ export interface AuthUserState {
     passwordConfirmationUnknowServerError?: string;
     code?: SMSCodeValidationsError;
   };
+  loginIsCompleted: boolean;
 }
 
-export const authuserDefaultState: AuthUserState = {
+export const defaultAuthUserState: AuthUserState = {
   isLogging: false,
   step: 'PHONE',
   user: null,
   errors: {},
   showSensitizationPopup: false,
+  loginIsCompleted: false,
 }
 
-export function authUserReducer(state: AuthUserState = authuserDefaultState, action: AuthUserAction): AuthUserState {
+export function authUserReducer(state: AuthUserState = defaultAuthUserState, action: AuthUserAction): AuthUserState {
   switch (action.type) {
     case AuthUserActionType.PHONE_LOOK_UP: {
       return {
@@ -131,6 +135,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         user: action.payload.user,
+        step: null,
       }
     }
 
@@ -154,7 +159,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         user: action.payload,
-        step: action.payload ? null : LoginSteps.PHONE,
+        loginIsCompleted: !!action.payload,
       }
     }
 
@@ -162,7 +167,7 @@ export function authUserReducer(state: AuthUserState = authuserDefaultState, act
       return {
         ...state,
         showSensitizationPopup: action.payload,
-        step: null,
+        loginIsCompleted: true,
       }
     }
 

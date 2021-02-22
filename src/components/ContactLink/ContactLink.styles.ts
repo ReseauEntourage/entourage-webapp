@@ -6,3 +6,8 @@ export const StyledLink = styled(Link)`
   align-items: center;
 `
 
+export const StyledDisabledLink = styled.div`
+  display: flex;
+  align-items: center;
+`
+
