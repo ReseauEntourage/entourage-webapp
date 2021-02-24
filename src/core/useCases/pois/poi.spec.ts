@@ -3,7 +3,7 @@ import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import { selectCurrentFeedItem } from '../feed'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { selectLocation, selectLocationIsInit } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { locationSaga } from '../location/location.saga'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
@@ -17,6 +17,7 @@ import {
   selectCurrentPOI,
   selectPOIDetailsIsFetching,
 } from './pois.selectors'
+import { Cities, EntourageCities } from "../../../utils/types"
 
 function configureStoreWithPOIs(
   params: {
@@ -470,7 +471,7 @@ describe('POIs', () => {
       },
     )
 
-    const selectedPOIId = Object.keys(entourageCities)[0]
+    const selectedPOIId = Object.keys(EntourageCities)[0]
 
     // --------------------------------------------------
 
@@ -483,7 +484,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+        center: EntourageCities[Object.keys(EntourageCities)[0] as Cities].center,
         zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
       },
     })

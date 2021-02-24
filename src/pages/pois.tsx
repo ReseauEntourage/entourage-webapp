@@ -2,6 +2,8 @@ import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { MapPOIs, usePOIId } from 'src/containers/MapContainer'
+import { useDefaultCityLocation } from 'src/containers/Nav'
+import { locationActions } from 'src/core/useCases/location'
 import { poisActions } from 'src/core/useCases/pois'
 import { texts } from 'src/i18n'
 import { useMount } from 'src/utils/hooks'
@@ -12,6 +14,7 @@ interface Props {}
 const POIs: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const poiId = usePOIId()
+  const cityLocation = useDefaultCityLocation()
 
   useMount(() => {
     dispatch(poisActions.init())
@@ -22,8 +25,16 @@ const POIs: StatelessPage<Props> = () => {
   })
 
   useEffect(() => {
-    dispatch(poisActions.setCurrentPOIUuid(poiId || null))
-  }, [poiId, dispatch])
+    if (cityLocation) {
+      dispatch(locationActions.setLocation({
+        location: cityLocation,
+      }))
+    } else if (poiId) {
+      dispatch(poisActions.setCurrentPOIUuid(poiId))
+    } else {
+      dispatch(poisActions.retrievePOIsOrInitLocation())
+    }
+  }, [poiId, dispatch, cityLocation])
 
   return (
     <>

@@ -5,9 +5,10 @@ import { poisActions, selectCurrentPOIUuid } from '../pois'
 import { selectUser } from 'src/core/useCases/authUser'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
-import { LocationActionType, actions, LocationActions } from './location.actions'
+import { Cities, EntourageCities } from 'src/utils/types'
+import { LocationActionType, actions, LocationActions, LocationAction } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
-import { Cities, entourageCities, IGeolocationService, selectLocation } from '.'
+import { IGeolocationService, selectLocation } from '.'
 
 export interface Dependencies {
   geolocationService: IGeolocationService;
@@ -15,36 +16,19 @@ export interface Dependencies {
 
 function* initLocationSaga() {
   const user = yield select(selectUser)
-  const actionsId = yield select(selectCurrentFeedItemUuid)
-  const poiId = yield select(selectCurrentPOIUuid)
 
-  const queryId = actionsId ?? poiId ?? null
-
-  if (!queryId) {
-    if (user && user.address) {
-      yield put(actions.setLocation({
-        location: {
-          center: {
-            lat: user.address.latitude,
-            lng: user.address.longitude,
-          },
-          displayAddress: user.address.displayAddress,
+  if (user?.address) {
+    yield put(actions.setLocation({
+      location: {
+        center: {
+          lat: user.address.latitude,
+          lng: user.address.longitude,
         },
-      }))
-    } else {
-      yield put(actions.getGeolocation())
-    }
+        displayAddress: user.address.displayAddress,
+      },
+    }))
   } else {
-    const defaultCity = entourageCities[queryId as Cities]
-    if (defaultCity) {
-      yield put(actions.setLocation({
-        location: {
-          ...defaultCity,
-        },
-      }))
-      yield put(feedActions.removeCurrentItemUuid())
-      yield put(poisActions.removeCurrentPOIUuid())
-    }
+    yield put(actions.getGeolocation())
   }
 }
 
@@ -70,14 +54,7 @@ function* getGeolocationSaga() {
     }
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
-      // Call action with the same position so that the initialized saga can get its data from gateway
-      const location = yield select(selectLocation)
-
-      yield put(actions.setLocation({
-        location: {
-          ...location,
-        },
-      }))
+      yield put(actions.geolocationRefused())
     }
   }
 }

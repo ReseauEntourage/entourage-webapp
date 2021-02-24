@@ -8,11 +8,12 @@ import { selectCurrentPOIUuid } from '../pois'
 import { defaultPOIsState } from '../pois/pois.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
+import { EntourageCities } from 'src/utils/types'
 import { TestGeolocationService } from './TestGeolocationService'
 import { fakeLocationData } from './__mocks__'
 import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
-import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
+import { defaultLocationState, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
 import { selectLocation, selectLocationIsInit } from './location.selectors'
 
@@ -207,7 +208,7 @@ describe('Location', () => {
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
+        ...EntourageCities.lyon,
         zoom: defaultLocationState.zoom,
         isInit: true,
       })
@@ -238,7 +239,7 @@ describe('Location', () => {
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
+        ...EntourageCities.lyon,
         zoom: defaultLocationState.zoom,
         isInit: true,
       })

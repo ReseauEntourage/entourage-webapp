@@ -1,11 +1,11 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
-import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
+import { locationActions, selectLocation, selectLocationIsInit } from '../location'
 import { LocationActionType } from '../location/location.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
-import { selectCurrentFeedItem, selectFeed, selectFeedIsIdle } from './feed.selectors'
+import { selectCurrentFeedItem, selectFeed } from './feed.selectors'
 
 export interface Dependencies {
   feedGateway: IFeedGateway;
@@ -61,36 +61,30 @@ function* retrieveFeedNextPage() {
 
 function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
   const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
-  const feedIsIdle: ReturnType<typeof selectFeedIsIdle> = yield select(selectFeedIsIdle)
-  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
   const entourageUuid = action.payload
 
   if (!currentItem && entourageUuid) {
-    const isCityId = entourageCities[entourageUuid as Cities]
+    const dependencies: Dependencies = yield getContext('dependencies')
+    const { retrieveFeedItem } = dependencies.feedGateway
 
-    if (isCityId) {
-      yield put(locationActions.initLocation())
-    } else {
-      const dependencies: Dependencies = yield getContext('dependencies')
-      const { retrieveFeedItem } = dependencies.feedGateway
+    const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
-      const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
+    yield put(locationActions.setLocation({
+      location: {
+        center: response.center,
+        displayAddress: response.displayAddress,
+      },
+    }))
+  }
+}
 
-      if (feedIsIdle) {
-        yield put(locationActions.setLocation({
-          location: {
-            center: response.center,
-            displayAddress: response.displayAddress,
-          },
-        }))
-      }
-    }
-  } else if (!entourageUuid) {
-    if (locationIsInit) {
-      yield put(actions.retrieveFeed())
-    } else {
-      yield put(locationActions.initLocation())
-    }
+function* retrieveFeedOrInitPosition() {
+  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
+
+  if (locationIsInit) {
+    yield put(actions.retrieveFeed())
+  } else {
+    yield put(locationActions.initLocation())
   }
 }
 
@@ -136,13 +130,16 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
+  yield takeEvery(FeedActionType.RETRIEVE_FEED_OR_INIT_POSITION, retrieveFeedOrInitPosition)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
   yield takeEvery(FeedActionType.LEAVE_ENTOURAGE, leaveEntourage)
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
+    const setLocationRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
+    const geolocationRefusedRetrieveFeed = yield takeEvery(LocationActionType.GEOLOCATION_REFUSED, retrieveFeed)
     yield take(FeedActionType.CANCEL_FEED)
-    yield cancel(bgRetrieveFeed)
+    yield cancel(setLocationRetrieveFeed)
+    yield cancel(geolocationRefusedRetrieveFeed)
   }
 }

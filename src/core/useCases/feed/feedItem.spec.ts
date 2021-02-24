@@ -2,7 +2,7 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { selectLocation, selectLocationIsInit } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { locationSaga } from '../location/location.saga'
 import { selectCurrentPOI } from '../pois'
@@ -22,6 +22,7 @@ import {
   selectIsUpdatingStatus,
   selectStatus,
 } from './feed.selectors'
+import { Cities, EntourageCities } from "../../../utils/types"
 
 function configureStoreWithFeed(
   params: {
@@ -388,7 +389,7 @@ describe('Feed Item', () => {
       },
     )
 
-    const selectedItemUuid = Object.keys(entourageCities)[0]
+    const selectedItemUuid = Object.keys(EntourageCities)[0]
 
     // --------------------------------------------------
 
@@ -401,7 +402,7 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledTimes(0)
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+        center: EntourageCities[Object.keys(EntourageCities)[0] as Cities].center,
         zoom: selectLocation(store.getState()).zoom,
       },
     })

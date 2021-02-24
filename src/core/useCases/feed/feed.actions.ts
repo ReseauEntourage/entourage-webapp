@@ -5,6 +5,7 @@ import { FeedState } from './feed.reducer'
 export const FeedActionType = {
   INIT_FEED: 'FEED/INIT_FEED',
   CANCEL_FEED: 'FEED/CANCEL_FEED',
+  RETRIEVE_FEED_OR_INIT_POSITION: 'FEED/RETRIEVE_FEED_OR_INIT_POSITION',
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
@@ -95,10 +96,16 @@ function updateItem(payload: Partial<FeedState['items'][string]>) {
   }
 }
 
-function setCurrentItemUuid(payload: string | null) {
+function setCurrentItemUuid(payload: string) {
   return {
     type: FeedActionType.SET_CURRENT_ITEM_UUID,
     payload,
+  }
+}
+
+function retrieveFeedOrInitPosition() {
+  return {
+    type: FeedActionType.RETRIEVE_FEED_OR_INIT_POSITION,
   }
 }
 
@@ -174,6 +181,7 @@ export const publicActions = {
   retrieveFeedNextPage,
   updateItem,
   setCurrentItemUuid,
+  retrieveFeedOrInitPosition,
   joinEntourage,
   leaveEntourage,
   closeEntourage,

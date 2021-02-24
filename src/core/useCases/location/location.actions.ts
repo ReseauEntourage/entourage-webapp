@@ -6,6 +6,7 @@ export const LocationActionType = {
   SET_LOCATION: 'LOCATION/SET_LOCATION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
+  GEOLOCATION_REFUSED: 'LOCATION/GEOLOCATION_REFUSED',
 } as const
 
 export type LocationActionType = keyof typeof LocationActionType;
@@ -41,6 +42,12 @@ function getGeolocation() {
   }
 }
 
+function geolocationRefused() {
+  return {
+    type: LocationActionType.GEOLOCATION_REFUSED,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -51,6 +58,7 @@ export const publicActions = {
 
 const privateActions = {
   setDisplayAddress,
+  geolocationRefused,
 }
 
 export const actions = {

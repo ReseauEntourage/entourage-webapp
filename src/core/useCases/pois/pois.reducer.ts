@@ -105,7 +105,7 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       }
     }
 
-    case POIsActionType.REMOVE_CURRENT_POI_UUID: {
+    case POIsActionType.RETRIEVE_POIS_OR_INIT_LOCATION: {
       return {
         ...state,
         selectedPOIUuid: null,

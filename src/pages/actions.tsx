@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
+import { useDefaultCityLocation } from '../containers/Nav'
 import { useActionId, MapActions } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
+import { locationActions } from 'src/core/useCases/location'
 import { texts } from 'src/i18n'
 import { useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
@@ -12,6 +14,7 @@ interface Props {}
 const Actions: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const actionId = useActionId()
+  const cityLocation = useDefaultCityLocation()
 
   useMount(() => {
     dispatch(feedActions.init())
@@ -21,8 +24,16 @@ const Actions: StatelessPage<Props> = () => {
   })
 
   useEffect(() => {
-    dispatch(feedActions.setCurrentItemUuid(actionId || null))
-  }, [actionId, dispatch])
+    if (cityLocation) {
+      dispatch(locationActions.setLocation({
+        location: cityLocation,
+      }))
+    } else if (actionId) {
+      dispatch(feedActions.setCurrentItemUuid(actionId))
+    } else {
+      dispatch(feedActions.retrieveFeedOrInitPosition())
+    }
+  }, [actionId, cityLocation, dispatch])
 
   return (
     <>
