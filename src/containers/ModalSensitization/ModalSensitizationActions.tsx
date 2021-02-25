@@ -3,6 +3,7 @@ import React, { useCallback } from 'react'
 import { Button } from 'src/components/Button'
 import { constants } from 'src/constants'
 import { texts } from 'src/i18n'
+import { useFirebase, useMount } from 'src/utils/hooks'
 import { useModalSensitizationActions } from './useModalSensitizationActions'
 
 interface ModalSensitizationActions {
@@ -18,6 +19,9 @@ export function ModalSensitizationActions(props: ModalSensitizationActions) {
 
   const { onDismiss, onDismissWithFeedback, onWorkshopClick } = useModalSensitizationActions()
   const modalTexts = texts.content.modalSensitization
+
+  const { sendActionWorkshopShow } = useFirebase()
+  useMount(sendActionWorkshopShow)
 
   const dismissWithFeedback = useCallback(async () => {
     await trigger()

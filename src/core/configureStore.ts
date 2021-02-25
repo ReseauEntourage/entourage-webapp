@@ -73,7 +73,7 @@ export function configureStore<
   sagaMiddleware.run(rootSaga)
 
   function waitForActionEnd() {
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       if (sagaRunningCount === 0) {
         resolve()
       } else {

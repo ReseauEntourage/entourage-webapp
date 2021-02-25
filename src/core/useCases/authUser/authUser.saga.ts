@@ -26,7 +26,7 @@ export interface Dependencies {
 function* showSensitizationPopupSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserSensitizationStorage } = dependencies
-  const user = yield select(selectUser)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
 
   if (user) {
     const hasSeenSensitizationPopup = authUserSensitizationStorage.getHasSeenPopup(user.id)
@@ -48,7 +48,7 @@ function* showSensitizationPopupSaga() {
 function* hideSensitizationPopupSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserSensitizationStorage } = dependencies
-  const user = yield select(selectUser)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
   if (user) authUserSensitizationStorage.setHasSeenPopup(user.id)
 }
 

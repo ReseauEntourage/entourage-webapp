@@ -1,5 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
+import { firebaseSaga } from '../firebase'
+import { TestFirebaseService } from '../firebase/TestFirebaseService'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
@@ -35,6 +37,14 @@ function createSilentAuthUserTokenStorage() {
   return authUserTokenStorage
 }
 
+function createSilentFirebaseService() {
+  const firebaseService = new TestFirebaseService()
+  firebaseService.setUser.mockImplementation()
+  firebaseService.sendEvent.mockImplementation()
+
+  return firebaseService
+}
+
 function configureStoreWithAuthUser(
   params: {
     dependencies?: PartialAppDependencies;
@@ -51,14 +61,16 @@ function configureStoreWithAuthUser(
     },
     dependencies: {
       authUserTokenStorage: createSilentAuthUserTokenStorage(),
+      firebaseService: createSilentFirebaseService(),
       ...dependencies,
     },
-    sagas: [authUserSaga],
+    sagas: [authUserSaga, firebaseSaga],
   })
 }
 
 function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: boolean) {
   const authUserGateway = new TestAuthUserGateway()
+  const firebaseService = new TestFirebaseService()
   const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
   const user = createUser(isFirstSignIn, isActiveUser)
 
@@ -73,6 +85,7 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
   authUserGateway.resetPassword.mockDeferredValueOnce(deferredValues.resetPassword)
   authUserGateway.loginWithPassword.mockDeferredValueOnce(deferredValues.loginWithPassword)
   authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+  firebaseService.setUser.mockReturnValueOnce()
 
   const resolveAllDeferredValue = () => {
     authUserGateway.phoneLookUp.resolveDeferredValue()
@@ -81,12 +94,18 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
     authUserGateway.loginWithSMSCode.resolveDeferredValue()
   }
 
-  const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+  const store = configureStoreWithAuthUser({
+    dependencies: {
+      authUserGateway,
+      authUserSensitizationStorage,
+      firebaseService },
+  })
 
   return {
     store,
     authUserGateway,
     authUserSensitizationStorage,
+    firebaseService,
     resolveAllDeferredValue,
     user,
   }
@@ -375,8 +394,15 @@ describe('Auth User', () => {
       And user data should be equal to server response
       And there should not be a next step
       And login should be completed
+      And user id should be set into Firebase
   `, async () => {
-    const { store, resolveAllDeferredValue, user, authUserSensitizationStorage } = configureStoreWithUserAccount()
+    const {
+      store,
+      resolveAllDeferredValue,
+      user,
+      authUserSensitizationStorage,
+      firebaseService,
+    } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const password = 'abcdefghi'
 
@@ -398,6 +424,8 @@ describe('Auth User', () => {
     expect(selectStep(store.getState())).toEqual(null)
 
     expect(selectLoginIsCompleted(store.getState())).toEqual(true)
+
+    expect(firebaseService.setUser).toHaveBeenCalledWith(user.id.toString())
   })
 
   it(`
@@ -408,12 +436,14 @@ describe('Auth User', () => {
       And user data should be equal to server response
       And next step should be password creation
       And login should not be completed
+      And user id should be set into Firebase
   `, async () => {
     const {
       store,
       resolveAllDeferredValue,
       user,
       authUserGateway,
+      firebaseService,
     } = configureStoreWithUserAccount()
     const phone = '0700000000'
     const SMSCode = 'abc'
@@ -434,6 +464,7 @@ describe('Auth User', () => {
     expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledTimes(1)
     expect(authUserGateway.loginWithSMSCode).toHaveBeenCalledWith({ phone, SMSCode })
     expect(selectLoginIsCompleted(store.getState())).toEqual(false)
+    expect(firebaseService.setUser).toHaveBeenCalledWith(user.id.toString())
   })
 
   describe('Phone validation: phone look up', () => {
@@ -826,43 +857,71 @@ describe('Auth User', () => {
 
   describe('Giver user is not set', () => {
     it(`
-      Should set user
-        And login should be completed`, async () => {
+      Given initial state
+      When user is automatically logged in
+      Then the user should be set
+        And login should be completed
+        And the user id should be set into Firebase`, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const firebaseService = new TestFirebaseService()
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          authUserGateway,
+          authUserSensitizationStorage,
+          firebaseService,
+        },
+      })
       const user = createUser()
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+      firebaseService.setUser.mockReturnValueOnce()
+      firebaseService.sendEvent.mockReturnValueOnce()
 
       store.dispatch(publicActions.setUser(user))
       await store.waitForActionEnd()
       expect(selectUser(store.getState())).toBeTruthy()
       expect(selectUser(store.getState())).toEqual(user)
       expect(selectLoginIsCompleted(store.getState())).toEqual(true)
+      expect(firebaseService.setUser).toHaveBeenCalledWith(user.id.toString())
     })
 
     it(`
-      When logout
-        And user set to null
-      Then login should not be completed
+      Given initial state
+      When user is logged out
+      Then user should be set to null
+        And login should not be completed
+        And user id should be removed from Firebase
       `, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const firebaseService = new TestFirebaseService()
       const user = createUser()
 
-      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
-      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            user,
+            ...defaultAuthUserState,
+          },
+        },
+        dependencies: {
+          authUserGateway,
+          authUserSensitizationStorage,
+          firebaseService,
+        },
+      })
 
-      store.dispatch(publicActions.setUser(user))
+      firebaseService.setUser.mockReturnValueOnce()
+      firebaseService.sendEvent.mockReturnValueOnce()
 
       store.dispatch(publicActions.setUser(null))
       await store.waitForActionEnd()
       expect(selectUser(store.getState())).toBeFalsy()
       expect(selectUser(store.getState())).toEqual(null)
       expect(selectLoginIsCompleted(store.getState())).toEqual(false)
+      expect(firebaseService.setUser).toHaveBeenCalledWith(undefined)
     })
   })
 

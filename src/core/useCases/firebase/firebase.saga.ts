@@ -1,39 +1,36 @@
-import { call, getContext, put, select } from 'redux-saga/effects'
-import { snakeToCamel } from '../../../utils/misc/strings'
-import { sendEvent, setUser } from '../../services/firebase'
+import { all, ForkEffect, getContext, select } from 'redux-saga/effects'
 import { AuthUserActionType } from '../authUser/authUser.actions'
-import { feedActions, selectCurrentFeedItemUuid } from '../feed'
-import { poisActions, selectCurrentPOIUuid } from '../pois'
 import { selectUser } from 'src/core/useCases/authUser'
-import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
-import { LocationActionType, actions, LocationActions } from './location.actions'
-import { LocationErrorGeolocationRefused } from './location.errors'
-import { Cities, entourageCities, IGeolocationService, selectLocation } from '.'
+import { FirebaseEvent, FirebaseEvents, FirebaseProps } from 'src/utils/types'
 
-export const firebaseEvents: string[] = [
-  'LOGIN',
-]
-
-const events = firebaseEvents.reduce((acc, curr) => {
-  return {
-    ...acc,
-    * [snakeToCamel(curr)]() { yield sendEvent(curr) },
-  }
-}, {})
+import { IFirebaseService } from './IFirebaseService'
+import { FirebaseActionType } from './firebase.actions'
 
 export interface Dependencies {
-  geolocationService: IGeolocationService;
+  firebaseService: IFirebaseService;
 }
 
+const firebaseSagas: ForkEffect<never>[] = FirebaseEvents.map((firebaseEvent) => {
+  function* saga(payload?: FirebaseProps) {
+    const dependencies: Dependencies = yield getContext('dependencies')
+    const { sendEvent } = dependencies.firebaseService
+    yield sendEvent(firebaseEvent, payload)
+  }
+
+  return takeEvery(FirebaseActionType[firebaseEvent as FirebaseEvent], saga)
+})
+
 function* setUserId() {
-  const user = yield select(selectUser)
-  setUser(user?.id)
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { setUser } = dependencies.firebaseService
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
+  setUser(user?.id.toString())
 }
 
 export function* firebaseSaga() {
   yield takeEvery(AuthUserActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED, setUserId)
+  yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, setUserId)
   yield takeEvery(AuthUserActionType.SET_USER, setUserId)
-
-  yield takeEvery(AuthUserActionType.SET_USER, events.login)
+  yield all(firebaseSagas)
 }

@@ -2,8 +2,8 @@ import { getContext, takeEvery as takeEveryBase } from 'redux-saga/effects'
 
 function trackTake<A>(fn: (action: A) => void) {
   return function* saga(action: A) {
-    const startAction = yield getContext('startAction')
-    const endAction = yield getContext('endAction')
+    const startAction: () => void = yield getContext('startAction')
+    const endAction: () => void = yield getContext('endAction')
     startAction()
     yield fn(action)
     endAction()

@@ -1,49 +1,44 @@
-import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
-import { LocationState } from './location.reducer'
+import { toCamelCase } from 'src/utils/misc'
+import {
+  FirebaseEvent,
+  FirebaseEventFunction,
+  FirebaseEvents,
+  FirebaseProps,
+  ActionFromMapObject,
+  ActionsFromMapObject,
+} from 'src/utils/types'
 
-export const LocationActionType = {
-  INIT_LOCATION: 'LOCATION/INIT_LOCATION',
-  SET_LOCATION: 'LOCATION/SET_LOCATION',
-  SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
-  GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
-} as const
+type GeneratedFirebaseActionType = Record<FirebaseEvent, string>
 
-export type LocationActionType = keyof typeof LocationActionType;
+export const FirebaseActionType: GeneratedFirebaseActionType = FirebaseEvents.reduce((acc, curr) => {
+  return {
+    ...acc,
+    [curr as FirebaseEvent]: `FIREBASE/${curr}`,
+  }
+}, {} as GeneratedFirebaseActionType)
+
+export type FirebaseActionType = keyof typeof FirebaseActionType
+
+type GeneratedFirebaseActions = Record<FirebaseEventFunction, (params?: FirebaseProps) => {
+  type: string;
+  payload?: FirebaseProps;
+}>
 
 // ------------------------------------------------------------------------
 
-function initLocation() {
+const firebaseActions: GeneratedFirebaseActions = FirebaseEvents.reduce((acc, curr) => {
   return {
-    type: LocationActionType.INIT_LOCATION,
+    ...acc,
+    [toCamelCase(`send_${curr}`) as FirebaseEventFunction]: (props?: Record<string, string>) => {
+      return { type: FirebaseActionType[curr as FirebaseEvent], payload: props }
+    },
   }
-}
-
-function setLocation(payload: {
-  location: Partial<LocationState>;
-  getDisplayAddressFromCoordinates?: boolean;
-}) {
-  return {
-    type: LocationActionType.SET_LOCATION,
-    payload,
-  }
-}
-
-function setDisplayAddress(payload: Pick<LocationState, 'displayAddress'>) {
-  return {
-    type: LocationActionType.SET_DISPLAY_ADDRESS,
-    payload,
-  }
-}
-
-function getGeolocation() {
-  return {
-    type: LocationActionType.GET_GEOLOCATION,
-  }
-}
+}, {} as GeneratedFirebaseActions)
 
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
+  ...firebaseActions,
 }
 
 const privateActions = {
@@ -54,5 +49,5 @@ export const actions = {
   ...privateActions,
 }
 
-export type LocationActions = ActionsFromMapObject<typeof actions>
-export type LocationAction = ActionFromMapObject<typeof actions>
+export type FirebaseActions = ActionsFromMapObject<typeof actions>
+export type FirebaseAction = ActionFromMapObject<typeof actions>
