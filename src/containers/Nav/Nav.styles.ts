@@ -15,6 +15,11 @@ export const ConnectButton = styled(Button)`
   }
 `
 
+export const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 export const NavItem = styled(NotStyledNavItem)`
   margin-left: ${theme.spacing(2)}px;
   margin-right: ${theme.spacing(2)}px;

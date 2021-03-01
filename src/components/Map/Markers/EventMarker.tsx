@@ -1,7 +1,8 @@
+import { Tooltip } from '@material-ui/core'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { constants } from 'src/constants'
-import { selectFeedFilters } from 'src/core/useCases/feed'
+import { selectLocation } from 'src/core/useCases/location'
 import { colors } from 'src/styles'
 import { getPixelPerMeter } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
@@ -18,31 +19,42 @@ function getMarkerSize(lat: number, zoom: number) {
 
 interface Props {
   isActive: boolean;
+  tooltip?: string;
 }
 
 // disable ESLint because lat and lng are internally use by Google Map
 // eslint-disable-next-line
 export function EventMarker(props: Props) {
-  const { isActive } = props
-  const filters = useSelector(selectFeedFilters)
-  const { zoom, center: { lat } } = filters
+  const { isActive, tooltip } = props
+  const position = useSelector(selectLocation)
+  const { zoom, center: { lat } } = position
   const size = getMarkerSize(lat, zoom)
+
+  const marker = (
+    <div
+      style={{
+        position: 'relative',
+        display: 'block',
+        height: size,
+        width: size,
+        borderRadius: '50%',
+        backgroundColor: isActive ? colors.main.red : colors.main.marker,
+        opacity: isActive ? 1 : 0.7,
+        cursor: 'pointer',
+        zIndex: isActive ? 2 : 1,
+      }}
+    />
+  )
+
+  const tooltipMarker = (
+    <Tooltip title={tooltip}>
+      {marker}
+    </Tooltip>
+  )
 
   return (
     <BaseMarker size={size}>
-      <div
-        style={{
-          position: 'relative',
-          display: 'block',
-          height: size,
-          width: size,
-          borderRadius: '50%',
-          backgroundColor: isActive ? colors.main.red : colors.main.marker,
-          opacity: isActive ? 1 : 0.7,
-          cursor: 'pointer',
-          zIndex: isActive ? 2 : 1,
-        }}
-      />
+      {tooltip ? tooltipMarker : marker}
     </BaseMarker>
   )
 }

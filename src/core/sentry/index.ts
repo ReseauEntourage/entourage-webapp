@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/browser'
-import { texts } from '../../i18n'
 import { env } from 'src/core/env'
+import { texts } from 'src/i18n'
 
 export function initSentry() {
   if (process.env.NODE_ENV !== 'production') return

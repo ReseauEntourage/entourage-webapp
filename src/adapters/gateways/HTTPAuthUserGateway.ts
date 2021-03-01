@@ -64,7 +64,7 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
         },
       })
       .then((res) => {
-        const { user } = res.data
+        const { user, firstSignIn } = res.data
 
         assertIsDefined(user.id, 'user id')
 
@@ -77,8 +77,10 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
           firstName: user.firstName ?? undefined,
           lastName: user.lastName ?? undefined,
           about: user.about ?? undefined,
-          address: user.address ? { displayAddress: user.address.displayAddress } : undefined,
+          address: user.address ?? undefined,
           token: user.token,
+          stats: user.stats,
+          firstSignIn,
         }
       })
       .catch((error) => {

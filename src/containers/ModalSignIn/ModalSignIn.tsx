@@ -10,7 +10,7 @@ import {
   selectStep,
   authUserActions,
   selectErrors,
-  selectLoginStepIsCompleted,
+  selectLoginIsCompleted,
 } from 'src/core/useCases/authUser'
 import { texts } from 'src/i18n'
 import { useIsDesktop, variants } from 'src/styles'
@@ -32,7 +32,7 @@ export function ModalSignIn(props: ModalSignInProps) {
   const dispatch = useDispatch()
   const step = useSelector(selectStep)
   const errors = useSelector(selectErrors)
-  const closeOnNextRender = useSelector(selectLoginStepIsCompleted)
+  const closeOnNextRender = useSelector(selectLoginIsCompleted)
   const phoneForm = useForm<FormFields>()
 
   const isDesktop = useIsDesktop()

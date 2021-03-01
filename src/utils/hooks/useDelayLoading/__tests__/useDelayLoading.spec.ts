@@ -27,7 +27,7 @@ describe('useDelayLoading', () => {
     })
   })
 
-  it('should change loading state aftet 500ms', async () => {
+  it('should change loading state after 500ms', async () => {
     const { result } = renderHook(() => useDelayLoading(false, options))
 
     await act(async () => {

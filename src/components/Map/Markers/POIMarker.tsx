@@ -1,61 +1,42 @@
-import AddBoxIcon from '@material-ui/icons/AddBox'
-import ExploreIcon from '@material-ui/icons/Explore'
-import HomeIcon from '@material-ui/icons/Home'
-import LocalDrinkIcon from '@material-ui/icons/LocalDrink'
-import PeopleIcon from '@material-ui/icons/People'
-import RestaurantIcon from '@material-ui/icons/Restaurant'
-import SpaIcon from '@material-ui/icons/Spa'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { POICategory } from 'src/core/api'
-import { selectFeedFilters } from 'src/core/useCases/feed'
-import { colors } from 'src/styles'
+import { selectLocation } from 'src/core/useCases/location'
+import { roundToEven } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
+import { POIIcon } from './POIIcon'
 
-function getSize(zoom: number): { iconSize: number; size: number; } {
-  return zoom < 15
-    ? { size: 15, iconSize: 10 }
-    : { size: 32, iconSize: 16 }
-}
-
-const icons = {
-  1: RestaurantIcon,
-  2: HomeIcon,
-  3: AddBoxIcon,
-  4: LocalDrinkIcon,
-  5: ExploreIcon,
-  6: SpaIcon,
-  7: PeopleIcon,
+function getSize(zoom: number): number {
+  if (zoom < 12) {
+    return 16
+  }
+  if (zoom >= 12 && zoom < 15) {
+    return 24
+  }
+  return 32
 }
 
 interface Props {
-  category: POICategory;
+  category: POICategory['id'];
+  isActive: boolean;
+  tooltip?: string;
 }
 
 export function POIMarker(props: Props) {
-  const { category } = props
-  const { zoom } = useSelector(selectFeedFilters)
-  const { size, iconSize } = getSize(zoom)
-  const color = colors.pois[category.id]
-  const Icon = icons[category.id]
+  const { category, isActive, tooltip } = props
+  const { zoom } = useSelector(selectLocation)
+  const size = getSize(zoom)
+
+  const displaySize = isActive ? size * 2 : roundToEven(size)
 
   return (
-    <BaseMarker size={size}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: size,
-          width: size,
-          borderRadius: '50%',
-          backgroundColor: color,
-          border: 'solid 1px #fff',
-          cursor: 'pointer',
-        }}
-      >
-        <Icon style={{ color: '#fff', fontSize: iconSize }} />
-      </div>
+    <BaseMarker size={displaySize}>
+      <POIIcon
+        isActive={isActive}
+        poiCategory={category}
+        size={size}
+        tooltip={tooltip}
+      />
     </BaseMarker>
   )
 }

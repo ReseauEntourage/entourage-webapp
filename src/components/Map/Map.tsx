@@ -3,7 +3,7 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
-import { selectFeedFilters, feedActions } from 'src/core/useCases/feed'
+import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
@@ -15,21 +15,33 @@ interface Props {
   children: AnyToFix;
 }
 
+const coordinatesHasChanged = (
+  oldCoordinates: google.maps.LatLngLiteral,
+  newCoordinates: google.maps.LatLngLiteral,
+) => {
+  const latHasChanged = Math.abs(oldCoordinates.lat - newCoordinates.lat) > (1 / 1e3)
+  const lngHasChanged = Math.abs(oldCoordinates.lng - newCoordinates.lng) > (1 / 1e3)
+
+  return latHasChanged || lngHasChanged
+}
+
 export function Map(props: Props) {
   const { children } = props
-  const filters = useSelector(selectFeedFilters)
+  const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const googleMapIsLoaded = useLoadGoogleMapApi()
 
   function onChange(value: ChangeEventValue) {
-    const filtersHasChanged = filters.center.lat !== value.center.lat
-      || filters.center.lng !== value.center.lng
-      || filters.zoom !== value.zoom
+    // used coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
+    const positionHasChanged = coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom
 
-    if (filtersHasChanged) {
-      dispatch(feedActions.setFilters({
-        center: value.center,
-        zoom: value.zoom,
+    if (positionHasChanged) {
+      dispatch(locationActions.setLocation({
+        location: {
+          center: value.center,
+          zoom: value.zoom,
+        },
+        getDisplayAddressFromCoordinates: true,
       }))
     }
   }
@@ -40,7 +52,7 @@ export function Map(props: Props) {
 
   return (
     <GoogleMapReact
-      center={filters.center}
+      center={position.center}
       defaultCenter={constants.DEFAULT_LOCATION.CENTER}
       defaultZoom={constants.DEFAULT_LOCATION.ZOOM}
       onChange={(nextValue) => onChange(nextValue)}

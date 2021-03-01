@@ -1,3 +1,4 @@
+import Box from '@material-ui/core/Box'
 import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
 import { Messages, TopBar } from 'src/components/Conversations'
@@ -70,7 +71,13 @@ export function ConversationDetail(props: ConversationDetailProps) {
   }))
 
   if (!entourage) {
-    return <OverlayLoader />
+    return (
+      <S.Container>
+        <Box alignItems="center" display="flex" height="100%" justifyContent="center">
+          <OverlayLoader />
+        </Box>
+      </S.Container>
+    )
   }
 
   if (joinStatus !== 'accepted' && joinStatus !== 'pending') {

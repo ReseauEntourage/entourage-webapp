@@ -5,6 +5,8 @@ import { isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
 const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`
 
+const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query='
+
 class GoogleMapApiNotLoaded extends Error {
   name = 'Google Map Api is not loaded'
 }
@@ -22,6 +24,21 @@ export function getDetailPlacesService(
   return new Promise((resolve) => {
     new google.maps.places.PlacesService(document.createElement('div'))
       .getDetails(requestGetDetail, (res) => {
+        resolve(res)
+      })
+  })
+}
+
+export function getDetailPlacesFromCoordinatesService(
+  coordinates: google.maps.LatLngLiteral,
+): Promise<google.maps.GeocoderResult[]> {
+  const requestGetDetail: google.maps.GeocoderRequest = {
+    location: coordinates,
+  }
+
+  return new Promise((resolve) => {
+    new google.maps.Geocoder()
+      .geocode(requestGetDetail, (res) => {
         resolve(res)
       })
   })
@@ -73,3 +90,12 @@ export function useAutocompleteServices() {
     return new google.maps.places.AutocompleteService()
   }, [])
 }
+
+export function getLinkFromCoordinates(lat: number, lng: number) {
+  return `${googleMapsUrl}${lat},${lng}`
+}
+
+export function getUrlFromAddress(address: string) {
+  return `${googleMapsUrl}${encodeURI(address)}`
+}
+

@@ -9,6 +9,7 @@ import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import ExploreIcon from '@material-ui/icons/Explore'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
@@ -16,11 +17,12 @@ import { NavItem } from '../NavItem'
 import { FeedBackButton } from '../NavNotificationBar'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
-import { useOpenModalProfileOnLogin } from '../useOpenModalProfileOnLogin'
+import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
+import { useCurrentRoute } from 'src/hooks/useCurrentRoute'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { theme, variants } from 'src/styles'
@@ -29,8 +31,9 @@ import * as S from './DrawerNav.styles'
 export function DrawerNavMobile() {
   const iAmLogged = !!useMe()
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
+  const { currentRoute } = useCurrentRoute()
 
-  useOpenModalProfileOnLogin()
+  useOpenModalsOnLogin()
 
   const onClickDrawerClose = useCallback(() => {
     setOpen(false)
@@ -66,17 +69,27 @@ export function DrawerNavMobile() {
           <NavItem
             href="/actions"
             icon={<MapIcon />}
+            isActive={currentRoute === '/actions'}
             label={texts.nav.actions}
+            onClick={onClickDrawerClose}
+          />
+        </ListItem>
+        <ListItem key="pois" button={true}>
+          <NavItem
+            href="/pois"
+            icon={<ExploreIcon />}
+            isActive={currentRoute === '/pois'}
+            label={texts.nav.pois}
             onClick={onClickDrawerClose}
           />
         </ListItem>
         {iAmLogged && (
           <>
             <ListItem key="messages" button={true}>
-
               <NavItem
                 href="/messages"
                 icon={<ChatBubbleOutlineIcon />}
+                isActive={currentRoute === '/messages'}
                 label={texts.nav.messages}
                 onClick={onClickDrawerClose}
               />

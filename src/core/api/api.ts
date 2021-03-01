@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosPromise } from 'axios'
+import axios, { AxiosRequestConfig, AxiosPromise, Method } from 'axios'
 import { NextPageContext } from 'next'
 import { Config, Response } from 'typescript-request-schema'
 import { env } from 'src/core/env'
@@ -14,7 +14,9 @@ type RequestConfig<T extends RequestName> = Config<T, Schema, ExtraConfig, TypeS
 type RequestResponse<T extends RequestName> = AxiosPromise<Response<T, Schema>>
 type Request = <T extends RequestName>(config: RequestConfig<T>) => RequestResponse<T>
 
-const axiosInstance = axios.create({ baseURL: env.API_V1_URL })
+const axiosInstance = axios.create({
+  baseURL: env.API_V1_URL,
+})
 
 const request: Request = (config) => {
   const {
@@ -33,7 +35,7 @@ const request: Request = (config) => {
 
   return axiosInstance.request({
     url: urlWithPathParams,
-    method,
+    method: method as Method,
     data,
     params,
     ...restConfig,

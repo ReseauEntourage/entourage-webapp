@@ -1,34 +1,20 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
-import { useMount } from 'src/utils/hooks'
-import { FeedList } from './FeedList'
+import { LeftList } from './LeftLists/LeftList'
 import * as S from './MapContainer.styles'
-import { RightCards } from './RightCards'
-import { useActionId } from './useActionId'
-import { useCurrentFeedItem } from './useCurrentFeedItem'
-import { useMarkers } from './useMarkers'
+import { MapContainerProps } from './index'
 
-export function MapContainerMobile() {
-  const dispatch = useDispatch()
-  const actionId = useActionId()
-  const { feedsMarkersContent, POIsMarkersContent, isLoading } = useMarkers()
+export function MapContainerMobile(props: MapContainerProps) {
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
-  const currentFeedItem = useCurrentFeedItem()
 
-  useMount(() => {
-    if (!actionId) {
-      dispatch(feedActions.retrieveFeed())
-    }
-  })
+  const { markers, cards, list, isLoading } = props
 
-  if (currentFeedItem) {
+  if (cards) {
     return (
       <S.Container>
-        <RightCards key={actionId} />
+        {cards}
       </S.Container>
     )
   }
@@ -38,8 +24,7 @@ export function MapContainerMobile() {
       { isMapOpen ? (
         <S.MapContainer>
           <Map>
-            {POIsMarkersContent}
-            {feedsMarkersContent}
+            {markers}
           </Map>
           {isLoading && <OverlayLoader />}
           <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
@@ -50,7 +35,7 @@ export function MapContainerMobile() {
         </S.MapContainer>
       ) : (
         <>
-          <FeedList />
+          <LeftList isLoading={isLoading} list={list} />
           <S.FabFeed color="primary" onClick={() => setIsMapOpen(true)} size="small" variant="extended">
             <S.NavIcon />
             {texts.content.navActions.mapButton}

@@ -1,5 +1,6 @@
 import produce from 'immer'
-import { constants } from 'src/constants'
+import { LocationAction, LocationActionType } from '../location/location.actions'
+import { POIsActionType, POIsAction } from '../pois/pois.actions'
 import {
   FeedMetadata,
   FeedDisplayCategory,
@@ -9,7 +10,7 @@ import {
   FeedJoinStatus,
   FeedStatus,
 } from 'src/core/api'
-import { Action, ActionType } from './feed.actions'
+import { FeedAction, FeedActionType } from './feed.actions'
 
 export const JoinRequestStatus = {
   NOT_REQUEST: 'NOT_REQUEST',
@@ -54,14 +55,6 @@ export interface FeedItem {
 
 export interface FeedState {
   fetching: boolean;
-  filters: {
-    cityName: string;
-    center: {
-      lat: number;
-      lng: number;
-    };
-    zoom: number;
-  };
   itemsUuids: string[];
   items: {
     [itemUuid: string]: FeedItem;
@@ -76,11 +69,6 @@ export interface FeedState {
 export const defaultFeedState: FeedState = {
   fetching: false,
   itemsUuids: [],
-  filters: {
-    cityName: constants.DEFAULT_LOCATION.CITY_NAME,
-    center: constants.DEFAULT_LOCATION.CENTER,
-    zoom: constants.DEFAULT_LOCATION.ZOOM,
-  },
   nextPageToken: null,
   items: {},
   selectedItemUuid: null,
@@ -89,28 +77,26 @@ export const defaultFeedState: FeedState = {
   isIdle: true,
 }
 
-export function feedReducer(state: FeedState = defaultFeedState, action: Action): FeedState {
+export function feedReducer(
+  state: FeedState = defaultFeedState,
+  action: FeedAction | POIsAction | LocationAction,
+): FeedState {
   switch (action.type) {
-    case ActionType.SET_FILTERS: {
+    case LocationActionType.SET_LOCATION: {
       return {
         ...state,
-        filters: {
-          ...state.filters,
-          ...action.payload,
-        },
         nextPageToken: null,
       }
     }
-
-    case ActionType.RETRIEVE_FEED_STARTED:
-    case ActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED: {
+    case FeedActionType.RETRIEVE_FEED_STARTED:
+    case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED: {
       return {
         ...state,
         fetching: true,
       }
     }
 
-    case ActionType.RETRIEVE_FEED_SUCCEEDED: {
+    case FeedActionType.RETRIEVE_FEED_SUCCEEDED: {
       return {
         ...state,
         isIdle: false,
@@ -122,13 +108,13 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
             }
           }, state.items,
         ),
-        itemsUuids: action.payload.items.map((item) => item.uuid),
+        itemsUuids: action.payload.items.map((item: FeedItem) => item.uuid),
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
       }
     }
 
-    case ActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
+    case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
         items: action.payload.items.reduce(
@@ -148,7 +134,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.UPDATE_ITEM: {
+    case FeedActionType.UPDATE_ITEM: {
       return produce(state, (draftState) => {
         const { uuid } = action.payload
         if (!uuid) {
@@ -169,22 +155,36 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       })
     }
 
-    case ActionType.SET_CURRENT_ITEM_UUID: {
+    case FeedActionType.SET_CURRENT_ITEM_UUID: {
       return {
         ...state,
         selectedItemUuid: action.payload,
       }
     }
 
-    case ActionType.JOIN_ENTOURAGE:
-    case ActionType.LEAVE_ENTOURAGE: {
+    case FeedActionType.REMOVE_CURRENT_ITEM_UUID: {
+      return {
+        ...state,
+        selectedItemUuid: null,
+      }
+    }
+
+    case POIsActionType.SET_CURRENT_POI_UUID: {
+      return {
+        ...state,
+        selectedItemUuid: null,
+      }
+    }
+
+    case FeedActionType.JOIN_ENTOURAGE:
+    case FeedActionType.LEAVE_ENTOURAGE: {
       return {
         ...state,
         isUpdatingJoinStatus: true,
       }
     }
 
-    case ActionType.JOIN_ENTOURAGE_SUCCEEDED: {
+    case FeedActionType.JOIN_ENTOURAGE_SUCCEEDED: {
       return {
         ...state,
         isUpdatingJoinStatus: false,
@@ -195,7 +195,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.LEAVE_ENTOURAGE_SUCCEEDED: {
+    case FeedActionType.LEAVE_ENTOURAGE_SUCCEEDED: {
       return {
         ...state,
         isUpdatingJoinStatus: false,
@@ -206,15 +206,15 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.REOPEN_ENTOURAGE:
-    case ActionType.CLOSE_ENTOURAGE: {
+    case FeedActionType.REOPEN_ENTOURAGE:
+    case FeedActionType.CLOSE_ENTOURAGE: {
       return {
         ...state,
         isUpdatingStatus: true,
       }
     }
 
-    case ActionType.CLOSE_ENTOURAGE_SUCCEEDED: {
+    case FeedActionType.CLOSE_ENTOURAGE_SUCCEEDED: {
       return {
         ...state,
         isUpdatingStatus: false,
@@ -225,7 +225,7 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
-    case ActionType.REOPEN_ENTOURAGE_SUCCEEDED: {
+    case FeedActionType.REOPEN_ENTOURAGE_SUCCEEDED: {
       return {
         ...state,
         isUpdatingStatus: false,
@@ -236,9 +236,14 @@ export function feedReducer(state: FeedState = defaultFeedState, action: Action)
       }
     }
 
+    case FeedActionType.CANCEL_FEED: {
+      return {
+        ...state,
+        nextPageToken: null,
+      }
+    }
+
     default:
       return state
   }
-
-  return state
 }

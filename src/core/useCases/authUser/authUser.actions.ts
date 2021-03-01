@@ -1,7 +1,7 @@
 import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
 import { AuthUserState } from './authUser.reducer'
 
-export const ActionType = {
+export const AuthUserActionType = {
   PHONE_LOOK_UP: 'AUTH/PHONE_LOOK_UP',
   CREATE_ACCOUNT: 'AUTH/CREATE_ACCOUNT',
   CREATE_ACCOUNT_SUCCEEDED: 'AUTH/CREATE_ACCOUNT_SUCCEEDED',
@@ -19,13 +19,15 @@ export const ActionType = {
   SET_ERRORS: 'AUTH/SET_ERRORS',
   RESET_FORM: 'AUTH/RESET_FORM',
   SET_USER: 'AUTH/SET_USER',
+  SHOW_SENSITIZATION_POPUP: 'AUTH/SHOW_SENSITIZATION_POPUP',
+  HIDE_SENSITIZATION_POPUP: 'AUTH/HIDE_SENSITIZATION_POPUP',
 } as const
 
-export type ActionType = keyof typeof ActionType;
+export type AuthUserActionType = keyof typeof AuthUserActionType;
 
 function phoneLookUp(phone: string) {
   return {
-    type: ActionType.PHONE_LOOK_UP,
+    type: AuthUserActionType.PHONE_LOOK_UP,
     payload: {
       phone,
     },
@@ -34,7 +36,7 @@ function phoneLookUp(phone: string) {
 
 function createAccount(phone: string) {
   return {
-    type: ActionType.CREATE_ACCOUNT,
+    type: AuthUserActionType.CREATE_ACCOUNT,
     payload: {
       phone,
     },
@@ -43,98 +45,111 @@ function createAccount(phone: string) {
 
 function createAccountSuccess() {
   return {
-    type: ActionType.CREATE_ACCOUNT_SUCCEEDED,
+    type: AuthUserActionType.CREATE_ACCOUNT_SUCCEEDED,
   }
 }
 
 function askCreateAccount() {
   return {
-    type: ActionType.ASK_CREATE_ACCOUNT,
+    type: AuthUserActionType.ASK_CREATE_ACCOUNT,
   }
 }
 
 function askSMSCode() {
   return {
-    type: ActionType.ASK_SMS_CODE,
+    type: AuthUserActionType.ASK_SMS_CODE,
   }
 }
 
 function askPassword() {
   return {
-    type: ActionType.ASK_PASSWORD,
+    type: AuthUserActionType.ASK_PASSWORD,
   }
 }
 
 function loginWithPassword(payload: { phone: string; password: string; }) {
   return {
-    type: ActionType.LOGIN_WITH_PASSWORD,
+    type: AuthUserActionType.LOGIN_WITH_PASSWORD,
     payload,
   }
 }
 
 function loginWithPasswordSuccess(payload: { user: AuthUserState['user']; }) {
   return {
-    type: ActionType.LOGIN_WITH_PASSWORD_SUCCEEDED,
+    type: AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED,
     payload,
   }
 }
 
 function loginWithSMSCode(payload: { phone: string; SMSCode: string; }) {
   return {
-    type: ActionType.LOGIN_WITH_SMS_CODE,
+    type: AuthUserActionType.LOGIN_WITH_SMS_CODE,
     payload,
   }
 }
 
 function loginWithSMSCodeSuccess(payload: { user: AuthUserState['user']; }) {
   return {
-    type: ActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED,
+    type: AuthUserActionType.LOGIN_WITH_SMS_CODE_SUCCEEDED,
     payload,
   }
 }
 
 function createPassword(payload: { password: string; passwordConfirmation: string; }) {
   return {
-    type: ActionType.CREATE_PASSWORD,
+    type: AuthUserActionType.CREATE_PASSWORD,
     payload,
   }
 }
 
 function createPasswordSuccess() {
   return {
-    type: ActionType.CREATE_PASSWORD_SUCCEEDED,
+    type: AuthUserActionType.CREATE_PASSWORD_SUCCEEDED,
   }
 }
 
 function resetPassword(payload: { phone: string; }) {
   return {
-    type: ActionType.RESET_PASSWORD,
+    type: AuthUserActionType.RESET_PASSWORD,
     payload,
   }
 }
 
 function resetPasswordSuccess() {
   return {
-    type: ActionType.RESET_PASSWORD_SUCCEEDED,
+    type: AuthUserActionType.RESET_PASSWORD_SUCCEEDED,
   }
 }
 
 function setErrors(payload: AuthUserState['errors']) {
   return {
-    type: ActionType.SET_ERRORS,
+    type: AuthUserActionType.SET_ERRORS,
     payload,
   }
 }
 
 function resetForm() {
   return {
-    type: ActionType.RESET_FORM,
+    type: AuthUserActionType.RESET_FORM,
   }
 }
 
 function setUser(payload: AuthUserState['user']) {
   return {
-    type: ActionType.SET_USER,
+    type: AuthUserActionType.SET_USER,
+    payload,
+  }
+}
+
+function hideSensitizationPopup() {
+  return {
+    type: AuthUserActionType.HIDE_SENSITIZATION_POPUP,
+  }
+}
+
+function setShowSensitizationPopup(payload: AuthUserState['showSensitizationPopup']) {
+  return {
+    type: AuthUserActionType.SHOW_SENSITIZATION_POPUP,
     payload,
   }
 }
@@ -152,6 +167,7 @@ export const publicActions = {
   resetPassword,
   resetForm,
   setUser,
+  hideSensitizationPopup,
 }
 
 const privateActions = {
@@ -162,6 +178,7 @@ const privateActions = {
   resetPasswordSuccess,
   loginWithPasswordSuccess,
   setErrors,
+  setShowSensitizationPopup,
 }
 
 export const actions = {
@@ -169,5 +186,5 @@ export const actions = {
   ...privateActions,
 }
 
-export type Actions = ActionsFromMapObject<typeof actions>
-export type Action = ActionFromMapObject<typeof actions>;
+export type AuthUserActions = ActionsFromMapObject<typeof actions>
+export type AuthUserAction = ActionFromMapObject<typeof actions>
