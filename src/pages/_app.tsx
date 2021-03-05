@@ -86,23 +86,6 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
       const { store, persistor } = bootstrapStore()
       this.store = store
       this.persistor = persistor
-
-      if (authUserData && !authUserData.anonymous) {
-        this.store.dispatch(authUserActions.setUser({
-          id: authUserData.id,
-          email: authUserData.email || undefined,
-          hasPassword: authUserData.hasPassword,
-          avatarUrl: authUserData.avatarUrl || undefined,
-          partner: authUserData.partner,
-          lastName: authUserData.lastName || undefined,
-          firstName: authUserData.firstName || undefined,
-          address: authUserData.address || undefined,
-          about: authUserData.about || undefined,
-          token: authUserData.token,
-          stats: authUserData.stats,
-          firstSignIn: authUserData.firstSignIn || false,
-        }))
-      }
     }
 
     const content = (
@@ -122,7 +105,28 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     )
 
     const persistorWrappedContent = this.persistor ? (
-      <PersistGate loading={<OverlayLoader />} persistor={this.persistor}>
+      <PersistGate
+        loading={<OverlayLoader />}
+        onBeforeLift={() => {
+          if (this.store && authUserData && !authUserData.anonymous) {
+            this.store.dispatch(authUserActions.setUser({
+              id: authUserData.id,
+              email: authUserData.email || undefined,
+              hasPassword: authUserData.hasPassword,
+              avatarUrl: authUserData.avatarUrl || undefined,
+              partner: authUserData.partner,
+              lastName: authUserData.lastName || undefined,
+              firstName: authUserData.firstName || undefined,
+              address: authUserData.address || undefined,
+              about: authUserData.about || undefined,
+              token: authUserData.token,
+              stats: authUserData.stats,
+              firstSignIn: authUserData.firstSignIn || false,
+            }))
+          }
+        }}
+        persistor={this.persistor}
+      >
         {content}
       </PersistGate>
     )
