@@ -127,6 +127,7 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
+  yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
@@ -134,11 +135,8 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgSetPositionRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
-    const bgToggleFeedFilterRetrieveFeed = yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, retrieveFeed)
-
+    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
     yield take(FeedActionType.CANCEL_FEED)
-    yield cancel(bgSetPositionRetrieveFeed)
-    yield cancel(bgToggleFeedFilterRetrieveFeed)
+    yield cancel(bgRetrieveFeed)
   }
 }
