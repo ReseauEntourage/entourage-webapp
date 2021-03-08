@@ -1,5 +1,6 @@
 import { Tooltip } from '@material-ui/core'
 
+import SvgIcon from '@material-ui/core/SvgIcon'
 import React from 'react'
 import { POICategory } from 'src/core/api'
 import { colors } from 'src/styles'
@@ -22,6 +23,8 @@ export function POIIcon(props: POIIconProps) {
 
   const fontSize = roundToEven(displaySize / 1.4)
 
+  const { width, height } = Icon({}).props
+
   return (
     <Tooltip title={tooltip || label}>
       <div
@@ -34,15 +37,18 @@ export function POIIcon(props: POIIconProps) {
           width: displaySize,
           borderRadius: '50%',
           backgroundColor: color,
-          border: 'solid 1px #fff',
+          border: `solid 1px ${colors.main.white}`,
           cursor: 'pointer',
           zIndex: isActive ? 2 : 1,
         }}
       >
-        <Icon
+        <SvgIcon
+          component={Icon}
           style={{
-            color: '#fff', fontSize,
+            color: colors.main.white,
+            fontSize,
           }}
+          viewBox={`0 0 ${width} ${height}`}
         />
       </div>
     </Tooltip>

@@ -11,4 +11,7 @@ module.exports = {
   setupFiles: [
     '<rootDir>/jest.setupTests.js',
   ],
+  moduleNameMapper: {
+    "\\.svg": "<rootDir>/__mocks__/svgrMock.js"
+  },
 }

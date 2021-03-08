@@ -109,11 +109,11 @@ describe('POIs', () => {
     Given initial state
     When user init POIs
       And user resets all filters
-    Then store should be update with new POIs filters values
+    Then store should be update with new POI filters values
       And isActiveFilter selector should be disabled for all filters
       And all filters should be disabled
       And POIs should be fetched
-      And should retrieve POIs gateway method have been called with POIs filters values
+      And should retrieve POIs gateway method have been called with POI filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
@@ -167,10 +167,10 @@ describe('POIs', () => {
     When user init POIs
       And user toggles an already toggled POI filter
       And user toggles an non toggled partner filter
-    Then store should be update with new POIs filters values
+    Then store should be update with new POI filters values
       And isActiveFilter selector should be disabled for the specific filter
       And POIs should be fetched
-      And should retrieve POIs gateway method have been called with POIs filters values
+      And should retrieve POIs gateway method have been called with POI filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     const store = configureStoreWithPOIs({
@@ -243,11 +243,11 @@ describe('POIs', () => {
       And the partner filters are toggled
     When user init POIs
       And user toggles the already toggled partner category filter
-    Then store should be update with new POIs filters values
+    Then store should be update with new POI filters values
       And isActiveFilter selector should be disabled for the specific filter
       And isActiveFilter selector should be disabled for all partner filters
       And POIs should be fetched
-      And should retrieve POIs gateway method have been called with POIs filters values
+      And should retrieve POIs gateway method have been called with POI filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
@@ -310,11 +310,11 @@ describe('POIs', () => {
       And the partner category filter is not toggled
     When user init POIs
       And user toggles the one of the partners filters
-    Then store should be update with new POIs filters values
+    Then store should be update with new POI filters values
       And isActiveFilter selector should be enabled for the specific partner filter
       And isActiveFilter selector should be enabled for the partner category filter
       And POIs should be fetched
-      And should retrieve POIs gateway method have been called with POIs filters values
+      And should retrieve POIs gateway method have been called with POI filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })

@@ -18,7 +18,7 @@ export const Container = styled.div<ContainerProps>`
 
 export const AvatarNumber = styled.div`
   background-color: #333;
-  color: #fff;
+  color: ${colors.main.white};
   font-size: 9;
   font-weight: 400;
   line-height: 38;
@@ -32,9 +32,3 @@ export const TitleContainer = styled.div`
     margin-left: ${theme.spacing(1)}px;
   }
 `
-
-export const iconStyle = {
-  padding: 4,
-  borderRadius: 20,
-  fontSize: 14,
-}

@@ -5,9 +5,9 @@ import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
-import { LineFilterProps } from './FeedCategoryFilter'
+import { FeedCategoryFilterProps } from './FeedCategoryFilter'
 
-export function FeedTypeFilter(props: Omit<LineFilterProps, 'category' | 'color'>) {
+export function FeedTypeFilter(props: Omit<FeedCategoryFilterProps, 'color' | 'category'>) {
   const { index, type } = props
   const dispatch = useDispatch()
 

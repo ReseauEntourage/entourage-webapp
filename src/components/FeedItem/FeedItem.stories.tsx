@@ -1,7 +1,7 @@
-import LocalMallIcon from '@material-ui/icons/LocalMall'
 import React from 'react'
+import { FeedItemIcon } from '../Map'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
-import { FeedItem, iconStyle } from './FeedItem'
+import { FeedItem } from './FeedItem'
 
 export default {
   title: 'FeedItem',
@@ -10,7 +10,14 @@ export default {
 export const Base = () => (
   <TransparentWrapper style={{ width: 500 }}>
     <FeedItem
-      icon={<LocalMallIcon style={{ ...iconStyle, color: '#fff', backgroundColor: '#f00' }} />}
+      icon={(
+        <FeedItemIcon
+          displayCategory="social"
+          entourageType="contribution"
+          groupType="action"
+          tooltip="Passer du temps avec une personne"
+        />
+      )}
       primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
       secondText="Créé ce mois-ci par Ines"

@@ -4,8 +4,6 @@ import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import * as S from './FeedItem.styles'
 
-export { iconStyle } from './FeedItem.styles'
-
 interface FeedItemProps {
   icon?: JSX.Element;
   isActive?: boolean;

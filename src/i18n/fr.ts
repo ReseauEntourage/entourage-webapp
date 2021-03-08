@@ -3,22 +3,17 @@
 
 export const texts = {
   types: {
+    event: 'Événement',
     categoryHelpList: {
-      event: '',
-      info: 'Poser une question au réseau',
       mat_help: 'Un don matériel',
       other: 'Autre chose',
       resource: 'Un service',
-      skill: 'Une compétence',
       social: 'Des voisins pour entourer une personne',
     },
     categoryContributionList: {
-      event: '',
-      info: 'Diffuser une information',
       mat_help: 'Faire un don matériel',
       other: 'Aider à ma façon',
       resource: 'Offrir un service',
-      skill: 'Offrir une compétence',
       social: 'Passer du temps avec une personne',
     },
     pois: {

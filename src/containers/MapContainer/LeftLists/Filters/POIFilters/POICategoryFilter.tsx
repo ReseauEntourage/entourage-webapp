@@ -1,28 +1,29 @@
+import { SvgIconProps } from '@material-ui/core/SvgIcon'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LineFilter } from '../LineFilter'
+import { POIIcon } from 'src/components/Map'
 import { selectIsActiveFilter, poisActions } from 'src/core/useCases/pois'
 
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { colors, variants } from 'src/styles'
 import {
-  poiIcons,
   poiLabels,
   poisCategoriesFilterResolver,
 } from 'src/utils/misc'
 import { FilterPOICategory } from 'src/utils/types'
 
-export interface LineFilterProps {
+export interface POICategoryFilter {
   index: number;
   category: FilterPOICategory;
   title?: boolean;
 }
 
-export function POIsCategoryFilter(props: LineFilterProps) {
+export function POICategoryFilter(props: POICategoryFilter) {
   const { index, category, title = false } = props
   const categoryId = poisCategoriesFilterResolver[category]
-  const CategoryIcon = poiIcons[categoryId] || poiIcons[0]
+  const CategoryIcon = (iconProps: SvgIconProps) => <POIIcon poiCategory={categoryId} {...iconProps} />
 
   const dispatch = useDispatch()
 

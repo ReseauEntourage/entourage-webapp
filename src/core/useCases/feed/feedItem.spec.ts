@@ -221,7 +221,7 @@ describe('Feed Item', () => {
             lng: 2,
           },
         },
-        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
       },
     })
   })
@@ -344,7 +344,7 @@ describe('Feed Item', () => {
             lng: selectLocation(store.getState()).center.lng,
           },
         },
-        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
       },
     })
   })

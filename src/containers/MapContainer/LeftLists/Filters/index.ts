@@ -1,4 +1,4 @@
 export * from './Filters'
 export * from './LineFilter'
-export * from './POIsFilters'
+export * from './POIFilters'
 export * from './FeedFilters'

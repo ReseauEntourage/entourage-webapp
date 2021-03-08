@@ -78,7 +78,7 @@ export function Modal(props: ModalProps) {
           id="form-dialog-title"
           style={{
             backgroundColor: colors.main.primary,
-            color: '#fff',
+            color: colors.main.white,
             textAlign: 'center',
             paddingLeft: showCloseButton ? 60 : 20,
             paddingRight: showCloseButton ? 60 : 20,
