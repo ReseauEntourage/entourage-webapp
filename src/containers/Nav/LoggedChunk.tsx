@@ -13,6 +13,7 @@ export function LoggedChunk() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const me = useMeNonNullable()
   const partnerName = me.partner?.name
+  const authToken = me.token
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget)
@@ -28,8 +29,8 @@ export function LoggedChunk() {
   }, [])
 
   const openAdminAsso = useCallback(() => {
-    window.open(constants.ADMIN_ASSO_LINK, '_blank')
-  }, [])
+    window.open(constants.ADMIN_ASSO_LINK + authToken, '_blank')
+  }, [authToken])
 
   const onClickLogout = useOnClickLogout()
   return (
