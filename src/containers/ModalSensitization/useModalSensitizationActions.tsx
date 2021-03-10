@@ -6,28 +6,28 @@ import { useFirebase } from 'src/utils/hooks'
 
 export function useModalSensitizationActions() {
   const { onClose } = useModalContext()
-  const { sendActionWorkshopDismiss, sendActionWorkshopParticipate } = useFirebase()
+  const { sendEvent } = useFirebase()
   const dispatch = useDispatch()
 
   const onDismissWithFeedback = useCallback((dismissReason: string) => {
-    sendActionWorkshopDismiss({
+    sendEvent('Action__Workshop__Dismiss', {
       value: dismissReason,
     })
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose, sendActionWorkshopDismiss])
+  }, [dispatch, onClose, sendEvent])
 
   const onDismiss = useCallback(() => {
-    sendActionWorkshopDismiss()
+    sendEvent('Action__Workshop__Dismiss')
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose, sendActionWorkshopDismiss])
+  }, [dispatch, onClose, sendEvent])
 
   const onWorkshopClick = useCallback(() => {
-    sendActionWorkshopParticipate()
+    sendEvent('Action__Workshop__Participate')
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose, sendActionWorkshopParticipate])
+  }, [dispatch, onClose, sendEvent])
 
   return { onDismiss, onDismissWithFeedback, onWorkshopClick }
 }

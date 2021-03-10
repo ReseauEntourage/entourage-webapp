@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux'
 import { OverlayLoader } from '../OverlayLoader'
 import { TextField, TextFieldProps } from 'src/components/Form'
 import { locationActions } from 'src/core/useCases/location'
-import { useDelayLoadingNext } from 'src/utils/hooks'
+import { useDelayLoadingNext, useFirebase } from 'src/utils/hooks'
 import { useAutocompleteSessionToken, useAutocompleteServices, useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 import * as S from './GoogleMapLocation.styles'
@@ -59,6 +59,7 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, inputValue: inputValueProp, defaultValue } = props
   const { getSessionToken, regenerateSessionToken } = useAutocompleteSessionToken()
   const autocompletServices = useAutocompleteServices()
+  const { sendEvent } = useFirebase()
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
@@ -116,6 +117,7 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
   }, [inputValue, fetch])
 
   const handleClickCurrentPosition = () => {
+    sendEvent('Action__Map__Geolocation')
     dispatch(locationActions.getGeolocation())
   }
 

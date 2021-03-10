@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { MapPOIs, usePOIId } from 'src/containers/MapContainer'
 import { poisActions } from 'src/core/useCases/pois'
 import { texts } from 'src/i18n'
-import { useMount } from 'src/utils/hooks'
+import { useFirebase, useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -12,10 +12,11 @@ interface Props {}
 const POIs: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const poiId = usePOIId()
+  const { sendEvent } = useFirebase()
 
   useMount(() => {
+    sendEvent('View__POIs')
     dispatch(poisActions.init())
-
     return () => {
       dispatch(poisActions.cancel())
     }

@@ -20,8 +20,10 @@ export function ModalSensitizationActions(props: ModalSensitizationActions) {
   const { onDismiss, onDismissWithFeedback, onWorkshopClick } = useModalSensitizationActions()
   const modalTexts = texts.content.modalSensitization
 
-  const { sendActionWorkshopShow } = useFirebase()
-  useMount(sendActionWorkshopShow)
+  const { sendEvent } = useFirebase()
+  useMount(() => {
+    sendEvent('View__Workshop')
+  })
 
   const dismissWithFeedback = useCallback(async () => {
     await trigger()

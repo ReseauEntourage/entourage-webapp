@@ -1,20 +1,36 @@
-import { toCamelCase } from 'src/utils/misc'
-
 export const FirebaseEvents = [
-  'Action__Workshop__Dismiss',
+  'View__LoginOrSignup__',
+  'Action__LoginOrSignup__ValidatePhone',
+  'Action__Login__Connection',
+  'Action__Login__PasswordForgotten',
+  'Action__SignUp__CreateAccount',
+  'Action__SignUp__ValidateSMSCode',
+  'Action__SignUp__ResendSMSCode',
+  'Action__SignUp__ValidatePassword',
+  'Action__LoginOrSignup__Cancel',
+  'View__Workshop',
   'Action__Workshop__Participate',
-  'Action__Workshop__Show',
+  'Action__Workshop__Dismiss',
+  'Action__Map__Search',
+  'Action__Map__PanZoom',
+  'Action__Map__Geolocation',
+  'View__Feed',
+  'Action__Feed__ListItem',
+  'Action__Feed_MapItem',
+  'View__POIs',
+  'Action__POIs__ListItem',
+  'Action__POIs_MapItem',
+  'View__Messages',
+  'Action__Messages__WriteMessage',
+  'View__ActionMenu',
+  'Action__ActionMenu__CreateAction',
+  'Action__ActionMenu__CreateEvent',
+  'Action__ActionMenu__Ambassador',
+  'Action__ActionMenu__Workshop',
+  'Action__ActionMenu__GoodWaves',
+  'Action__ActionMenu__Donate',
 ] as const
 
-// TODO use Template Literals type on TypeScript 4.2.2
-// https://entourage-asso.atlassian.net/browse/EN-3524
-
 export type FirebaseEvent = typeof FirebaseEvents[number]
-
-export const FirebaseEventFunctions = FirebaseEvents.map((event) => {
-  return toCamelCase(`send_${event}`)
-})
-
-export type FirebaseEventFunction = typeof FirebaseEventFunctions[number]
 
 export type FirebaseProps = Record<string, string>

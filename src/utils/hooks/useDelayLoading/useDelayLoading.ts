@@ -47,7 +47,7 @@ export function useDelayLoading(defaultValue = false, options: Options = default
   const stopWithDelay = useCallback(() => {
     clearTimeout(startTimeout.current)
     if (timeoutIsActiveRef.current) {
-      return new Promise<void>((resolve) => {
+      return new Promise((resolve) => {
         const sub = subjectStopLoading.current.subscribe(() => {
           if (isUnmountRef.current) return
           setLoading(false)

@@ -19,7 +19,7 @@ import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
-import { useOnScroll } from 'src/utils/hooks'
+import { useFirebase, useOnScroll } from 'src/utils/hooks'
 
 interface FeedItemIconProps {
   feedItem: FeedItemType;
@@ -77,6 +77,8 @@ export function FeedList() {
   const dispatch = useDispatch()
   const { feeds } = useNextFeed()
 
+  const { sendEvent } = useFirebase()
+
   const { onScroll } = useOnScroll({
     onScrollBottomEnd: () => {
       dispatch(feedActions.retrieveFeedNextPage())
@@ -100,7 +102,7 @@ export function FeedList() {
     return (
       <S.ListItem key={feedItem.uuid}>
         <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
-          <a style={{ textDecoration: 'none' }}>
+          <S.ClickableItem onClick={() => sendEvent('Action__Feed__ListItem')}>
             <FeedItem
               key={feedItem.uuid}
               icon={<FeedItemIcon feedItem={feedItem} />}
@@ -109,7 +111,7 @@ export function FeedList() {
               profilePictureURL={feedItem.author.avatarUrl}
               secondText={secondText}
             />
-          </a>
+          </S.ClickableItem>
         </Link>
       </S.ListItem>
     )

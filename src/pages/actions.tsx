@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import { useActionId, MapActions } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
-import { useMount } from 'src/utils/hooks'
+import { useFirebase, useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -12,8 +12,10 @@ interface Props {}
 const Actions: StatelessPage<Props> = () => {
   const dispatch = useDispatch()
   const actionId = useActionId()
+  const { sendEvent } = useFirebase()
 
   useMount(() => {
+    sendEvent('View__Feed')
     dispatch(feedActions.init())
     return () => {
       dispatch(feedActions.cancel())

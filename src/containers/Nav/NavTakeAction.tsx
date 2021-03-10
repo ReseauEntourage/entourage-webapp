@@ -1,4 +1,5 @@
 import Divider from '@material-ui/core/Divider'
+import Link from '@material-ui/core/Link'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import Menu from '@material-ui/core/Menu'
 import MenuItem, { MenuItemProps } from '@material-ui/core/MenuItem'
@@ -17,6 +18,7 @@ import { ModalCharter } from 'src/containers/ModalCharter'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { variants, colors } from 'src/styles'
+import { useFirebase } from 'src/utils/hooks'
 
 const MenuContainer = styled.div`
   a {
@@ -62,19 +64,28 @@ interface IconExternalLinkProps {
   icon: JSX.Element;
   label: string;
   link: string;
+  onClick?: () => void;
 }
 
 function IconExternalLink(props: IconExternalLinkProps) {
-  const { icon, label, link } = props
+  const { icon, label, link, onClick } = props
   return (
-    <a href={link} rel="noopener noreferrer" target="_blank">
+    <Link
+      href={link}
+      onClick={onClick}
+      rel="noopener noreferrer"
+      style={{
+        textDecoration: 'none',
+      }}
+      target="_blank"
+    >
       <MenuItem>
         <ListItemIcon style={{ minWidth: 40 }}>
           {icon}
         </ListItemIcon>
         {label}
       </MenuItem>
-    </a>
+    </Link>
   )
 }
 
@@ -86,8 +97,10 @@ export function NavTakeAction(props: NavTakeActionProps) {
   const { children } = props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { drawerIsOpen, setDrawerIsOpen } = useLayoutContext()
+  const { sendEvent } = useFirebase()
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+    sendEvent('View__ActionMenu')
     setAnchorEl(event.currentTarget)
   }
 
@@ -102,6 +115,7 @@ export function NavTakeAction(props: NavTakeActionProps) {
   }
 
   const openActionModal = useCallback(() => {
+    sendEvent('Action__ActionMenu__CreateAction')
     openModal(
       <ModalCharter
         onValidate={() => {
@@ -111,13 +125,14 @@ export function NavTakeAction(props: NavTakeActionProps) {
     )
     setAnchorEl(null)
     closeDrawerIfOpen()
-  }, [closeDrawerIfOpen])
+  }, [closeDrawerIfOpen, sendEvent])
 
   const openEventModal = useCallback(() => {
+    sendEvent('Action__ActionMenu__CreateEvent')
     openModal(<ModalEditEvent />)
     setAnchorEl(null)
     closeDrawerIfOpen()
-  }, [closeDrawerIfOpen])
+  }, [closeDrawerIfOpen, sendEvent])
 
   return (
     <>
@@ -173,22 +188,26 @@ export function NavTakeAction(props: NavTakeActionProps) {
               icon={<MicIcon />}
               label="Devenir Ambassadeur Entourage"
               link="https://www.entourage.social/devenir-ambassadeur/"
+              onClick={() => sendEvent('Action__ActionMenu__Ambassador')}
             />
             <IconExternalLink
               icon={<ForumIcon />}
               label="Se former à la rencontre"
               link="http://www.simplecommebonjour.org/"
+              onClick={() => sendEvent('Action__ActionMenu__Workshop')}
             />
             <IconExternalLink
               icon={<GroupIcon />}
               label="Entourer une personne isolée"
               link="https://entourage-asso.typeform.com/to/OIO0bI"
+              onClick={() => sendEvent('Action__ActionMenu__GoodWaves')}
             />
             <IconExternalLink
               icon={<FavoriteIcon />}
               label="Soutenir entourage"
-              // eslint-disable-next-line
+              /* eslint-disable-next-line max-len */
               link="https://entourage.iraiser.eu/effet-entourage/~mon-don?_ga=2.11026804.1529967740.1575371021-1827432881.1572366327"
+              onClick={() => sendEvent('Action__ActionMenu__Donate')}
             />
           </Typography>
         </MenuContainer>

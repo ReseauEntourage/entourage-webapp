@@ -2,7 +2,7 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
-import { FirebaseEventFunctions, FirebaseEvents } from 'src/utils/types'
+import { FirebaseEvents } from 'src/utils/types'
 import { TestFirebaseService } from './TestFirebaseService'
 import { publicActions } from './firebase.actions'
 import { firebaseSaga } from './firebase.saga'
@@ -39,10 +39,17 @@ describe('Firebase', () => {
     firebaseService.setUser.mockReturnValueOnce()
     firebaseService.sendEvent.mockReturnValueOnce()
 
-    store.dispatch(publicActions[FirebaseEventFunctions[0]]())
+    const firebaseEvent = {
+      event: FirebaseEvents[0],
+      props: {
+        value: '',
+      },
+    }
+
+    store.dispatch(publicActions.sendFirebaseEvent(firebaseEvent))
 
     await store.waitForActionEnd()
 
-    expect(firebaseService.sendEvent).toHaveBeenCalledWith(FirebaseEvents[0])
+    expect(firebaseService.sendEvent).toHaveBeenCalledWith(firebaseEvent.event, firebaseEvent.props)
   })
 })

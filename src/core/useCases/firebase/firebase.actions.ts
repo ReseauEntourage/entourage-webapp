@@ -1,44 +1,31 @@
-import { toCamelCase } from 'src/utils/misc'
 import {
   FirebaseEvent,
-  FirebaseEventFunction,
-  FirebaseEvents,
   FirebaseProps,
   ActionFromMapObject,
   ActionsFromMapObject,
 } from 'src/utils/types'
 
-type GeneratedFirebaseActionType = Record<FirebaseEvent, string>
+export const FirebaseActionType = {
+  SEND_EVENT: 'FIREBASE/SEND_EVENT',
+} as const
 
-export const FirebaseActionType: GeneratedFirebaseActionType = FirebaseEvents.reduce((acc, curr) => {
-  return {
-    ...acc,
-    [curr as FirebaseEvent]: `FIREBASE/${curr}`,
-  }
-}, {} as GeneratedFirebaseActionType)
-
-export type FirebaseActionType = keyof typeof FirebaseActionType
-
-type GeneratedFirebaseActions = Record<FirebaseEventFunction, (params?: FirebaseProps) => {
-  type: string;
-  payload?: FirebaseProps;
-}>
+export type GeneratedFirebaseActionType = Record<FirebaseEvent, string>
 
 // ------------------------------------------------------------------------
 
-const firebaseActions: GeneratedFirebaseActions = FirebaseEvents.reduce((acc, curr) => {
+function sendFirebaseEvent(payload: {
+  event: FirebaseEvent;
+  props?: FirebaseProps;
+}) {
   return {
-    ...acc,
-    [toCamelCase(`send_${curr}`) as FirebaseEventFunction]: (props?: Record<string, string>) => {
-      return { type: FirebaseActionType[curr as FirebaseEvent], payload: props }
-    },
+    type: FirebaseActionType.SEND_EVENT,
+    payload,
   }
-}, {} as GeneratedFirebaseActions)
-
+}
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
-  ...firebaseActions,
+  sendFirebaseEvent,
 }
 
 const privateActions = {
