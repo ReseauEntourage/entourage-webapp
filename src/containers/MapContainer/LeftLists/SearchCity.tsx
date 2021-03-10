@@ -5,6 +5,7 @@ import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { selectFeedIsIdle } from 'src/core/useCases/feed'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { selectPOIsIsIdle } from 'src/core/useCases/pois'
+import { useFirebase } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsNumber, assertIsString } from 'src/utils/misc'
 import * as S from './SearchCity.styles'
 
@@ -13,11 +14,15 @@ const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation
 export function SearchCity() {
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
+  const { sendEvent } = useFirebase()
+
   const feedIsIdle = useSelector(selectFeedIsIdle)
   const poisIsIdle = useSelector(selectPOIsIsIdle)
   const defaultValue = position.displayAddress
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
+    sendEvent('Action__Map__Search')
+
     const placeDetail = await getDetailPlacesService(value.place.place_id, value.sessionToken)
 
     const lat = placeDetail.geometry?.location.lat()
@@ -39,7 +44,7 @@ export function SearchCity() {
         },
       }),
     )
-  }, [dispatch])
+  }, [dispatch, sendEvent])
 
   if (feedIsIdle && poisIsIdle) {
     return null

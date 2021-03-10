@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
+import { useFirebase } from 'src/utils/hooks'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
@@ -30,12 +31,14 @@ export function Map(props: Props) {
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const googleMapIsLoaded = useLoadGoogleMapApi()
-
+  const { sendEvent } = useFirebase()
   function onChange(value: ChangeEventValue) {
-    // used coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
+    // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
     const positionHasChanged = coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom
 
     if (positionHasChanged) {
+      sendEvent('Action__Map__PanZoom')
+
       dispatch(locationActions.setLocation({
         location: {
           center: value.center,

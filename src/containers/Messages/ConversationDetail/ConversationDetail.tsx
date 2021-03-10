@@ -13,6 +13,7 @@ import {
   queryKeys,
 } from 'src/core/store'
 import { useMeNonNullable } from 'src/hooks/useMe'
+import { useFirebase } from 'src/utils/hooks'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
@@ -43,9 +44,12 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   const me = useMeNonNullable()
 
+  const { sendEvent } = useFirebase()
+
   const onClickSend = useCallback(async (messageContent) => {
+    sendEvent('Action__Messages__WriteMessage')
     await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })
-  }, [createcChatMessage])
+  }, [createcChatMessage, sendEvent])
 
   const onClickTopBar = useCallback(() => {
     assertIsDefined(entourage)

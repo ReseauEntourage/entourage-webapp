@@ -14,9 +14,9 @@ export interface Dependencies {
 }
 
 function* initLocationSaga() {
-  const user = yield select(selectUser)
-  const actionsId = yield select(selectCurrentFeedItemUuid)
-  const poiId = yield select(selectCurrentPOIUuid)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
+  const actionsId: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
+  const poiId: ReturnType<typeof selectCurrentPOIUuid> = yield select(selectCurrentPOIUuid)
 
   const queryId = actionsId ?? poiId ?? null
 
@@ -71,7 +71,7 @@ function* getGeolocationSaga() {
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
       // Call action with the same position so that the initialized saga can get its data from gateway
-      const location = yield select(selectLocation)
+      const location: ReturnType<typeof selectLocation> = yield select(selectLocation)
 
       yield put(actions.setLocation({
         location: {
