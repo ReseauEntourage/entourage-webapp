@@ -40,6 +40,7 @@ export interface AuthUserState {
     stats: UserStats;
     firstSignIn: boolean;
   };
+  userUpdating: boolean;
   showSensitizationPopup: boolean;
   errors: {
     phone?: PhoneValidationsError;
@@ -56,6 +57,7 @@ export const defaultAuthUserState: AuthUserState = {
   isLogging: false,
   step: 'PHONE',
   user: null,
+  userUpdating: false,
   errors: {},
   showSensitizationPopup: false,
   loginIsCompleted: false,
@@ -175,6 +177,23 @@ export function authUserReducer(state: AuthUserState = defaultAuthUserState, act
       return {
         ...state,
         showSensitizationPopup: false,
+      }
+    }
+
+    case AuthUserActionType.UPDATE_USER: {
+      return {
+        ...state,
+        userUpdating: true,
+      }
+    }
+
+    case AuthUserActionType.UPDATE_USER_SUCCEEDED: {
+      return {
+        ...state,
+        user: {
+          ...action.payload.user,
+        },
+        userUpdating: false,
       }
     }
 

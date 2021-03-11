@@ -181,6 +181,7 @@ export interface AnonymousUser {
   partner: null;
   roles: unknown[];
   token: string;
+  stats: UserStats;
   userType: UserType;
   uuid: string;
 }

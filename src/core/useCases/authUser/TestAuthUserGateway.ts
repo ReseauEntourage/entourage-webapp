@@ -13,4 +13,8 @@ export class TestAuthUserGateway implements IAuthUserGateway {
   loginWithPassword = jestFn<IAuthUserGateway['loginWithPassword']>('loginWithPassword')
 
   definePassword = jestFn<IAuthUserGateway['definePassword']>('definePassword')
+
+  updateMe = jestFn<IAuthUserGateway['updateMe']>('updateMe')
+
+  updateMeAddress = jestFn<IAuthUserGateway['updateMeAddress']>('updateMeAddress')
 }

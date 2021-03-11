@@ -30,7 +30,10 @@ export class GeolocationService implements IGeolocationService {
     throw new LocationErrorGeolocationRefused()
   }
 
-  getPlaceAddressFromCoordinates: IGeolocationService['getPlaceAddressFromCoordinates'] = (coordinates) => {
+  getPlaceAddressFromCoordinates: IGeolocationService['getPlaceAddressFromCoordinates'] = (
+    coordinates,
+    getGooglePlaceId,
+  ) => {
     return getDetailPlacesFromCoordinatesService(coordinates)
       .then((places: google.maps.GeocoderResult[]) => {
         if (places && Array.isArray(places) && places.length > 0) {
@@ -47,16 +50,28 @@ export class GeolocationService implements IGeolocationService {
           })
 
           if (neighborhoodAddress) {
-            return ({ placeAddress: neighborhoodAddress.formatted_address })
+            return {
+              placeAddress: neighborhoodAddress.formatted_address,
+              googlePlaceId: getGooglePlaceId ? neighborhoodAddress.place_id : null,
+            }
           }
 
           if (localityAddress) {
-            return ({ placeAddress: localityAddress.formatted_address })
+            return {
+              placeAddress: localityAddress.formatted_address,
+              googlePlaceId: getGooglePlaceId ? localityAddress.place_id : null,
+            }
           }
 
-          return ({ placeAddress: streetAddress ? streetAddress.formatted_address : null })
+          return {
+            placeAddress: streetAddress ? streetAddress.formatted_address : null,
+            googlePlaceId: streetAddress && getGooglePlaceId ? streetAddress.place_id : null,
+          }
         }
-        return ({ placeAddress: null })
+        return {
+          placeAddress: null,
+          googlePlaceId: null,
+        }
       })
   }
 }

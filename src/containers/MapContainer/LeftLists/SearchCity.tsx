@@ -46,6 +46,11 @@ export function SearchCity() {
     )
   }, [dispatch, sendEvent])
 
+  const onClickCurrentPosition = useCallback(() => {
+    sendEvent('Action__Map__Geolocation')
+    dispatch(locationActions.getGeolocation())
+  }, [dispatch, sendEvent])
+
   if (feedIsIdle && poisIsIdle) {
     return null
   }
@@ -56,6 +61,7 @@ export function SearchCity() {
         defaultValue={defaultValue}
         inputValue={position.displayAddress}
         onChange={onChange}
+        onClickCurrentPosition={onClickCurrentPosition}
         textFieldProps={{}}
       />
     </S.Container>

@@ -21,6 +21,8 @@ export const AuthUserActionType = {
   SET_USER: 'AUTH/SET_USER',
   SHOW_SENSITIZATION_POPUP: 'AUTH/SHOW_SENSITIZATION_POPUP',
   HIDE_SENSITIZATION_POPUP: 'AUTH/HIDE_SENSITIZATION_POPUP',
+  UPDATE_USER: 'AUTH/UPDATE_USER',
+  UPDATE_USER_SUCCEEDED: 'AUTH/UPDATE_USER_SUCCEEDED',
 } as const
 
 export type AuthUserActionType = keyof typeof AuthUserActionType;
@@ -154,6 +156,31 @@ function setShowSensitizationPopup(payload: AuthUserState['showSensitizationPopu
   }
 }
 
+function updateUser(payload: {
+  about?: string;
+  avatarKey?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  address?: {
+    googlePlaceId: string;
+    googleSessionToken: google.maps.places.AutocompleteSessionToken;
+  };
+}) {
+  return {
+    type: AuthUserActionType.UPDATE_USER,
+    payload,
+  }
+}
+
+function updateUserSuccess(payload: { user: NonNullable<AuthUserState['user']>; }) {
+  return {
+    type: AuthUserActionType.UPDATE_USER_SUCCEEDED,
+    payload,
+  }
+}
+
 // ------------------------------------------------------------------------
 
 export const publicActions = {
@@ -168,6 +195,7 @@ export const publicActions = {
   resetForm,
   setUser,
   hideSensitizationPopup,
+  updateUser,
 }
 
 const privateActions = {
@@ -179,6 +207,7 @@ const privateActions = {
   loginWithPasswordSuccess,
   setErrors,
   setShowSensitizationPopup,
+  updateUserSuccess,
 }
 
 export const actions = {

@@ -7,16 +7,15 @@ import Autocomplete from '@material-ui/lab/Autocomplete'
 import parse from 'autosuggest-highlight/parse'
 import throttle from 'lodash/throttle'
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
-import { useDispatch } from 'react-redux'
 import { OverlayLoader } from '../OverlayLoader'
 import { TextField, TextFieldProps } from 'src/components/Form'
-import { locationActions } from 'src/core/useCases/location'
-import { useDelayLoadingNext, useFirebase } from 'src/utils/hooks'
+import { useDelayLoadingNext } from 'src/utils/hooks'
 import { useAutocompleteSessionToken, useAutocompleteServices, useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 import * as S from './GoogleMapLocation.styles'
 
 export interface PlaceType {
+  description: string;
   place_id: string;
   structured_formatting: {
     main_text_matched_substrings: [
@@ -39,8 +38,12 @@ export interface GoogleMapLocationProps {
   inputValue?: string;
   includeLatLng?: boolean;
   onChange: (value: GoogleMapLocationValue) => void;
+  onClickCurrentPosition: () => void;
   textFieldProps: TextFieldProps;
 }
+
+export type AutocompleteFormField = Parameters<GoogleMapLocationProps['onChange']>[0];
+export const AutocompleteFormFieldKey = 'autocompletePlace' as const
 
 export function GoogleMapLocation(props: GoogleMapLocationProps) {
   const googleMapApiIsLoaded = useLoadGoogleMapApi()
@@ -56,15 +59,12 @@ export function GoogleMapLocation(props: GoogleMapLocationProps) {
 }
 
 function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
-  const { textFieldProps, onChange, inputValue: inputValueProp, defaultValue } = props
+  const { textFieldProps, onChange, inputValue: inputValueProp, defaultValue, onClickCurrentPosition } = props
   const { getSessionToken, regenerateSessionToken } = useAutocompleteSessionToken()
   const autocompletServices = useAutocompleteServices()
-  const { sendEvent } = useFirebase()
 
   const [inputValue, setInputValue] = useState('')
   const [options, setOptions] = useState<PlaceType[]>([])
-
-  const dispatch = useDispatch()
 
   const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value)
@@ -116,11 +116,6 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
     }
   }, [inputValue, fetch])
 
-  const handleClickCurrentPosition = () => {
-    sendEvent('Action__Map__Geolocation')
-    dispatch(locationActions.getGeolocation())
-  }
-
   const handleMouseDownCurrentPosition = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
   }
@@ -148,7 +143,7 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
               <InputAdornment position="start">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={handleClickCurrentPosition}
+                  onClick={onClickCurrentPosition}
                   onMouseDown={handleMouseDownCurrentPosition}
                 >
                   <GpsFixedIcon />
