@@ -30,8 +30,8 @@ export class HTTPFeedGateway implements IFeedGateway {
       params: {
         types,
         timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
-        latitude: data.filters.position.center.lat,
-        longitude: data.filters.position.center.lng,
+        latitude: data.filters.location.center.lat,
+        longitude: data.filters.location.center.lng,
         pageToken: data.nextPageToken ?? undefined,
       },
     }).then((res) => {
