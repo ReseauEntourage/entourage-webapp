@@ -259,13 +259,26 @@ export function feedReducer(
 
     case FeedActionType.TOGGLE_FEED_FILTER: {
       const currentFeedFilters = state.filters[action.payload.type]
+
+      if (action.payload.category) {
+        return {
+          ...state,
+          filters: {
+            ...state.filters,
+            [action.payload.type]: currentFeedFilters.includes(action.payload.category)
+              ? currentFeedFilters.filter((i) => i !== action.payload.category)
+              : [...currentFeedFilters, action.payload.category],
+          },
+        }
+      }
+
       return {
         ...state,
         filters: {
           ...state.filters,
-          [action.payload.type]: currentFeedFilters.includes(action.payload.category)
-            ? currentFeedFilters.filter((i) => i !== action.payload.category)
-            : [...currentFeedFilters, action.payload.category],
+          [action.payload.type]: currentFeedFilters.length === 0
+            ? defaultFeedState.filters[action.payload.type]
+            : [],
         },
       }
     }

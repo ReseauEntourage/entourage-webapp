@@ -16,6 +16,7 @@ import {
   selectHasNextPageToken,
   selectFeedIsIdle,
   selectFeedFilters,
+  selectIsActiveFilter,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -142,6 +143,51 @@ describe('Feed', () => {
   })
 
   it(`
+  Given initial state
+  When user init feed
+    And user toogle feed filters (only the type)
+  Then store should be update with new feed filters values
+    And isActiveFilter selector should be return false
+    And items should be fetched
+`, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+    }))
+
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [],
+    }
+
+    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveFilter(store.getState(), FilterEntourageType.CONTRIBUTION)).toBeFalsy()
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: {
+          ...defaultFeedState.filters,
+          [FilterEntourageType.CONTRIBUTION]: [],
+        },
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
     Given initial state
     When user init feed
       And user set position filters
@@ -221,8 +267,9 @@ describe('Feed', () => {
     When user init feed
       And user toogle feed filters
     Then store should be update with new feed filters values
-    And items should be fetched
-    And should retrieve feed gateway method have been called with feed filters values
+      And isActiveFilter selector should be return false
+      And items should be fetched
+      And should retrieve feed gateway method have been called with feed filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
@@ -245,6 +292,11 @@ describe('Feed', () => {
     }
 
     expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterEntourageType.CONTRIBUTION,
+      FilterFeedCategory.OTHER,
+    )).toBeFalsy()
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()

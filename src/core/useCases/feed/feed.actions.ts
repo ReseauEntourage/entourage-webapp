@@ -165,7 +165,7 @@ function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
   }
 }
 
-function toggleFeedFilter(payload: { type: FilterEntourageType; category: FilterFeedCategory;}) {
+function toggleFeedFilter(payload: { type: FilterEntourageType; category?: FilterFeedCategory;}) {
   return {
     type: FeedActionType.TOGGLE_FEED_FILTER,
     payload,
