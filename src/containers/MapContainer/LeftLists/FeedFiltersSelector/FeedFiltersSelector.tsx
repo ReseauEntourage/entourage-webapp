@@ -1,0 +1,73 @@
+import Divider from '@material-ui/core/Divider'
+import Menu from '@material-ui/core/Menu'
+import Typography from '@material-ui/core/Typography'
+import FilterListIcon from '@material-ui/icons/FilterList'
+import React from 'react'
+import styled from 'styled-components'
+import { variants, theme } from 'src/styles'
+import { FilterEntourageType } from 'src/utils/types'
+import { SectionFilter } from './SectionFilter/SectionFilter'
+
+const MenuContainer = styled.div`
+  a {
+    text-decoration: none !important;
+  }
+`
+
+export function FeedFiltersSelector() {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  return (
+    <>
+      <div
+        aria-controls="simple-menu"
+        onClick={handleClick}
+        onKeyUp={handleClick}
+        role="button"
+        style={{
+          outline: 'none',
+          display: 'flex',
+          alignItems: 'center',
+          cursor: 'pointer',
+          padding: theme.spacing(2, 2, 2, 0),
+        }}
+        tabIndex={0}
+      >
+        {/* <Button>Filters</Button> */}
+        <FilterListIcon color="primary" />
+      </div>
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        getContentAnchorEl={null}
+        id="simple-menu"
+        keepMounted={true}
+        onClose={handleClose}
+        open={Boolean(anchorEl)}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuContainer>
+          <Typography component="div" variant={variants.bodyRegular}>
+            <SectionFilter type={FilterEntourageType.ASK_FOR_HELP} />
+            <Divider />
+            <SectionFilter type={FilterEntourageType.CONTRIBUTION} />
+          </Typography>
+        </MenuContainer>
+      </Menu>
+    </>
+  )
+}

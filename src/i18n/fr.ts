@@ -53,6 +53,26 @@ export const texts = {
   },
   content: {
     map: {
+      filters: {
+        CONTRIBUTION: {
+          title: 'Voir les contributions concernant',
+          category: {
+            SOCIAL: 'Partager un repas, un café',
+            MAT_HELP: 'Faire un don matériel',
+            RESOURCE: 'Offrir un service',
+            OTHER: 'Aider à ma façon',
+          },
+        },
+        ASK_FOR_HELP: {
+          title: 'Voir les demandes concernant',
+          category: {
+            SOCIAL: 'Des voisins pour entourer une personne',
+            MAT_HELP: 'Un don matériel',
+            RESOURCE: 'Un service',
+            OTHER: 'Autre chose !',
+          },
+        },
+      },
       rightCards: {
         share: 'Partager',
         edit: 'Modifier',

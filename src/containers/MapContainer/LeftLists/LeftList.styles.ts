@@ -12,6 +12,7 @@ export const Container = styled.div`
 
 export const SearchContainer = styled.div`
   flex: 0;
+  display: flex;
 `
 
 export const ListContainer = styled(Box)`
