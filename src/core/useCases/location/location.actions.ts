@@ -6,6 +6,7 @@ export const LocationActionType = {
   SET_LOCATION: 'LOCATION/SET_LOCATION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
+  SET_GEOLOCATION: 'LOCATION/SET_GEOLOCATION',
 } as const
 
 export type LocationActionType = keyof typeof LocationActionType;
@@ -28,6 +29,15 @@ function setLocation(payload: {
   }
 }
 
+function setGeolocation(payload: {
+  geolocation: LocationState['geolocation'];
+}) {
+  return {
+    type: LocationActionType.SET_GEOLOCATION,
+    payload,
+  }
+}
+
 function setDisplayAddress(payload: Pick<LocationState, 'displayAddress'>) {
   return {
     type: LocationActionType.SET_DISPLAY_ADDRESS,
@@ -35,9 +45,12 @@ function setDisplayAddress(payload: Pick<LocationState, 'displayAddress'>) {
   }
 }
 
-function getGeolocation() {
+function getGeolocation(payload: {
+  updateLocationFilter: boolean;
+}) {
   return {
     type: LocationActionType.GET_GEOLOCATION,
+    payload,
   }
 }
 
@@ -51,6 +64,7 @@ export const publicActions = {
 
 const privateActions = {
   setDisplayAddress,
+  setGeolocation,
 }
 
 export const actions = {

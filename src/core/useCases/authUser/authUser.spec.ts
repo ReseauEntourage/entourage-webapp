@@ -1339,14 +1339,16 @@ describe('Auth User', () => {
 
       await store.waitForActionEnd()
 
+      const { geolocation: defaultGeolocationData, ...defaultPositionData } = defaultLocationState
+      const { isInit, ...restDefaultPositionData } = defaultPositionData
+
       expect(authUserGateway.updateMe).toHaveBeenCalledWith(newUserData)
       expect(authUserGateway.updateMeAddress).toHaveBeenCalledWith(newAddress)
 
       expect(selectUserIsUpdating(store.getState())).toBe(false)
       expect(selectUser(store.getState())).toStrictEqual(updatedUser)
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...defaultLocationState,
-        isInit: true,
+        ...restDefaultPositionData,
         center: {
           lat: updatedAddress.latitude,
           lng: updatedAddress.longitude,

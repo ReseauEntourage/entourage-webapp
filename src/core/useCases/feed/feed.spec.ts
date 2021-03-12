@@ -58,11 +58,10 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
     store.dispatch(locationActions.setLocation({
       location: nextLocation,
@@ -83,11 +82,10 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
 
     store.dispatch(publicActions.init())
@@ -188,11 +186,10 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
     store.dispatch(publicActions.init())
 
@@ -205,11 +202,10 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.cancel())
 
-    const nextNextLocation: LocationState = {
+    const nextNextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 5, lng: 6 },
       zoom: 65,
-      isInit: true,
     }
 
     store.dispatch(locationActions.setLocation({
@@ -232,11 +228,10 @@ describe('Feed', () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
 
     store.dispatch(publicActions.init())
@@ -383,7 +378,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Lyon',
       center: { lat: 5, lng: 6 },
       zoom: 13,

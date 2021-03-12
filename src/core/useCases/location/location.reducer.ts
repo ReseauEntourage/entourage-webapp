@@ -59,6 +59,11 @@ export interface LocationState {
   };
   zoom: number;
   isInit: boolean;
+  geolocation: {
+    lat: number;
+    lng: number;
+    displayAddress: string;
+  } | null;
 }
 
 export const defaultLocationState: LocationState = {
@@ -66,6 +71,7 @@ export const defaultLocationState: LocationState = {
   center: constants.DEFAULT_LOCATION.CENTER,
   zoom: constants.DEFAULT_LOCATION.ZOOM,
   isInit: false,
+  geolocation: null,
 }
 
 function locationPureReducer(
@@ -85,6 +91,16 @@ function locationPureReducer(
       return {
         ...state,
         displayAddress: action.payload.displayAddress,
+      }
+    }
+
+    case LocationActionType.SET_GEOLOCATION: {
+      return {
+        ...state,
+        geolocation: action.payload.geolocation ? {
+          ...state.geolocation,
+          ...action.payload.geolocation,
+        } : null,
       }
     }
 

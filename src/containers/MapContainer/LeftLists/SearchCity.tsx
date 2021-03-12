@@ -48,7 +48,9 @@ export function SearchCity() {
 
   const onClickCurrentPosition = useCallback(() => {
     sendEvent('Action__Map__Geolocation')
-    dispatch(locationActions.getGeolocation())
+    dispatch(locationActions.getGeolocation({
+      updateLocationFilter: true,
+    }))
   }, [dispatch, sendEvent])
 
   if (feedIsIdle && poisIsIdle) {
