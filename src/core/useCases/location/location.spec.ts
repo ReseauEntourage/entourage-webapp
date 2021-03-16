@@ -40,6 +40,7 @@ describe('Location', () => {
   const fakeGeolocationData = {
     ...fakeLocationData.center,
     displayAddress: fakeLocationData.displayAddress,
+    googlePlaceId: 'placeId',
   }
   const { isInit, ...restDefaultPositionData } = defaultPositionData
 
@@ -103,7 +104,7 @@ describe('Location', () => {
 
     geolocationService.getPlaceAddressFromCoordinates.mockDeferredValueOnce({
       placeAddress: fakeLocationData.displayAddress,
-      googlePlaceId: null,
+      googlePlaceId: fakeGeolocationData.googlePlaceId,
     })
 
     const store = configureStoreWithLocation({ dependencies: { geolocationService } })
@@ -148,7 +149,7 @@ describe('Location', () => {
 
       geolocationService.getPlaceAddressFromCoordinates.mockDeferredValueOnce({
         placeAddress: fakeLocationData.displayAddress,
-        googlePlaceId: null,
+        googlePlaceId: fakeGeolocationData.googlePlaceId,
       })
 
       const store = configureStoreWithLocation({ dependencies: { geolocationService } })
@@ -185,7 +186,7 @@ describe('Location', () => {
 
       geolocationService.getPlaceAddressFromCoordinates.mockDeferredValueOnce({
         placeAddress: fakeLocationData.displayAddress,
-        googlePlaceId: null,
+        googlePlaceId: fakeGeolocationData.googlePlaceId,
       })
 
       const store = configureStoreWithLocation({ dependencies: { geolocationService } })
@@ -385,7 +386,7 @@ describe('Location', () => {
 
       geolocationService.getPlaceAddressFromCoordinates.mockDeferredValueOnce({
         placeAddress: fakeLocationData.displayAddress,
-        googlePlaceId: null,
+        googlePlaceId: 'placeId',
       })
 
       store.dispatch(publicActions.initLocation())

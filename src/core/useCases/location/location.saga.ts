@@ -60,6 +60,7 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
     const placeAddress: CallReturnType<typeof getPlaceAddressFromCoordinates> = yield call(
       getPlaceAddressFromCoordinates,
       response.coordinates,
+      true,
     )
 
     if (placeAddress.placeAddress) {
@@ -75,6 +76,7 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
         geolocation: {
           ...response.coordinates,
           displayAddress: placeAddress.placeAddress,
+          googlePlaceId: placeAddress.googlePlaceId,
         },
       }))
     }

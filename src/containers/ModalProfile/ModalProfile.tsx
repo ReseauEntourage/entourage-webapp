@@ -4,7 +4,6 @@ import axios from 'axios'
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useGetCurrentPosition } from '../../utils/hooks/useGetCurrentPosition'
 import { TextField, Label, RowFields, validators } from 'src/components/Form'
 import {
   AutocompleteFormField,
@@ -17,6 +16,7 @@ import { api, User } from 'src/core/api'
 import { authUserActions, selectUserIsUpdating } from 'src/core/useCases/authUser'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
+import { useGetCurrentPosition } from 'src/utils/hooks'
 import { notifServerError } from 'src/utils/misc'
 
 interface FormField {

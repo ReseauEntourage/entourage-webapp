@@ -63,6 +63,7 @@ export interface LocationState {
     lat: number;
     lng: number;
     displayAddress: string;
+    googlePlaceId: string | null;
   } | null;
 }
 

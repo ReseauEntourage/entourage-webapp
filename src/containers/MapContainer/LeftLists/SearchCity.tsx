@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { selectFeedIsIdle } from 'src/core/useCases/feed'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { selectPOIsIsIdle } from 'src/core/useCases/pois'
@@ -54,7 +55,7 @@ export function SearchCity() {
   }, [dispatch, sendEvent])
 
   if (feedIsIdle && poisIsIdle) {
-    return null
+    return <OverlayLoader />
   }
 
   return (

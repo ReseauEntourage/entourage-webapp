@@ -1,13 +1,17 @@
-import { useCallback, useState } from 'react'
-import { useForm } from '../../components/Form'
-import { useAutocompleteSessionToken } from '../misc'
-import { AnyToFix } from '../types'
-import { GeolocationService } from 'src/adapters/services/GeolocationService'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useForm } from 'src/components/Form'
 import { AutocompleteFormFieldKey, PlaceType } from 'src/components/GoogleMapLocation'
+import { locationActions, selectGeolocation } from 'src/core/useCases/location'
+import { useAutocompleteSessionToken } from 'src/utils/misc'
+import { AnyToFix } from 'src/utils/types'
 
 export function useGetCurrentPosition<T>(fields: T, defaultAddress?: string) {
   const [displayAddress, setDisplayAddress] = useState(defaultAddress)
   const { getSessionToken, regenerateSessionToken } = useAutocompleteSessionToken()
+  const dispatch = useDispatch()
+  const geolocation = useSelector(selectGeolocation)
+  const isFirstRun = useRef(true)
 
   const form = useForm<T>({
     defaultValues: {
@@ -18,27 +22,31 @@ export function useGetCurrentPosition<T>(fields: T, defaultAddress?: string) {
   const { setValue } = form
 
   const getCurrentLocation = useCallback(async () => {
-    try {
-      const geolocationService = new GeolocationService()
-      const { coordinates } = await geolocationService.getGeolocation()
-      const { placeAddress, googlePlaceId } = await geolocationService.getPlaceAddressFromCoordinates(coordinates, true)
+    dispatch(locationActions.getGeolocation({
+      updateLocationFilter: false,
+    }))
+  }, [dispatch])
+
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false
+      return
+    }
+
+    if (geolocation?.googlePlaceId) {
       const sessionToken = getSessionToken()
       regenerateSessionToken()
+      setValue(AutocompleteFormFieldKey, {
+        sessionToken,
+        place: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          place_id: geolocation.googlePlaceId,
+        } as PlaceType,
+      } as AnyToFix)
 
-      if (googlePlaceId) {
-        setValue(AutocompleteFormFieldKey, {
-          sessionToken,
-          place: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            place_id: googlePlaceId,
-          } as PlaceType,
-        } as AnyToFix)
-        setDisplayAddress(placeAddress ?? undefined)
-      }
-    } catch (error) {
-      // Do nothing
+      setDisplayAddress(geolocation.displayAddress ?? undefined)
     }
-  }, [getSessionToken, regenerateSessionToken, setValue])
+  }, [geolocation, getSessionToken, regenerateSessionToken, setValue])
 
   return { displayAddress, setDisplayAddress, getCurrentLocation, form }
 }

@@ -8,7 +8,6 @@ import {
 } from '@material-ui/pickers'
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
-import { useGetCurrentPosition } from '../../utils/hooks/useGetCurrentPosition'
 import { TextField, Label, RowFields } from 'src/components/Form'
 import {
   AutocompleteFormField,
@@ -18,6 +17,7 @@ import {
 import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
+import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
