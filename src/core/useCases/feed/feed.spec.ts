@@ -129,14 +129,7 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: {
-          ...defaultFeedState.filters,
-          [FilterEntourageType.CONTRIBUTION]: [
-            FilterFeedCategory.MAT_HELP,
-            FilterFeedCategory.RESOURCE,
-            FilterFeedCategory.SOCIAL,
-          ],
-        },
+        types: 'am,ao,ai,ak,ar,as,cm,cr,cs',
       },
       nextPageToken: undefined,
     })
@@ -178,10 +171,7 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: {
-          ...defaultFeedState.filters,
-          [FilterEntourageType.CONTRIBUTION]: [],
-        },
+        types: 'am,ao,ai,ak,ar,as',
       },
       nextPageToken: undefined,
     })
@@ -308,7 +298,7 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: expectedFeedFilters,
+        types: 'am,ao,ai,ak,ar,as,cm,cr,cs',
       },
       nextPageToken: undefined,
     })
@@ -378,7 +368,7 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: defaultFeedState.filters,
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
     })
   })
@@ -414,7 +404,7 @@ describe('Feed', () => {
           center: nextLocation.center,
           zoom: nextLocation.zoom,
         },
-        types: defaultFeedState.filters,
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
       nextPageToken: undefined,
     })
@@ -474,7 +464,7 @@ describe('Feed', () => {
           center: initialAppState?.location?.center,
           zoom: initialAppState?.location?.zoom,
         },
-        types: defaultFeedState.filters,
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
       nextPageToken: 'wyz',
     })

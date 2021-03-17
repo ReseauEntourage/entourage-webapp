@@ -1,7 +1,7 @@
 import { constants } from 'src/constants'
 import { api } from 'src/core/api'
 import { IFeedGateway } from 'src/core/useCases/feed'
-import { assertCondition, formatTypes } from 'src/utils/misc'
+import { assertCondition } from 'src/utils/misc'
 import { ResolvedValue } from 'src/utils/types'
 
 export class HTTPFeedGateway implements IFeedGateway {
@@ -23,12 +23,10 @@ export class HTTPFeedGateway implements IFeedGateway {
       }
     }
 
-    const types = formatTypes(data.filters.types)
-
     return api.request({
       name: '/feeds GET',
       params: {
-        types,
+        types: data.filters.types,
         timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
         latitude: data.filters.location.center.lat,
         longitude: data.filters.location.center.lng,
