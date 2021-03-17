@@ -15,27 +15,20 @@ export function SectionFilter(props: SectionFilterProps) {
       <HeadFilter
         index={0}
         type={type}
-      />
-      <LineFilter
-        category={FilterFeedCategory.SOCIAL}
-        index={1}
-        type={type}
-      />
-      <LineFilter
-        category={FilterFeedCategory.MAT_HELP}
-        index={2}
-        type={type}
-      />
-      <LineFilter
-        category={FilterFeedCategory.RESOURCE}
-        index={3}
-        type={type}
-      />
-      <LineFilter
-        category={FilterFeedCategory.OTHER}
-        index={4}
-        type={type}
-      />
+      /> {
+        [
+          FilterFeedCategory.SOCIAL,
+          FilterFeedCategory.MAT_HELP,
+          FilterFeedCategory.RESOURCE,
+          FilterFeedCategory.OTHER,
+        ].map((category, i) => (
+          <LineFilter
+            category={category}
+            index={i + 1}
+            type={type}
+          />
+        ))
+      }
     </S.SectionContainer>
   )
 }
