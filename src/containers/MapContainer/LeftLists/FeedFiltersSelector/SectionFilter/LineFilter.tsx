@@ -25,7 +25,8 @@ export function LineFilter(props: LineFilterProps) {
     dispatch(feedActions.toggleFeedFilter({ type, category }))
   }, [dispatch, type, category])
 
-  const label = texts.content.map.filters[type].category[category]
+  const categoryTextKey = type === FilterEntourageType.CONTRIBUTION ? 'categoryContributionList' : 'categoryHelpList'
+  const label = texts.types[categoryTextKey][category]
 
   return (
     <>

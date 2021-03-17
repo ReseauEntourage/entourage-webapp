@@ -31,17 +31,19 @@ export interface User extends BaseModel {}
  */
 
 export const FilterFeedCategory = {
-  SOCIAL: 'SOCIAL',
-  MAT_HELP: 'MAT_HELP',
-  RESOURCE: 'RESOURCE',
-  OTHER: 'OTHER',
+  SOCIAL: 'social',
+  MAT_HELP: 'mat_help',
+  RESOURCE: 'resource',
+  OTHER: 'other',
 } as const
 
-export type FilterFeedCategory = keyof typeof FilterFeedCategory
+type FilterFeedCategoryKeys = keyof typeof FilterFeedCategory;
+export type FilterFeedCategory = typeof FilterFeedCategory[FilterFeedCategoryKeys]
 
 export const FilterEntourageType = {
-  CONTRIBUTION: 'CONTRIBUTION',
-  ASK_FOR_HELP: 'ASK_FOR_HELP',
+  CONTRIBUTION: 'contribution',
+  ASK_FOR_HELP: 'ask_for_help',
 } as const
 
-export type FilterEntourageType = keyof typeof FilterEntourageType
+type FilterEntourageTypeKeys = keyof typeof FilterEntourageType
+export type FilterEntourageType = typeof FilterEntourageType[FilterEntourageTypeKeys]

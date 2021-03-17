@@ -2,6 +2,26 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
+  types: {
+    categoryHelpList: {
+      event: '',
+      info: 'Poser une question au réseau',
+      mat_help: 'Un don matériel',
+      other: 'Autre chose',
+      resource: 'Une resource mise à disposition',
+      skill: 'Une compétence',
+      social: 'Des voisins pour entourer une personne',
+    },
+    categoryContributionList: {
+      event: '',
+      info: 'Diffuser une information',
+      mat_help: 'Faire un don matériel',
+      other: 'Aider à ma façon',
+      resource: 'Mettre à disposition une ressource',
+      skill: 'Offir une compétence',
+      social: 'Passer du temps avec une personne',
+    },
+  },
   form: {
     REQUIRED: 'Champs requis',
     INVALID_FORMAT: 'Format incorrect',
@@ -54,23 +74,11 @@ export const texts = {
   content: {
     map: {
       filters: {
-        CONTRIBUTION: {
+        contribution: {
           title: 'Voir les contributions concernant',
-          category: {
-            SOCIAL: 'Partager un repas, un café',
-            MAT_HELP: 'Faire un don matériel',
-            RESOURCE: 'Offrir un service',
-            OTHER: 'Aider à ma façon',
-          },
         },
-        ASK_FOR_HELP: {
+        ask_for_help: {
           title: 'Voir les demandes concernant',
-          category: {
-            SOCIAL: 'Des voisins pour entourer une personne',
-            MAT_HELP: 'Un don matériel',
-            RESOURCE: 'Un service',
-            OTHER: 'Autre chose !',
-          },
         },
       },
       rightCards: {
@@ -147,25 +155,7 @@ export const texts = {
       fieldLabelTitle: 'Je suis disponible pour... / Je recherche...',
       fieldLabelDescription: 'Description',
       fieldCategoryHelpLabel: 'Je recherche...',
-      fieldCategoryHelpList: {
-        event: '',
-        info: 'Poser une question au réseau',
-        mat_help: 'Un don matériel',
-        other: 'Autre chose',
-        resource: 'Une resource mise à disposition',
-        skill: 'Une compétence',
-        social: 'Des voisins pour entourer une personne',
-      },
       fieldCategoryContributionLabel: 'Je me propose de...',
-      fieldCategoryContributionList: {
-        event: '',
-        info: 'Diffuser une information',
-        mat_help: 'Faire un don matériel',
-        other: 'Aider à ma façon',
-        resource: 'Mettre à disposition une ressource',
-        skill: 'Offir une compétence',
-        social: 'Passer du temps avec une personne',
-      },
       validateLabelCreate: 'Créer mon action',
       validateLabelUpdate: 'Mettre à jour mon action',
     },
