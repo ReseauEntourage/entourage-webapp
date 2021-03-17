@@ -6,11 +6,11 @@ import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerDesktop(props: MapContainerProps) {
-  const { markers, cards, list, isLoading } = props
+  const { markers, cards, list, isLoading, filter } = props
 
   return (
     <S.Container>
-      <LeftList isLoading={isLoading} list={list} />
+      <LeftList filter={filter} isLoading={isLoading} list={list} />
       <S.MapContainer>
         <Map>
           {markers}
