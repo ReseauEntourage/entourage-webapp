@@ -7,6 +7,7 @@ import * as S from './styles'
 interface SectionFilterProps {
   type: FilterEntourageType;
 }
+
 export function SectionFilter(props: SectionFilterProps) {
   const { type } = props
   return (
