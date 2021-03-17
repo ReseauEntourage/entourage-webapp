@@ -1,12 +1,5 @@
 import {
-  LocalMall,
   Event,
-  LocalLaundryService,
-  People,
-  Help,
-  MoreHoriz,
-  Create,
-  SvgIconComponent,
 } from '@material-ui/icons'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
@@ -16,23 +9,14 @@ import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
 import { FeedItem, iconStyle } from 'src/components/FeedItem'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
-import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
+import { FeedEntourageType } from 'src/core/api'
 import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
+import { feedItemCategoryIcons } from 'src/utils/misc'
 
 interface FeedItemIconProps {
   feedItem: FeedItemType;
-}
-
-const feedItemCategoryIcons: Record<FeedDisplayCategory, SvgIconComponent> = {
-  info: Help,
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  mat_help: LocalMall,
-  other: MoreHoriz,
-  skill: Create,
-  social: People,
-  resource: LocalLaundryService,
 }
 
 function FeedItemIcon(props: FeedItemIconProps) {

@@ -1,18 +1,11 @@
 import Divider from '@material-ui/core/Divider'
 import Menu from '@material-ui/core/Menu'
 import Typography from '@material-ui/core/Typography'
-import FilterListIcon from '@material-ui/icons/FilterList'
 import React from 'react'
-import styled from 'styled-components'
-import { variants, theme } from 'src/styles'
+import { variants } from 'src/styles'
 import { FilterEntourageType } from 'src/utils/types'
+import * as S from './FeedFiltersSelector.styles'
 import { SectionFilter } from './SectionFilter/SectionFilter'
-
-const MenuContainer = styled.div`
-  a {
-    text-decoration: none !important;
-  }
-`
 
 export function FeedFiltersSelector() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
@@ -27,23 +20,15 @@ export function FeedFiltersSelector() {
 
   return (
     <>
-      <div
+      <S.FilterListButton
         aria-controls="simple-menu"
         onClick={handleClick}
         onKeyUp={handleClick}
         role="button"
-        style={{
-          outline: 'none',
-          display: 'flex',
-          alignItems: 'center',
-          cursor: 'pointer',
-          padding: theme.spacing(2, 2, 2, 0),
-        }}
         tabIndex={0}
       >
-        {/* <Button>Filters</Button> */}
-        <FilterListIcon color="primary" />
-      </div>
+        <S.FilterListIcon />
+      </S.FilterListButton>
       <Menu
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -60,13 +45,13 @@ export function FeedFiltersSelector() {
           horizontal: 'right',
         }}
       >
-        <MenuContainer>
+        <S.MenuContainer>
           <Typography component="div" variant={variants.bodyRegular}>
             <SectionFilter type={FilterEntourageType.ASK_FOR_HELP} />
             <Divider />
             <SectionFilter type={FilterEntourageType.CONTRIBUTION} />
           </Typography>
-        </MenuContainer>
+        </S.MenuContainer>
       </Menu>
     </>
   )

@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
+import * as S from './Filter.styles'
 import { LineFilterProps } from './LineFilter'
-import * as S from './styles'
 
 export function HeadFilter(props: Omit<LineFilterProps, 'category'>) {
   const { index, type } = props

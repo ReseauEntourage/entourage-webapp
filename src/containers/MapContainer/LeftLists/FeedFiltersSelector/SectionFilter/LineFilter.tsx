@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
+import { feedItemCategoryIcons } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
-import { mapCategoriesToIcons } from './helper'
-import * as S from './styles'
+import * as S from './Filter.styles'
 
 export interface LineFilterProps {
   index: number;
@@ -16,7 +16,7 @@ export interface LineFilterProps {
 
 export function LineFilter(props: LineFilterProps) {
   const { index, type, category } = props
-  const CategoryIcon = mapCategoriesToIcons[category]
+  const CategoryIcon = feedItemCategoryIcons[category] || feedItemCategoryIcons.other
 
   const dispatch = useDispatch()
 

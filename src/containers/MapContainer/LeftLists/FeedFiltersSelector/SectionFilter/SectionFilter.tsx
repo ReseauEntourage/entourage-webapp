@@ -1,8 +1,8 @@
 import React from 'react'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
+import * as S from './Filter.styles'
 import { HeadFilter } from './HeadFilter'
 import { LineFilter } from './LineFilter'
-import * as S from './styles'
 
 interface SectionFilterProps {
   type: FilterEntourageType;
