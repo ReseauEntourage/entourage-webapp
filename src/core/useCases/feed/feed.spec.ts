@@ -143,12 +143,12 @@ describe('Feed', () => {
   })
 
   it(`
-  Given initial state
-  When user init feed
-    And user toogle feed filters (only the type)
-  Then store should be update with new feed filters values
-    And isActiveFilter selector should be return false
-    And items should be fetched
+    Given initial state
+    When user init feed
+      And user change the filter with type CONTRIBUTION
+    Then store should be updated with new feed filters values
+      And CONTRIBUTION filtrer should not be selected
+      And retrieve items service should have been called with empty filter CONTRIBUTION
 `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
