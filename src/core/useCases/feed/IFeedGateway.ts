@@ -6,6 +6,7 @@ interface FeedItemsFilter {
   location: Pick<LocationState, 'center' | 'zoom'>;
   types: FeedState['filters'];
 }
+
 export interface IFeedGateway {
   retrieveFeedItems(data: {
     filters: FeedItemsFilter;
