@@ -1,3 +1,3 @@
-export * from './Model'
+export * from './FilterFeedEnum'
 export * from './utils'
 export * from './Firebase'
