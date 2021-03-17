@@ -69,6 +69,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
   const form = useForm<FormField>({ defaultValues })
   const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditAction
+  const typesTexts = texts.types
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
@@ -151,14 +152,14 @@ export function ModalEditAction(props: ModalEditActionProps) {
     {
       label: modalTexts.fieldCategoryHelpLabel,
       options: categories.map((category) => ({
-        label: modalTexts.fieldCategoryHelpList[category],
+        label: typesTexts.categoryHelpList[category],
         value: createCategoryValue('ask_for_help', category),
       })),
     },
     {
       label: modalTexts.fieldCategoryContributionLabel,
       options: categories.map((category) => ({
-        label: modalTexts.fieldCategoryContributionList[category],
+        label: typesTexts.categoryContributionList[category],
         value: createCategoryValue('contribution', category),
       })),
     },

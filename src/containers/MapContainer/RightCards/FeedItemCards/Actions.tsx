@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useDispatch, useStore } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Button } from 'src/components/Button'
 import { openModal } from 'src/components/Modal'
 import { ModalShare } from 'src/components/ModalShare'
@@ -9,6 +9,7 @@ import { ModalCloseAction } from 'src/containers/ModalCloseAction'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
 import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus } from 'src/core/useCases/feed'
+import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
 import * as S from './Actions.styles'
@@ -22,11 +23,10 @@ export function Actions(props: ActionsProps) {
   const { iAmCreator } = props
   const feedItem = useCurrentFeedItem()
   const dispatch = useDispatch()
-  const store = useStore()
   assertIsDefined(feedItem)
 
-  const isUpdatingStatus = selectIsUpdatingStatus(store.getState())
-  const status = selectStatus(store.getState(), feedItem.uuid)
+  const isUpdatingStatus = useSelector(selectIsUpdatingStatus)
+  const status = useSelector<AppState, RequestStatus>((state) => selectStatus(state, feedItem.uuid))
 
   const onClickReport = useCallback(() => {
     // eslint-disable-next-line no-useless-escape

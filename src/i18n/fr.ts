@@ -2,6 +2,26 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
+  types: {
+    categoryHelpList: {
+      event: '',
+      info: 'Poser une question au réseau',
+      mat_help: 'Un don matériel',
+      other: 'Autre chose',
+      resource: 'Un service',
+      skill: 'Une compétence',
+      social: 'Des voisins pour entourer une personne',
+    },
+    categoryContributionList: {
+      event: '',
+      info: 'Diffuser une information',
+      mat_help: 'Faire un don matériel',
+      other: 'Aider à ma façon',
+      resource: 'Offrir un service',
+      skill: 'Offrir une compétence',
+      social: 'Passer du temps avec une personne',
+    },
+  },
   form: {
     REQUIRED: 'Champs requis',
     INVALID_FORMAT: 'Format incorrect',
@@ -53,6 +73,14 @@ export const texts = {
   },
   content: {
     map: {
+      filters: {
+        contribution: {
+          title: 'Voir les contributions concernant',
+        },
+        ask_for_help: {
+          title: 'Voir les demandes concernant',
+        },
+      },
       rightCards: {
         share: 'Partager',
         edit: 'Modifier',
@@ -127,25 +155,7 @@ export const texts = {
       fieldLabelTitle: 'Je suis disponible pour... / Je recherche...',
       fieldLabelDescription: 'Description',
       fieldCategoryHelpLabel: 'Je recherche...',
-      fieldCategoryHelpList: {
-        event: '',
-        info: 'Poser une question au réseau',
-        mat_help: 'Un don matériel',
-        other: 'Autre chose',
-        resource: 'Une resource mise à disposition',
-        skill: 'Une compétence',
-        social: 'Des voisins pour entourer une personne',
-      },
       fieldCategoryContributionLabel: 'Je me propose de...',
-      fieldCategoryContributionList: {
-        event: '',
-        info: 'Diffuser une information',
-        mat_help: 'Faire un don matériel',
-        other: 'Aider à ma façon',
-        resource: 'Mettre à disposition une ressource',
-        skill: 'Offir une compétence',
-        social: 'Passer du temps avec une personne',
-      },
       validateLabelCreate: 'Créer mon action',
       validateLabelUpdate: 'Mettre à jour mon action',
     },

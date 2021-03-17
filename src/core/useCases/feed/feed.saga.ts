@@ -3,6 +3,7 @@ import { Cities, entourageCities, locationActions, selectLocation, selectLocatio
 import { LocationActionType } from '../location/location.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
+import { formatTypes } from 'src/utils/misc'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
 import { selectCurrentFeedItem, selectFeed, selectFeedIsIdle } from './feed.selectors'
@@ -16,7 +17,7 @@ function* retrieveFeed() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching } = feedState
+  const { nextPageToken, fetching, filters: typeFilters } = feedState
   const { zoom, center } = positionState
 
   if (fetching) {
@@ -25,10 +26,11 @@ function* retrieveFeed() {
 
   yield put(actions.retrieveFeedStarted())
 
+  const types = formatTypes(typeFilters)
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { center, zoom },
+      filters: { types, location: { center, zoom } },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -40,7 +42,7 @@ function* retrieveFeedNextPage() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching } = feedState
+  const { nextPageToken, fetching, filters: typeFilters } = feedState
   const { zoom, center } = positionState
 
   if (!nextPageToken || fetching) {
@@ -49,10 +51,11 @@ function* retrieveFeedNextPage() {
 
   yield put(actions.retrieveFeedNextPageStarted())
 
+  const types = formatTypes(typeFilters)
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { center, zoom },
+      filters: { types, location: { center, zoom } },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -134,6 +137,7 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
+  yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)

@@ -4,6 +4,7 @@ import { locationActions, LocationState, selectLocation } from '../location'
 import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
@@ -14,6 +15,8 @@ import {
   selectFeedItems,
   selectHasNextPageToken,
   selectFeedIsIdle,
+  selectFeedFilters,
+  selectIsActiveFilter,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -102,6 +105,81 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
+      And user toogle feed filters
+    Then items should be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,cr,cs',
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user change the filter with type CONTRIBUTION
+    Then store should be updated with new feed filters values
+      And CONTRIBUTION filtrer should not be selected
+      And retrieve items service should have been called with empty filter CONTRIBUTION
+`, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+    }))
+
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [],
+    }
+
+    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveFilter(store.getState(), FilterEntourageType.CONTRIBUTION)).toBeFalsy()
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as',
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init feed
       And user set position filters
       And user cancels feed
       And user sets a new position filter again
@@ -175,6 +253,58 @@ describe('Feed', () => {
   })
 
   it(`
+    Given initial state
+    When user init feed
+      And user toogle feed filters
+    Then store should be update with new feed filters values
+      And isActiveFilter selector should be return false
+      And items should be fetched
+      And should retrieve feed gateway method have been called with feed filters values
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleFeedFilter({
+      type: FilterEntourageType.CONTRIBUTION,
+      category: FilterFeedCategory.OTHER,
+    }))
+
+    const expectedFeedFilters = {
+      ...defaultFeedState.filters,
+      [FilterEntourageType.CONTRIBUTION]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.RESOURCE,
+        FilterFeedCategory.SOCIAL,
+      ],
+    }
+
+    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterEntourageType.CONTRIBUTION,
+      FilterFeedCategory.OTHER,
+    )).toBeFalsy()
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,cr,cs',
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
     Given feed request is idle
     When no action is trigger by user
     Then feed request should still be idle
@@ -234,8 +364,11 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: defaultLocationState.center,
-        zoom: defaultLocationState.zoom,
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
     })
   })
@@ -267,8 +400,11 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: nextLocation.center,
-        zoom: nextLocation.zoom,
+        location: {
+          center: nextLocation.center,
+          zoom: nextLocation.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
       nextPageToken: undefined,
     })
@@ -324,8 +460,11 @@ describe('Feed', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     expect(feedGateway.retrieveFeedItems).toHaveBeenNthCalledWith(1, {
       filters: {
-        center: initialAppState?.location?.center,
-        zoom: initialAppState?.location?.zoom,
+        location: {
+          center: initialAppState?.location?.center,
+          zoom: initialAppState?.location?.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
       },
       nextPageToken: 'wyz',
     })

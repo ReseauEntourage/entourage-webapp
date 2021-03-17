@@ -1,5 +1,5 @@
 import { FeedJoinStatus } from 'src/core/api'
-import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
+import { ActionFromMapObject, ActionsFromMapObject, FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
 import { FeedState } from './feed.reducer'
 
 export const FeedActionType = {
@@ -22,6 +22,7 @@ export const FeedActionType = {
   CLOSE_ENTOURAGE_SUCCEEDED: 'FEED/CLOSE_ENTOURAGE_SUCCEEDED',
   REOPEN_ENTOURAGE: 'FEED/REOPEN_ENTOURAGE',
   REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
+  TOGGLE_FEED_FILTER: 'TOGGLE_FEED_FILTER',
 } as const
 
 export type FeedActionType = keyof typeof FeedActionType;
@@ -164,6 +165,13 @@ function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
   }
 }
 
+function toggleFeedFilter(payload: { type: FilterEntourageType; category?: FilterFeedCategory;}) {
+  return {
+    type: FeedActionType.TOGGLE_FEED_FILTER,
+    payload,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -179,6 +187,7 @@ export const publicActions = {
   closeEntourage,
   reopenEntourage,
   removeCurrentItemUuid,
+  toggleFeedFilter,
 }
 
 const privateActions = {
