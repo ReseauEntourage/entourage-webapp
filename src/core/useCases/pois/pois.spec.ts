@@ -50,11 +50,10 @@ describe('POIs', () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
     store.dispatch(locationActions.setLocation({
       location: nextLocation,
@@ -75,11 +74,10 @@ describe('POIs', () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
 
     store.dispatch(publicActions.init())
@@ -105,11 +103,10 @@ describe('POIs', () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
     store.dispatch(publicActions.init())
 
@@ -122,11 +119,10 @@ describe('POIs', () => {
 
     store.dispatch(publicActions.cancel())
 
-    const nextNextLocation: LocationState = {
+    const nextNextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 5, lng: 6 },
       zoom: 65,
-      isInit: true,
     }
 
     store.dispatch(locationActions.setLocation({
@@ -150,11 +146,10 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
 
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: LocationState = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
-      isInit: true,
     }
     store.dispatch(publicActions.init())
     store.dispatch(locationActions.setLocation({
@@ -240,7 +235,7 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation = {
+    const nextLocation: Partial<LocationState> = {
       displayAddress: 'Lyon',
       center: { lat: 5, lng: 6 },
       zoom: 13,
@@ -258,7 +253,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
       filters: {
         center: nextLocation.center,
-        zoom: calculateDistanceFromZoom(nextLocation.zoom),
+        zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
       },
     })
   })

@@ -121,4 +121,58 @@ export class HTTPAuthUserGateway implements IAuthUserGateway {
       })
       .then(() => null)
   }
+
+  updateMeAddress(data: {
+    googlePlaceId: string;
+    googleSessionToken: google.maps.places.AutocompleteSessionToken;
+  }) {
+    return api
+      .request({
+        name: '/users/me/address POST',
+        data: {
+          address: {
+            ...data,
+          },
+        },
+      })
+      .then(() => null)
+  }
+
+  updateMe(data: {
+    about?: string;
+    avatarKey?: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+  }) {
+    return api
+      .request({
+        name: '/users/me PATCH',
+        data: {
+          user: {
+            ...data,
+          },
+        },
+      })
+      .then((res) => {
+        const { user } = res.data
+
+        assertIsDefined(user.id, 'user id')
+
+        return {
+          id: user.id,
+          email: user.email ?? undefined,
+          hasPassword: user.hasPassword,
+          partner: user.partner ? { name: user.partner.name } : undefined,
+          avatarUrl: user.avatarUrl ?? undefined,
+          firstName: user.firstName ?? undefined,
+          lastName: user.lastName ?? undefined,
+          about: user.about ?? undefined,
+          address: user.address ?? undefined,
+          token: user.token,
+          stats: user.stats,
+          firstSignIn: false,
+        }
+      })
+  }
 }

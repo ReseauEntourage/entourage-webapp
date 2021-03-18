@@ -32,7 +32,9 @@ function* initLocationSaga() {
         },
       }))
     } else {
-      yield put(actions.getGeolocation())
+      yield put(actions.getGeolocation({
+        updateLocationFilter: true,
+      }))
     }
   } else {
     const defaultCity = entourageCities[queryId as Cities]
@@ -48,7 +50,7 @@ function* initLocationSaga() {
   }
 }
 
-function* getGeolocationSaga() {
+function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { getGeolocation, getPlaceAddressFromCoordinates } = dependencies.geolocationService
 
@@ -58,13 +60,23 @@ function* getGeolocationSaga() {
     const placeAddress: CallReturnType<typeof getPlaceAddressFromCoordinates> = yield call(
       getPlaceAddressFromCoordinates,
       response.coordinates,
+      true,
     )
 
     if (placeAddress.placeAddress) {
-      yield put(actions.setLocation({
-        location: {
-          center: response.coordinates,
+      if (action.payload.updateLocationFilter) {
+        yield put(actions.setLocation({
+          location: {
+            center: response.coordinates,
+            displayAddress: placeAddress.placeAddress,
+          },
+        }))
+      }
+      yield put(actions.setGeolocation({
+        geolocation: {
+          ...response.coordinates,
           displayAddress: placeAddress.placeAddress,
+          googlePlaceId: placeAddress.googlePlaceId,
         },
       }))
     }

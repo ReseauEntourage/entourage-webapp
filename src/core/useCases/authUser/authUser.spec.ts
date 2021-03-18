@@ -2,7 +2,11 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { firebaseSaga } from '../firebase'
 import { TestFirebaseService } from '../firebase/TestFirebaseService'
+import { locationSaga, selectLocation } from '../location'
+import { TestGeolocationService } from '../location/TestGeolocationService'
+import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { assertIsDefined } from 'src/utils/misc'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
 import { TestAuthUserSensitizationStorage } from './TestAuthUserSensitizationStorage'
@@ -20,6 +24,7 @@ import {
   selectErrors,
   selectLoginIsCompleted,
   selectShowSensitizationPopup,
+  selectUserIsUpdating,
 } from './authUser.selectors'
 import {
   PhoneValidationsError,
@@ -45,6 +50,14 @@ function createSilentFirebaseService() {
   return firebaseService
 }
 
+function createSilentGeolocationService() {
+  const geolocationService = new TestGeolocationService()
+  geolocationService.getGeolocation.mockImplementation()
+  geolocationService.getPlaceAddressFromCoordinates.mockImplementation()
+
+  return geolocationService
+}
+
 function configureStoreWithAuthUser(
   params: {
     dependencies?: PartialAppDependencies;
@@ -62,9 +75,10 @@ function configureStoreWithAuthUser(
     dependencies: {
       authUserTokenStorage: createSilentAuthUserTokenStorage(),
       firebaseService: createSilentFirebaseService(),
+      geolocationService: createSilentGeolocationService(),
       ...dependencies,
     },
-    sagas: [authUserSaga, firebaseSaga],
+    sagas: [authUserSaga, firebaseSaga, locationSaga],
   })
 }
 
@@ -299,6 +313,7 @@ describe('Auth User', () => {
         user: createUser(),
         showSensitizationPopup: false,
         loginIsCompleted: false,
+        userUpdating: false,
       },
     }
 
@@ -770,6 +785,7 @@ describe('Auth User', () => {
           user: createUser(),
           showSensitizationPopup: false,
           loginIsCompleted: false,
+          userUpdating: false,
         },
       }
       const store = configureStoreWithAuthUser({
@@ -960,6 +976,7 @@ describe('Auth User', () => {
           user: createUser(true, false),
           showSensitizationPopup: false,
           loginIsCompleted: false,
+          userUpdating: false,
         },
       }
 
@@ -1181,6 +1198,163 @@ describe('Auth User', () => {
       expect(authUserSensitizationStorage.setHasSeenPopup).toHaveBeenNthCalledWith(1, user.id)
 
       expect(selectShowSensitizationPopup(store.getState())).toBe(false)
+    })
+  })
+
+  describe('Update user profile', () => {
+    const user = createUser(false, false)
+
+    const newUserData = {
+      about: 'About test',
+      avatarKey: '/avatar.png',
+      email: 'test@gmail.com',
+      firstName: 'John',
+      lastName: 'Doe',
+    }
+
+    const updatedUser = {
+      ...user,
+      ...newUserData,
+    }
+
+    const newAddress = {
+      googlePlaceId: 'placeId',
+      googleSessionToken: '12345',
+    }
+
+    assertIsDefined(user.address)
+
+    const updatedAddress = {
+      ...user.address,
+    }
+
+    it(`
+      Given initial state
+         And user is logged in
+      When no action is triggered
+      Then the user should not be updating
+  `, () => {
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway },
+      })
+
+      expect(selectUserIsUpdating(store.getState())).toBe(false)
+    })
+
+    it(`
+      Given initial state
+        And user is logged in
+      When user wants to update only his profile
+      Then the user should be updating during request
+        And the user should not be updating after request succeeded
+        And the new user data should have been sent to the gateway
+        And the update address gateway should not have been called
+        And the user data should be updated
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway },
+      })
+
+      authUserGateway.updateMe.mockDeferredValueOnce(updatedUser)
+      authUserGateway.updateMeAddress.mockDeferredValueOnce(null)
+
+      store.dispatch(publicActions.updateUser({
+        ...newUserData,
+      }))
+
+      expect(selectUserIsUpdating(store.getState())).toBe(true)
+
+      authUserGateway.updateMe.resolveDeferredValue()
+      authUserGateway.updateMeAddress.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(authUserGateway.updateMe).toHaveBeenCalledWith(newUserData)
+      expect(authUserGateway.updateMeAddress).toHaveBeenCalledTimes(0)
+
+      expect(selectUserIsUpdating(store.getState())).toBe(false)
+      expect(selectUser(store.getState())).toStrictEqual(updatedUser)
+    })
+
+    it(`
+      Given initial state
+        And user is logged in
+      When user wants to update his profile and address
+      Then the user should be updating during request
+        And the user should not be updating after request succeeded
+        And the new user data should have been sent to the gateway
+        And the new user address should have been sent to the gateway
+        And the user data should be updated
+        And the map position should be set to the user's new address
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway },
+      })
+
+      authUserGateway.updateMe.mockDeferredValueOnce(updatedUser)
+      authUserGateway.updateMeAddress.mockDeferredValueOnce(null)
+
+      store.dispatch(publicActions.updateUser({
+        ...newUserData,
+        address: newAddress,
+      }))
+
+      expect(selectUserIsUpdating(store.getState())).toBe(true)
+
+      authUserGateway.updateMe.resolveDeferredValue()
+      authUserGateway.updateMeAddress.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      const { geolocation: defaultGeolocationData, ...defaultPositionData } = defaultLocationState
+      const { isInit, ...restDefaultPositionData } = defaultPositionData
+
+      expect(authUserGateway.updateMe).toHaveBeenCalledWith(newUserData)
+      expect(authUserGateway.updateMeAddress).toHaveBeenCalledWith(newAddress)
+
+      expect(selectUserIsUpdating(store.getState())).toBe(false)
+      expect(selectUser(store.getState())).toStrictEqual(updatedUser)
+      expect(selectLocation(store.getState())).toStrictEqual({
+        ...restDefaultPositionData,
+        center: {
+          lat: updatedAddress.latitude,
+          lng: updatedAddress.longitude,
+        },
+        displayAddress: updatedAddress.displayAddress,
+      })
     })
   })
 })

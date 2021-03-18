@@ -20,6 +20,10 @@ export function selectUser(state: AppState) {
   return state.authUser.user
 }
 
+export function selectUserIsUpdating(state: AppState) {
+  return state.authUser.userUpdating
+}
+
 export function selectUserInfosAreIncomplete(state: AppState) {
   const { user } = state.authUser
   if (user) {
