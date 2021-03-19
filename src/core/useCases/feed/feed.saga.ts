@@ -51,7 +51,8 @@ function* retrieveFeedNextPage() {
 
   yield put(actions.retrieveFeedNextPageStarted())
 
-  const types = formatFeedTypes(typeFilters)
+  const types = typeFilters.contribution.length > 0 && typeFilters.ask_for_help.length > 0
+    ? formatFeedTypes(typeFilters) : undefined
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {

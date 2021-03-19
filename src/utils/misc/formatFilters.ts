@@ -1,4 +1,5 @@
-import { FilterEntourageType, FilterFeedCategory, FilterPOICategory } from '../types'
+import { POIPartnersTypes, POICategory } from '../../core/api'
+import { FilterEntourageType, FilterFeedCategory, FilterPOICategory, FilterPOIPartner } from '../types'
 
 const feedTypeFilterResolver: Record<FilterEntourageType, Record<FilterFeedCategory, string>> = {
   [FilterEntourageType.ASK_FOR_HELP]: {
@@ -28,7 +29,7 @@ export function formatFeedTypes(types: Record<FilterEntourageType, FilterFeedCat
   return filtersTab.join(',')
 }
 
-const poisCategoriesFilterResolver: Record<FilterPOICategory, number> = {
+const poisCategoriesFilterResolver: Record<FilterPOICategory, POICategory['id']> = {
   [FilterPOICategory.OTHER]: 0,
   [FilterPOICategory.EATING]: 1,
   [FilterPOICategory.SLEEPING]: 2,
@@ -46,8 +47,20 @@ const poisCategoriesFilterResolver: Record<FilterPOICategory, number> = {
   [FilterPOICategory.CLOAKROOM]: 63,
 }
 
-export function formatPOIsCategories(types: FilterPOICategory[]): string {
-  const filtersTab = types.map((value) => poisCategoriesFilterResolver[value])
+export function formatPOIsCategories(categories: FilterPOICategory[]): string {
+  const filtersTab = categories.map((value) => poisCategoriesFilterResolver[value])
 
   return filtersTab.join(',')
 }
+
+const poisPartnersFilterResolver: Record<FilterPOIPartner, POIPartnersTypes> = {
+  [FilterPOIPartner.DONATIONS]: 'donations',
+  [FilterPOIPartner.VOLUNTEERS]: 'volunteers',
+}
+
+export function formatPOIsPartners(partner: FilterPOIPartner[]): string {
+  const filtersTab = partner.map((value) => poisPartnersFilterResolver[value])
+
+  return filtersTab.join(',')
+}
+

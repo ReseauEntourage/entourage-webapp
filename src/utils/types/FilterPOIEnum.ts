@@ -21,3 +21,10 @@ export const FilterPOICategory = {
 } as const
 
 export type FilterPOICategory = keyof typeof FilterPOICategory
+
+export const FilterPOIPartner = {
+  VOLUNTEERS: 'VOLUNTEERS',
+  DONATIONS: 'DONATIONS',
+} as const
+
+export type FilterPOIPartner = keyof typeof FilterPOIPartner

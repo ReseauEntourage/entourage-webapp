@@ -306,7 +306,7 @@ describe('POIs', () => {
             lng: poiDetailsFromGateway.longitude,
           },
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters),
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -429,7 +429,7 @@ describe('POIs', () => {
             lng: selectLocation(store.getState()).center.lng,
           },
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters),
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -494,7 +494,7 @@ describe('POIs', () => {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
           zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters),
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })

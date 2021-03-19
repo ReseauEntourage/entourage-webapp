@@ -26,6 +26,7 @@ import {
   DTOReopenEntourage,
   POIItem,
   POIDetailsItem,
+  POIPartnersFilters,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -341,7 +342,8 @@ export const schema = {
     method: 'GET',
     params: {} as {
       v: 2;
-      categoryIds: POICategoriesIds;
+      categoryIds?: POICategoriesIds;
+      partnersFilters?: POIPartnersFilters;
       distance: number;
       latitude: number;
       longitude: number;

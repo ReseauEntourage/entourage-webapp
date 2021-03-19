@@ -30,6 +30,7 @@ export class HTTPPOIsGateway implements IPOIsGateway {
         longitude: data.filters.location.center.lng,
         latitude: data.filters.location.center.lat,
         categoryIds: data.filters.categories,
+        partnersFilters: data.filters.partners,
       },
     }).then((res) => {
       const { pois } = res.data

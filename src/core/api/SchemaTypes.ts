@@ -55,6 +55,8 @@ export type POICategory =
 
 export type POISource = 'entourage' | 'soliguide'
 
+export type POIPartnersTypes = 'donations' | 'volunteers'
+
 export interface POIItem {
   uuid: string;
   name: string;
@@ -84,6 +86,14 @@ export interface POIDetailsItem {
   source: POISource;
   sourceUrl: string | null;
 }
+
+/**
+ * Values splitted by coma: donations,volunteers
+ *
+ * 'donations'
+ * 'volunteers'
+ */
+export type POIPartnersFilters = string
 
 /**
  * Values splited by coma: 1,2,3,4,5,6,7

@@ -1,6 +1,6 @@
 import { FeedAction, FeedActionType } from '../feed/feed.actions'
 import { POICategory, POISource } from 'src/core/api'
-import { FilterPOICategory } from 'src/utils/types'
+import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
 import { POIsAction, POIsActionType } from './pois.actions'
 
 export interface POI {
@@ -45,7 +45,10 @@ export interface POIsState {
   };
   selectedPOIUuid: string | null;
   isIdle: boolean;
-  filters: FilterPOICategory[];
+  filters: {
+    categories: FilterPOICategory[];
+    partners: FilterPOIPartner[];
+  };
 }
 
 export const defaultPOIsState: POIsState = {
@@ -56,23 +59,26 @@ export const defaultPOIsState: POIsState = {
   detailedPOIs: {},
   selectedPOIUuid: null,
   isIdle: true,
-  filters: [
-    FilterPOICategory.OTHER,
-    FilterPOICategory.EATING,
-    FilterPOICategory.SLEEPING,
-    FilterPOICategory.HEALING,
-    FilterPOICategory.ORIENTATION,
-    FilterPOICategory.REINTEGRATION,
-    FilterPOICategory.PARTNERS,
-    FilterPOICategory.TOILETS,
-    FilterPOICategory.FOUNTAINS,
-    FilterPOICategory.SHOWERS,
-    FilterPOICategory.LAUNDRIES,
-    FilterPOICategory.WELL_BEING,
-    FilterPOICategory.CLOTHES,
-    FilterPOICategory.DONATION_BOX,
-    FilterPOICategory.CLOAKROOM,
-  ],
+  filters: {
+    categories: [
+      FilterPOICategory.OTHER,
+      FilterPOICategory.EATING,
+      FilterPOICategory.SLEEPING,
+      FilterPOICategory.HEALING,
+      FilterPOICategory.ORIENTATION,
+      FilterPOICategory.REINTEGRATION,
+      FilterPOICategory.PARTNERS,
+      FilterPOICategory.TOILETS,
+      FilterPOICategory.FOUNTAINS,
+      FilterPOICategory.SHOWERS,
+      FilterPOICategory.LAUNDRIES,
+      FilterPOICategory.WELL_BEING,
+      FilterPOICategory.CLOTHES,
+      FilterPOICategory.DONATION_BOX,
+      FilterPOICategory.CLOAKROOM,
+    ],
+    partners: [],
+  },
 }
 
 export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAction | FeedAction): POIsState {
@@ -139,13 +145,31 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
     }
 
     case POIsActionType.TOGGLE_POIS_FILTER: {
-      const currentFeedFilters = state.filters
+      const currentPOIsFilters = state.filters
+
+      const { category, partner } = action.payload
+
+      if (partner && category === FilterPOICategory.PARTNERS) {
+        return {
+          ...state,
+          filters: {
+            categories: currentPOIsFilters.categories.includes(category)
+              ? currentPOIsFilters.categories : [...currentPOIsFilters.categories, category],
+            partners: currentPOIsFilters.partners.includes(partner)
+              ? currentPOIsFilters.partners.filter((i) => i !== partner)
+              : [...currentPOIsFilters.partners, partner],
+          },
+        }
+      }
 
       return {
         ...state,
-        filters: currentFeedFilters.includes(action.payload.category)
-          ? currentFeedFilters.filter((i) => i !== action.payload.category)
-          : [...currentFeedFilters, action.payload.category],
+        filters: {
+          categories: currentPOIsFilters.categories.includes(category)
+            ? currentPOIsFilters.categories.filter((i) => i !== category)
+            : [...currentPOIsFilters.categories, category],
+          partners: category === FilterPOICategory.PARTNERS ? [] : currentPOIsFilters.partners,
+        },
       }
     }
 

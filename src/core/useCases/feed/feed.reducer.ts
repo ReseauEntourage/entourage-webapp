@@ -280,6 +280,7 @@ export function feedReducer(
             ? defaultFeedState.filters[action.payload.type]
             : [],
         },
+        nextPageToken: null,
       }
     }
 

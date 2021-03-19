@@ -4,7 +4,7 @@ import { LocationActionType } from '../location/location.actions'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
-import { formatPOIsCategories } from 'src/utils/misc'
+import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
 import { IPOIsGateway } from './IPOIsGateway'
 import { POIsActionType, actions, POIsActions } from './pois.actions'
 import { selectCurrentPOI, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
@@ -37,6 +37,11 @@ function* retrievePOIs() {
 
   yield put(actions.retrievePOIsStarted())
 
+  const categories = categoryFilters.categories.length > 0
+    ? formatPOIsCategories(categoryFilters.categories) : undefined
+  const partners = categoryFilters.partners.length > 0
+    ? formatPOIsPartners(categoryFilters.partners) : undefined
+
   const response: CallReturnType<typeof poisGateway.retrievePOIs> = yield call(
     poisGateway.retrievePOIs,
     {
@@ -45,7 +50,8 @@ function* retrievePOIs() {
           center,
           zoom: calculateDistanceFromZoom(zoom),
         },
-        categories: formatPOIsCategories(categoryFilters),
+        categories,
+        partners,
       },
     },
   )

@@ -1,7 +1,7 @@
 import {
   ActionFromMapObject,
   ActionsFromMapObject,
-  FilterPOICategory,
+  FilterPOICategory, FilterPOIPartner,
 } from 'src/utils/types'
 import { POIsState } from './pois.reducer'
 
@@ -87,7 +87,7 @@ function removeCurrentPOIUuid() {
   }
 }
 
-function togglePOIsFilter(payload: { category: FilterPOICategory; }) {
+function togglePOIsFilter(payload: { category: FilterPOICategory; partner?: FilterPOIPartner; }) {
   return {
     type: POIsActionType.TOGGLE_POIS_FILTER,
     payload,

@@ -3,8 +3,8 @@ import { PartialAppDependencies } from '../Dependencies'
 import { locationActions, LocationState, selectLocation } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
-import { formatPOIsCategories } from 'src/utils/misc'
-import { FilterPOICategory } from 'src/utils/types'
+import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
+import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { fakePOIsData } from './__mocks__'
 
@@ -92,7 +92,7 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedPOIsFilters = defaultPOIsState.filters.filter((i) => i !== FilterPOICategory.OTHER)
+    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.OTHER)
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
@@ -110,27 +110,118 @@ describe('POIs', () => {
     Given initial state
     When user init POIs
       And user toggles an already toggled POI filter
+      And user toggles an non toggled partner filter
     Then store should be update with new POIs filters values
       And isActiveFilter selector should be disabled for the specific filter
       And POIs should be fetched
       And should retrieve POIs gateway method have been called with POIs filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
     const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
 
     store.dispatch(publicActions.init())
+
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+    store.dispatch(publicActions.togglePOIsFilter({
+      category: FilterPOICategory.PARTNERS,
+      partner: FilterPOIPartner.DONATIONS,
+    }))
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
 
     store.dispatch(publicActions.togglePOIsFilter({
       category: FilterPOICategory.OTHER,
     }))
 
-    const expectedPOIsFilters = defaultPOIsState.filters.filter((i) => i !== FilterPOICategory.OTHER)
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
 
-    expect(selectPOIsFilters(store.getState())).toEqual(expectedPOIsFilters)
+    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.OTHER)
+
+    expect(selectPOIsFilters(store.getState())).toEqual({
+      categories: expectedPOIsFilters,
+      partners: [FilterPOIPartner.DONATIONS],
+    })
+
     expect(selectIsActiveFilter(
       store.getState(),
       FilterPOICategory.OTHER,
+    )).toBeFalsy()
+
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.PARTNERS,
+      FilterPOIPartner.DONATIONS,
+    )).toBeTruthy()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(2)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories(expectedPOIsFilters),
+        partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
+      },
+    })
+  })
+
+  it(`
+    Given initial state
+      And the partner filters are toggled
+    When user init POIs
+      And user toggles the already toggled partner category filter
+    Then store should be update with new POIs filters values
+      And isActiveFilter selector should be disabled for the specific filter
+      And isActiveFilter selector should be disabled for all partner filters
+      And POIs should be fetched
+      And should retrieve POIs gateway method have been called with POIs filters values
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({
+      initialAppState: {
+        ...defaultInitialAppState,
+        pois: {
+          ...defaultPOIsState,
+          filters: {
+            ...defaultPOIsState.filters,
+            partners: [
+              FilterPOIPartner.DONATIONS,
+              FilterPOIPartner.VOLUNTEERS,
+            ],
+          },
+        },
+      },
+      dependencies: { poisGateway },
+    })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.togglePOIsFilter({
+      category: FilterPOICategory.PARTNERS,
+    }))
+
+    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.PARTNERS)
+
+    expect(selectPOIsFilters(store.getState())).toEqual({
+      categories: expectedPOIsFilters,
+      partners: [],
+    })
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.PARTNERS,
+    )).toBeFalsy()
+
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.PARTNERS,
+      FilterPOIPartner.DONATIONS,
     )).toBeFalsy()
 
     poisGateway.retrievePOIs.resolveDeferredValue()
@@ -144,6 +235,79 @@ describe('POIs', () => {
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
         categories: formatPOIsCategories(expectedPOIsFilters),
+      },
+    })
+  })
+
+  it(`
+    Given initial state
+      And the partner category filter is not toggled
+    When user init POIs
+      And user toggles the one of the partners filters
+    Then store should be update with new POIs filters values
+      And isActiveFilter selector should be enabled for the specific partner filter
+      And isActiveFilter selector should be enabled for the partner category filter
+      And POIs should be fetched
+      And should retrieve POIs gateway method have been called with POIs filters values
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const initialFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.PARTNERS)
+
+    const store = configureStoreWithPOIs({
+      initialAppState: {
+        ...defaultInitialAppState,
+        pois: {
+          ...defaultPOIsState,
+          filters: {
+            ...defaultPOIsState.filters,
+            categories: initialFilters,
+          },
+        },
+      },
+      dependencies: { poisGateway },
+    })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.togglePOIsFilter({
+      category: FilterPOICategory.PARTNERS,
+      partner: FilterPOIPartner.DONATIONS,
+    }))
+
+    expect(selectPOIsFilters(store.getState())).toEqual({
+      categories: [
+        ...initialFilters,
+        FilterPOICategory.PARTNERS,
+      ],
+      partners: [FilterPOIPartner.DONATIONS],
+    })
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.PARTNERS,
+    )).toBeTruthy()
+
+    expect(selectIsActiveFilter(
+      store.getState(),
+      FilterPOICategory.PARTNERS,
+      FilterPOIPartner.DONATIONS,
+    )).toBeTruthy()
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories([
+          ...initialFilters,
+          FilterPOICategory.PARTNERS,
+        ]),
+        partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
       },
     })
   })
@@ -305,7 +469,7 @@ describe('POIs', () => {
           center: defaultLocationState.center,
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters),
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -342,7 +506,7 @@ describe('POIs', () => {
           center: nextLocation.center,
           zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters),
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
