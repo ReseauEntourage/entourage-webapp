@@ -21,6 +21,25 @@ export const texts = {
       skill: 'Offrir une compétence',
       social: 'Passer du temps avec une personne',
     },
+    pois: {
+      other: 'Autre',
+      eating: 'Se nourrir',
+      sleeping: 'Se loger',
+      healing: 'Se soigner',
+      orientation: 'S\'orienter',
+      reintegration: 'Se réinsérer',
+      partners: 'Partenaires',
+      toilets: 'Toilettes',
+      fountains: 'Fontaines',
+      showers: 'Douches',
+      laundries: 'Laveries',
+      well_being: 'Bien-être & activités',
+      clothes: 'Vêtements & matériels',
+      cloakroom: 'Bagageries',
+      donation_box: 'Boîtes à dons & lire',
+      donations: 'Recherchant des dons',
+      volunteers: 'Recherchant des bénévoles',
+    },
   },
   form: {
     REQUIRED: 'Champs requis',
@@ -79,6 +98,12 @@ export const texts = {
         },
         ask_for_help: {
           title: 'Voir les demandes concernant',
+        },
+        partners: {
+          title: 'Associations et services actifs\n sur Entourage',
+        },
+        categories: {
+          title: 'Catégories',
         },
       },
       rightCards: {

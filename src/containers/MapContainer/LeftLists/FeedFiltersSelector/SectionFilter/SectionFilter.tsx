@@ -6,10 +6,11 @@ import { LineFilter } from './LineFilter'
 
 interface SectionFilterProps {
   type: FilterEntourageType;
+  color: string;
 }
 
 export function SectionFilter(props: SectionFilterProps) {
-  const { type } = props
+  const { type, color } = props
   return (
     <S.SectionContainer>
       <HeadFilter
@@ -23,7 +24,9 @@ export function SectionFilter(props: SectionFilterProps) {
           FilterFeedCategory.OTHER,
         ].map((category, i) => (
           <LineFilter
+            key={category}
             category={category}
+            color={color}
             index={i + 1}
             type={type}
           />

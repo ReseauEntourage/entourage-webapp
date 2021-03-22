@@ -12,13 +12,18 @@ import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
 
-export function SearchCity() {
+interface SearchCityProps {
+  filter?: JSX.Element;
+}
+
+export function SearchCity(props: SearchCityProps) {
+  const { filter } = props
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
-
   const feedIsIdle = useSelector(selectFeedIsIdle)
   const poisIsIdle = useSelector(selectPOIsIsIdle)
+
   const defaultValue = position.displayAddress
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
@@ -60,13 +65,18 @@ export function SearchCity() {
 
   return (
     <S.Container>
-      <GoogleMapLocation
-        defaultValue={defaultValue}
-        inputValue={position.displayAddress}
-        onChange={onChange}
-        onClickCurrentPosition={onClickCurrentPosition}
-        textFieldProps={{}}
-      />
+      <S.SearchContainer>
+        <GoogleMapLocation
+          defaultValue={defaultValue}
+          inputValue={position.displayAddress}
+          onChange={onChange}
+          onClickCurrentPosition={onClickCurrentPosition}
+          textFieldProps={{}}
+        />
+      </S.SearchContainer>
+      <S.FilterContainer>
+        {filter}
+      </S.FilterContainer>
     </S.Container>
   )
 }

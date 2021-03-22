@@ -86,13 +86,13 @@ describe('POIs', () => {
     store.dispatch(publicActions.init())
 
     store.dispatch(publicActions.togglePOIsFilter({
-      category: FilterPOICategory.OTHER,
+      category: FilterPOICategory.EATING,
     }))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.OTHER)
+    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.EATING)
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
@@ -134,13 +134,13 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
 
     store.dispatch(publicActions.togglePOIsFilter({
-      category: FilterPOICategory.OTHER,
+      category: FilterPOICategory.EATING,
     }))
 
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.OTHER)
+    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.EATING)
 
     expect(selectPOIsFilters(store.getState())).toEqual({
       categories: expectedPOIsFilters,
@@ -149,7 +149,7 @@ describe('POIs', () => {
 
     expect(selectIsActiveFilter(
       store.getState(),
-      FilterPOICategory.OTHER,
+      FilterPOICategory.EATING,
     )).toBeFalsy()
 
     expect(selectIsActiveFilter(

@@ -3,28 +3,29 @@
  */
 
 export const FilterPOICategory = {
-  OTHER: 'OTHER',
-  EATING: 'EATING',
-  SLEEPING: 'SLEEPING',
-  HEALING: 'HEALING',
-  ORIENTATION: 'ORIENTATION',
-  REINTEGRATION: 'REINTEGRATION',
-  PARTNERS: 'PARTNERS',
-  TOILETS: 'TOILETS',
-  FOUNTAINS: 'FOUNTAINS',
-  SHOWERS: 'SHOWERS',
-  LAUNDRIES: 'LAUNDRIES',
-  WELL_BEING: 'WELL_BEING',
-  CLOTHES: 'CLOTHES',
-  DONATION_BOX: 'DONATION_BOX',
-  CLOAKROOM: 'CLOAKROOM',
+  EATING: 'eating',
+  SLEEPING: 'sleeping',
+  HEALING: 'healing',
+  ORIENTATION: 'orientation',
+  REINTEGRATION: 'reintegration',
+  PARTNERS: 'partners',
+  TOILETS: 'toilets',
+  FOUNTAINS: 'fountains',
+  SHOWERS: 'showers',
+  LAUNDRIES: 'laundries',
+  WELL_BEING: 'well_being',
+  CLOTHES: 'clothes',
+  DONATION_BOX: 'donation_box',
+  CLOAKROOM: 'cloakroom',
 } as const
 
-export type FilterPOICategory = keyof typeof FilterPOICategory
+type FilterPOICategoryKeys = keyof typeof FilterPOICategory
+export type FilterPOICategory = typeof FilterPOICategory[FilterPOICategoryKeys]
 
 export const FilterPOIPartner = {
-  VOLUNTEERS: 'VOLUNTEERS',
-  DONATIONS: 'DONATIONS',
+  VOLUNTEERS: 'volunteers',
+  DONATIONS: 'donations',
 } as const
 
-export type FilterPOIPartner = keyof typeof FilterPOIPartner
+type FilterPOIPartnerKeys = keyof typeof FilterPOIPartner
+export type FilterPOIPartner = typeof FilterPOIPartner[FilterPOIPartnerKeys]

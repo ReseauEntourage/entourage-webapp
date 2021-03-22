@@ -33,7 +33,7 @@ export const Icon = styled.div<ElementProps & { color: string; }>`
   `}
 `
 
-export const Label = styled.div<ElementProps>`
+export const Label = styled(Typography)<ElementProps>`
   grid-area: label;
   display: flex;
   align-items: center;
@@ -46,7 +46,6 @@ export const Switch = styled.div<ElementProps>`
   grid-area: switch;
   align-items: center;
   justify-content: center;
-  display: flex;
   ${({ index }) => `
     grid-row: ${index + 1} / ${index + 2};
   `}

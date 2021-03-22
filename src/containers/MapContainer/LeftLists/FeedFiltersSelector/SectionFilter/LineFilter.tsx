@@ -12,10 +12,11 @@ export interface LineFilterProps {
   index: number;
   type: FilterEntourageType;
   category: FilterFeedCategory;
+  color: string;
 }
 
 export function LineFilter(props: LineFilterProps) {
-  const { index, type, category } = props
+  const { index, type, category, color } = props
   const CategoryIcon = feedItemCategoryIcons[category] || feedItemCategoryIcons.other
 
   const dispatch = useDispatch()
@@ -30,7 +31,7 @@ export function LineFilter(props: LineFilterProps) {
 
   return (
     <>
-      <S.Icon index={index}><CategoryIcon color="primary" /></S.Icon>
+      <S.Icon color={color} index={index}><CategoryIcon /></S.Icon>
       <S.Label index={index}>{label}</S.Label>
       <S.Switch index={index}><Switch checked={checked} color="primary" onChange={onChange} /></S.Switch>
     </>

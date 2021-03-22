@@ -2,12 +2,13 @@ import Divider from '@material-ui/core/Divider'
 import Menu from '@material-ui/core/Menu'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
-import { colors, variants } from 'src/styles'
-import { FilterEntourageType } from 'src/utils/types'
-import * as S from './FeedFiltersSelector.styles'
+import { variants } from 'src/styles'
+import { FilterPOICategory } from 'src/utils/types'
+import * as S from './POIsFiltersSelector.styles'
+import { Section2Filter } from './SectionFilter/Section2Filter'
 import { SectionFilter } from './SectionFilter/SectionFilter'
 
-export function FeedFiltersSelector() {
+export function POIsFiltersSelector() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
@@ -47,9 +48,9 @@ export function FeedFiltersSelector() {
       >
         <S.MenuContainer>
           <Typography component="div" variant={variants.bodyRegular}>
-            <SectionFilter color={colors.main.primary} type={FilterEntourageType.ASK_FOR_HELP} />
+            <SectionFilter category={FilterPOICategory.PARTNERS} />
             <Divider />
-            <SectionFilter color={colors.main.blue} type={FilterEntourageType.CONTRIBUTION} />
+            <Section2Filter />
           </Typography>
         </S.MenuContainer>
       </Menu>

@@ -7,7 +7,7 @@ import { texts } from 'src/i18n'
 import * as S from './Filter.styles'
 import { LineFilterProps } from './LineFilter'
 
-export function HeadFilter(props: Omit<LineFilterProps, 'category'>) {
+export function HeadFilter(props: Omit<LineFilterProps, 'category' | 'color'>) {
   const { index, type } = props
   const dispatch = useDispatch()
 

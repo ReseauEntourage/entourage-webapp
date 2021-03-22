@@ -61,7 +61,6 @@ export const defaultPOIsState: POIsState = {
   isIdle: true,
   filters: {
     categories: [
-      FilterPOICategory.OTHER,
       FilterPOICategory.EATING,
       FilterPOICategory.SLEEPING,
       FilterPOICategory.HEALING,

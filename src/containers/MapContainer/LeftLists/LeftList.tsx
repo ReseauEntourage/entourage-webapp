@@ -16,8 +16,7 @@ export function LeftList(props: LeftListProps) {
   return (
     <S.Container>
       <S.SearchContainer>
-        <SearchCity />
-        {filter}
+        <SearchCity filter={filter} />
       </S.SearchContainer>
       <S.ListContainer
         boxShadow={4}
