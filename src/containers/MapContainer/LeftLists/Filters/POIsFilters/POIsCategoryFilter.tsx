@@ -1,6 +1,6 @@
-import Switch from '@material-ui/core/Switch'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { LineFilter } from '../LineFilter'
 import { selectIsActiveFilter, poisActions } from 'src/core/useCases/pois'
 
 import { AppState } from 'src/core/useCases/reducers'
@@ -12,7 +12,6 @@ import {
   poisCategoriesFilterResolver,
 } from 'src/utils/misc'
 import { FilterPOICategory } from 'src/utils/types'
-import * as S from './Filter.styles'
 
 export interface LineFilterProps {
   index: number;
@@ -20,7 +19,7 @@ export interface LineFilterProps {
   title?: boolean;
 }
 
-export function LineFilter(props: LineFilterProps) {
+export function POIsCategoryFilter(props: LineFilterProps) {
   const { index, category, title = false } = props
   const categoryId = poisCategoriesFilterResolver[category]
   const CategoryIcon = poiIcons[categoryId] || poiIcons[0]
@@ -37,10 +36,14 @@ export function LineFilter(props: LineFilterProps) {
   const color = colors.pois[categoryId] ?? colors.pois[0]
 
   return (
-    <>
-      <S.Icon color={color} index={index}><CategoryIcon /></S.Icon>
-      <S.Label index={index} variant={title ? variants.title2 : variants.bodyRegular}>{label}</S.Label>
-      <S.Switch index={index}><Switch checked={checked} color="primary" onChange={onChange} /></S.Switch>
-    </>
+    <LineFilter
+      checked={checked}
+      Icon={CategoryIcon}
+      iconColor={color}
+      index={index}
+      label={label}
+      onChange={onChange}
+      variant={title ? variants.title2 : variants.bodyRegular}
+    />
   )
 }

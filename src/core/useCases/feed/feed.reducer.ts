@@ -269,6 +269,7 @@ export function feedReducer(
               ? currentFeedFilters.filter((i) => i !== action.payload.category)
               : [...currentFeedFilters, action.payload.category],
           },
+          nextPageToken: null,
         }
       }
 

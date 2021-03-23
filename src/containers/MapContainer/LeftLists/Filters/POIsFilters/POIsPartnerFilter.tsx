@@ -1,13 +1,12 @@
-import Switch from '@material-ui/core/Switch'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { LineFilter } from '../LineFilter'
 import { poisActions, selectIsActiveFilter } from 'src/core/useCases/pois'
 
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
-import * as S from './Filter.styles'
 
 interface TextFilterProps {
   index: number;
@@ -15,7 +14,7 @@ interface TextFilterProps {
   partner: FilterPOIPartner;
 }
 
-export function TextFilter(props: TextFilterProps) {
+export function POIsPartnerFilter(props: TextFilterProps) {
   const { index, category, partner } = props
   const dispatch = useDispatch()
 
@@ -29,9 +28,12 @@ export function TextFilter(props: TextFilterProps) {
   const label = texts.types.pois[partner]
 
   return (
-    <>
-      <S.Label index={index} variant={variants.bodyRegular}>{label}</S.Label>
-      <S.Switch index={index}><Switch checked={checked} onChange={onChange} /></S.Switch>
-    </>
+    <LineFilter
+      checked={checked}
+      index={index}
+      label={label}
+      onChange={onChange}
+      variant={variants.bodyRegular}
+    />
   )
 }

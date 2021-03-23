@@ -8,16 +8,17 @@ import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { useFirebase } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsNumber, assertIsString } from 'src/utils/misc'
+import { Filters } from './Filters/Filters'
 import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
 
 interface SearchCityProps {
-  filter?: JSX.Element;
+  filters?: JSX.Element;
 }
 
 export function SearchCity(props: SearchCityProps) {
-  const { filter } = props
+  const { filters } = props
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
@@ -71,11 +72,11 @@ export function SearchCity(props: SearchCityProps) {
           inputValue={position.displayAddress}
           onChange={onChange}
           onClickCurrentPosition={onClickCurrentPosition}
-          textFieldProps={{}}
+          textFieldProps={{ margin: 'none' }}
         />
       </S.SearchContainer>
       <S.FilterContainer>
-        {filter}
+        <Filters filters={filters} />
       </S.FilterContainer>
     </S.Container>
   )

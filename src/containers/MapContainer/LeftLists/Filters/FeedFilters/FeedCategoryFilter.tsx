@@ -1,12 +1,11 @@
-import Switch from '@material-ui/core/Switch'
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { LineFilter } from '../LineFilter'
 import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { feedItemCategoryIcons } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
-import * as S from './Filter.styles'
 
 export interface LineFilterProps {
   index: number;
@@ -15,7 +14,7 @@ export interface LineFilterProps {
   color: string;
 }
 
-export function LineFilter(props: LineFilterProps) {
+export function FeedCategoryFilter(props: LineFilterProps) {
   const { index, type, category, color } = props
   const CategoryIcon = feedItemCategoryIcons[category] || feedItemCategoryIcons.other
 
@@ -30,10 +29,13 @@ export function LineFilter(props: LineFilterProps) {
   const label = texts.types[categoryTextKey][category]
 
   return (
-    <>
-      <S.Icon color={color} index={index}><CategoryIcon /></S.Icon>
-      <S.Label index={index}>{label}</S.Label>
-      <S.Switch index={index}><Switch checked={checked} color="primary" onChange={onChange} /></S.Switch>
-    </>
+    <LineFilter
+      checked={checked}
+      Icon={CategoryIcon}
+      iconColor={color}
+      index={index}
+      label={label}
+      onChange={onChange}
+    />
   )
 }

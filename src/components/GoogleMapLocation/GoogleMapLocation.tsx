@@ -142,9 +142,10 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
             startAdornment: (
               <InputAdornment position="start">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label="get geolocation"
                   onClick={onClickCurrentPosition}
                   onMouseDown={handleMouseDownCurrentPosition}
+                  size="small"
                 >
                   <GpsFixedIcon />
                 </IconButton>

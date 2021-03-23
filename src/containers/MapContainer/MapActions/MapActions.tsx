@@ -1,6 +1,6 @@
 import React from 'react'
-import { FeedFiltersSelector } from '../LeftLists/FeedFiltersSelector'
 import { FeedList } from '../LeftLists/FeedList'
+import { FeedFilters } from '../LeftLists/Filters/FeedFilters'
 import { FeedItemCards } from '../RightCards/FeedItemCards'
 import { useActionId } from '../useActionId'
 import { MapContainer } from 'src/containers/MapContainer'
@@ -18,7 +18,7 @@ export function MapActions() {
   return (
     <MapContainer
       cards={cards}
-      filter={<FeedFiltersSelector />}
+      filters={<FeedFilters />}
       isLoading={isLoading}
       list={<FeedList />}
       markers={feedsMarkersContent}

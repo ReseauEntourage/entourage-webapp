@@ -1,6 +1,7 @@
 import Typography from '@material-ui/core/Typography'
+import FilterListIconMUI from '@material-ui/icons/FilterList'
 import styled from 'styled-components'
-import { variants, theme } from 'src/styles'
+import { variants, theme, colors } from 'src/styles'
 
 export const SectionContainer = styled.div`
   padding-left: ${theme.spacing(2)}px;
@@ -33,7 +34,7 @@ export const Icon = styled.div<ElementProps & { color: string; }>`
   `}
 `
 
-export const Label = styled.div<ElementProps>`
+export const Label = styled(Typography)<ElementProps>`
   grid-area: label;
   display: flex;
   align-items: center;
@@ -46,7 +47,6 @@ export const Switch = styled.div<ElementProps>`
   grid-area: switch;
   align-items: center;
   justify-content: center;
-  display: flex;
   ${({ index }) => `
     grid-row: ${index + 1} / ${index + 2};
   `}
@@ -58,5 +58,26 @@ export const Title = styled(Typography).attrs(() => ({
   grid-area: title;
   display: flex;
   align-items: center;
+`
+
+export const MenuContainer = styled.div`
+  a {
+    text-decoration: none !important;
+  }
+`
+
+export const FilterListButton = styled.div`
+    outline: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: ${theme.spacing(2, 0, 2, 0)};
+`
+
+export const FilterListIcon = styled(FilterListIconMUI)`
+    color: white;
+    background-color: ${colors.main.primary};
+    padding: 2px;
+    border-radius: 14px;
 `
 

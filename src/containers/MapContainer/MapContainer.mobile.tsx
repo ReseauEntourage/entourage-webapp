@@ -9,7 +9,7 @@ import { MapContainerProps } from './index'
 export function MapContainerMobile(props: MapContainerProps) {
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
 
-  const { markers, cards, list, isLoading, filter } = props
+  const { markers, cards, list, isLoading, filters } = props
 
   if (cards) {
     return (
@@ -35,7 +35,7 @@ export function MapContainerMobile(props: MapContainerProps) {
         </S.MapContainer>
       ) : (
         <>
-          <LeftList filter={filter} isLoading={isLoading} list={list} />
+          <LeftList filters={filters} isLoading={isLoading} list={list} />
           <S.FabFeed color="primary" onClick={() => setIsMapOpen(true)} size="small" variant="extended">
             <S.NavIcon />
             {texts.content.navActions.mapButton}
