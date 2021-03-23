@@ -1,10 +1,10 @@
 import { LocationState } from '../location'
-import { FeedJoinStatus } from 'src/core/api'
+import { FeedJoinStatus, FeedTypesFilter } from 'src/core/api'
 import { FeedState, FeedItem } from './feed.reducer'
 
 interface FeedItemsFilter {
   location: Pick<LocationState, 'center' | 'zoom'>;
-  types: string;
+  types?: FeedTypesFilter;
 }
 
 export interface IFeedGateway {

@@ -50,10 +50,12 @@ export type POICategory =
   | { id: 43; name: 'Laveries'; }
   | { id: 6; name: 'Bien-être & activités'; }
   | { id: 61; name: 'Vêtements & matériels'; }
-  | { id: 63; name: 'Bagageries'; }
   | { id: 62; name: 'Boîtes à dons & lire'; }
+  | { id: 63; name: 'Bagageries'; }
 
 export type POISource = 'entourage' | 'soliguide'
+
+export type POIPartnersTypes = 'donations' | 'volunteers'
 
 export interface POIItem {
   uuid: string;
@@ -86,6 +88,14 @@ export interface POIDetailsItem {
 }
 
 /**
+ * Values splitted by coma: donations,volunteers
+ *
+ * 'donations'
+ * 'volunteers'
+ */
+export type POIPartnersFilters = string
+
+/**
  * Values splited by coma: 1,2,3,4,5,6,7
  *
  * 0 = 'Autre'
@@ -101,8 +111,8 @@ export interface POIDetailsItem {
  * 43 = 'Laveries'
  * 6 = 'Bien-être & activités'
  * 61 = 'Vêtements & matériels'
- * 63 = 'Bagageries'
  * 62 = 'Boîtes à dons & lire'
+ * 63 = 'Bagageries'
  *
  */
 export type POICategoriesIds = string

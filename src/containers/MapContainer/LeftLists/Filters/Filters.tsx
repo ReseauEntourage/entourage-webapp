@@ -1,13 +1,15 @@
-import Divider from '@material-ui/core/Divider'
 import Menu from '@material-ui/core/Menu'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { variants } from 'src/styles'
-import { FilterEntourageType } from 'src/utils/types'
-import * as S from './FeedFiltersSelector.styles'
-import { SectionFilter } from './SectionFilter/SectionFilter'
+import * as S from './Filters.styles'
 
-export function FeedFiltersSelector() {
+interface FiltersProps {
+  filters?: JSX.Element;
+}
+
+export function Filters(props: FiltersProps) {
+  const { filters } = props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
@@ -47,9 +49,7 @@ export function FeedFiltersSelector() {
       >
         <S.MenuContainer>
           <Typography component="div" variant={variants.bodyRegular}>
-            <SectionFilter type={FilterEntourageType.ASK_FOR_HELP} />
-            <Divider />
-            <SectionFilter type={FilterEntourageType.CONTRIBUTION} />
+            {filters}
           </Typography>
         </S.MenuContainer>
       </Menu>

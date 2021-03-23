@@ -1,18 +1,19 @@
 import React from 'react'
+import * as S from '../Filters.styles'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
-import * as S from './Filter.styles'
-import { HeadFilter } from './HeadFilter'
-import { LineFilter } from './LineFilter'
+import { FeedCategoryFilter } from './FeedCategoryFilter'
+import { FeedTypeFilter } from './FeedTypeFilter'
 
 interface SectionFilterProps {
   type: FilterEntourageType;
+  color: string;
 }
 
-export function SectionFilter(props: SectionFilterProps) {
-  const { type } = props
+export function FeedSectionFilters(props: SectionFilterProps) {
+  const { type, color } = props
   return (
     <S.SectionContainer>
-      <HeadFilter
+      <FeedTypeFilter
         index={0}
         type={type}
       /> {
@@ -22,8 +23,10 @@ export function SectionFilter(props: SectionFilterProps) {
           FilterFeedCategory.RESOURCE,
           FilterFeedCategory.OTHER,
         ].map((category, i) => (
-          <LineFilter
+          <FeedCategoryFilter
+            key={category}
             category={category}
+            color={color}
             index={i + 1}
             type={type}
           />

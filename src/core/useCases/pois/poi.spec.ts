@@ -3,14 +3,15 @@ import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import { selectCurrentFeedItem } from '../feed'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
-import { locationSaga } from '../location/location.saga'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { formatPOIsCategories } from 'src/utils/misc'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
+import { defaultPOIsState } from './pois.reducer'
 import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
 import {
   selectPOIList,
@@ -298,11 +299,14 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOI).toHaveBeenCalledWith({ poiUuid: selectedPOIId })
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
-        center: {
-          lat: poiDetailsFromGateway.latitude,
-          lng: poiDetailsFromGateway.longitude,
+        location: {
+          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          center: {
+            lat: poiDetailsFromGateway.latitude,
+            lng: poiDetailsFromGateway.longitude,
+          },
         },
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -418,11 +422,14 @@ describe('POIs', () => {
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
-        center: {
-          lat: selectLocation(store.getState()).center.lat,
-          lng: selectLocation(store.getState()).center.lng,
+        location: {
+          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          center: {
+            lat: selectLocation(store.getState()).center.lat,
+            lng: selectLocation(store.getState()).center.lng,
+          },
         },
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -483,8 +490,11 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
-        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-        zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+        location: {
+          center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+        },
+        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })

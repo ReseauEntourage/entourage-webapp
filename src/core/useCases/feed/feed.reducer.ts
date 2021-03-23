@@ -269,6 +269,7 @@ export function feedReducer(
               ? currentFeedFilters.filter((i) => i !== action.payload.category)
               : [...currentFeedFilters, action.payload.category],
           },
+          nextPageToken: null,
         }
       }
 
@@ -280,6 +281,7 @@ export function feedReducer(
             ? defaultFeedState.filters[action.payload.type]
             : [],
         },
+        nextPageToken: null,
       }
     }
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
+import { POIsFilters } from '../LeftLists/Filters/POIsFilters'
 import { POIList } from '../LeftLists/POIList'
 import { POICards } from '../RightCards/POICards/POICards'
 import { usePOIId } from '../usePOIId'
@@ -20,6 +21,7 @@ export function MapPOIs() {
   return (
     <MapContainer
       cards={cards}
+      filters={<POIsFilters />}
       isLoading={isLoading}
       list={<POIList />}
       markers={poisMarkersContent}

@@ -1,16 +1,11 @@
 import Head from 'next/head'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { texts } from '../i18n'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
 const Home: StatelessPage<Props> = () => {
-  useEffect(() => {
-    // temp hard redirection
-    window.location.href = '/actions'
-  }, [])
-
   return (
     <>
       <Head>

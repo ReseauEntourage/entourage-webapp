@@ -3,7 +3,7 @@ import { Cities, entourageCities, locationActions, selectLocation, selectLocatio
 import { LocationActionType } from '../location/location.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
-import { formatTypes } from 'src/utils/misc'
+import { formatFeedTypes } from 'src/utils/misc'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
 import { selectCurrentFeedItem, selectFeed, selectFeedIsIdle } from './feed.selectors'
@@ -26,7 +26,7 @@ function* retrieveFeed() {
 
   yield put(actions.retrieveFeedStarted())
 
-  const types = formatTypes(typeFilters)
+  const types = formatFeedTypes(typeFilters)
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
@@ -51,7 +51,8 @@ function* retrieveFeedNextPage() {
 
   yield put(actions.retrieveFeedNextPageStarted())
 
-  const types = formatTypes(typeFilters)
+  const types = typeFilters.contribution.length > 0 && typeFilters.ask_for_help.length > 0
+    ? formatFeedTypes(typeFilters) : undefined
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {

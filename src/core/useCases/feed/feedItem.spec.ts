@@ -7,11 +7,12 @@ import { defaultLocationState } from '../location/location.reducer'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { formatFeedTypes } from 'src/utils/misc'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentFeedItem,
@@ -410,7 +411,7 @@ describe('Feed Item', () => {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
           zoom: selectLocation(store.getState()).zoom,
         },
-        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs',
+        types: formatFeedTypes(defaultFeedState.filters),
       },
     })
   })

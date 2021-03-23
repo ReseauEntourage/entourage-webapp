@@ -8,17 +8,23 @@ import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { useFirebase } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsNumber, assertIsString } from 'src/utils/misc'
+import { Filters } from './Filters/Filters'
 import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
 
-export function SearchCity() {
+interface SearchCityProps {
+  filters?: JSX.Element;
+}
+
+export function SearchCity(props: SearchCityProps) {
+  const { filters } = props
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
-
   const feedIsIdle = useSelector(selectFeedIsIdle)
   const poisIsIdle = useSelector(selectPOIsIsIdle)
+
   const defaultValue = position.displayAddress
 
   const onChange = useCallback(async (value: GoogleMapLocationValue) => {
@@ -60,13 +66,18 @@ export function SearchCity() {
 
   return (
     <S.Container>
-      <GoogleMapLocation
-        defaultValue={defaultValue}
-        inputValue={position.displayAddress}
-        onChange={onChange}
-        onClickCurrentPosition={onClickCurrentPosition}
-        textFieldProps={{}}
-      />
+      <S.SearchContainer>
+        <GoogleMapLocation
+          defaultValue={defaultValue}
+          inputValue={position.displayAddress}
+          onChange={onChange}
+          onClickCurrentPosition={onClickCurrentPosition}
+          textFieldProps={{ margin: 'none' }}
+        />
+      </S.SearchContainer>
+      <S.FilterContainer>
+        <Filters filters={filters} />
+      </S.FilterContainer>
     </S.Container>
   )
 }
