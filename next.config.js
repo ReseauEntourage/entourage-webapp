@@ -16,6 +16,7 @@ module.exports = withCSS({
     API_KEY: process.env.API_KEY,
     GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
     SENTRY_DSN: process.env.SENTRY_DSN,
+    ADMIN_ASSO_URL: process.env.ADMIN_ASSO_URL,
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
     FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
