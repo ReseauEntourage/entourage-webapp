@@ -28,7 +28,7 @@ export function usePOIMarkers() {
           href="/pois/[poiId]"
         >
           <MaterialLink
-            onClick={() => sendEvent('Action__POIs_MapItem')}
+            onClick={() => sendEvent('Action__POIs__MapItem')}
             style={{
               textDecoration: 'none',
             }}

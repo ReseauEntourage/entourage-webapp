@@ -168,6 +168,11 @@ export const texts = {
       close: 'Fermer',
       error: 'Veuillez renseigner une raison',
       reason: 'Je ne suis pas intéressé car ...',
+      dismissReasons: {
+        alreadyParticipated: 'J’ai déja participé à l’atelier en ligne',
+        notInterested: 'Je ne suis pas intéressé par l’atelier',
+        wantToDiscover: 'Je veux juste découvrir le site Entourage',
+      },
     },
     modalEditAction: {
       titleCreate: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
