@@ -3,8 +3,8 @@ import MenuItem from '@material-ui/core/MenuItem'
 import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
-import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
+import { env } from 'src/core/env'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { useOnClickLogout } from './useOnClickLogout'
@@ -29,7 +29,7 @@ export function LoggedChunk() {
   }, [])
 
   const openAdminAsso = useCallback(() => {
-    window.open(constants.ADMIN_ASSO_LINK + authToken, '_blank')
+    window.open(env.ADMIN_ASSO_URL + authToken, '_blank')
   }, [authToken])
 
   const onClickLogout = useOnClickLogout()
