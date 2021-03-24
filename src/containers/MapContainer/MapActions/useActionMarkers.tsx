@@ -24,7 +24,7 @@ export function useActionMarkers() {
           href="/actions/[actionId]"
         >
           <MaterialLink
-            onClick={() => sendEvent('Action__Feed_MapItem')}
+            onClick={() => sendEvent('Action__Feed__MapItem')}
             style={{
               textDecoration: 'none',
             }}

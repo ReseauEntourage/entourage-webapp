@@ -22,7 +22,7 @@ type Errors = Partial<Record<string, FieldError>>
 interface SelectProps extends SelectBaseProps {
   formErrors?: Errors;
   label: string;
-  options: OptionWithGroup[];
+  options: (OptionWithGroup | OptionWithoutGroup)[];
 }
 
 function renderOptions(options: OptionWithoutGroup[]) {
@@ -55,7 +55,8 @@ export function Select(props: SelectProps) {
   return (
     <FormControl
       error={!!formError}
-      margin="normal"
+      fullWidth={restProps.fullWidth}
+      margin={restProps.margin ?? 'normal'}
       variant="outlined"
     >
       <InputLabel
@@ -71,17 +72,20 @@ export function Select(props: SelectProps) {
         {...restProps}
       >
         <option value="">&nbsp;</option>
-        {options.map((option) => {
-          if (option.options) {
-            return (
-              <optgroup key={option.label} label={option.label}>
-                {renderOptions(option.options)}
-              </optgroup>
-            )
-          }
+        {
+          options.map((option) => {
+            const subOptions = (option as OptionWithGroup)
+            if (subOptions.options) {
+              return (
+                <optgroup key={option.label} label={option.label}>
+                  {renderOptions(subOptions.options as OptionWithoutGroup[])}
+                </optgroup>
+              )
+            }
 
-          return renderOptions(option.options)
-        })}
+            return renderOptions([option] as OptionWithoutGroup[])
+          })
+        }
       </SelectBase>
       {formError && (
         <FormHelperText>{helperTextError(formError)}</FormHelperText>
