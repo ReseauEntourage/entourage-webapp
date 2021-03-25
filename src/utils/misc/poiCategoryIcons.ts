@@ -13,11 +13,13 @@ import {
   Restaurant,
   Spa,
   Stars,
-  SvgIconComponent, Wc,
+  SvgIconComponent,
+  Wc,
 } from '@material-ui/icons'
 import { POICategory } from 'src/core/api'
+import { texts } from 'src/i18n'
 
-export const poiIcons: Record<POICategory['id'], SvgIconComponent> = {
+export const poiIcons: Record<POICategory, SvgIconComponent> = {
   0: MoreHoriz,
   1: Restaurant,
   2: Home,
@@ -35,20 +37,20 @@ export const poiIcons: Record<POICategory['id'], SvgIconComponent> = {
   62: CardGiftcard,
 }
 
-export const poiLabels: Record<POICategory['id'], POICategory['name']> = {
-  0: 'Autre',
-  1: 'Se nourrir',
-  2: 'Se loger',
-  3: 'Se soigner',
-  5: 'S\'orienter',
-  7: 'Se réinsérer',
-  8: 'Partenaires',
-  40: 'Toilettes',
-  41: 'Fontaines',
-  42: 'Douches',
-  43: 'Laveries',
-  6: 'Bien-être & activités',
-  61: 'Vêtements & matériels',
-  63: 'Bagageries',
-  62: 'Boîtes à dons & lire',
+export const poiLabels: Record<POICategory, string> = {
+  0: texts.types.pois.other,
+  1: texts.types.pois.eating,
+  2: texts.types.pois.sleeping,
+  3: texts.types.pois.healing,
+  5: texts.types.pois.orientation,
+  7: texts.types.pois.reintegration,
+  8: texts.types.pois.partners,
+  40: texts.types.pois.toilets,
+  41: texts.types.pois.fountains,
+  42: texts.types.pois.showers,
+  43: texts.types.pois.laundries,
+  6: texts.types.pois.well_being,
+  61: texts.types.pois.clothes,
+  62: texts.types.pois.donation_box,
+  63: texts.types.pois.cloakroom,
 }

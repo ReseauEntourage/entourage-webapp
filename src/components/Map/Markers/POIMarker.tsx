@@ -17,7 +17,7 @@ function getSize(zoom: number): number {
 }
 
 interface Props {
-  category: POICategory['id'];
+  category: POICategory;
   isActive: boolean;
   tooltip?: string;
 }

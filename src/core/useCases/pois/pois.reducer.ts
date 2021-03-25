@@ -11,7 +11,7 @@ export interface POI {
   address: string;
   phone: string | null;
   partnerId: string | null;
-  categoryId: POICategory['id'];
+  categoryId: POICategory;
 }
 
 export interface POIDetails {
@@ -22,7 +22,7 @@ export interface POIDetails {
   address: string;
   phone: string | null;
   description: string | null;
-  categoryIds: POICategory['id'][];
+  categoryIds: POICategory[];
   partnerId: string | null;
   website: string | null;
   email: string | null;
@@ -60,22 +60,7 @@ export const defaultPOIsState: POIsState = {
   selectedPOIUuid: null,
   isIdle: true,
   filters: {
-    categories: [
-      FilterPOICategory.EATING,
-      FilterPOICategory.SLEEPING,
-      FilterPOICategory.HEALING,
-      FilterPOICategory.ORIENTATION,
-      FilterPOICategory.REINTEGRATION,
-      FilterPOICategory.PARTNERS,
-      FilterPOICategory.TOILETS,
-      FilterPOICategory.FOUNTAINS,
-      FilterPOICategory.SHOWERS,
-      FilterPOICategory.LAUNDRIES,
-      FilterPOICategory.WELL_BEING,
-      FilterPOICategory.CLOTHES,
-      FilterPOICategory.DONATION_BOX,
-      FilterPOICategory.CLOAKROOM,
-    ],
+    categories: [],
     partners: [],
   },
 }
@@ -168,6 +153,15 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
             ? currentPOIsFilters.categories.filter((i) => i !== category)
             : [...currentPOIsFilters.categories, category],
           partners: category === FilterPOICategory.PARTNERS ? [] : currentPOIsFilters.partners,
+        },
+      }
+    }
+
+    case POIsActionType.RESET_POIS_FILTERS: {
+      return {
+        ...state,
+        filters: {
+          ...defaultPOIsState.filters,
         },
       }
     }

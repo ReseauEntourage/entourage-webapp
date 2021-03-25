@@ -10,7 +10,7 @@ export const SectionContainer = styled.div`
   grid-template-rows: 1fr 1fr 1fr;
   grid-gap: ${theme.spacing(0, 2)};
   grid-template-areas:
-    'title title switch'
+    'x title switch'
     'icon label switch'
     'icon label switch'
     'icon label switch'

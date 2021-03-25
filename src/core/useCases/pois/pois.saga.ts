@@ -105,6 +105,7 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
 export function* poisSaga() {
   yield takeEvery(POIsActionType.RETRIEVE_POIS, retrievePOIs)
   yield takeEvery(POIsActionType.TOGGLE_POIS_FILTER, retrievePOIs)
+  yield takeEvery(POIsActionType.RESET_POIS_FILTERS, retrievePOIs)
 
   yield takeEvery(POIsActionType.SET_CURRENT_POI_UUID, setCurrentPOIUuid)
   while (yield take(POIsActionType.INIT_POIS)) {

@@ -29,7 +29,7 @@ export function formatFeedTypes(types: Record<FilterEntourageType, FilterFeedCat
   return filtersTab.join(',')
 }
 
-export const poisCategoriesFilterResolver: Record<FilterPOICategory, POICategory['id']> = {
+export const poisCategoriesFilterResolver: Record<FilterPOICategory, POICategory> = {
   [FilterPOICategory.EATING]: 1,
   [FilterPOICategory.SLEEPING]: 2,
   [FilterPOICategory.HEALING]: 3,

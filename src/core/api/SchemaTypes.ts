@@ -37,21 +37,21 @@ export type Location = {
 export type EntourageTypes = 'medical' | 'barehands' | 'alimentary'
 
 export type POICategory =
-  | { id: 0; name: 'Autre'; }
-  | { id: 1; name: 'Se nourrir'; }
-  | { id: 2; name: 'Se loger'; }
-  | { id: 3; name: 'Se soigner'; }
-  | { id: 5; name: 'S\'orienter'; }
-  | { id: 7; name: 'Se réinsérer'; }
-  | { id: 8; name: 'Partenaires'; }
-  | { id: 40; name: 'Toilettes'; }
-  | { id: 41; name: 'Fontaines'; }
-  | { id: 42; name: 'Douches'; }
-  | { id: 43; name: 'Laveries'; }
-  | { id: 6; name: 'Bien-être & activités'; }
-  | { id: 61; name: 'Vêtements & matériels'; }
-  | { id: 62; name: 'Boîtes à dons & lire'; }
-  | { id: 63; name: 'Bagageries'; }
+| 0
+| 1
+| 2
+| 3
+| 5
+| 7
+| 8
+| 40
+| 41
+| 42
+| 43
+| 6
+| 61
+| 62
+| 63
 
 export type POISource = 'entourage' | 'soliguide'
 
@@ -64,7 +64,7 @@ export interface POIItem {
   latitude: number;
   address: string;
   phone: string | null;
-  categoryId: POICategory['id'];
+  categoryId: POICategory;
   partnerId: string | null;
 }
 
@@ -76,7 +76,7 @@ export interface POIDetailsItem {
   address: string;
   phone: string | null;
   description: string | null;
-  categoryIds: POICategory['id'][];
+  categoryIds: POICategory[];
   partnerId: string | null;
   website: string | null;
   email: string | null;

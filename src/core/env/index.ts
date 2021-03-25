@@ -4,6 +4,7 @@ export const env = {
   GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY as string,
   SENTRY_DSN: process.env.SENTRY_DSN as string,
   ADMIN_ASSO_URL: process.env.ADMIN_ASSO_URL as string,
+  SERVER_URL: process.env.SERVER_URL as string,
   FIREBASE_API_KEY: process.env.FIREBASE_API_KEY as string,
   FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN as string,
   FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL as string,

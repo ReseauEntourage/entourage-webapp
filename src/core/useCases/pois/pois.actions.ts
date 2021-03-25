@@ -16,6 +16,7 @@ export const POIsActionType = {
   SET_CURRENT_POI_UUID: 'POIS/SET_CURRENT_POI_UUID',
   REMOVE_CURRENT_POI_UUID: 'POIS/REMOVE_CURRENT_POI_UUID',
   TOGGLE_POIS_FILTER: 'POIS/TOGGLE_POIS_FILTER',
+  RESET_POIS_FILTERS: 'POIS/RESET_POIS_FILTERS',
 } as const
 
 export type POIsActionType = keyof typeof POIsActionType;
@@ -94,6 +95,12 @@ function togglePOIsFilter(payload: { category: FilterPOICategory; partner?: Filt
   }
 }
 
+function resetPOIsFilters() {
+  return {
+    type: POIsActionType.RESET_POIS_FILTERS,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -103,6 +110,7 @@ export const publicActions = {
   setCurrentPOIUuid,
   removeCurrentPOIUuid,
   togglePOIsFilter,
+  resetPOIsFilters,
 }
 
 const privateActions = {
