@@ -22,16 +22,18 @@ export const FabFeed = styled(FabMUI)`
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;
+  padding-right: ${theme.spacing(2)}px !important;
 `
 
 export const ReturnIcon = styled(ChevronLeftIcon)`
-margin-right: ${theme.spacing(2)};
+  margin-right: ${theme.spacing(2)};
 `
 
 export const FabMap = styled(FabMUI)`
   position: absolute;
   top: ${theme.spacing(2)}px;
   left: ${theme.spacing(2)}px;
+  padding-right: ${theme.spacing(2)}px !important;
   z-index: 2;
   `
 

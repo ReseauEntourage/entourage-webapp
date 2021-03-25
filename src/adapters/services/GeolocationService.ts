@@ -7,6 +7,7 @@ export class GeolocationService implements IGeolocationService {
     const positionOptions = {
       timeout: constants.GEOLOCATION_TIMEOUT,
       maximumAge: constants.GEOLOCATION_TTL,
+      enableHighAccuracy: false,
     }
 
     if (!isSSR && 'geolocation' in navigator) {

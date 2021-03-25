@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { texts } from 'src/i18n'
-import { LeftList } from './LeftLists/LeftList'
+import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerMobile(props: MapContainerProps) {
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
-
   const { markers, cards, list, isLoading, filters } = props
+
+  const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
 
   if (cards) {
     return (
