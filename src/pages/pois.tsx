@@ -1,37 +1,22 @@
 import Head from 'next/head'
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { MapPOIs, usePOIId } from 'src/containers/MapContainer'
-import { poisActions } from 'src/core/useCases/pois'
+import React from 'react'
+import { OverlayLoader } from 'src/components/OverlayLoader'
+import { MapPOIs } from 'src/containers/MapContainer'
 import { texts } from 'src/i18n'
-import { useFirebase, useMount } from 'src/utils/hooks'
+import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
 const POIs: StatelessPage<Props> = () => {
-  const dispatch = useDispatch()
-  const poiId = usePOIId()
-  const { sendEvent } = useFirebase()
-
-  useMount(() => {
-    sendEvent('View__POIs')
-    dispatch(poisActions.init())
-    return () => {
-      dispatch(poisActions.cancel())
-    }
-  })
-
-  useEffect(() => {
-    dispatch(poisActions.setCurrentPOIUuid(poiId || null))
-  }, [poiId, dispatch])
+  const googleMapIsLoaded = useLoadGoogleMapApi()
 
   return (
     <>
       <Head>
         <title>{texts.nav.pageTitles.pois} - {texts.nav.pageTitles.main}</title>
       </Head>
-      <MapPOIs />
+      { googleMapIsLoaded ? <MapPOIs /> : <OverlayLoader /> }
     </>
   )
 }

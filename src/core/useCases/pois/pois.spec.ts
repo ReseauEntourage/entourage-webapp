@@ -17,6 +17,7 @@ import {
   selectPOIsIsFetching,
   selectPOIsIsIdle,
   selectPOIList,
+  selectAreFiltersDisabled,
 } from './pois.selectors'
 
 function configureStoreWithPOIs(
@@ -92,7 +93,63 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.EATING)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+        },
+        categories: formatPOIsCategories([FilterPOICategory.EATING]),
+      },
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init POIs
+      And user resets all filters
+    Then store should be update with new POIs filters values
+      And isActiveFilter selector should be disabled for all filters
+      And all filters should be disabled
+      And POIs should be fetched
+      And should retrieve POIs gateway method have been called with POIs filters values
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({
+      initialAppState: {
+        ...defaultInitialAppState,
+        pois: {
+          ...defaultPOIsState,
+          filters: {
+            ...defaultPOIsState.filters,
+            categories: [
+              FilterPOICategory.ORIENTATION,
+              FilterPOICategory.EATING,
+              FilterPOICategory.PARTNERS,
+              FilterPOICategory.SHOWERS,
+              FilterPOICategory.SLEEPING,
+            ],
+          },
+        },
+      },
+      dependencies: { poisGateway },
+    })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.resetPOIsFilters())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(Object.values(FilterPOICategory).map((filter) => selectIsActiveFilter(
+      store.getState(),
+      filter,
+    ))).toStrictEqual(Array(Object.values(FilterPOICategory).length).fill(false))
+
+    expect(selectAreFiltersDisabled(store.getState())).toBeTruthy()
 
     expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
@@ -101,7 +158,6 @@ describe('POIs', () => {
           center: defaultLocationState.center,
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
-        categories: formatPOIsCategories(expectedPOIsFilters),
       },
     })
   })
@@ -117,7 +173,20 @@ describe('POIs', () => {
       And should retrieve POIs gateway method have been called with POIs filters values
   `, async () => {
     const poisGateway = new TestPOIsGateway()
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+    const store = configureStoreWithPOIs({
+      initialAppState: {
+        ...defaultInitialAppState,
+        pois: {
+          ...defaultPOIsState,
+          filters: {
+            ...defaultPOIsState.filters,
+            categories: [
+              FilterPOICategory.EATING,
+            ],
+          },
+        },
+      },
+      dependencies: { poisGateway } })
 
     store.dispatch(publicActions.init())
 
@@ -140,10 +209,8 @@ describe('POIs', () => {
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.EATING)
-
     expect(selectPOIsFilters(store.getState())).toEqual({
-      categories: expectedPOIsFilters,
+      categories: [FilterPOICategory.PARTNERS],
       partners: [FilterPOIPartner.DONATIONS],
     })
 
@@ -165,7 +232,7 @@ describe('POIs', () => {
           center: defaultLocationState.center,
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
-        categories: formatPOIsCategories(expectedPOIsFilters),
+        categories: formatPOIsCategories([FilterPOICategory.PARTNERS]),
         partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
       },
     })
@@ -190,7 +257,9 @@ describe('POIs', () => {
         pois: {
           ...defaultPOIsState,
           filters: {
-            ...defaultPOIsState.filters,
+            categories: [
+              FilterPOICategory.PARTNERS,
+            ],
             partners: [
               FilterPOIPartner.DONATIONS,
               FilterPOIPartner.VOLUNTEERS,
@@ -207,10 +276,8 @@ describe('POIs', () => {
       category: FilterPOICategory.PARTNERS,
     }))
 
-    const expectedPOIsFilters = defaultPOIsState.filters.categories.filter((i) => i !== FilterPOICategory.PARTNERS)
-
     expect(selectPOIsFilters(store.getState())).toEqual({
-      categories: expectedPOIsFilters,
+      categories: [],
       partners: [],
     })
     expect(selectIsActiveFilter(
@@ -234,7 +301,6 @@ describe('POIs', () => {
           center: defaultLocationState.center,
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
-        categories: formatPOIsCategories(expectedPOIsFilters),
       },
     })
   })
@@ -469,7 +535,6 @@ describe('POIs', () => {
           center: defaultLocationState.center,
           zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -506,7 +571,6 @@ describe('POIs', () => {
           center: nextLocation.center,
           zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })

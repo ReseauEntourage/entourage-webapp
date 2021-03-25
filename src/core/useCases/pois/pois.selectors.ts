@@ -49,3 +49,7 @@ export function selectIsActiveFilter(state: AppState, category: FilterPOICategor
   return state.pois.filters.categories.includes(category)
 }
 
+export function selectAreFiltersDisabled(state: AppState) {
+  return state.pois.filters.categories.length === 0
+}
+

@@ -105,6 +105,7 @@ export const texts = {
         categories: {
           title: 'Catégories',
         },
+        disableFilters: 'Désactiver filtres',
       },
       rightCards: {
         share: 'Partager',

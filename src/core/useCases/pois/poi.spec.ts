@@ -6,12 +6,10 @@ import { selectCurrentFeedItem } from '../feed'
 import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
-import { formatPOIsCategories } from 'src/utils/misc'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
-import { defaultPOIsState } from './pois.reducer'
 import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
 import {
   selectPOIList,
@@ -306,7 +304,6 @@ describe('POIs', () => {
             lng: poiDetailsFromGateway.longitude,
           },
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -429,7 +426,6 @@ describe('POIs', () => {
             lng: selectLocation(store.getState()).center.lng,
           },
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })
@@ -494,7 +490,6 @@ describe('POIs', () => {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
           zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
         },
-        categories: formatPOIsCategories(defaultPOIsState.filters.categories),
       },
     })
   })

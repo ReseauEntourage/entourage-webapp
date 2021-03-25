@@ -6,7 +6,7 @@ import { colors } from 'src/styles'
 import { roundToEven, poiIcons, poiLabels } from 'src/utils/misc'
 
 interface POIIconProps {
-  poiCategory: POICategory['id'];
+  poiCategory: POICategory;
   size?: number;
   isActive?: boolean;
   tooltip?: string;

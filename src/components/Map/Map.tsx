@@ -1,11 +1,9 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { useFirebase } from 'src/utils/hooks'
-import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { AnyToFix } from 'src/utils/types'
 
 interface Props {
@@ -30,7 +28,6 @@ export function Map(props: Props) {
   const { children } = props
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
-  const googleMapIsLoaded = useLoadGoogleMapApi()
   const { sendEvent } = useFirebase()
   function onChange(value: ChangeEventValue) {
     // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
@@ -47,10 +44,6 @@ export function Map(props: Props) {
         getDisplayAddressFromCoordinates: true,
       }))
     }
-  }
-
-  if (!googleMapIsLoaded) {
-    return <OverlayLoader />
   }
 
   return (
