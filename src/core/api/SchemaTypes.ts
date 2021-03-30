@@ -15,11 +15,9 @@ export type EntourageIdOrUUIDParams =
   | { entourageId?: number; entourageUuid: string; }
 
 export type FeedDisplayCategory =
-  | 'info'
   | 'mat_help'
   | 'other'
   | 'resource'
-  | 'skill'
   | 'social'
 
 export type FeedJoinStatus =

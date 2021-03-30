@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
-import { EventMarker, MarkerWrapper } from 'src/components/Map'
+import { EventMarker, MarkerWrapper, ActionMarker } from 'src/components/Map'
 import { useFirebase } from 'src/utils/hooks'
 
 export function useActionMarkers() {
@@ -12,7 +12,7 @@ export function useActionMarkers() {
   const { sendEvent } = useFirebase()
 
   const feedsMarkersContent = feeds.map((feed) => {
-    const { location, uuid } = feed
+    const { location, uuid, groupType } = feed
     return (
       <MarkerWrapper
         key={uuid}
@@ -29,11 +29,24 @@ export function useActionMarkers() {
               textDecoration: 'none',
             }}
           >
-            <EventMarker
-              key={uuid}
-              isActive={uuid === actionId}
-              tooltip={feed.title}
-            />
+            {
+              groupType === 'outing'
+                ? (
+                  <EventMarker
+                    key={uuid}
+                    isActive={uuid === actionId}
+                    tooltip={feed.title}
+                  />
+                )
+                : (
+                  <ActionMarker
+                    key={uuid}
+                    isActive={uuid === actionId}
+                    tooltip={feed.title}
+                  />
+                )
+            }
+
           </MaterialLink>
         </Link>
       </MarkerWrapper>

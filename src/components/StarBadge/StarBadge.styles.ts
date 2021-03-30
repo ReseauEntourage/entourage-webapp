@@ -7,5 +7,5 @@ export const Container = styled.div`
   width: fit-content;
   background-color: ${colors.main.primary};
   padding: 2px;
-  border: solid 1px #ffff;
+  border: solid 1px ${colors.main.white}f;
 `

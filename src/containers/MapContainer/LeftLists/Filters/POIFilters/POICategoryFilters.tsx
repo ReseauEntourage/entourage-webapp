@@ -2,9 +2,9 @@ import React from 'react'
 import * as S from '../Filters.styles'
 import { texts } from 'src/i18n'
 import { FilterPOICategory } from 'src/utils/types'
-import { POIsCategoryFilter } from './POIsCategoryFilter'
+import { POICategoryFilter } from './POICategoryFilter'
 
-export function POIsCategoryFilters() {
+export function POICategoryFilters() {
   return (
     <S.SectionContainer>
       <S.Title align="center">{texts.content.map.filters.categories.title}</S.Title>
@@ -21,10 +21,10 @@ export function POIsCategoryFilters() {
           FilterPOICategory.LAUNDRIES,
           FilterPOICategory.WELL_BEING,
           FilterPOICategory.CLOTHES,
-          FilterPOICategory.DONATION_BOX,
           FilterPOICategory.CLOAKROOM,
+          FilterPOICategory.DONATION_BOX,
         ].map((category, i) => (
-          <POIsCategoryFilter
+          <POICategoryFilter
             key={category}
             category={category}
             index={i + 1}

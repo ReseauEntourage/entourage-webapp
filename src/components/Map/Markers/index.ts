@@ -1,4 +1,6 @@
 export * from './EventMarker'
+export * from './ActionMarker'
 export * from './POIMarker'
 export * from './POIIcon'
+export * from './FeedItemIcon'
 export * from './MarkerWrapper'

@@ -1,60 +1,16 @@
-import {
-  Event,
-} from '@material-ui/icons'
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
-import { FeedItem, iconStyle } from 'src/components/FeedItem'
+import { FeedItem } from 'src/components/FeedItem'
+import { FeedItemIcon } from 'src/components/Map'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
-import { FeedEntourageType } from 'src/core/api'
-import { FeedItem as FeedItemType, feedActions } from 'src/core/useCases/feed'
-import { colors } from 'src/styles'
+import { feedActions } from 'src/core/useCases/feed'
+import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
-import { feedItemCategoryIcons } from 'src/utils/misc'
-
-interface FeedItemIconProps {
-  feedItem: FeedItemType;
-}
-
-function FeedItemIcon(props: FeedItemIconProps) {
-  const { feedItem } = props
-  const { entourageType, displayCategory, groupType } = feedItem
-
-  if (groupType === 'outing') {
-    return (
-      <Event
-        style={{
-          ...iconStyle,
-          color: '#fff',
-          backgroundColor: colors.main.grey,
-        }}
-      />
-    )
-  }
-
-  const backgroundColors: Record<FeedEntourageType, string> = {
-    contribution: colors.main.primary,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    ask_for_help: colors.main.blue,
-  }
-
-  const iconProps = {
-    style: {
-      ...iconStyle,
-      color: '#fff',
-      backgroundColor: backgroundColors[entourageType],
-    },
-  }
-
-  const IconComponent = feedItemCategoryIcons[displayCategory] || feedItemCategoryIcons.other
-
-  return (
-    <IconComponent {...iconProps} />
-  )
-}
+import { FilterEntourageType } from 'src/utils/types'
 
 export function FeedList() {
   const actionId = useActionId()
@@ -71,16 +27,22 @@ export function FeedList() {
 
   const feedsListContent = feeds.map((feedItem) => {
     let secondText = ''
+    let label = ''
     if (feedItem.groupType === 'action') {
       const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
       secondText = `
         Créé il y a ${createAtDistance}
         par ${feedItem.author.displayName}
       `
+
+      const categoryTextKey = feedItem.entourageType === FilterEntourageType.CONTRIBUTION
+        ? 'categoryContributionList' : 'categoryHelpList'
+      label = texts.types[categoryTextKey][feedItem.displayCategory]
     }
     if (feedItem.groupType === 'outing') {
       const startDate = new Date(feedItem.metadata.startsAt)
       secondText = format(startDate, "'Rendez-vous le' d MMMM 'à' H'h'mm", { locale: fr })
+      label = texts.types.event
     }
 
     return (
@@ -89,7 +51,14 @@ export function FeedList() {
           <S.ClickableItem onClick={() => sendEvent('Action__Feed__ListItem')}>
             <FeedItem
               key={feedItem.uuid}
-              icon={<FeedItemIcon feedItem={feedItem} />}
+              icon={(
+                <FeedItemIcon
+                  displayCategory={feedItem.displayCategory}
+                  entourageType={feedItem.entourageType}
+                  groupType={feedItem.groupType}
+                  tooltip={label}
+                />
+              )}
               isActive={feedItem.uuid === actionId}
               primaryText={feedItem.title}
               profilePictureURL={feedItem.author.avatarUrl}

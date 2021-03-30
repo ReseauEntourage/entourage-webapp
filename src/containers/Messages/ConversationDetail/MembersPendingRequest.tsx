@@ -10,6 +10,7 @@ import {
   useMutateDeleteEntourageUser,
 } from 'src/core/store'
 import { useMeNonNullable } from 'src/hooks/useMe'
+import { colors } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
 import * as S from './MembersPendingRequest.styles'
 
@@ -68,7 +69,7 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
               loading={deleting}
               onClick={onRejectRequest}
               startIcon={<CloseIcon />}
-              style={{ backgroundColor: '#fff' }}
+              style={{ backgroundColor: colors.main.white }}
               variant="outlined"
             >
               Refuser

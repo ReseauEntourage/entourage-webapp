@@ -1,25 +1,16 @@
 import { Tooltip } from '@material-ui/core'
+import SvgIcon from '@material-ui/core/SvgIcon'
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { constants } from 'src/constants'
+import { Event } from 'src/assets'
 import { selectLocation } from 'src/core/useCases/location'
 import { colors } from 'src/styles'
-import { getPixelPerMeter } from 'src/utils/misc'
+import { getMarkerSize, roundToEven } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
-
-function getMarkerSize(lat: number, zoom: number) {
-  const MIN_PX_SIZE = 30
-  const pixelPerMeter = getPixelPerMeter(lat, zoom)
-  const size = pixelPerMeter * constants.MARKER_DIAMETER
-
-  return size < MIN_PX_SIZE
-    ? MIN_PX_SIZE
-    : size
-}
 
 interface Props {
   isActive: boolean;
-  tooltip?: string;
+  tooltip: string;
 }
 
 // disable ESLint because lat and lng are internally use by Google Map
@@ -27,34 +18,43 @@ interface Props {
 export function EventMarker(props: Props) {
   const { isActive, tooltip } = props
   const position = useSelector(selectLocation)
-  const { zoom, center: { lat } } = position
-  const size = getMarkerSize(lat, zoom)
+  const { zoom } = position
+  const size = getMarkerSize(zoom)
 
-  const marker = (
-    <div
-      style={{
-        position: 'relative',
-        display: 'block',
-        height: size,
-        width: size,
-        borderRadius: '50%',
-        backgroundColor: isActive ? colors.main.red : colors.main.marker,
-        opacity: isActive ? 1 : 0.7,
-        cursor: 'pointer',
-        zIndex: isActive ? 2 : 1,
-      }}
-    />
-  )
+  const displaySize = isActive ? size * 2 : roundToEven(size)
 
-  const tooltipMarker = (
-    <Tooltip title={tooltip}>
-      {marker}
-    </Tooltip>
-  )
+  const fontSize = roundToEven(displaySize / 1.6)
+
+  const { width, height } = Event().props
 
   return (
     <BaseMarker size={size}>
-      {tooltip ? tooltipMarker : marker}
+      <Tooltip title={tooltip}>
+        <div
+          style={{
+            position: 'relative',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: displaySize,
+            width: displaySize,
+            borderRadius: '50%',
+            backgroundColor: colors.main.white,
+            border: `solid 1px ${colors.main.primary}`,
+            cursor: 'pointer',
+            zIndex: isActive ? 2 : 1,
+          }}
+        >
+          <SvgIcon
+            component={Event}
+            style={{
+              color: colors.main.primary,
+              fontSize,
+            }}
+            viewBox={`0 0 ${width} ${height}`}
+          />
+        </div>
+      </Tooltip>
     </BaseMarker>
   )
 }

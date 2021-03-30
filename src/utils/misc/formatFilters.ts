@@ -26,7 +26,7 @@ export function formatFeedTypes(types: Record<FilterEntourageType, FilterFeedCat
     ),
   ]
 
-  return filtersTab.join(',')
+  return `${filtersTab.join(',')},ou`
 }
 
 export const poisCategoriesFilterResolver: Record<FilterPOICategory, POICategory> = {

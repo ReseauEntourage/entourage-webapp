@@ -7,10 +7,10 @@ import { OverlayLoader } from 'src/components/OverlayLoader'
 import { poisActions, selectAreFiltersDisabled, selectPOIsIsFetching } from 'src/core/useCases/pois'
 import { texts } from 'src/i18n'
 import { FilterPOICategory } from 'src/utils/types'
-import { POIsCategoryFilters } from './POIsCategoryFilters'
-import { POIsPartnersFilters } from './POIsPartnersFilters'
+import { POICategoryFilters } from './POICategoryFilters'
+import { POIPartnersFilters } from './POIPartnersFilters'
 
-export function POIsFilters() {
+export function POIFilters() {
   const poisIsFetching = useSelector(selectPOIsIsFetching)
   const dispatch = useDispatch()
   const areFiltersDisabled = useSelector(selectAreFiltersDisabled)
@@ -31,9 +31,9 @@ export function POIsFilters() {
           {texts.content.map.filters.disableFilters}
         </Button>
       </Box>
-      <POIsPartnersFilters category={FilterPOICategory.PARTNERS} />
+      <POIPartnersFilters category={FilterPOICategory.PARTNERS} />
       <Divider />
-      <POIsCategoryFilters />
+      <POICategoryFilters />
       {
         poisIsFetching && <OverlayLoader />
       }

@@ -1,24 +1,24 @@
 import React from 'react'
 import * as S from '../Filters.styles'
 import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
-import { POIsCategoryFilter } from './POIsCategoryFilter'
-import { POIsPartnerFilter } from './POIsPartnerFilter'
+import { POICategoryFilter } from './POICategoryFilter'
+import { POIPartnerFilter } from './POIPartnerFilter'
 
 interface SectionFilterProps {
   category: FilterPOICategory;
 }
 
-export function POIsPartnersFilters(props: SectionFilterProps) {
+export function POIPartnersFilters(props: SectionFilterProps) {
   const { category } = props
   return (
     <S.SectionContainer>
-      <POIsCategoryFilter category={category} index={0} title={true} />
+      <POICategoryFilter category={category} index={0} title={true} />
       {
         [
           FilterPOIPartner.DONATIONS,
           FilterPOIPartner.VOLUNTEERS,
         ].map((partnerFilter, i) => (
-          <POIsPartnerFilter
+          <POIPartnerFilter
             key={partnerFilter}
             category={FilterPOICategory.PARTNERS}
             index={i + 1}

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { POIList } from '../LeftLists'
-import { POIsFilters } from '../LeftLists/Filters'
+import { POIFilters } from '../LeftLists/Filters'
 import { POICards } from '../RightCards/POICards/POICards'
 import { usePOIId } from '../usePOIId'
 import { MapContainer } from 'src/containers/MapContainer'
@@ -36,7 +36,7 @@ export function MapPOIs() {
   return (
     <MapContainer
       cards={cards}
-      filters={<POIsFilters />}
+      filters={<POIFilters />}
       isLoading={isLoading}
       list={<POIList />}
       markers={poisMarkersContent}

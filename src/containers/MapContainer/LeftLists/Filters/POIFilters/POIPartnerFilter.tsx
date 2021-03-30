@@ -14,7 +14,7 @@ interface TextFilterProps {
   partner: FilterPOIPartner;
 }
 
-export function POIsPartnerFilter(props: TextFilterProps) {
+export function POIPartnerFilter(props: TextFilterProps) {
   const { index, category, partner } = props
   const dispatch = useDispatch()
 

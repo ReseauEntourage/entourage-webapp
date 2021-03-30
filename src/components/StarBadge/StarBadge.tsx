@@ -1,5 +1,6 @@
 import Star from '@material-ui/icons/Star'
 import React from 'react'
+import { colors } from 'src/styles'
 import * as S from './StarBadge.styles'
 
 interface StarBadgeProps {
@@ -15,7 +16,7 @@ export function StarBadge(props: StarBadgeProps) {
         style={{
           fontSize: 10,
           display: 'block', // use to remove SVG margins
-          color: '#fff',
+          color: colors.main.white,
           ...iconStyle,
         }}
       />
