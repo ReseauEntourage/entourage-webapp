@@ -37,7 +37,6 @@ export function POIIcon(props: POIIconProps) {
           width: displaySize,
           borderRadius: '50%',
           backgroundColor: color,
-          border: `solid 1px ${colors.main.white}`,
           cursor: 'pointer',
           zIndex: isActive ? 2 : 1,
         }}

@@ -18,10 +18,10 @@ interface FeedItemIconProps {
 }
 
 export function FeedItemIcon(props: FeedItemIconProps) {
-  const { entourageType, displayCategory, groupType, size = 28, isActive = false, tooltip } = props
+  const { entourageType, displayCategory, groupType, size = 22, isActive = false, tooltip } = props
 
   const displaySize = isActive ? size * 2 : roundToEven(size)
-  const fontSize = roundToEven(displaySize / 1.4)
+  const fontSize = roundToEven(displaySize)
 
   const style: CSSProperties = {
     position: 'relative',

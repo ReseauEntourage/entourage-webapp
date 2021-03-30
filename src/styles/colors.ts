@@ -16,7 +16,7 @@ export const colors = {
     white: '#fff',
   },
   pois: {
-    0: '#bfbfb9',
+    0: '#4A4A4A',
     1: '#13B686',
     2: '#1F6D80',
     3: '#D63649',
