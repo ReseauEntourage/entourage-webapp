@@ -3,7 +3,6 @@ import React from 'react'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { MapActions } from 'src/containers/MapContainer'
 import { texts } from 'src/i18n'
-import { useDelayLoadingNext } from 'src/utils/hooks'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
@@ -11,14 +10,13 @@ interface Props {}
 
 const Actions: StatelessPage<Props> = () => {
   const googleMapApiIsLoaded = useLoadGoogleMapApi()
-  const isMapLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
 
   return (
     <>
       <Head>
         <title>{texts.nav.pageTitles.actions} - {texts.nav.pageTitles.main}</title>
       </Head>
-      { isMapLoading ? <OverlayLoader /> : <MapActions /> }
+      { !googleMapApiIsLoaded ? <OverlayLoader /> : <MapActions /> }
     </>
   )
 }
