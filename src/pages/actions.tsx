@@ -9,14 +9,14 @@ import { StatelessPage } from 'src/utils/types'
 interface Props {}
 
 const Actions: StatelessPage<Props> = () => {
-  const googleMapIsLoaded = useLoadGoogleMapApi()
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
 
   return (
     <>
       <Head>
         <title>{texts.nav.pageTitles.actions} - {texts.nav.pageTitles.main}</title>
       </Head>
-      { googleMapIsLoaded ? <MapActions /> : <OverlayLoader /> }
+      { !googleMapApiIsLoaded ? <OverlayLoader /> : <MapActions /> }
     </>
   )
 }
