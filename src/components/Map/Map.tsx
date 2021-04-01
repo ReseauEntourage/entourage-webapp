@@ -1,5 +1,5 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
-import React from 'react'
+import React, { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
@@ -29,9 +29,15 @@ export function Map(props: Props) {
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
+  const prevOnChangeValue = useRef(position.center)
+
   function onChange(value: ChangeEventValue) {
     // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
-    const positionHasChanged = coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom
+    const positionHasChanged = (coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom)
+    // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
+      && coordinatesHasChanged(prevOnChangeValue.current, value.center)
+
+    prevOnChangeValue.current = value.center
 
     if (positionHasChanged) {
       sendEvent('Action__Map__PanZoom')
