@@ -15,6 +15,14 @@ module.exports = {
     },
   ],
   webpackFinal: async config => {
+    // necessary to override default .svg loader with svgr
+    const fileLoaderRule = config.module.rules.find(rule => rule.test.test('.svg'));
+    fileLoaderRule.exclude = /\.svg$/;
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack", "url-loader"],
+    });
+
     config.module.rules.push({
       test: /\.(ts|tsx)$/,
       use: [
@@ -31,6 +39,7 @@ module.exports = {
         },
       ],
     });
+
     config.resolve.extensions.push('.ts', '.tsx');
 
     config.resolve.modules = [
