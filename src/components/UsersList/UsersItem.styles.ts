@@ -20,7 +20,7 @@ export const Container = styled.div`
 export const OwnerContainer = styled(Typography).attrs(() => ({
   variant: variants.footNote,
 }))`
-  color: #fff !important;
+  color: ${colors.main.white} !important;
   background-color: ${colors.main.greyishBrown};
   border-radius: 20px;
   padding: 0px 7px;

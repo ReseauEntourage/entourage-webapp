@@ -1,35 +1,22 @@
 import Head from 'next/head'
-import React, { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { useActionId, MapActions } from 'src/containers/MapContainer'
-import { feedActions } from 'src/core/useCases/feed'
+import React from 'react'
+import { OverlayLoader } from 'src/components/OverlayLoader'
+import { MapActions } from 'src/containers/MapContainer'
 import { texts } from 'src/i18n'
-import { useMount } from 'src/utils/hooks'
+import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
 const Actions: StatelessPage<Props> = () => {
-  const dispatch = useDispatch()
-  const actionId = useActionId()
-
-  useMount(() => {
-    dispatch(feedActions.init())
-    return () => {
-      dispatch(feedActions.cancel())
-    }
-  })
-
-  useEffect(() => {
-    dispatch(feedActions.setCurrentItemUuid(actionId || null))
-  }, [actionId, dispatch])
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
 
   return (
     <>
       <Head>
         <title>{texts.nav.pageTitles.actions} - {texts.nav.pageTitles.main}</title>
       </Head>
-      <MapActions />
+      { !googleMapApiIsLoaded ? <OverlayLoader /> : <MapActions /> }
     </>
   )
 }

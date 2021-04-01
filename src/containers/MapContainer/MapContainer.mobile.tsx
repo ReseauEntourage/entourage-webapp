@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { texts } from 'src/i18n'
-import { LeftList } from './LeftLists/LeftList'
+import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerMobile(props: MapContainerProps) {
-  const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
+  const { markers, cards, list, isLoading, filters } = props
 
-  const { markers, cards, list, isLoading } = props
+  const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
 
   if (cards) {
     return (
@@ -35,7 +35,7 @@ export function MapContainerMobile(props: MapContainerProps) {
         </S.MapContainer>
       ) : (
         <>
-          <LeftList isLoading={isLoading} list={list} />
+          <LeftList filters={filters} isLoading={isLoading} list={list} />
           <S.FabFeed color="primary" onClick={() => setIsMapOpen(true)} size="small" variant="extended">
             <S.NavIcon />
             {texts.content.navActions.mapButton}

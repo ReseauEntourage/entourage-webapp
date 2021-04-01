@@ -10,6 +10,7 @@ import {
   FeedJoinStatus,
   FeedStatus,
 } from 'src/core/api'
+import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
 import { FeedAction, FeedActionType } from './feed.actions'
 
 export const JoinRequestStatus = {
@@ -55,6 +56,7 @@ export interface FeedItem {
 
 export interface FeedState {
   fetching: boolean;
+  filters: Record<FilterEntourageType, FilterFeedCategory[]>;
   itemsUuids: string[];
   items: {
     [itemUuid: string]: FeedItem;
@@ -68,6 +70,18 @@ export interface FeedState {
 
 export const defaultFeedState: FeedState = {
   fetching: false,
+  filters: {
+    [FilterEntourageType.CONTRIBUTION]: [
+      FilterFeedCategory.MAT_HELP,
+      FilterFeedCategory.OTHER,
+      FilterFeedCategory.RESOURCE,
+      FilterFeedCategory.SOCIAL],
+    [FilterEntourageType.ASK_FOR_HELP]: [
+      FilterFeedCategory.MAT_HELP,
+      FilterFeedCategory.OTHER,
+      FilterFeedCategory.RESOURCE,
+      FilterFeedCategory.SOCIAL],
+  },
   itemsUuids: [],
   nextPageToken: null,
   items: {},
@@ -239,6 +253,34 @@ export function feedReducer(
     case FeedActionType.CANCEL_FEED: {
       return {
         ...state,
+        nextPageToken: null,
+      }
+    }
+
+    case FeedActionType.TOGGLE_FEED_FILTER: {
+      const currentFeedFilters = state.filters[action.payload.type]
+
+      if (action.payload.category) {
+        return {
+          ...state,
+          filters: {
+            ...state.filters,
+            [action.payload.type]: currentFeedFilters.includes(action.payload.category)
+              ? currentFeedFilters.filter((i) => i !== action.payload.category)
+              : [...currentFeedFilters, action.payload.category],
+          },
+          nextPageToken: null,
+        }
+      }
+
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          [action.payload.type]: currentFeedFilters.length === 0
+            ? defaultFeedState.filters[action.payload.type]
+            : [],
+        },
         nextPageToken: null,
       }
     }

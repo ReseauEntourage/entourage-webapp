@@ -1,16 +1,16 @@
 import React from 'react'
 import { Map } from 'src/components/Map'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { LeftList } from './LeftLists/LeftList'
+import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerDesktop(props: MapContainerProps) {
-  const { markers, cards, list, isLoading } = props
+  const { markers, cards, list, isLoading, filters } = props
 
   return (
     <S.Container>
-      <LeftList isLoading={isLoading} list={list} />
+      <LeftList filters={filters} isLoading={isLoading} list={list} />
       <S.MapContainer>
         <Map>
           {markers}

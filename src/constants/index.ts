@@ -19,7 +19,6 @@ export const constants = {
   POI_DISTANCE_BREAKPOINT: 15,
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
   WORKSHOP_LINK: 'https://bit.ly/2O7naY7',
-  ADMIN_ASSO_LINK: 'https://entourage-back.herokuapp.com/organization_admin',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
   GEOLOCATION_TTL: 1000 * 60,
   GEOLOCATION_TIMEOUT: 1000 * 5,

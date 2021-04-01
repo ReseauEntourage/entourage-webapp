@@ -26,11 +26,11 @@ export class HTTPFeedGateway implements IFeedGateway {
     return api.request({
       name: '/feeds GET',
       params: {
+        types: data.filters.types,
         timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
-        latitude: data.filters.center.lat,
-        longitude: data.filters.center.lng,
+        latitude: data.filters.location.center.lat,
+        longitude: data.filters.location.center.lng,
         pageToken: data.nextPageToken ?? undefined,
-        types: 'as,ae,am,ar,ai,ak,ao,cs,ce,cm,cr,ci,ck,co,ou',
       },
     }).then((res) => {
       const { nextPageToken, feeds } = res.data
@@ -142,7 +142,7 @@ export class HTTPFeedGateway implements IFeedGateway {
       },
     }).then((res) => {
       return {
-        displayAddress: res.data.entourage.metadata.city,
+        displayAddress: res.data.entourage.metadata.displayAddress,
         center: {
           lat: res.data.entourage.location.latitude,
           lng: res.data.entourage.location.longitude,

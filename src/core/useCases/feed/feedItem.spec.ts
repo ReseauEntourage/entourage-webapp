@@ -2,17 +2,17 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit } from '../location'
+import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
-import { locationSaga } from '../location/location.saga'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { formatFeedTypes } from 'src/utils/misc'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentFeedItem,
@@ -214,11 +214,14 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: selectLocation(store.getState()).zoom,
-        center: {
-          lat: 1,
-          lng: 2,
+        location: {
+          zoom: selectLocation(store.getState()).zoom,
+          center: {
+            lat: 1,
+            lng: 2,
+          },
         },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
       },
     })
   })
@@ -334,11 +337,14 @@ describe('Feed Item', () => {
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        zoom: selectLocation(store.getState()).zoom,
-        center: {
-          lat: selectLocation(store.getState()).center.lat,
-          lng: selectLocation(store.getState()).center.lng,
+        location: {
+          zoom: selectLocation(store.getState()).zoom,
+          center: {
+            lat: selectLocation(store.getState()).center.lat,
+            lng: selectLocation(store.getState()).center.lng,
+          },
         },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
       },
     })
   })
@@ -401,8 +407,11 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledTimes(0)
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
-        center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-        zoom: selectLocation(store.getState()).zoom,
+        location: {
+          center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+          zoom: selectLocation(store.getState()).zoom,
+        },
+        types: formatFeedTypes(defaultFeedState.filters),
       },
     })
   })

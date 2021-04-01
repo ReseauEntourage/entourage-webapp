@@ -1,7 +1,6 @@
-import { LocationState, defaultLocationState } from './location.reducer'
+import { LocationState } from './location.reducer'
 
-export const fakeLocationData: LocationState = {
-  ...defaultLocationState,
+export const fakeLocationData: Pick<LocationState, 'center' |'zoom' | 'displayAddress'> = {
   center: {
     lat: 0,
     lng: 0,

@@ -1,4 +1,5 @@
 import { FeedStatus } from 'src/core/api'
+import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
 import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 
 interface AppState {
@@ -60,6 +61,17 @@ export function selectJoinRequestStatus(state: AppState, entourageUuid: string) 
 
 export function selectIsUpdatingStatus(state: AppState) {
   return state.feed.isUpdatingStatus
+}
+
+export function selectFeedFilters(state: AppState) {
+  return state.feed.filters
+}
+
+export function selectIsActiveFilter(state: AppState, type: FilterEntourageType, category?: FilterFeedCategory) {
+  if (category) {
+    return state.feed.filters[type].includes(category)
+  }
+  return state.feed.filters[type].length > 0
 }
 
 const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {

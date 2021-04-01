@@ -4,8 +4,6 @@ import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import * as S from './FeedItem.styles'
 
-export { iconStyle } from './FeedItem.styles'
-
 interface FeedItemProps {
   icon?: JSX.Element;
   isActive?: boolean;
@@ -36,9 +34,11 @@ export function FeedItem(props: FeedItemProps) {
             {primaryTextCropped}
           </Typography>
         </S.TitleContainer>
-        <Typography variant="caption">
-          {secondText}
-        </Typography>
+        <Box marginTop={1}>
+          <Typography variant="caption">
+            {secondText}
+          </Typography>
+        </Box>
       </div>
       <Box flexGrow="1" />
       <Box display="flex">

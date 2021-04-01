@@ -6,6 +6,7 @@ interface ContainerProps {
 }
 
 export const Container = styled.div<ContainerProps>`
+  flex: 1;
   padding: ${theme.spacing(3, 2)};
   padding-right: 0 !important;
   display: flex;

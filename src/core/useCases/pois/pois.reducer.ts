@@ -1,5 +1,6 @@
 import { FeedAction, FeedActionType } from '../feed/feed.actions'
 import { POICategory, POISource } from 'src/core/api'
+import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
 import { POIsAction, POIsActionType } from './pois.actions'
 
 export interface POI {
@@ -10,7 +11,7 @@ export interface POI {
   address: string;
   phone: string | null;
   partnerId: string | null;
-  categoryId: POICategory['id'];
+  categoryId: POICategory;
 }
 
 export interface POIDetails {
@@ -21,7 +22,7 @@ export interface POIDetails {
   address: string;
   phone: string | null;
   description: string | null;
-  categoryIds: POICategory['id'][];
+  categoryIds: POICategory[];
   partnerId: string | null;
   website: string | null;
   email: string | null;
@@ -44,6 +45,10 @@ export interface POIsState {
   };
   selectedPOIUuid: string | null;
   isIdle: boolean;
+  filters: {
+    categories: FilterPOICategory[];
+    partners: FilterPOIPartner[];
+  };
 }
 
 export const defaultPOIsState: POIsState = {
@@ -54,6 +59,10 @@ export const defaultPOIsState: POIsState = {
   detailedPOIs: {},
   selectedPOIUuid: null,
   isIdle: true,
+  filters: {
+    categories: [],
+    partners: [],
+  },
 }
 
 export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAction | FeedAction): POIsState {
@@ -116,6 +125,44 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       return {
         ...state,
         selectedPOIUuid: null,
+      }
+    }
+
+    case POIsActionType.TOGGLE_POIS_FILTER: {
+      const currentPOIsFilters = state.filters
+
+      const { category, partner } = action.payload
+
+      if (partner && category === FilterPOICategory.PARTNERS) {
+        return {
+          ...state,
+          filters: {
+            categories: currentPOIsFilters.categories.includes(category)
+              ? currentPOIsFilters.categories : [...currentPOIsFilters.categories, category],
+            partners: currentPOIsFilters.partners.includes(partner)
+              ? currentPOIsFilters.partners.filter((i) => i !== partner)
+              : [...currentPOIsFilters.partners, partner],
+          },
+        }
+      }
+
+      return {
+        ...state,
+        filters: {
+          categories: currentPOIsFilters.categories.includes(category)
+            ? currentPOIsFilters.categories.filter((i) => i !== category)
+            : [...currentPOIsFilters.categories, category],
+          partners: category === FilterPOICategory.PARTNERS ? [] : currentPOIsFilters.partners,
+        },
+      }
+    }
+
+    case POIsActionType.RESET_POIS_FILTERS: {
+      return {
+        ...state,
+        filters: {
+          ...defaultPOIsState.filters,
+        },
       }
     }
 

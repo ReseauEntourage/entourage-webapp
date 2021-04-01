@@ -2,6 +2,40 @@
 /* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
+  types: {
+    event: 'Événement',
+    categoryHelpList: {
+      mat_help: 'Un don matériel',
+      other: 'Autre chose',
+      resource: 'Un service',
+      social: 'Des voisins pour entourer une personne',
+    },
+    categoryContributionList: {
+      mat_help: 'Faire un don matériel',
+      other: 'Aider à ma façon',
+      resource: 'Offrir un service',
+      social: 'Passer du temps avec une personne',
+    },
+    pois: {
+      other: 'Autre',
+      eating: 'Se nourrir',
+      sleeping: 'Se loger',
+      healing: 'Se soigner',
+      orientation: 'S\'orienter',
+      reintegration: 'Se réinsérer',
+      partners: 'Partenaires',
+      toilets: 'Toilettes',
+      fountains: 'Fontaines',
+      showers: 'Douches',
+      laundries: 'Laveries',
+      well_being: 'Bien-être & activités',
+      clothes: 'Vêtements & matériels',
+      cloakroom: 'Bagageries',
+      donation_box: 'Boîtes à dons & lire',
+      donations: 'Recherchant des dons',
+      volunteers: 'Recherchant des bénévoles',
+    },
+  },
   form: {
     REQUIRED: 'Champs requis',
     INVALID_FORMAT: 'Format incorrect',
@@ -53,6 +87,21 @@ export const texts = {
   },
   content: {
     map: {
+      filters: {
+        contribution: {
+          title: 'Voir les contributions concernant',
+        },
+        ask_for_help: {
+          title: 'Voir les demandes concernant',
+        },
+        partners: {
+          title: 'Associations et services actifs\n sur Entourage',
+        },
+        categories: {
+          title: 'Catégories',
+        },
+        disableFilters: 'Désactiver filtres',
+      },
       rightCards: {
         share: 'Partager',
         edit: 'Modifier',
@@ -115,6 +164,11 @@ export const texts = {
       close: 'Fermer',
       error: 'Veuillez renseigner une raison',
       reason: 'Je ne suis pas intéressé car ...',
+      dismissReasons: {
+        alreadyParticipated: 'J’ai déja participé à l’atelier en ligne',
+        notInterested: 'Je ne suis pas intéressé par l’atelier',
+        wantToDiscover: 'Je veux juste découvrir le site Entourage',
+      },
     },
     modalEditAction: {
       titleCreate: 'Vous souhaitez créer une action solidaire ? C\'est parti !',
@@ -127,25 +181,7 @@ export const texts = {
       fieldLabelTitle: 'Je suis disponible pour... / Je recherche...',
       fieldLabelDescription: 'Description',
       fieldCategoryHelpLabel: 'Je recherche...',
-      fieldCategoryHelpList: {
-        event: '',
-        info: 'Poser une question au réseau',
-        mat_help: 'Un don matériel',
-        other: 'Autre chose',
-        resource: 'Une resource mise à disposition',
-        skill: 'Une compétence',
-        social: 'Des voisins pour entourer une personne',
-      },
       fieldCategoryContributionLabel: 'Je me propose de...',
-      fieldCategoryContributionList: {
-        event: '',
-        info: 'Diffuser une information',
-        mat_help: 'Faire un don matériel',
-        other: 'Aider à ma façon',
-        resource: 'Mettre à disposition une ressource',
-        skill: 'Offir une compétence',
-        social: 'Passer du temps avec une personne',
-      },
       validateLabelCreate: 'Créer mon action',
       validateLabelUpdate: 'Mettre à jour mon action',
     },

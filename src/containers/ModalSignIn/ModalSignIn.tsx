@@ -3,6 +3,7 @@ import Box from '@material-ui/core/Box'
 import { useForm } from 'react-hook-form'
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { useFirebase, useMount } from '../../utils/hooks'
 import { TextField, TextFieldPassword } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
 import { useOnLogin } from 'src/core/events'
@@ -37,11 +38,17 @@ export function ModalSignIn(props: ModalSignInProps) {
 
   const isDesktop = useIsDesktop()
 
+  const { sendEvent } = useFirebase()
+  useMount(() => {
+    sendEvent('View__LoginOrSignup__')
+  })
+
   useEffect(() => {
     return () => {
+      sendEvent('Action__LoginOrSignup__Cancel')
       dispatch(authUserActions.resetForm())
     }
-  }, [dispatch, onSuccess])
+  }, [dispatch, onSuccess, sendEvent])
 
   useOnLogin(() => {
     if (onSuccess) {
@@ -53,14 +60,19 @@ export function ModalSignIn(props: ModalSignInProps) {
     const { phone, password, SMSCode, passwordConfirmation } = phoneForm.getValues()
 
     if (step === 'PHONE') {
+      sendEvent('Action__LoginOrSignup__ValidatePhone')
       dispatch(authUserActions.phoneLookUp(phone))
     } else if (step === 'CREATE_ACCOUNT') {
+      sendEvent('Action__SignUp__CreateAccount')
       dispatch(authUserActions.createAccount(phone))
     } else if (step === 'PASSWORD') {
+      sendEvent('Action__Login__Connection')
       dispatch(authUserActions.loginWithPassword({ phone, password }))
     } else if (step === 'SMS_CODE') {
+      sendEvent('Action__SignUp__ValidateSMSCode')
       dispatch(authUserActions.loginWithSMSCode({ phone, SMSCode }))
     } else if (step === 'CREATE_PASSWORD') {
+      sendEvent('Action__SignUp__ValidatePassword')
       dispatch(authUserActions.createPassword({ password, passwordConfirmation }))
     }
 
@@ -68,6 +80,11 @@ export function ModalSignIn(props: ModalSignInProps) {
   }
 
   const resetPassword = () => {
+    if (step === 'PASSWORD') {
+      sendEvent('Action__Login__PasswordForgotten')
+    } else {
+      sendEvent('Action__SignUp__ResendSMSCode')
+    }
     const { phone } = phoneForm.getValues()
     dispatch(authUserActions.resetPassword({ phone }))
   }

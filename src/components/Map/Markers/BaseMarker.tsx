@@ -16,7 +16,7 @@ export function BaseMarker(props: Props) {
         height: size,
         width: size,
         borderRadius: '50%',
-        boxShadow: 'rgba(0, 0, 0, 0.24) 0px 1px 4px',
+        boxShadow: 'rgba(0, 0, 0, 0.25) 0px 4px 4px',
       }}
     >
       {children}

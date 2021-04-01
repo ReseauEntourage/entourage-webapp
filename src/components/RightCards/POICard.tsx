@@ -21,7 +21,7 @@ interface POICardProps {
   address: string;
   phone: string | null;
   description: string | null;
-  categoryIds: POICategory['id'][];
+  categoryIds: POICategory[];
   partnerId?: string | null;
   website: string | null;
   email: string | null;

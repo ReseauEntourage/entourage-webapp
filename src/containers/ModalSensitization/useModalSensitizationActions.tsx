@@ -2,33 +2,31 @@ import { useCallback } from 'react'
 import { useDispatch } from 'react-redux'
 import { useModalContext } from 'src/components/Modal'
 import { authUserActions } from 'src/core/useCases/authUser'
+import { useFirebase } from 'src/utils/hooks'
+import { FirebaseEvent } from 'src/utils/types'
 
 export function useModalSensitizationActions() {
   const { onClose } = useModalContext()
+  const { sendEvent } = useFirebase()
   const dispatch = useDispatch()
 
-  const onDismissWithFeedback = useCallback((dismissReason: string) => {
-    // TODO send event to Firebase with value
-    // TODO https://entourage-asso.atlassian.net/browse/EN-3466
-
-    // eslint-disable-next-line no-console
-    console.log(dismissReason)
+  const onDismissWithFeedback = useCallback((dismissReason: FirebaseEvent) => {
+    sendEvent(dismissReason)
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose])
+  }, [dispatch, onClose, sendEvent])
 
   const onDismiss = useCallback(() => {
-    // TODO send event to Firebase
-    // TODO https://entourage-asso.atlassian.net/browse/EN-3466
+    sendEvent('Action__Workshop__Dismiss')
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose])
+  }, [dispatch, onClose, sendEvent])
 
   const onWorkshopClick = useCallback(() => {
-    // TODO https://entourage-asso.atlassian.net/browse/EN-3466
+    sendEvent('Action__Workshop__Participate')
     onClose()
     dispatch(authUserActions.hideSensitizationPopup())
-  }, [dispatch, onClose])
+  }, [dispatch, onClose, sendEvent])
 
   return { onDismiss, onDismissWithFeedback, onWorkshopClick }
 }

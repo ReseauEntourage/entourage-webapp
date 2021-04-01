@@ -18,24 +18,16 @@ export function createPOIList(): POI[] {
   return new Array(10).fill(null).map(() => createPOI())
 }
 
-export const fakePOIsData = {
+export const fakePOIsData: POIsState = {
   ...defaultPOIsState,
   fetching: false,
-  filters: {
-    displayAddress: 'New York',
-    center: {
-      lat: 0,
-      lng: 0,
-    },
-    zoom: 12,
-  },
   poisUuids: ['abc'],
   pois: {
     abc: createPOI(),
   },
   detailedPOIs: {},
-  selectedItemUuid: null,
-} as POIsState
+  selectedPOIUuid: null,
+}
 
 export function createPOIDetails(): POIDetails {
   return {

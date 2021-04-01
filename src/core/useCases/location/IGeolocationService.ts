@@ -5,7 +5,8 @@ export interface IGeolocationService {
     coordinates: LocationState['center'];
   }>;
 
-  getPlaceAddressFromCoordinates(coordinates: google.maps.LatLngLiteral): Promise<{
+  getPlaceAddressFromCoordinates(coordinates: google.maps.LatLngLiteral, getGooglePlaceId?: boolean): Promise<{
     placeAddress: LocationState['displayAddress'] | null;
+    googlePlaceId: google.maps.GeocoderResult['place_id'] | null;
   }>;
 }

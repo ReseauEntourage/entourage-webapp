@@ -1,4 +1,5 @@
 import { call, put, getContext, select } from 'redux-saga/effects'
+import { locationActions } from '../location'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
@@ -26,7 +27,7 @@ export interface Dependencies {
 function* showSensitizationPopupSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserSensitizationStorage } = dependencies
-  const user = yield select(selectUser)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
 
   if (user) {
     const hasSeenSensitizationPopup = authUserSensitizationStorage.getHasSeenPopup(user.id)
@@ -48,7 +49,7 @@ function* showSensitizationPopupSaga() {
 function* hideSensitizationPopupSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { authUserSensitizationStorage } = dependencies
-  const user = yield select(selectUser)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
   if (user) authUserSensitizationStorage.setHasSeenPopup(user.id)
 }
 
@@ -200,6 +201,32 @@ function* resetPasswordSaga(action: AuthUserActions['resetPassword']) {
   yield put(actions.resetPasswordSuccess())
 }
 
+function* updateUserSaga(action: AuthUserActions['updateUser']) {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { updateMe, updateMeAddress } = dependencies.authUserGateway
+  const { address, ...updatedData } = action.payload
+
+  if (address) {
+    yield call(updateMeAddress, address)
+  }
+
+  const response: CallReturnType<typeof updateMe> = yield call(updateMe, updatedData)
+
+  if (response.address) {
+    yield put(locationActions.setLocation({
+      location: {
+        center: {
+          lat: response.address.latitude,
+          lng: response.address.longitude,
+        },
+        displayAddress: response.address.displayAddress,
+      },
+    }))
+  }
+
+  yield put(actions.updateUserSuccess({ user: response }))
+}
+
 export function* authUserSaga() {
   yield takeEvery(AuthUserActionType.PHONE_LOOK_UP, phoneLookUpSaga)
   yield takeEvery(AuthUserActionType.CREATE_ACCOUNT, createAccountSaga)
@@ -211,5 +238,6 @@ export function* authUserSaga() {
   yield takeEvery(AuthUserActionType.RESET_PASSWORD, resetPasswordSaga)
   yield takeEvery(AuthUserActionType.SET_USER, showSensitizationPopupSaga)
   yield takeEvery(AuthUserActionType.HIDE_SENSITIZATION_POPUP, hideSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.UPDATE_USER, updateUserSaga)
 }
 

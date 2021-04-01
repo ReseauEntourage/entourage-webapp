@@ -3,6 +3,7 @@ import CloseIcon from '@material-ui/icons/Close'
 import random from 'lodash/random'
 import React from 'react'
 import { ButtonsList, Button } from 'src/components/Button'
+import { colors } from 'src/styles'
 import { loremIpsum } from 'src/utils/misc'
 import { ConversationItem } from './ConversationItem'
 import { Message } from './Message'
@@ -74,7 +75,7 @@ export const PendingNotifWithRightContent = () => (
         <Button startIcon={<CheckIcon />}>
             Accepter
         </Button>
-        <Button startIcon={<CloseIcon />} style={{ backgroundColor: '#fff' }} variant="outlined">
+        <Button startIcon={<CloseIcon />} style={{ backgroundColor: colors.main.white }} variant="outlined">
             Refuser
         </Button>
       </ButtonsList>

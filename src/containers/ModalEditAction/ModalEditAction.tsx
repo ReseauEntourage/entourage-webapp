@@ -4,13 +4,14 @@ import ListIcon from '@material-ui/icons/List'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect } from 'react'
-import { TextField, Label, RowFields, useForm, Select } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import { Label, RowFields, Select, TextField } from 'src/components/Form'
+import { AutocompleteFormField, AutocompleteFormFieldKey, GoogleMapLocation } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
-import { getDetailPlacesService, assertIsNumber } from 'src/utils/misc'
+import { useGetCurrentPosition } from 'src/utils/hooks'
+import { assertIsNumber, getDetailPlacesService } from 'src/utils/misc'
 
 const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other'/* , 'info', 'skill' */]
 
@@ -28,7 +29,7 @@ function parseCategoryValue(value: string) {
 }
 
 interface FormField {
-  autocompletePlace: GoogleMapLocationValue;
+  [AutocompleteFormFieldKey]: AutocompleteFormField;
   category: string;
   description: string;
   title: string;
@@ -66,9 +67,16 @@ export function ModalEditAction(props: ModalEditActionProps) {
     title: existedAction?.title,
   }
 
-  const form = useForm<FormField>({ defaultValues })
+  const {
+    displayAddress,
+    setDisplayAddress,
+    getCurrentLocation,
+    form,
+  } = useGetCurrentPosition<FormField>(defaultValues as FormField, existedAction?.displayAddress ?? '')
+
   const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditAction
+  const typesTexts = texts.types
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
@@ -144,21 +152,21 @@ export function ModalEditAction(props: ModalEditActionProps) {
   }, [createEntourage, existedAction, getValues, updateEntourage, trigger])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' as FormFieldKey })
+    register({ name: AutocompleteFormFieldKey as FormFieldKey })
   }, [register])
 
   const options: Options = [
     {
       label: modalTexts.fieldCategoryHelpLabel,
       options: categories.map((category) => ({
-        label: modalTexts.fieldCategoryHelpList[category],
+        label: typesTexts.categoryHelpList[category],
         value: createCategoryValue('ask_for_help', category),
       })),
     },
     {
       label: modalTexts.fieldCategoryContributionLabel,
       options: categories.map((category) => ({
-        label: modalTexts.fieldCategoryContributionList[category],
+        label: typesTexts.categoryContributionList[category],
         value: createCategoryValue('contribution', category),
       })),
     },
@@ -185,9 +193,12 @@ export function ModalEditAction(props: ModalEditActionProps) {
             )}
           />
           <GoogleMapLocation
-            defaultValue={existedAction?.displayAddress || ''}
-            includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+            inputValue={displayAddress}
+            onChange={(autocompletePlace) => {
+              setDisplayAddress(autocompletePlace.place.description)
+              setValue(AutocompleteFormFieldKey as FormFieldKey, autocompletePlace)
+            }}
+            onClickCurrentPosition={getCurrentLocation}
             textFieldProps={{
               name: 'action-address',
               inputRef: register({ required: isCreation }),

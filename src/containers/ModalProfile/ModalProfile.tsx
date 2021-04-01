@@ -3,24 +3,28 @@ import EmailIcon from '@material-ui/icons/Email'
 import axios from 'axios'
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
-import { TextField, Label, RowFields, validators, useForm } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationProps } from 'src/components/GoogleMapLocation'
+import { useDispatch, useSelector } from 'react-redux'
+import { TextField, Label, RowFields, validators } from 'src/components/Form'
+import {
+  AutocompleteFormField,
+  AutocompleteFormFieldKey,
+  GoogleMapLocation,
+} from 'src/components/GoogleMapLocation'
 import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
 import { Modal } from 'src/components/Modal'
-import { api } from 'src/core/api'
-import { useMutateMe, useMutateMeAddress } from 'src/core/store'
+import { api, User } from 'src/core/api'
+import { authUserActions, selectUserIsUpdating } from 'src/core/useCases/authUser'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
+import { useGetCurrentPosition } from 'src/utils/hooks'
 import { notifServerError } from 'src/utils/misc'
 
-type UserUpdate = NonNullable<Parameters<ReturnType<typeof useMutateMe>[0]>[0]>
-
 interface FormField {
-  about: UserUpdate['about'];
-  autocompletePlace?: Parameters<GoogleMapLocationProps['onChange']>[0];
-  email: UserUpdate['email'];
-  firstName: UserUpdate['firstName'];
-  lastName: UserUpdate['lastName'];
+  about: User['about'];
+  [AutocompleteFormFieldKey]?: AutocompleteFormField;
+  email: User['email'];
+  firstName: User['firstName'];
+  lastName: User['lastName'];
 }
 
 type FormFieldKey = keyof FormField
@@ -63,20 +67,25 @@ function useUploadImageProfile() {
 
 export function ModalProfile() {
   const me = useMe()
-  const [mutateMe] = useMutateMe()
-  const [mutateMeAddress] = useMutateMeAddress(false)
   const [onValidateImageProfile, upload] = useUploadImageProfile()
+  const closeOnNextRender = useSelector(selectUserIsUpdating)
 
+  const dispatch = useDispatch()
   const user = me || {} as NonNullable<typeof me>
 
-  const form = useForm<FormField>({
-    defaultValues: {
-      firstName: user.firstName || '',
-      lastName: user.lastName || '',
-      about: user.about || '',
-      email: user.email || '',
-    },
-  })
+  const defaultValues = {
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
+    about: user.about || '',
+    email: user.email || '',
+  }
+
+  const {
+    displayAddress,
+    setDisplayAddress,
+    getCurrentLocation,
+    form,
+  } = useGetCurrentPosition<FormField>(defaultValues as FormField, user.address?.displayAddress ?? '')
 
   const { register, trigger, setValue, getValues } = form
 
@@ -96,31 +105,32 @@ export function ModalProfile() {
     } = getValues()
 
     try {
-      if (autocompletePlace && autocompletePlace.place) {
-        await mutateMeAddress({
-          googleSessionToken: autocompletePlace.sessionToken,
-          googlePlaceId: autocompletePlace.place.place_id,
-        })
-      }
-
       const avatarKey = (await upload()) ?? undefined
 
-      await mutateMe({
-        firstName,
-        lastName,
-        about,
-        email,
-        avatarKey,
-      })
+      const address = autocompletePlace && autocompletePlace.place ? {
+        googleSessionToken: autocompletePlace.sessionToken,
+        googlePlaceId: autocompletePlace.place.place_id,
+      } : undefined
 
-      return true
+      const updatedUser = {
+        firstName: firstName ?? undefined,
+        lastName: lastName ?? undefined,
+        about: about ?? undefined,
+        email: email ?? undefined,
+        avatarKey,
+        address,
+      }
+
+      dispatch(authUserActions.updateUser(updatedUser))
+
+      return false
     } catch (e) {
       return false
     }
-  }, [getValues, mutateMe, mutateMeAddress, trigger, upload])
+  }, [dispatch, getValues, trigger, upload])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' as FormFieldKey })
+    register({ name: AutocompleteFormFieldKey as FormFieldKey })
   }, [register])
 
   const requiredInfoAreCompleted = !!(user.firstName && user.lastName && user.address?.displayAddress)
@@ -128,6 +138,7 @@ export function ModalProfile() {
   return (
     <Modal
       cancel={requiredInfoAreCompleted}
+      closeOnNextRender={closeOnNextRender}
       onValidate={onValidate}
       title={modalTexts.modalTitle}
       validateLabel={texts.labels.save}
@@ -170,8 +181,12 @@ export function ModalProfile() {
           {modalTexts.step3}
         </Label>
         <GoogleMapLocation
-          defaultValue={user.address ? user.address.displayAddress : ''}
-          onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+          inputValue={displayAddress}
+          onChange={(autocompletePlace) => {
+            setDisplayAddress(autocompletePlace.place.description)
+            setValue(AutocompleteFormFieldKey as FormFieldKey, autocompletePlace)
+          }}
+          onClickCurrentPosition={getCurrentLocation}
           textFieldProps={{
             label: modalTexts.locationLabel,
             name: 'address',

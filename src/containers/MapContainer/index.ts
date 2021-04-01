@@ -14,6 +14,7 @@ export interface MapContainerProps {
   markers: JSX.Element[];
   cards?: JSX.Element;
   list: JSX.Element;
+  filters?: JSX.Element;
   isLoading: boolean;
 }
 

@@ -1,4 +1,4 @@
-import Box from '@material-ui/core/Box'
+import { Box, ButtonBase } from '@material-ui/core'
 import styled from 'styled-components'
 import { devices, colors } from 'src/styles'
 
@@ -12,6 +12,7 @@ export const Container = styled.div`
 
 export const SearchContainer = styled.div`
   flex: 0;
+  display: flex;
 `
 
 export const ListContainer = styled(Box)`
@@ -25,10 +26,18 @@ export const ListContainer = styled(Box)`
 
 export const ListItem = styled.div`
   border-bottom: 1px ${colors.borderColor} solid;
+  display: flex;
 `
 
 export const Scroll = styled.div`
   position: relative;
   height: 100%;
   overflow: auto;
+`
+
+export const ClickableItem = styled(ButtonBase).attrs(() => ({
+  disableRipple: true,
+}))`
+  text-align: left;
+  flex: 1;
 `

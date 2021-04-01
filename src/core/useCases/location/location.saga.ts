@@ -14,9 +14,9 @@ export interface Dependencies {
 }
 
 function* initLocationSaga() {
-  const user = yield select(selectUser)
-  const actionsId = yield select(selectCurrentFeedItemUuid)
-  const poiId = yield select(selectCurrentPOIUuid)
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
+  const actionsId: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
+  const poiId: ReturnType<typeof selectCurrentPOIUuid> = yield select(selectCurrentPOIUuid)
 
   const queryId = actionsId ?? poiId ?? null
 
@@ -32,7 +32,9 @@ function* initLocationSaga() {
         },
       }))
     } else {
-      yield put(actions.getGeolocation())
+      yield put(actions.getGeolocation({
+        updateLocationFilter: true,
+      }))
     }
   } else {
     const defaultCity = entourageCities[queryId as Cities]
@@ -48,7 +50,7 @@ function* initLocationSaga() {
   }
 }
 
-function* getGeolocationSaga() {
+function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { getGeolocation, getPlaceAddressFromCoordinates } = dependencies.geolocationService
 
@@ -58,20 +60,30 @@ function* getGeolocationSaga() {
     const placeAddress: CallReturnType<typeof getPlaceAddressFromCoordinates> = yield call(
       getPlaceAddressFromCoordinates,
       response.coordinates,
+      true,
     )
 
     if (placeAddress.placeAddress) {
-      yield put(actions.setLocation({
-        location: {
-          center: response.coordinates,
+      if (action.payload.updateLocationFilter) {
+        yield put(actions.setLocation({
+          location: {
+            center: response.coordinates,
+            displayAddress: placeAddress.placeAddress,
+          },
+        }))
+      }
+      yield put(actions.setGeolocation({
+        geolocation: {
+          ...response.coordinates,
           displayAddress: placeAddress.placeAddress,
+          googlePlaceId: placeAddress.googlePlaceId,
         },
       }))
     }
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
       // Call action with the same position so that the initialized saga can get its data from gateway
-      const location = yield select(selectLocation)
+      const location: ReturnType<typeof selectLocation> = yield select(selectLocation)
 
       yield put(actions.setLocation({
         location: {

@@ -1,10 +1,9 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
-import React from 'react'
+import React, { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { OverlayLoader } from '../OverlayLoader'
 import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
-import { useLoadGoogleMapApi } from 'src/utils/misc'
+import { useFirebase } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
 
 interface Props {
@@ -29,13 +28,20 @@ export function Map(props: Props) {
   const { children } = props
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
-  const googleMapIsLoaded = useLoadGoogleMapApi()
+  const { sendEvent } = useFirebase()
+  const prevOnChangeValue = useRef(position.center)
 
   function onChange(value: ChangeEventValue) {
-    // used coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
-    const positionHasChanged = coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom
+    // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
+    const positionHasChanged = (coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom)
+    // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
+      && coordinatesHasChanged(prevOnChangeValue.current, value.center)
+
+    prevOnChangeValue.current = value.center
 
     if (positionHasChanged) {
+      sendEvent('Action__Map__PanZoom')
+
       dispatch(locationActions.setLocation({
         location: {
           center: value.center,
@@ -44,10 +50,6 @@ export function Map(props: Props) {
         getDisplayAddressFromCoordinates: true,
       }))
     }
-  }
-
-  if (!googleMapIsLoaded) {
-    return <OverlayLoader />
   }
 
   return (

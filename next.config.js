@@ -9,12 +9,35 @@ module.exports = withCSS({
   },
   webpack(config) {
     config.resolve.modules.push(__dirname)
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"]
+    });
     return config
   },
   env: {
     API_V1_URL: process.env.API_V1_URL,
     API_KEY: process.env.API_KEY,
     GOOGLE_MAP_API_KEY: process.env.GOOGLE_MAP_API_KEY,
-    SENTRY_DSN: process.env.SENTRY_DSN
+    SENTRY_DSN: process.env.SENTRY_DSN,
+    ADMIN_ASSO_URL: process.env.ADMIN_ASSO_URL,
+    SERVER_URL: process.env.SERVER_URL,
+    FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
+    FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
+    FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL,
+    FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
+    FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET,
+    FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    FIREBASE_APP_ID: process.env.FIREBASE_APP_ID,
+    FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID,
+  },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/actions',
+        permanent: true,
+      },
+    ]
   },
 })

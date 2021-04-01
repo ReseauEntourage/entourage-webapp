@@ -7,15 +7,16 @@ import { SearchCity } from './SearchCity'
 interface LeftListProps {
   isLoading: boolean;
   list: JSX.Element;
+  filters?: JSX.Element;
 }
 
 export function LeftList(props: LeftListProps) {
-  const { isLoading, list } = props
+  const { isLoading, list, filters } = props
 
   return (
     <S.Container>
       <S.SearchContainer>
-        <SearchCity />
+        <SearchCity filters={filters} />
       </S.SearchContainer>
       <S.ListContainer
         boxShadow={4}

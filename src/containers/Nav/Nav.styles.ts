@@ -27,7 +27,7 @@ export const NavItem = styled(NotStyledNavItem)`
 
 export const AppBar = styled(AppBarMUI)`
   && {
-    background-color: #fff;
+    background-color: ${colors.main.white};
     border-bottom: solid 1px ${colors.main.borderColorNav};
     color: ${colors.main.text};
   }

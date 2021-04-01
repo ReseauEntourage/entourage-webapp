@@ -1,4 +1,8 @@
-import { ActionFromMapObject, ActionsFromMapObject } from 'src/utils/types'
+import {
+  ActionFromMapObject,
+  ActionsFromMapObject,
+  FilterPOICategory, FilterPOIPartner,
+} from 'src/utils/types'
 import { POIsState } from './pois.reducer'
 
 export const POIsActionType = {
@@ -11,6 +15,8 @@ export const POIsActionType = {
   RETRIEVE_POI_DETAILS_SUCCEEDED: 'POIS/RETRIEVE_POI_DETAILS_SUCCEEDED',
   SET_CURRENT_POI_UUID: 'POIS/SET_CURRENT_POI_UUID',
   REMOVE_CURRENT_POI_UUID: 'POIS/REMOVE_CURRENT_POI_UUID',
+  TOGGLE_POIS_FILTER: 'POIS/TOGGLE_POIS_FILTER',
+  RESET_POIS_FILTERS: 'POIS/RESET_POIS_FILTERS',
 } as const
 
 export type POIsActionType = keyof typeof POIsActionType;
@@ -82,6 +88,19 @@ function removeCurrentPOIUuid() {
   }
 }
 
+function togglePOIsFilter(payload: { category: FilterPOICategory; partner?: FilterPOIPartner; }) {
+  return {
+    type: POIsActionType.TOGGLE_POIS_FILTER,
+    payload,
+  }
+}
+
+function resetPOIsFilters() {
+  return {
+    type: POIsActionType.RESET_POIS_FILTERS,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -90,6 +109,8 @@ export const publicActions = {
   retrievePOIs,
   setCurrentPOIUuid,
   removeCurrentPOIUuid,
+  togglePOIsFilter,
+  resetPOIsFilters,
 }
 
 const privateActions = {

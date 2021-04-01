@@ -4,6 +4,7 @@ import { LocationActionType } from '../location/location.actions'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
+import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
 import { IPOIsGateway } from './IPOIsGateway'
 import { POIsActionType, actions, POIsActions } from './pois.actions'
 import { selectCurrentPOI, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
@@ -21,13 +22,13 @@ export interface Dependencies {
   poisGateway: IPOIsGateway;
 }
 
-function* retrieveLocalizedPOIs() {
+function* retrievePOIs() {
   const dependencies: Dependencies = yield getContext('dependencies')
-  const { retrievePOIs } = dependencies.poisGateway
+  const { poisGateway } = dependencies
   const poisState: ReturnType<typeof selectPOIs> = yield select(selectPOIs)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
 
-  const { fetching } = poisState
+  const { fetching, filters: categoryFilters } = poisState
   const { zoom, center } = positionState
 
   if (fetching) {
@@ -36,9 +37,22 @@ function* retrieveLocalizedPOIs() {
 
   yield put(actions.retrievePOIsStarted())
 
-  const response: CallReturnType<typeof retrievePOIs> = yield call(
-    retrievePOIs,
-    { filters: { center, zoom: calculateDistanceFromZoom(zoom) },
+  const categories = categoryFilters.categories.length > 0
+    ? formatPOIsCategories(categoryFilters.categories) : undefined
+  const partners = categoryFilters.partners.length > 0
+    ? formatPOIsPartners(categoryFilters.partners) : undefined
+
+  const response: CallReturnType<typeof poisGateway.retrievePOIs> = yield call(
+    poisGateway.retrievePOIs,
+    {
+      filters: {
+        location: {
+          center,
+          zoom: calculateDistanceFromZoom(zoom),
+        },
+        categories,
+        partners,
+      },
     },
   )
   yield put(actions.retrievePOIsSuccess(response))
@@ -89,10 +103,13 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
 }
 
 export function* poisSaga() {
-  yield takeEvery(POIsActionType.RETRIEVE_POIS, retrieveLocalizedPOIs)
+  yield takeEvery(POIsActionType.RETRIEVE_POIS, retrievePOIs)
+  yield takeEvery(POIsActionType.TOGGLE_POIS_FILTER, retrievePOIs)
+  yield takeEvery(POIsActionType.RESET_POIS_FILTERS, retrievePOIs)
+
   yield takeEvery(POIsActionType.SET_CURRENT_POI_UUID, setCurrentPOIUuid)
   while (yield take(POIsActionType.INIT_POIS)) {
-    const bgRetrievePOIs = yield takeEvery(LocationActionType.SET_LOCATION, retrieveLocalizedPOIs)
+    const bgRetrievePOIs = yield takeEvery(LocationActionType.SET_LOCATION, retrievePOIs)
     yield take(POIsActionType.CANCEL_POIS)
     yield cancel(bgRetrievePOIs)
   }

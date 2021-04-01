@@ -8,16 +8,21 @@ import {
 } from '@material-ui/pickers'
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
-import { TextField, Label, RowFields, useForm } from 'src/components/Form'
-import { GoogleMapLocation, GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import { TextField, Label, RowFields } from 'src/components/Form'
+import {
+  AutocompleteFormField,
+  AutocompleteFormFieldKey,
+  GoogleMapLocation,
+} from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
+import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
 interface FormField {
-  autocompletePlace: GoogleMapLocationValue;
+  [AutocompleteFormFieldKey]?: AutocompleteFormField;
   category: string;
   description: string;
   title: string;
@@ -45,8 +50,15 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     title: existingEvent?.title,
   }
 
-  const form = useForm<FormField>({ defaultValues })
+  const {
+    displayAddress,
+    setDisplayAddress,
+    getCurrentLocation,
+    form,
+  } = useGetCurrentPosition<FormField>(defaultValues as FormField, existingEvent?.displayAddress ?? '')
+
   const { register, trigger, getValues, setValue } = form
+
   const modalTexts = texts.content.modalEditEvent
 
   const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
@@ -82,6 +94,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     } = getValues()
 
     const getLocation = async () => {
+      assertIsDefined(autocompletePlace)
+
       const placeDetail = await getDetailPlacesService(
         autocompletePlace.place.place_id,
         autocompletePlace.sessionToken,
@@ -165,7 +179,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   }, [trigger, date, time, getValues, existingEvent, updateEntourage, createEntourage])
 
   useEffect(() => {
-    register({ name: 'autocompletePlace' as FormFieldKey })
+    register({ name: AutocompleteFormFieldKey as FormFieldKey })
   }, [register])
 
   return (
@@ -196,9 +210,12 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           />
           <Label>{modalTexts.step2}</Label>
           <GoogleMapLocation
-            defaultValue={existingEvent?.displayAddress}
-            includeLatLng={true}
-            onChange={(autocompletePlace) => setValue('autocompletePlace' as FormFieldKey, autocompletePlace)}
+            inputValue={displayAddress}
+            onChange={(autocompletePlace) => {
+              setDisplayAddress(autocompletePlace.place.description)
+              setValue(AutocompleteFormFieldKey as FormFieldKey, autocompletePlace)
+            }}
+            onClickCurrentPosition={getCurrentLocation}
             textFieldProps={{
               placeholder: modalTexts.fieldAddressPlaceholder,
               name: 'action-address',
