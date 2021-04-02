@@ -15,7 +15,7 @@ import {
 import { FilterPOICategory } from 'src/utils/types'
 
 export interface POICategoryFilter {
-  index: number;
+  index?: number;
   category: FilterPOICategory;
   title?: boolean;
 }
