@@ -33,13 +33,14 @@ export function Map(props: Props) {
 
   function onChange(value: ChangeEventValue) {
     // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
-    const positionHasChanged = (coordinatesHasChanged(position.center, value.center) || position.zoom !== value.zoom)
+    const positionHasChanged = (coordinatesHasChanged(position.center, value.center)
     // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
-      && coordinatesHasChanged(prevOnChangeValue.current, value.center)
-
-    prevOnChangeValue.current = value.center
+      && coordinatesHasChanged(prevOnChangeValue.current, value.center))
+      || position.zoom !== value.zoom
 
     if (positionHasChanged) {
+      prevOnChangeValue.current = value.center
+
       sendEvent('Action__Map__PanZoom')
 
       dispatch(locationActions.setLocation({
