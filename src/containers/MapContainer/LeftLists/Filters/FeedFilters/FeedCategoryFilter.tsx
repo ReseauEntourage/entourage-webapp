@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LineFilter } from '../LineFilter'
 import { FeedItemIcon } from 'src/components/Map'
-import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
+import { selectIsActiveActionTypesFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
@@ -32,9 +32,9 @@ export function FeedCategoryFilter(props: FeedCategoryFilterProps) {
 
   const dispatch = useDispatch()
 
-  const checked = useSelector<AppState, boolean>((state) => selectIsActiveFilter(state, type, category))
+  const checked = useSelector<AppState, boolean>((state) => selectIsActiveActionTypesFilter(state, type, category))
   const onChange = useCallback(() => {
-    dispatch(feedActions.toggleFeedFilter({ type, category }))
+    dispatch(feedActions.toggleActionTypesFilter({ type, category }))
   }, [dispatch, type, category])
 
   return (

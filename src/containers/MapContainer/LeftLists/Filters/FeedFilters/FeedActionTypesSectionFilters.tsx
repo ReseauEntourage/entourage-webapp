@@ -9,7 +9,7 @@ interface SectionFilterProps {
   color: string;
 }
 
-export function FeedSectionFilters(props: SectionFilterProps) {
+export function FeedActionTypesSectionFilters(props: SectionFilterProps) {
   const { type, color } = props
   return (
     <S.SectionContainer>

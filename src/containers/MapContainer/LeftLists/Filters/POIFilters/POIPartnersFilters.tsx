@@ -12,7 +12,7 @@ export function POIPartnersFilters(props: SectionFilterProps) {
   const { category } = props
   return (
     <S.SectionContainer>
-      <POICategoryFilter category={category} index={0} title={true} />
+      <POICategoryFilter category={category} title={true} />
       {
         [
           FilterPOIPartner.DONATIONS,

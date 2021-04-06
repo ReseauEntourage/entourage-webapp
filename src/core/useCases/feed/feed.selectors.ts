@@ -63,15 +63,23 @@ export function selectIsUpdatingStatus(state: AppState) {
   return state.feed.isUpdatingStatus
 }
 
-export function selectFeedFilters(state: AppState) {
-  return state.feed.filters
+export function selectActionTypesFilters(state: AppState) {
+  return state.feed.filters.actionTypes
 }
 
-export function selectIsActiveFilter(state: AppState, type: FilterEntourageType, category?: FilterFeedCategory) {
+export function selectIsActiveActionTypesFilter(
+  state: AppState,
+  type: FilterEntourageType,
+  category?: FilterFeedCategory,
+) {
   if (category) {
-    return state.feed.filters[type].includes(category)
+    return state.feed.filters.actionTypes[type].includes(category)
   }
-  return state.feed.filters[type].length > 0
+  return state.feed.filters.actionTypes[type].length > 0
+}
+
+export function selectIsActiveEventsFilter(state: AppState) {
+  return state.feed.filters.events
 }
 
 const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {

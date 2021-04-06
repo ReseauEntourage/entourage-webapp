@@ -7,7 +7,7 @@ export const SectionContainer = styled.div`
   padding-left: ${theme.spacing(2)}px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-rows: 1fr 1fr 1fr;
+  // grid-template-rows: 1fr 1fr 1fr;
   grid-gap: ${theme.spacing(0, 2)};
   grid-template-areas:
     'x title switch'
@@ -52,9 +52,10 @@ export const Switch = styled.div<ElementProps>`
   `}
 `
 
-export const Title = styled(Typography).attrs(() => ({
+export const SectionTitle = styled(Typography).attrs(() => ({
   variant: variants.title2,
 }))`
+  padding: ${theme.spacing(1, 0)};
   grid-area: title;
   display: flex;
   align-items: center;
@@ -80,4 +81,13 @@ export const FilterListIcon = styled(FilterListIconMUI)`
     padding: 2px;
     border-radius: 14px;
 `
+
+export const Title = styled(Typography).attrs(() => ({
+  variant: variants.bodyRegular,
+}))`
+    padding: ${theme.spacing(1, 0)};
+    background-color: ${colors.main.greyLight};
+    display: flex;
+    justify-content: center;
+  `
 
