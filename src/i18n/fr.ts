@@ -90,6 +90,7 @@ export const texts = {
       filters: {
         events: 'Évènements',
         actionTypes: 'Types d\'action',
+        updatedBefore: 'Mis à jour il y a moins de ...',
         contribution: {
           title: 'Voir les contributions concernant',
         },
