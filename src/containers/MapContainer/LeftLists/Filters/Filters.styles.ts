@@ -110,5 +110,5 @@ export const Circle = styled.div<{isActive: boolean; }>`
 export const CircleContainer = styled.div`
   display: flex;
   justify-content: space-around;
-  padding:  ${theme.spacing(1)}px;
+  padding: ${theme.spacing(1)}px;
 `
