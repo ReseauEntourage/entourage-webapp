@@ -276,13 +276,13 @@ describe('Feed', () => {
   })
 
   it(`
-  Given initial state
-  When user init feed (time range is 8 days)
-    And user clicks to update time range from 8 to 1 day
-  Then store should be update with time range = 1 * 24 hours
-    And items should be fetched
-    And should retrieve feed gateway method have been called for 1 * 24 hours
-`, async () => {
+    Given initial state
+    When user init feed
+      And user update time range to 1 day
+    Then store should be updated with a 24 hours time range
+      And items should be fetched once
+      And retrieve feed gateway method should have been called with a 24 hours time range and default locations and types 
+  `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
