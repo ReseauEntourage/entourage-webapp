@@ -10,7 +10,7 @@ import {
   FeedJoinStatus,
   FeedStatus,
 } from 'src/core/api'
-import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { FeedAction, FeedActionType } from './feed.actions'
 
 export const JoinRequestStatus = {
@@ -59,7 +59,7 @@ export interface FeedState {
   filters: {
     actionTypes: Record<FilterEntourageType, FilterFeedCategory[]>;
     events: boolean;
-    timeRange: number;
+    timeRange: FilterFeedTimeRangeValues;
   };
   itemsUuids: string[];
   items: {
@@ -88,7 +88,7 @@ export const defaultFeedState: FeedState = {
         FilterFeedCategory.SOCIAL],
     },
     events: true,
-    timeRange: 8 * 24,
+    timeRange: FilterFeedTimeRangeValues.ONE_WEEK,
   },
   itemsUuids: [],
   nextPageToken: null,

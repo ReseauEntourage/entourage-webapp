@@ -13,23 +13,20 @@ import {
 } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { colors, variants } from 'src/styles'
-import { FilterEntourageType } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { FeedActionTypesSectionFilters } from './FeedActionTypesSectionFilters'
 
-const marks = [
-  {
-    value: 1 * 24,
-    label: '24H',
-  },
-  {
-    value: 8 * 24,
-    label: '8J',
-  },
-  {
-    value: 30 * 24,
-    label: '1M',
-  },
+const timeRanges = [
+  FilterFeedTimeRangeValues.ONE_DAY,
+  FilterFeedTimeRangeValues.ONE_WEEK,
+  FilterFeedTimeRangeValues.ONE_MONTH,
 ]
+
+const labelByTimeRanges: Record<FilterFeedTimeRangeValues, string> = {
+  [FilterFeedTimeRangeValues.ONE_DAY]: '24H',
+  [FilterFeedTimeRangeValues.ONE_WEEK]: '8J',
+  [FilterFeedTimeRangeValues.ONE_MONTH]: '1M',
+}
 
 export function FeedFilters() {
   const feedIsFetching = useSelector(selectFeedIsFetching)
@@ -64,13 +61,13 @@ export function FeedFilters() {
       <FeedActionTypesSectionFilters color={colors.main.blue} type={FilterEntourageType.CONTRIBUTION} />
       <S.Title>{texts.content.map.filters.updatedBefore}</S.Title>
       <S.CircleContainer>
-        {marks.map((mark) => (
+        {timeRanges.map((timeRange) => (
           <S.Circle
-            key={mark.value}
-            isActive={selectedTimeRange === mark.value}
-            onClick={() => onTimeRangeClick(mark.value)}
+            key={timeRange}
+            isActive={selectedTimeRange === timeRange}
+            onClick={() => onTimeRangeClick(timeRange)}
           >
-            {mark.label}
+            {labelByTimeRanges[timeRange]}
           </S.Circle>
         ))}
       </S.CircleContainer>
