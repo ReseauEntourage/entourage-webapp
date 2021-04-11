@@ -67,7 +67,7 @@ export function FeedFilters() {
         {marks.map((mark) => (
           <S.Circle
             key={mark.value}
-            isActive={Boolean(selectedTimeRange === mark.value)}
+            isActive={selectedTimeRange === mark.value}
             onClick={() => onTimeRangeClick(mark.value)}
           >
             {mark.label}
