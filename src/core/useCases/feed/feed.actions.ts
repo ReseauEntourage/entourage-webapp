@@ -24,6 +24,7 @@ export const FeedActionType = {
   REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
   TOGGLE_ACTION_TYPES_FILTER: 'FEED/TOGGLE_ACTION_TYPES_FILTER',
   TOGGLE_EVENTS_FILTER: 'FEED/TOGGLE_EVENTS_FILTER',
+  SET_TIME_RANGE_FILTER: 'FEED/SET_TIME_RANGE_FILTER',
 } as const
 
 export type FeedActionType = keyof typeof FeedActionType;
@@ -179,6 +180,13 @@ function toggleEventsFilter() {
   }
 }
 
+function setTimeRangeFilter(payload: number) {
+  return {
+    type: FeedActionType.SET_TIME_RANGE_FILTER,
+    payload,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -196,6 +204,7 @@ export const publicActions = {
   removeCurrentItemUuid,
   toggleActionTypesFilter,
   toggleEventsFilter,
+  setTimeRangeFilter,
 }
 
 const privateActions = {

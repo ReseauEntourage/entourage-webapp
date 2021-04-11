@@ -59,6 +59,7 @@ export interface FeedState {
   filters: {
     actionTypes: Record<FilterEntourageType, FilterFeedCategory[]>;
     events: boolean;
+    timeRange: number;
   };
   itemsUuids: string[];
   items: {
@@ -87,6 +88,7 @@ export const defaultFeedState: FeedState = {
         FilterFeedCategory.SOCIAL],
     },
     events: true,
+    timeRange: 8 * 24,
   },
   itemsUuids: [],
   nextPageToken: null,
@@ -305,6 +307,17 @@ export function feedReducer(
         filters: {
           ...state.filters,
           events: !currentEventsFilters,
+        },
+        nextPageToken: null,
+      }
+    }
+
+    case FeedActionType.SET_TIME_RANGE_FILTER: {
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          timeRange: action.payload,
         },
         nextPageToken: null,
       }

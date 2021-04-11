@@ -19,6 +19,7 @@ import {
   selectActionTypesFilters,
   selectIsActiveActionTypesFilter,
   selectIsActiveEventsFilter,
+  selectTimeRangeFilter,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -137,6 +138,7 @@ describe('Feed', () => {
           ...defaultFeedState.filters.actionTypes,
           [FilterEntourageType.CONTRIBUTION]: expectedContributionFilters,
         }, defaultFeedState.filters.events),
+        timeRange: 8,
       },
       nextPageToken: undefined,
     })
@@ -179,6 +181,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: 8,
       },
       nextPageToken: undefined,
     })
@@ -231,6 +234,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: 8,
       },
       nextPageToken: undefined,
     })
@@ -265,6 +269,42 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, false),
+        timeRange: 8,
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+  Given initial state
+  When user init feed (time range is 8 days)
+    And user clicks to update time range from 8 to 1 day
+  Then store should be update with time range = 1
+    And items should be fetched
+    And should retrieve feed gateway method have been called for 1 day
+`, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.setTimeRangeFilter(1))
+
+    expect(selectTimeRangeFilter(store.getState())).toEqual(1)
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, true),
+        timeRange: 1,
       },
       nextPageToken: undefined,
     })
@@ -407,6 +447,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: 8,
       },
     })
   })
@@ -443,6 +484,7 @@ describe('Feed', () => {
           zoom: nextLocation.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: 8,
       },
       nextPageToken: undefined,
     })
@@ -503,6 +545,7 @@ describe('Feed', () => {
           zoom: initialAppState?.location?.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: 8,
       },
       nextPageToken: 'wyz',
     })

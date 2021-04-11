@@ -222,6 +222,7 @@ describe('Feed Item', () => {
           },
         },
         types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
+        timeRange: 8,
       },
     })
   })
@@ -345,6 +346,7 @@ describe('Feed Item', () => {
           },
         },
         types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
+        timeRange: 8,
       },
     })
   })
@@ -412,6 +414,7 @@ describe('Feed Item', () => {
           zoom: selectLocation(store.getState()).zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: 8,
       },
     })
   })
