@@ -99,10 +99,9 @@ export const Circle = styled.div<{isActive: boolean; }>`
   text-align: center;
   cursor: pointer;
   ${({ isActive }) => `
-    border: 2px solid ${isActive ? colors.main.primary : colors.borderColor};
+    border: 1px solid ${isActive ? colors.main.primary : colors.main.grey};
     color: ${isActive ? colors.main.primary : colors.main.grey};
     &:hover {
-      border-color: ${isActive ? colors.main.primary : colors.main.grey};
       box-shadow: 0 0 0 7px ${colors.borderColor}; 
     }
   `}
