@@ -82,6 +82,10 @@ export function selectIsActiveEventsFilter(state: AppState) {
   return state.feed.filters.events
 }
 
+export function selectTimeRangeFilter(state: AppState) {
+  return state.feed.filters.timeRange
+}
+
 const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {
   closed: RequestStatus.CLOSED,
   open: RequestStatus.OPEN,

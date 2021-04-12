@@ -91,3 +91,24 @@ export const Title = styled(Typography).attrs(() => ({
     justify-content: center;
   `
 
+export const Circle = styled.div<{isActive: boolean; }>`
+  height: 60px;
+  line-height: 60px;  
+  width: 60px;  
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  ${({ isActive }) => `
+    border: 1px solid ${isActive ? colors.main.primary : colors.main.grey};
+    color: ${isActive ? colors.main.primary : colors.main.grey};
+    &:hover {
+      box-shadow: 0 0 0 7px ${colors.borderColor}; 
+    }
+  `}
+`
+
+export const CircleContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: ${theme.spacing(1)}px;
+`

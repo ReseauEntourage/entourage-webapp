@@ -31,7 +31,7 @@ function* retrieveFeed() {
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { types, location: { center, zoom } },
+      filters: { types, location: { center, zoom }, timeRange: filters.timeRange },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -56,7 +56,7 @@ function* retrieveFeedNextPage() {
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { types, location: { center, zoom } },
+      filters: { types, location: { center, zoom }, timeRange: filters.timeRange },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -140,6 +140,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
   yield takeEvery(FeedActionType.TOGGLE_ACTION_TYPES_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.TOGGLE_EVENTS_FILTER, retrieveFeed)
+  yield takeEvery(FeedActionType.SET_TIME_RANGE_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)

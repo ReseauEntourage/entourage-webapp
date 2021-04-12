@@ -5,7 +5,7 @@ import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { formatFeedTypes } from 'src/utils/misc'
-import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
@@ -19,6 +19,7 @@ import {
   selectActionTypesFilters,
   selectIsActiveActionTypesFilter,
   selectIsActiveEventsFilter,
+  selectTimeRangeFilter,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -137,6 +138,7 @@ describe('Feed', () => {
           ...defaultFeedState.filters.actionTypes,
           [FilterEntourageType.CONTRIBUTION]: expectedContributionFilters,
         }, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -179,6 +181,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -231,6 +234,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -265,6 +269,43 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, false),
+        timeRange: defaultFeedState.filters.timeRange,
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user update time range to 1 day
+    Then store should be updated with a 24 hours time range
+      And items should be fetched once
+      And retrieve feed gateway method should have been called with a 24 hours time range 
+        and default locations and types 
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.setTimeRangeFilter(FilterFeedTimeRangeValues.ONE_DAY))
+
+    expect(selectTimeRangeFilter(store.getState())).toEqual(FilterFeedTimeRangeValues.ONE_DAY)
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, true),
+        timeRange: FilterFeedTimeRangeValues.ONE_DAY,
       },
       nextPageToken: undefined,
     })
@@ -407,6 +448,7 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
     })
   })
@@ -443,6 +485,7 @@ describe('Feed', () => {
           zoom: nextLocation.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -503,6 +546,7 @@ describe('Feed', () => {
           zoom: initialAppState?.location?.zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: 'wyz',
     })
