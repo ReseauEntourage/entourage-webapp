@@ -12,49 +12,51 @@ export function useActionMarkers() {
   const { feeds, isLoading } = useNextFeed()
   const { sendEvent } = useFirebase()
 
-  const feedsMarkersContent = feeds.map((feed) => {
-    assertCondition(feed.itemType === 'Entourage')
+  const feedsMarkersContent = feeds
+    .filter((feedItem) => feedItem.itemType === 'Entourage')
+    .map((feedItem) => {
+      assertCondition(feedItem.itemType === 'Entourage')
 
-    const { location, uuid, groupType } = feed
-    return (
-      <MarkerWrapper
-        key={uuid}
-        lat={location.latitude}
-        lng={location.longitude}
-      >
-        <Link
-          as={`/actions/${uuid}`}
-          href="/actions/[actionId]"
+      const { location, uuid, groupType } = feedItem
+      return (
+        <MarkerWrapper
+          key={uuid}
+          lat={location.latitude}
+          lng={location.longitude}
         >
-          <MaterialLink
-            onClick={() => sendEvent('Action__Feed__MapItem')}
-            style={{
-              textDecoration: 'none',
-            }}
+          <Link
+            as={`/actions/${uuid}`}
+            href="/actions/[actionId]"
           >
-            {
-              groupType === 'outing'
-                ? (
-                  <EventMarker
-                    key={uuid}
-                    isActive={uuid === actionId}
-                    tooltip={feed.title}
-                  />
-                )
-                : (
-                  <ActionMarker
-                    key={uuid}
-                    isActive={uuid === actionId}
-                    tooltip={feed.title}
-                  />
-                )
-            }
+            <MaterialLink
+              onClick={() => sendEvent('Action__Feed__MapItem')}
+              style={{
+                textDecoration: 'none',
+              }}
+            >
+              {
+                groupType === 'outing'
+                  ? (
+                    <EventMarker
+                      key={uuid}
+                      isActive={uuid === actionId}
+                      tooltip={feedItem.title}
+                    />
+                  )
+                  : (
+                    <ActionMarker
+                      key={uuid}
+                      isActive={uuid === actionId}
+                      tooltip={feedItem.title}
+                    />
+                  )
+              }
 
-          </MaterialLink>
-        </Link>
-      </MarkerWrapper>
-    )
-  })
+            </MaterialLink>
+          </Link>
+        </MarkerWrapper>
+      )
+    })
 
   return { feedsMarkersContent, isLoading }
 }

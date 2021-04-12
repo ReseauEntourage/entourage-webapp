@@ -422,7 +422,10 @@ describe('Feed', () => {
       And should retrieve feed gateway method have been called with position filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
+    const deferredValue = {
+      nextPageToken: fakeFeedData.nextPageToken,
+      items: [fakeFeedData.items.abc, fakeFeedData.items.def],
+    }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
 
@@ -434,7 +437,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc])
+    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc, fakeFeedData.items.def])
 
     expect(selectHasNextPageToken(store.getState())).toEqual(true)
 
@@ -459,7 +462,10 @@ describe('Feed', () => {
     Then should retrieve feed gateway method have been called the second time with next position filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
-    const deferredValue = { nextPageToken: fakeFeedData.nextPageToken, items: [fakeFeedData.items.abc] }
+    const deferredValue = {
+      nextPageToken: fakeFeedData.nextPageToken,
+      items: [fakeFeedData.items.abc, fakeFeedData.items.def],
+    }
     feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValue)
 
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
@@ -551,7 +557,11 @@ describe('Feed', () => {
       nextPageToken: 'wyz',
     })
 
-    expect(selectFeedItems(store.getState())).toEqual([fakeFeedData.items.abc, feedNextData.items[0]])
+    expect(selectFeedItems(store.getState())).toEqual([
+      fakeFeedData.items.abc,
+      fakeFeedData.items.def,
+      feedNextData.items[0],
+    ])
   })
 
   it(`

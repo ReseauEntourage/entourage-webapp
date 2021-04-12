@@ -4,13 +4,13 @@ import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
+import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedItem } from 'src/components/FeedItem'
 import { FeedItemIcon } from 'src/components/Map'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
-import { assertCondition } from 'src/utils/misc'
 import { FilterEntourageType } from 'src/utils/types'
 
 export function FeedList() {
@@ -27,7 +27,20 @@ export function FeedList() {
   })
 
   const feedsListContent = feeds.map((feedItem) => {
-    assertCondition(feedItem.itemType === 'Entourage')
+    if (feedItem.itemType === 'Announcement') {
+      return (
+        <S.ListItem key={feedItem.uuid}>
+          <FeedAnnouncement
+            action={feedItem.action}
+            body={feedItem.body}
+            iconUrl={feedItem.iconUrl}
+            imageUrl={feedItem.imageUrl}
+            title={feedItem.title}
+            url={feedItem.url}
+          />
+        </S.ListItem>
+      )
+    }
 
     let secondText = ''
     let label = ''
@@ -53,7 +66,6 @@ export function FeedList() {
         <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
           <S.ClickableItem onClick={() => sendEvent('Action__Feed__ListItem')}>
             <FeedItem
-              key={feedItem.uuid}
               icon={(
                 <FeedItemIcon
                   displayCategory={feedItem.displayCategory}

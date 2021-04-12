@@ -45,10 +45,10 @@ export class HTTPFeedGateway implements IFeedGateway {
             uuid: item.data.uuid,
             title: item.data.title,
             body: item.data.body,
-            imageUrl: item.data.image_url,
+            imageUrl: item.data.imageUrl,
             action: item.data.action,
             url: item.data.url,
-            iconUrl: item.data.icon_url,
+            iconUrl: item.data.iconUrl,
           }
         }
 

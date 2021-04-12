@@ -268,10 +268,10 @@ export interface FeedItemAnnouncement {
     uuid: string;
     title: string;
     body?: string;
-    image_url?: string;
+    imageUrl?: string;
     action?: string;
     url?: string;
-    icon_url: string;
+    iconUrl: string;
     author?: null;
   };
   type: 'Announcement';
