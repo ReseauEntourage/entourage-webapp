@@ -37,6 +37,7 @@ export function FeedList() {
             imageUrl={feedItem.imageUrl}
             title={feedItem.title}
             url={feedItem.url}
+            webappUrl={feedItem.webappUrl}
           />
         </S.ListItem>
       )

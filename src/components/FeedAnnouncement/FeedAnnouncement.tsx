@@ -1,39 +1,36 @@
-import { Button } from '@material-ui/core/'
+import { Link as MaterialLink } from '@material-ui/core/'
 import Typography from '@material-ui/core/Typography'
+import Link from 'next/link'
 import React, { useCallback } from 'react'
+import { Button } from 'src/components/Button'
+import { constants } from 'src/constants'
 import { variants } from 'src/styles'
 import { useFirebase } from 'src/utils/hooks'
+import { formatWebLink } from 'src/utils/misc'
 import * as S from './FeedAnnouncement.styles'
 
 interface FeedAnnouncementProps {
   title: string;
-  body?: string;
+  body: string;
   imageUrl?: string;
-  action?: string;
-  url?: string;
+  action: string;
+  url: string;
+  webappUrl?: string;
   iconUrl: string;
 }
 
 export function FeedAnnouncement(props: FeedAnnouncementProps) {
-  const { title, body, imageUrl, action, url, iconUrl } = props
+  const { title, body, imageUrl, action, url, webappUrl, iconUrl } = props
 
   const { sendEvent } = useFirebase()
 
-  const sendWorkshopEvent = useCallback(() => {
-    // TODO find better way
-    const isWorkshopCard = title.toLowerCase().includes('inscrire')
-      || title.toLowerCase().includes('atelier')
-      || title.toLowerCase().includes('sensibilisation')
-      || (action && (
-        action.toLowerCase().includes('inscrire')
-        || action.toLowerCase().includes('atelier')
-        || action.toLowerCase().includes('sensibilisation')
-      ))
+  const { formattedUrl, isExternal } = formatWebLink(webappUrl ?? url)
 
-    if (isWorkshopCard) {
+  const sendWorkshopEvent = useCallback(() => {
+    if (formattedUrl === constants.WORKSHOP_LINK_CARD) {
       sendEvent('Action__Workshop__Card')
     }
-  }, [action, sendEvent, title])
+  }, [formattedUrl, sendEvent])
 
   return (
     <S.Container>
@@ -45,29 +42,60 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
           <Typography variant={variants.title2}>{title}</Typography>
         </S.TitleContainer>
         <S.ContentContainer>
-          <Typography align="center" variant={variants.bodyRegular}>
+          <Typography variant={variants.bodyRegular}>
             {body}
           </Typography>
         </S.ContentContainer>
         {
           imageUrl && (
-            <a href={url} onClick={sendWorkshopEvent}>
-              <S.AnnouncementImage
-                alt={title}
-                src={imageUrl}
-              />
-            </a>
+            isExternal
+              ? (
+                <MaterialLink href={formattedUrl} onClick={sendWorkshopEvent} target="_blank">
+                  <S.AnnouncementImage
+                    alt={title}
+                    src={imageUrl}
+                  />
+                </MaterialLink>
+              )
+              : (
+                <Link href={formattedUrl}>
+                  <a>
+                    <S.AnnouncementImage
+                      alt={title}
+                      src={imageUrl}
+                    />
+                  </a>
+                </Link>
+              )
           )
         }
         <S.ButtonContainer>
-          <Button
-            color="secondary"
-            href={url}
-            onClick={sendWorkshopEvent}
-            size="medium"
-          >
-            {action}
-          </Button>
+          {
+            isExternal ? (
+              <Button
+                color="secondary"
+                href={formattedUrl}
+                onClick={sendWorkshopEvent}
+                size="medium"
+                target="_blank"
+                variant="text"
+              >
+                {action}
+              </Button>
+            ) : (
+              <Link href={formattedUrl}>
+                <a>
+                  <Button
+                    color="secondary"
+                    size="medium"
+                    variant="text"
+                  >
+                    {action}
+                  </Button>
+                </a>
+              </Link>
+            )
+          }
         </S.ButtonContainer>
       </div>
     </S.Container>

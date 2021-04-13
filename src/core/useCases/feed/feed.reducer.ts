@@ -61,10 +61,11 @@ export interface FeedAnnouncement {
   id: number;
   uuid: string;
   title: string;
-  body?: string;
+  body: string;
   imageUrl?: string;
-  action?: string;
-  url?: string;
+  action: string;
+  url: string;
+  webappUrl?: string;
   iconUrl: string;
 }
 

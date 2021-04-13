@@ -48,6 +48,7 @@ export class HTTPFeedGateway implements IFeedGateway {
             imageUrl: item.data.imageUrl,
             action: item.data.action,
             url: item.data.url,
+            webappUrl: item.data.webappUrl,
             iconUrl: item.data.iconUrl,
           }
         }

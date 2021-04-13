@@ -30,7 +30,6 @@ export const TitleContainer = styled.div`
 export const ContentContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
   padding: ${theme.spacing(0, 2, 2, 2)};
 `
 
