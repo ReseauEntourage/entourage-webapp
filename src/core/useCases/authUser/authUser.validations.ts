@@ -1,5 +1,3 @@
-import validator from 'validator'
-
 // ----------------------------------------------------------------
 //                            Phone
 // ----------------------------------------------------------------
@@ -51,7 +49,7 @@ export function validatePhone(phone: string) {
     return PhoneValidationsError.REQUIRED
   }
 
-  if (!validator.isMobilePhone(phone, 'fr-FR')) {
+  if (!phone.match(/^((\+)33|0)[1-9](\d{2}){4}$/)) {
     return PhoneValidationsError.INVALID_FORMAT
   }
 
