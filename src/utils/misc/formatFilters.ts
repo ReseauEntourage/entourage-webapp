@@ -1,5 +1,5 @@
-import { POIPartnersTypes, POICategory } from '../../core/api'
 import { FilterEntourageType, FilterFeedCategory, FilterPOICategory, FilterPOIPartner } from '../types'
+import { POIPartnersTypes, POICategory } from 'src/core/api'
 
 const feedTypeFilterResolver: Record<FilterEntourageType, Record<FilterFeedCategory, string>> = {
   [FilterEntourageType.ASK_FOR_HELP]: {

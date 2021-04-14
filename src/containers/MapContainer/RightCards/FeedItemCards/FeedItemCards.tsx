@@ -11,13 +11,14 @@ import { UsersList } from 'src/components/UsersList'
 import { useCurrentFeedItem } from 'src/containers/MapContainer'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import { useQueryEntourageUsers } from 'src/core/store'
+import { FeedEntourage } from 'src/core/useCases/feed'
 import { useMe } from 'src/hooks/useMe'
 import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
 import { Actions } from './Actions'
 
 export function FeedItemCards() {
-  const feedItem = useCurrentFeedItem()
+  const feedItem = useCurrentFeedItem() as FeedEntourage
   assertIsDefined(feedItem)
   const [entourageUsers] = useQueryEntourageUsers(feedItem.uuid)
   const me = useMe()

@@ -1,22 +1,18 @@
+import { Event } from '@material-ui/icons'
 import React from 'react'
-import { FeedItemIcon } from '../Map'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
-import { FeedItem } from './FeedItem'
+import { colors } from 'src/styles'
+import { FeedEntourage } from './FeedEntourage'
 
 export default {
-  title: 'FeedItem',
+  title: 'FeedEntourage',
 }
 
 export const Base = () => (
   <TransparentWrapper style={{ width: 500 }}>
-    <FeedItem
+    <FeedEntourage
       icon={(
-        <FeedItemIcon
-          displayCategory="social"
-          entourageType="contribution"
-          groupType="action"
-          tooltip="Passer du temps avec une personne"
-        />
+        <Event style={{ color: colors.main.primary, fontSize: 22 }} />
       )}
       primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
@@ -27,7 +23,10 @@ export const Base = () => (
 
 export const Active = () => (
   <TransparentWrapper style={{ width: 500 }}>
-    <FeedItem
+    <FeedEntourage
+      icon={(
+        <Event style={{ color: colors.main.primary, fontSize: 22 }} />
+      )}
       isActive={true}
       primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"

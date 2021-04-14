@@ -1,9 +1,10 @@
 import uniqid from 'uniqid'
 import { uniqIntId } from 'src/utils/misc'
-import { FeedState, FeedItem, defaultFeedState } from './feed.reducer'
+import { FeedState, FeedEntourage, defaultFeedState, FeedAnnouncement } from './feed.reducer'
 
 export function createFeedItem() {
   return {
+    itemType: 'Entourage',
     author: {
       id: uniqIntId(),
       avatarUrl: '...',
@@ -21,20 +22,21 @@ export function createFeedItem() {
       longitude: 14,
     },
     metadata: {},
-  } as FeedItem
+  } as FeedEntourage
 }
 
-export function createFeedItemList(): FeedItem[] {
+export function createFeedItemList(): FeedEntourage[] {
   return new Array(10).fill(null).map(() => createFeedItem())
 }
 
-export const fakeFeedData = {
+export const fakeFeedData: FeedState = {
   ...defaultFeedState,
   fetching: false,
   nextPageToken: 'abc',
-  itemsUuids: ['abc'],
+  itemsUuids: ['abc', 'def'],
   items: {
     abc: {
+      itemType: 'Entourage',
       author: {
         avatarUrl: 'http://image.com',
         displayName: 'John',
@@ -50,7 +52,20 @@ export const fakeFeedData = {
         longitude: 2,
       },
       metadata: {},
-    } as FeedItem,
+    } as FeedEntourage,
+    def: {
+      itemType: 'Announcement',
+      action: 'Je découvre',
+      author: null,
+      body: "Le témoignage quotidien d'une personne SDF qui raconte sa façon de vivre le confinement.",
+      iconUrl: 'https://api-preprod.entourage.social/api/v1/announcements/64/icon',
+      id: 64,
+      imageUrl: 'https://api.entourage.social/assets/announcements/images/64.jpg',
+      title: 'Journal du confinement',
+      // eslint-disable-next-line max-len
+      url: 'entourage-staging://webview?url=https://api-preprod.entourage.social/api/v1/announcements/64/redirect/e59866c68b39596c23bd4d71a7b03241',
+      uuid: '64',
+    } as FeedAnnouncement,
   },
   selectedItemUuid: null,
 } as FeedState

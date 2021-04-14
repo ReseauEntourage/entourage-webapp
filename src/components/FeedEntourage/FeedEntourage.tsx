@@ -2,9 +2,9 @@ import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
-import * as S from './FeedItem.styles'
+import * as S from './FeedEntourage.styles'
 
-interface FeedItemProps {
+interface FeedEntourageProps {
   icon?: JSX.Element;
   isActive?: boolean;
   primaryText: string;
@@ -12,7 +12,7 @@ interface FeedItemProps {
   secondText: string;
 }
 
-export function FeedItem(props: FeedItemProps) {
+export function FeedEntourage(props: FeedEntourageProps) {
   const {
     primaryText,
     secondText,

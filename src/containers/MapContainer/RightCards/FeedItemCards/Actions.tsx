@@ -8,7 +8,7 @@ import { useCurrentFeedItem } from 'src/containers/MapContainer'
 import { ModalCloseAction } from 'src/containers/ModalCloseAction'
 import { ModalEditAction } from 'src/containers/ModalEditAction'
 import { ModalEditEvent } from 'src/containers/ModalEditEvent'
-import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus } from 'src/core/useCases/feed'
+import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus, FeedEntourage } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
@@ -21,7 +21,7 @@ interface ActionsProps {
 
 export function Actions(props: ActionsProps) {
   const { iAmCreator } = props
-  const feedItem = useCurrentFeedItem()
+  const feedItem = useCurrentFeedItem() as FeedEntourage
   const dispatch = useDispatch()
   assertIsDefined(feedItem)
 

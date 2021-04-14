@@ -16,7 +16,7 @@ module.exports = {
   ],
   webpackFinal: async config => {
     // necessary to override default .svg loader with svgr
-    const fileLoaderRule = config.module.rules.find(rule => rule.test.test('.svg'));
+    const fileLoaderRule = config.module.rules.find((rule) => rule.test.toString().indexOf("svg") !== -1);
     fileLoaderRule.exclude = /\.svg$/;
     config.module.rules.push({
       test: /\.svg$/,

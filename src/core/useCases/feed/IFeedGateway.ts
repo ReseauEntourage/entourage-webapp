@@ -1,6 +1,6 @@
 import { LocationState } from '../location'
 import { FeedJoinStatus, FeedTypesFilter } from 'src/core/api'
-import { FeedState, FeedItem } from './feed.reducer'
+import { FeedState, FeedEntourage, FeedAnnouncement } from './feed.reducer'
 
 interface FeedItemsFilter {
   location: Pick<LocationState, 'center' | 'zoom'>;
@@ -13,7 +13,7 @@ export interface IFeedGateway {
     filters: FeedItemsFilter;
     nextPageToken?: FeedState['nextPageToken'];
   }): Promise<{
-    items: FeedItem[];
+    items: (FeedEntourage | FeedAnnouncement)[];
     nextPageToken: FeedState['nextPageToken'];
   }>;
 

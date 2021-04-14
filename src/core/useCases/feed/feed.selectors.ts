@@ -1,4 +1,5 @@
 import { FeedStatus } from 'src/core/api'
+import { assertCondition } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
 import { JoinRequestStatus, FeedState, RequestStatus } from './feed.reducer'
 
@@ -44,6 +45,7 @@ export function selectIsUpdatingJoinStatus(state: AppState) {
 
 export function selectJoinRequestStatus(state: AppState, entourageUuid: string) {
   const entourage = state.feed.items[entourageUuid]
+  assertCondition(entourage.itemType === 'Entourage')
 
   switch (entourage.joinStatus) {
     case 'cancelled':
@@ -94,5 +96,6 @@ const MapFeedStatusToRequestStatus: Record<FeedStatus, RequestStatus> = {
 
 export function selectStatus(state: AppState, entourageUuid: string) {
   const entourage = state.feed.items[entourageUuid]
+  assertCondition(entourage.itemType === 'Entourage')
   return MapFeedStatusToRequestStatus[entourage.status]
 }

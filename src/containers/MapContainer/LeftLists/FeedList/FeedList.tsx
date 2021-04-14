@@ -4,12 +4,15 @@ import Link from 'next/link'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
-import { FeedItem } from 'src/components/FeedItem'
+import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
+import { FeedEntourage } from 'src/components/FeedEntourage'
 import { FeedItemIcon } from 'src/components/Map'
+import { constants } from 'src/constants'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
+import { formatWebLink } from 'src/utils/misc'
 import { FilterEntourageType } from 'src/utils/types'
 
 export function FeedList() {
@@ -26,6 +29,31 @@ export function FeedList() {
   })
 
   const feedsListContent = feeds.map((feedItem) => {
+    if (feedItem.itemType === 'Announcement') {
+      const { formattedUrl, isExternal } = formatWebLink(feedItem.webappUrl ?? feedItem.url)
+
+      const sendWorkshopEvent = () => {
+        if (formattedUrl === constants.WORKSHOP_LINK_CARD) {
+          sendEvent('Action__Workshop__Card')
+        }
+      }
+
+      return (
+        <S.ListItem key={feedItem.uuid}>
+          <FeedAnnouncement
+            action={feedItem.action}
+            body={feedItem.body}
+            iconUrl={feedItem.iconUrl}
+            imageUrl={feedItem.imageUrl}
+            isExternal={isExternal}
+            onClick={sendWorkshopEvent}
+            title={feedItem.title}
+            url={formattedUrl}
+          />
+        </S.ListItem>
+      )
+    }
+
     let secondText = ''
     let label = ''
     if (feedItem.groupType === 'action') {
@@ -49,8 +77,7 @@ export function FeedList() {
       <S.ListItem key={feedItem.uuid}>
         <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
           <S.ClickableItem onClick={() => sendEvent('Action__Feed__ListItem')}>
-            <FeedItem
-              key={feedItem.uuid}
+            <FeedEntourage
               icon={(
                 <FeedItemIcon
                   displayCategory={feedItem.displayCategory}
