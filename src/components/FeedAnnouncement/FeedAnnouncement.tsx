@@ -1,12 +1,10 @@
 import { Link as MaterialLink } from '@material-ui/core/'
 import Typography from '@material-ui/core/Typography'
 import Link from 'next/link'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Button } from 'src/components/Button'
-import { constants } from 'src/constants'
 import { variants } from 'src/styles'
-import { useFirebase } from 'src/utils/hooks'
-import { formatWebLink } from 'src/utils/misc'
+
 import * as S from './FeedAnnouncement.styles'
 
 interface FeedAnnouncementProps {
@@ -15,22 +13,13 @@ interface FeedAnnouncementProps {
   imageUrl?: string;
   action: string;
   url: string;
-  webappUrl?: string;
+  onClick?: () => void;
+  isExternal: boolean;
   iconUrl: string;
 }
 
 export function FeedAnnouncement(props: FeedAnnouncementProps) {
-  const { title, body, imageUrl, action, url, webappUrl, iconUrl } = props
-
-  const { sendEvent } = useFirebase()
-
-  const { formattedUrl, isExternal } = formatWebLink(webappUrl ?? url)
-
-  const sendWorkshopEvent = useCallback(() => {
-    if (formattedUrl === constants.WORKSHOP_LINK_CARD) {
-      sendEvent('Action__Workshop__Card')
-    }
-  }, [formattedUrl, sendEvent])
+  const { title, body, imageUrl, action, url, iconUrl, isExternal, onClick } = props
 
   return (
     <S.Container>
@@ -50,7 +39,7 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
           imageUrl && (
             isExternal
               ? (
-                <MaterialLink href={formattedUrl} onClick={sendWorkshopEvent} target="_blank">
+                <MaterialLink href={url} onClick={onClick} target="_blank">
                   <S.AnnouncementImage
                     alt={title}
                     src={imageUrl}
@@ -58,13 +47,13 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
                 </MaterialLink>
               )
               : (
-                <Link href={formattedUrl}>
-                  <a>
+                <Link href={url}>
+                  <MaterialLink onClick={onClick}>
                     <S.AnnouncementImage
                       alt={title}
                       src={imageUrl}
                     />
-                  </a>
+                  </MaterialLink>
                 </Link>
               )
           )
@@ -74,8 +63,8 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
             isExternal ? (
               <Button
                 color="secondary"
-                href={formattedUrl}
-                onClick={sendWorkshopEvent}
+                href={url}
+                onClick={onClick}
                 size="medium"
                 target="_blank"
                 variant="text"
@@ -83,10 +72,11 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
                 {action}
               </Button>
             ) : (
-              <Link href={formattedUrl}>
+              <Link href={url}>
                 <a>
                   <Button
                     color="secondary"
+                    onClick={onClick}
                     size="medium"
                     variant="text"
                   >

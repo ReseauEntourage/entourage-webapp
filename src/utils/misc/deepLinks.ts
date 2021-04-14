@@ -22,7 +22,7 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
 
   if (url.includes(env.SERVER_URL)) {
     return {
-      formattedUrl: url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length),
+      formattedUrl: `/${url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length)}`,
       isExternal: false,
     }
   }

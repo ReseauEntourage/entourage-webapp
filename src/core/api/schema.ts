@@ -492,6 +492,4 @@ export const schema = {
   },
 }
 
-export type FeedItem = typeof schema['/feeds GET']['response']['feeds'][0]['data']
-
 validateSchema<TypeScriptRequestSchemaConf>(schema)
