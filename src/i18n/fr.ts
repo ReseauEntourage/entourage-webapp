@@ -3,7 +3,7 @@
 
 export const texts = {
   types: {
-    event: 'Événement',
+    event: 'Évènement',
     categoryHelpList: {
       mat_help: 'Un don matériel',
       other: 'Autre chose',
@@ -88,6 +88,9 @@ export const texts = {
   content: {
     map: {
       filters: {
+        events: 'Évènements',
+        actionTypes: 'Types d\'action',
+        updatedBefore: 'Mis à jour il y a moins de ...',
         contribution: {
           title: 'Voir les contributions concernant',
         },

@@ -28,3 +28,7 @@ export function LineFilter(props: LineFilterProps) {
     </>
   )
 }
+
+LineFilter.defaultProps = {
+  index: 0,
+}

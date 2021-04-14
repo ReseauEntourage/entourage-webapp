@@ -7,7 +7,7 @@ export const SectionContainer = styled.div`
   padding-left: ${theme.spacing(2)}px;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-rows: 1fr 1fr 1fr;
+  // grid-template-rows: 1fr 1fr 1fr;
   grid-gap: ${theme.spacing(0, 2)};
   grid-template-areas:
     'x title switch'
@@ -52,9 +52,10 @@ export const Switch = styled.div<ElementProps>`
   `}
 `
 
-export const Title = styled(Typography).attrs(() => ({
+export const SectionTitle = styled(Typography).attrs(() => ({
   variant: variants.title2,
 }))`
+  padding: ${theme.spacing(1, 0)};
   grid-area: title;
   display: flex;
   align-items: center;
@@ -81,3 +82,33 @@ export const FilterListIcon = styled(FilterListIconMUI)`
     border-radius: 14px;
 `
 
+export const Title = styled(Typography).attrs(() => ({
+  variant: variants.bodyRegular,
+}))`
+    padding: ${theme.spacing(1, 0)};
+    background-color: ${colors.main.greyLight};
+    display: flex;
+    justify-content: center;
+  `
+
+export const Circle = styled.div<{isActive: boolean; }>`
+  height: 60px;
+  line-height: 60px;  
+  width: 60px;  
+  border-radius: 50%;
+  text-align: center;
+  cursor: pointer;
+  ${({ isActive }) => `
+    border: 1px solid ${isActive ? colors.main.primary : colors.main.grey};
+    color: ${isActive ? colors.main.primary : colors.main.grey};
+    &:hover {
+      box-shadow: 0 0 0 7px ${colors.borderColor}; 
+    }
+  `}
+`
+
+export const CircleContainer = styled.div`
+  display: flex;
+  justify-content: space-around;
+  padding: ${theme.spacing(1)}px;
+`

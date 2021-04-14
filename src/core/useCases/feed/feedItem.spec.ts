@@ -222,6 +222,7 @@ describe('Feed Item', () => {
           },
         },
         types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
+        timeRange: defaultFeedState.filters.timeRange,
       },
     })
   })
@@ -345,6 +346,7 @@ describe('Feed Item', () => {
           },
         },
         types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
+        timeRange: defaultFeedState.filters.timeRange,
       },
     })
   })
@@ -411,7 +413,8 @@ describe('Feed Item', () => {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
           zoom: selectLocation(store.getState()).zoom,
         },
-        types: formatFeedTypes(defaultFeedState.filters),
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
     })
   })

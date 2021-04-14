@@ -10,7 +10,7 @@ import {
   FeedJoinStatus,
   FeedStatus,
 } from 'src/core/api'
-import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { FeedAction, FeedActionType } from './feed.actions'
 
 export const JoinRequestStatus = {
@@ -56,7 +56,11 @@ export interface FeedItem {
 
 export interface FeedState {
   fetching: boolean;
-  filters: Record<FilterEntourageType, FilterFeedCategory[]>;
+  filters: {
+    actionTypes: Record<FilterEntourageType, FilterFeedCategory[]>;
+    events: boolean;
+    timeRange: FilterFeedTimeRangeValues;
+  };
   itemsUuids: string[];
   items: {
     [itemUuid: string]: FeedItem;
@@ -71,16 +75,20 @@ export interface FeedState {
 export const defaultFeedState: FeedState = {
   fetching: false,
   filters: {
-    [FilterEntourageType.CONTRIBUTION]: [
-      FilterFeedCategory.MAT_HELP,
-      FilterFeedCategory.OTHER,
-      FilterFeedCategory.RESOURCE,
-      FilterFeedCategory.SOCIAL],
-    [FilterEntourageType.ASK_FOR_HELP]: [
-      FilterFeedCategory.MAT_HELP,
-      FilterFeedCategory.OTHER,
-      FilterFeedCategory.RESOURCE,
-      FilterFeedCategory.SOCIAL],
+    actionTypes: {
+      [FilterEntourageType.CONTRIBUTION]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.OTHER,
+        FilterFeedCategory.RESOURCE,
+        FilterFeedCategory.SOCIAL],
+      [FilterEntourageType.ASK_FOR_HELP]: [
+        FilterFeedCategory.MAT_HELP,
+        FilterFeedCategory.OTHER,
+        FilterFeedCategory.RESOURCE,
+        FilterFeedCategory.SOCIAL],
+    },
+    events: true,
+    timeRange: FilterFeedTimeRangeValues.ONE_WEEK,
   },
   itemsUuids: [],
   nextPageToken: null,
@@ -257,17 +265,20 @@ export function feedReducer(
       }
     }
 
-    case FeedActionType.TOGGLE_FEED_FILTER: {
-      const currentFeedFilters = state.filters[action.payload.type]
+    case FeedActionType.TOGGLE_ACTION_TYPES_FILTER: {
+      const currentActionTypesFilters = state.filters.actionTypes[action.payload.type]
 
       if (action.payload.category) {
         return {
           ...state,
           filters: {
             ...state.filters,
-            [action.payload.type]: currentFeedFilters.includes(action.payload.category)
-              ? currentFeedFilters.filter((i) => i !== action.payload.category)
-              : [...currentFeedFilters, action.payload.category],
+            actionTypes: {
+              ...state.filters.actionTypes,
+              [action.payload.type]: currentActionTypesFilters.includes(action.payload.category)
+                ? currentActionTypesFilters.filter((i) => i !== action.payload.category)
+                : [...currentActionTypesFilters, action.payload.category],
+            },
           },
           nextPageToken: null,
         }
@@ -277,9 +288,36 @@ export function feedReducer(
         ...state,
         filters: {
           ...state.filters,
-          [action.payload.type]: currentFeedFilters.length === 0
-            ? defaultFeedState.filters[action.payload.type]
-            : [],
+          actionTypes: {
+            ...state.filters.actionTypes,
+            [action.payload.type]: currentActionTypesFilters.length === 0
+              ? defaultFeedState.filters.actionTypes[action.payload.type]
+              : [],
+          },
+        },
+        nextPageToken: null,
+      }
+    }
+
+    case FeedActionType.TOGGLE_EVENTS_FILTER: {
+      const currentEventsFilters = state.filters.events
+
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          events: !currentEventsFilters,
+        },
+        nextPageToken: null,
+      }
+    }
+
+    case FeedActionType.SET_TIME_RANGE_FILTER: {
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          timeRange: action.payload,
         },
         nextPageToken: null,
       }

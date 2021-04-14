@@ -5,7 +5,7 @@ import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { formatFeedTypes } from 'src/utils/misc'
-import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
 import { fakeFeedData } from './__mocks__'
 import { publicActions } from './feed.actions'
@@ -16,8 +16,10 @@ import {
   selectFeedItems,
   selectHasNextPageToken,
   selectFeedIsIdle,
-  selectFeedFilters,
-  selectIsActiveFilter,
+  selectActionTypesFilters,
+  selectIsActiveActionTypesFilter,
+  selectIsActiveEventsFilter,
+  selectTimeRangeFilter,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -104,7 +106,7 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
-      And user toogle feed filters
+      And user toogle action types filters
     Then items should be fetched
   `, async () => {
     const feedGateway = new TestFeedGateway()
@@ -113,7 +115,7 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(publicActions.toggleFeedFilter({
+    store.dispatch(publicActions.toggleActionTypesFilter({
       type: FilterEntourageType.CONTRIBUTION,
       category: FilterFeedCategory.OTHER,
     }))
@@ -121,7 +123,7 @@ describe('Feed', () => {
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const expectedContributionFilters = defaultFeedState.filters.contribution.filter(
+    const expectedContributionFilters = defaultFeedState.filters.actionTypes.contribution.filter(
       (filter) => filter !== FilterFeedCategory.OTHER,
     )
 
@@ -133,9 +135,10 @@ describe('Feed', () => {
           zoom: defaultLocationState.zoom,
         },
         types: formatFeedTypes({
-          ...defaultFeedState.filters,
+          ...defaultFeedState.filters.actionTypes,
           [FilterEntourageType.CONTRIBUTION]: expectedContributionFilters,
-        }),
+        }, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -145,7 +148,7 @@ describe('Feed', () => {
     Given initial state
     When user init feed
       And user change the filter with type CONTRIBUTION
-    Then store should be updated with new feed filters values
+    Then store should be updated with new action types filters values
       And CONTRIBUTION filter should not be selected
       And retrieve items service should have been called with empty filter CONTRIBUTION
 `, async () => {
@@ -155,17 +158,17 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(publicActions.toggleFeedFilter({
+    store.dispatch(publicActions.toggleActionTypesFilter({
       type: FilterEntourageType.CONTRIBUTION,
     }))
 
     const expectedFeedFilters = {
-      ...defaultFeedState.filters,
+      ...defaultFeedState.filters.actionTypes,
       [FilterEntourageType.CONTRIBUTION]: [],
     }
 
-    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
-    expect(selectIsActiveFilter(store.getState(), FilterEntourageType.CONTRIBUTION)).toBeFalsy()
+    expect(selectActionTypesFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveActionTypesFilter(store.getState(), FilterEntourageType.CONTRIBUTION)).toBeFalsy()
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -177,7 +180,8 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: formatFeedTypes(expectedFeedFilters),
+        types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -186,11 +190,11 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
-      And user toogle feed filters
-    Then store should be update with new feed filters values
+      And user toogle action types filters
+    Then store should be update with new action types filters values
       And isActiveFilter selector should be return false
       And items should be fetched
-      And should retrieve feed gateway method have been called with feed filters values
+      And should retrieve feed gateway method have been called with action types filters values
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
@@ -198,13 +202,13 @@ describe('Feed', () => {
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(publicActions.toggleFeedFilter({
+    store.dispatch(publicActions.toggleActionTypesFilter({
       type: FilterEntourageType.CONTRIBUTION,
       category: FilterFeedCategory.OTHER,
     }))
 
     const expectedFeedFilters = {
-      ...defaultFeedState.filters,
+      ...defaultFeedState.filters.actionTypes,
       [FilterEntourageType.CONTRIBUTION]: [
         FilterFeedCategory.MAT_HELP,
         FilterFeedCategory.RESOURCE,
@@ -212,8 +216,8 @@ describe('Feed', () => {
       ],
     }
 
-    expect(selectFeedFilters(store.getState())).toEqual(expectedFeedFilters)
-    expect(selectIsActiveFilter(
+    expect(selectActionTypesFilters(store.getState())).toEqual(expectedFeedFilters)
+    expect(selectIsActiveActionTypesFilter(
       store.getState(),
       FilterEntourageType.CONTRIBUTION,
       FilterFeedCategory.OTHER,
@@ -229,7 +233,79 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: formatFeedTypes(expectedFeedFilters),
+        types: formatFeedTypes(expectedFeedFilters, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+  Given initial state
+  When user init feed (events are availaible)
+    And user toogle events filters
+  Then store should be update and events filter disable
+    And items should be fetched
+    And should retrieve feed gateway method have been called without events
+`, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.toggleEventsFilter())
+
+    expect(selectIsActiveEventsFilter(store.getState())).toBeFalsy()
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, false),
+        timeRange: defaultFeedState.filters.timeRange,
+      },
+      nextPageToken: undefined,
+    })
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And user update time range to 1 day
+    Then store should be updated with a 24 hours time range
+      And items should be fetched once
+      And retrieve feed gateway method should have been called with a 24 hours time range 
+        and default locations and types 
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(publicActions.setTimeRangeFilter(FilterFeedTimeRangeValues.ONE_DAY))
+
+    expect(selectTimeRangeFilter(store.getState())).toEqual(FilterFeedTimeRangeValues.ONE_DAY)
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, true),
+        timeRange: FilterFeedTimeRangeValues.ONE_DAY,
       },
       nextPageToken: undefined,
     })
@@ -371,7 +447,8 @@ describe('Feed', () => {
           center: defaultLocationState.center,
           zoom: defaultLocationState.zoom,
         },
-        types: formatFeedTypes(defaultFeedState.filters),
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
     })
   })
@@ -407,7 +484,8 @@ describe('Feed', () => {
           center: nextLocation.center,
           zoom: nextLocation.zoom,
         },
-        types: formatFeedTypes(defaultFeedState.filters),
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: undefined,
     })
@@ -467,7 +545,8 @@ describe('Feed', () => {
           center: initialAppState?.location?.center,
           zoom: initialAppState?.location?.zoom,
         },
-        types: formatFeedTypes(defaultFeedState.filters),
+        types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),
+        timeRange: defaultFeedState.filters.timeRange,
       },
       nextPageToken: 'wyz',
     })

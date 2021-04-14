@@ -27,7 +27,7 @@ export class HTTPFeedGateway implements IFeedGateway {
       name: '/feeds GET',
       params: {
         types: data.filters.types,
-        timeRange: constants.MAX_FEED_ITEM_UPDATED_AT_HOURS,
+        timeRange: data.filters.timeRange,
         latitude: data.filters.location.center.lat,
         longitude: data.filters.location.center.lng,
         pageToken: data.nextPageToken ?? undefined,

@@ -7,7 +7,7 @@ import { POICategoryFilter } from './POICategoryFilter'
 export function POICategoryFilters() {
   return (
     <S.SectionContainer>
-      <S.Title align="center">{texts.content.map.filters.categories.title}</S.Title>
+      <S.SectionTitle align="center">{texts.content.map.filters.categories.title}</S.SectionTitle>
       {
         [
           FilterPOICategory.EATING,

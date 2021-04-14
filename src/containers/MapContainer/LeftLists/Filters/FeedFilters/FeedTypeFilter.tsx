@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LineFilter } from '../LineFilter'
-import { selectIsActiveFilter, feedActions } from 'src/core/useCases/feed'
+import { selectIsActiveActionTypesFilter, feedActions } from 'src/core/useCases/feed'
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
@@ -11,10 +11,10 @@ export function FeedTypeFilter(props: Omit<FeedCategoryFilterProps, 'color' | 'c
   const { index, type } = props
   const dispatch = useDispatch()
 
-  const checked = useSelector<AppState, boolean>((state) => selectIsActiveFilter(state, type))
+  const checked = useSelector<AppState, boolean>((state) => selectIsActiveActionTypesFilter(state, type))
 
   const onChange = useCallback(() => {
-    dispatch(feedActions.toggleFeedFilter({ type }))
+    dispatch(feedActions.toggleActionTypesFilter({ type }))
   },
   [dispatch, type])
 

@@ -16,17 +16,24 @@ const feedTypeFilterResolver: Record<FilterEntourageType, Record<FilterFeedCateg
   },
 }
 
-export function formatFeedTypes(types: Record<FilterEntourageType, FilterFeedCategory[]>): string {
+export function formatFeedTypes(
+  actionTypes: Record<FilterEntourageType, FilterFeedCategory[]>,
+  events: boolean,
+): string {
   const filtersTab = [
-    ...types[FilterEntourageType.ASK_FOR_HELP].map(
+    ...actionTypes[FilterEntourageType.ASK_FOR_HELP].map(
       (value) => feedTypeFilterResolver[FilterEntourageType.ASK_FOR_HELP][value],
     ),
-    ...types[FilterEntourageType.CONTRIBUTION].map(
+    ...actionTypes[FilterEntourageType.CONTRIBUTION].map(
       (value) => feedTypeFilterResolver[FilterEntourageType.CONTRIBUTION][value],
     ),
   ]
 
-  return `${filtersTab.join(',')},ou`
+  if (events) {
+    filtersTab.push('ou')
+  }
+
+  return `${filtersTab.join(',')}`
 }
 
 export const poisCategoriesFilterResolver: Record<FilterPOICategory, POICategory> = {

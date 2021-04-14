@@ -17,7 +17,7 @@ function* retrieveFeed() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching, filters: typeFilters } = feedState
+  const { nextPageToken, fetching, filters } = feedState
   const { zoom, center } = positionState
 
   if (fetching) {
@@ -26,12 +26,12 @@ function* retrieveFeed() {
 
   yield put(actions.retrieveFeedStarted())
 
-  const types = formatFeedTypes(typeFilters)
+  const types = formatFeedTypes(filters.actionTypes, filters.events)
 
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { types, location: { center, zoom } },
+      filters: { types, location: { center, zoom }, timeRange: filters.timeRange },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -43,7 +43,7 @@ function* retrieveFeedNextPage() {
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching, filters: typeFilters } = feedState
+  const { nextPageToken, fetching, filters } = feedState
   const { zoom, center } = positionState
 
   if (!nextPageToken || fetching) {
@@ -52,11 +52,11 @@ function* retrieveFeedNextPage() {
 
   yield put(actions.retrieveFeedNextPageStarted())
 
-  const types = formatFeedTypes(typeFilters)
+  const types = formatFeedTypes(filters.actionTypes, filters.events)
   const response: CallReturnType<typeof retrieveFeedItems> = yield call(
     retrieveFeedItems,
     {
-      filters: { types, location: { center, zoom } },
+      filters: { types, location: { center, zoom }, timeRange: filters.timeRange },
       nextPageToken: nextPageToken || undefined,
     },
   )
@@ -138,7 +138,9 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
 
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
-  yield takeEvery(FeedActionType.TOGGLE_FEED_FILTER, retrieveFeed)
+  yield takeEvery(FeedActionType.TOGGLE_ACTION_TYPES_FILTER, retrieveFeed)
+  yield takeEvery(FeedActionType.TOGGLE_EVENTS_FILTER, retrieveFeed)
+  yield takeEvery(FeedActionType.SET_TIME_RANGE_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)

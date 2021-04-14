@@ -22,7 +22,9 @@ export const FeedActionType = {
   CLOSE_ENTOURAGE_SUCCEEDED: 'FEED/CLOSE_ENTOURAGE_SUCCEEDED',
   REOPEN_ENTOURAGE: 'FEED/REOPEN_ENTOURAGE',
   REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
-  TOGGLE_FEED_FILTER: 'FEED/TOGGLE_FEED_FILTER',
+  TOGGLE_ACTION_TYPES_FILTER: 'FEED/TOGGLE_ACTION_TYPES_FILTER',
+  TOGGLE_EVENTS_FILTER: 'FEED/TOGGLE_EVENTS_FILTER',
+  SET_TIME_RANGE_FILTER: 'FEED/SET_TIME_RANGE_FILTER',
 } as const
 
 export type FeedActionType = keyof typeof FeedActionType;
@@ -165,9 +167,22 @@ function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
   }
 }
 
-function toggleFeedFilter(payload: { type: FilterEntourageType; category?: FilterFeedCategory;}) {
+function toggleActionTypesFilter(payload: { type: FilterEntourageType; category?: FilterFeedCategory;}) {
   return {
-    type: FeedActionType.TOGGLE_FEED_FILTER,
+    type: FeedActionType.TOGGLE_ACTION_TYPES_FILTER,
+    payload,
+  }
+}
+
+function toggleEventsFilter() {
+  return {
+    type: FeedActionType.TOGGLE_EVENTS_FILTER,
+  }
+}
+
+function setTimeRangeFilter(payload: number) {
+  return {
+    type: FeedActionType.SET_TIME_RANGE_FILTER,
     payload,
   }
 }
@@ -187,7 +202,9 @@ export const publicActions = {
   closeEntourage,
   reopenEntourage,
   removeCurrentItemUuid,
-  toggleFeedFilter,
+  toggleActionTypesFilter,
+  toggleEventsFilter,
+  setTimeRangeFilter,
 }
 
 const privateActions = {

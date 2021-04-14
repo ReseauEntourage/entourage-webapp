@@ -4,7 +4,8 @@ import { FeedState, FeedItem } from './feed.reducer'
 
 interface FeedItemsFilter {
   location: Pick<LocationState, 'center' | 'zoom'>;
-  types?: FeedTypesFilter;
+  timeRange: number;
+  types: FeedTypesFilter;
 }
 
 export interface IFeedGateway {

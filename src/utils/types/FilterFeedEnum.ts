@@ -19,3 +19,12 @@ export const FilterEntourageType = {
 
 type FilterEntourageTypeKeys = keyof typeof FilterEntourageType
 export type FilterEntourageType = typeof FilterEntourageType[FilterEntourageTypeKeys]
+
+export const FilterFeedTimeRangeValues = {
+  ONE_DAY: 1 * 24,
+  ONE_WEEK: 8 * 24,
+  ONE_MONTH: 30 * 24,
+} as const
+
+type FilterFeedTimeRangeValuesKeys = keyof typeof FilterFeedTimeRangeValues
+export type FilterFeedTimeRangeValues = typeof FilterFeedTimeRangeValues[FilterFeedTimeRangeValuesKeys]
