@@ -1,7 +1,8 @@
 import { constants } from 'src/constants'
 import { env } from 'src/core/env'
+import { Route } from 'src/utils/types'
 
-export function formatWebLink(url: string): { formattedUrl: string; isExternal: boolean; } {
+export function formatWebLink(url: string): { formattedUrl: string; isExternal: boolean; authRequired: boolean; } {
   const webviewMatch = '://webview?url='
   const messageMatch = '://entourage/'
   const poisMatch = '://guidemap'
@@ -10,6 +11,7 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
     return {
       formattedUrl: `/messages/${url.substring(url.indexOf(messageMatch) + messageMatch.length)}`,
       isExternal: false,
+      authRequired: true,
     }
   }
 
@@ -17,13 +19,16 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
     return {
       formattedUrl: '/pois',
       isExternal: false,
+      authRequired: false,
     }
   }
 
   if (url.includes(env.SERVER_URL)) {
+    const formattedUrl = `/${url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length)}`
     return {
-      formattedUrl: `/${url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length)}`,
+      formattedUrl,
       isExternal: false,
+      authRequired: formattedUrl.includes('/messages' as Route),
     }
   }
 
@@ -31,6 +36,7 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
     return {
       formattedUrl: url.substring(url.indexOf(webviewMatch) + webviewMatch.length),
       isExternal: true,
+      authRequired: false,
     }
   }
 
@@ -38,6 +44,7 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
     return {
       formattedUrl: url === constants.WORKSHOP_LINK_MOBILE ? constants.WORKSHOP_LINK_CARD : url,
       isExternal: true,
+      authRequired: false,
     }
   }
 
@@ -45,11 +52,13 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
     return {
       formattedUrl: url,
       isExternal: true,
+      authRequired: false,
     }
   }
 
   return {
     formattedUrl: url,
     isExternal: false,
+    authRequired: url.includes('/messages' as Route),
   }
 }
