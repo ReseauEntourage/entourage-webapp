@@ -1,14 +1,17 @@
 import { formatDistance, format } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
 import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedEntourage } from 'src/components/FeedEntourage'
 import { FeedItemIcon } from 'src/components/Map'
+import { openModal } from 'src/components/Modal'
 import { constants } from 'src/constants'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
+import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
@@ -22,6 +25,8 @@ export function FeedList() {
 
   const { sendEvent } = useFirebase()
 
+  const router = useRouter()
+
   const { onScroll } = useOnScroll({
     onScrollBottomEnd: () => {
       dispatch(feedActions.retrieveFeedNextPage())
@@ -30,10 +35,12 @@ export function FeedList() {
 
   const feedsListContent = feeds.map((feedItem) => {
     if (feedItem.itemType === 'Announcement') {
-      const { formattedUrl, isExternal } = formatWebLink(feedItem.webappUrl ?? feedItem.url)
+      const { formattedUrl, isExternal, authRequired } = formatWebLink(feedItem.webappUrl ?? feedItem.url)
 
-      const sendWorkshopEvent = () => {
-        if (formattedUrl === constants.WORKSHOP_LINK_CARD) {
+      const onClick = () => {
+        if (authRequired) {
+          openModal(<ModalSignIn onSuccess={() => router.push(formattedUrl)} />)
+        } else if (formattedUrl === constants.WORKSHOP_LINK_CARD) {
           sendEvent('Action__Workshop__Card')
         }
       }
@@ -46,9 +53,9 @@ export function FeedList() {
             iconUrl={feedItem.iconUrl}
             imageUrl={feedItem.imageUrl}
             isExternal={isExternal}
-            onClick={sendWorkshopEvent}
+            onClick={onClick}
             title={feedItem.title}
-            url={formattedUrl}
+            url={authRequired ? undefined : formattedUrl}
           />
         </S.ListItem>
       )

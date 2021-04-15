@@ -12,7 +12,7 @@ interface FeedAnnouncementProps {
   body: string;
   imageUrl?: string;
   action: string;
-  url: string;
+  url?: string;
   onClick?: () => void;
   isExternal: boolean;
   iconUrl: string;
@@ -20,6 +20,55 @@ interface FeedAnnouncementProps {
 
 export function FeedAnnouncement(props: FeedAnnouncementProps) {
   const { title, body, imageUrl, action, url, iconUrl, isExternal, onClick } = props
+
+  const image = (
+    <S.AnnouncementImage
+      alt={title}
+      src={imageUrl}
+    />
+  )
+
+  const linkTarget = isExternal ? '_blank' : '_self'
+
+  const imageLink = (!url || isExternal) ? (
+    <MaterialLink href={url} onClick={onClick} target={linkTarget}>
+      {image}
+    </MaterialLink>
+  ) : (
+    <Link href={url}>
+      <a>
+        <MaterialLink onClick={onClick}>
+          {image}
+        </MaterialLink>
+      </a>
+    </Link>
+  )
+
+  const buttonLink = (!url || isExternal) ? (
+    <Button
+      color="secondary"
+      href={url}
+      onClick={onClick}
+      size="medium"
+      target={linkTarget}
+      variant="text"
+    >
+      {action}
+    </Button>
+  ) : (
+    <Link href={url}>
+      <a>
+        <Button
+          color="secondary"
+          onClick={onClick}
+          size="medium"
+          variant="text"
+        >
+          {action}
+        </Button>
+      </a>
+    </Link>
+  )
 
   return (
     <S.Container>
@@ -36,56 +85,10 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
           </Typography>
         </S.ContentContainer>
         {
-          imageUrl && (
-            isExternal
-              ? (
-                <MaterialLink href={url} onClick={onClick} target="_blank">
-                  <S.AnnouncementImage
-                    alt={title}
-                    src={imageUrl}
-                  />
-                </MaterialLink>
-              )
-              : (
-                <Link href={url}>
-                  <MaterialLink onClick={onClick}>
-                    <S.AnnouncementImage
-                      alt={title}
-                      src={imageUrl}
-                    />
-                  </MaterialLink>
-                </Link>
-              )
-          )
+          imageUrl && imageLink
         }
         <S.ButtonContainer>
-          {
-            isExternal ? (
-              <Button
-                color="secondary"
-                href={url}
-                onClick={onClick}
-                size="medium"
-                target="_blank"
-                variant="text"
-              >
-                {action}
-              </Button>
-            ) : (
-              <Link href={url}>
-                <a>
-                  <Button
-                    color="secondary"
-                    onClick={onClick}
-                    size="medium"
-                    variant="text"
-                  >
-                    {action}
-                  </Button>
-                </a>
-              </Link>
-            )
-          }
+          {buttonLink}
         </S.ButtonContainer>
       </div>
     </S.Container>
