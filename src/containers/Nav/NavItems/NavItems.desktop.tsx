@@ -5,11 +5,13 @@ import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
 import ExploreIcon from '@material-ui/icons/Explore'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
+import Link from 'next/link'
 import React, { useCallback } from 'react'
 import { LoggedChunk } from '../LoggedChunk'
 import * as S from '../Nav.styles'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
+import { Link as CustomLink } from 'src/components/Link'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { useCurrentRoute } from 'src/hooks/useCurrentRoute'
@@ -30,9 +32,11 @@ export function NavItemsDeskTop() {
   return (
     <>
       <S.TitleContainer>
-        <a href="/">
-          <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
-        </a>
+        <Link href="/actions" passHref={true}>
+          <CustomLink>
+            <img alt="Entourage" height="34" src="/logo-entourage-orange.png" />
+          </CustomLink>
+        </Link>
         <Box marginLeft={3}>
           <Typography variant={variants.title1}>
             {routeTitle}

@@ -2,6 +2,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
+import { Link } from 'src/components/Link'
 import { openModal } from 'src/components/Modal'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { env } from 'src/core/env'
@@ -48,7 +49,9 @@ export function LoggedChunk() {
         }}
         tabIndex={0}
       >
-        <Avatar src={me.avatarUrl} />
+        <Link>
+          <Avatar src={me.avatarUrl} />
+        </Link>
       </div>
       <Menu
         anchorEl={anchorEl}

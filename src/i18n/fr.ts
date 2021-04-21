@@ -73,7 +73,7 @@ export const texts = {
     pois: 'Lieux solidaires',
     messages: 'Messages',
     takeAction: 'Passer à l\'action',
-    profile: 'Mon Profil',
+    profile: 'Mon profil',
     signIn: 'Connexion / Inscription',
     logout: 'Déconnexion',
     manage: 'Gérer',

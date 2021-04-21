@@ -37,7 +37,7 @@ export function POI(props: POIProps) {
           <div>
             {icon}
           </div>
-          <Typography variant={variants.title2}>
+          <Typography align="left" variant={variants.title2}>
             {name}
           </Typography>
         </S.TitleContainer>
@@ -56,6 +56,7 @@ export function POI(props: POIProps) {
         />
         {phone && (
           <ContactLink
+            color="secondary"
             icon={(
               <Box display="flex" marginLeft={0.5}>
                 <PhoneIcon

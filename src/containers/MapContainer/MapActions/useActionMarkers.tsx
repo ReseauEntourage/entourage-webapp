@@ -1,8 +1,8 @@
-import { Link as MaterialLink } from '@material-ui/core'
 import Link from 'next/link'
 import React from 'react'
 import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
+import { Link as CustomLink } from 'src/components/Link'
 import { EventMarker, MarkerWrapper, ActionMarker } from 'src/components/Map'
 import { useFirebase } from 'src/utils/hooks'
 import { assertCondition } from 'src/utils/misc'
@@ -27,12 +27,10 @@ export function useActionMarkers() {
           <Link
             as={`/actions/${uuid}`}
             href="/actions/[actionId]"
+            passHref={true}
           >
-            <MaterialLink
+            <CustomLink
               onClick={() => sendEvent('Action__Feed__MapItem')}
-              style={{
-                textDecoration: 'none',
-              }}
             >
               {
                 groupType === 'outing'
@@ -52,7 +50,7 @@ export function useActionMarkers() {
                   )
               }
 
-            </MaterialLink>
+            </CustomLink>
           </Link>
         </MarkerWrapper>
       )
