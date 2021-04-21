@@ -79,7 +79,7 @@ export const texts = {
     manage: 'Gérer',
     error: {
       message: 'Désolé, la page demandée est introuvable...',
-      back: 'Retour à l\'acceuil',
+      back: 'Retour à l\'accueil',
     },
   },
   labels: {
