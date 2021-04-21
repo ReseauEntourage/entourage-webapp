@@ -77,6 +77,10 @@ export const texts = {
     signIn: 'Connexion / Inscription',
     logout: 'Déconnexion',
     manage: 'Gérer',
+    error: {
+      message: 'Désolé, la page demandée est introuvable...',
+      back: 'Retour à l\'accueil',
+    },
   },
   labels: {
     save: 'Enregistrer',

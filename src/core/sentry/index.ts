@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/browser'
+import * as Sentry from '@sentry/react'
 import { env } from 'src/core/env'
 import { texts } from 'src/i18n'
 
