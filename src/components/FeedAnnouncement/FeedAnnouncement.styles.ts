@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { colors, theme } from 'src/styles'
 
 export const Icon = styled(Avatar)`
-  width: 16px !important;
-  height: 16px !important;
-  padding: 6px !important;
+  width: 14px !important;
+  height: 14px !important;
+  padding: 4px !important;
   background-color: ${colors.main.greyishBrown};
 `
 
@@ -22,6 +22,8 @@ export const TitleContainer = styled.div`
   display: flex;
   align-items: center;
   padding: ${theme.spacing(2)}px;
+  padding: ${theme.spacing(2, 2, 1, 2)};
+  border-left: solid 5px transparent;
   & > *:not(:first-child) {
     margin-left: ${theme.spacing(1)}px;
   }
@@ -30,7 +32,8 @@ export const TitleContainer = styled.div`
 export const ContentContainer = styled.div`
   display: flex;
   align-items: center;
-  padding: ${theme.spacing(0, 2, 2, 2)};
+  border-left: solid 5px transparent;
+  padding: ${theme.spacing(0, 2, 1, 2)};
 `
 
 export const ButtonContainer = styled.div`

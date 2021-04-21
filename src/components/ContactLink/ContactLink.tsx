@@ -36,6 +36,7 @@ export function ContactLink(props: ContactLinkProps) {
         <S.StyledDisabledLink>
           {icon && iconComponent}
           <Typography
+            align="left"
             color={color ?? 'textPrimary'}
             variant={variants.bodyRegular}
           >
@@ -49,7 +50,7 @@ export function ContactLink(props: ContactLinkProps) {
   return (
     <Box marginTop={1}>
       <S.StyledLink
-        color={color ?? 'textPrimary'}
+        color={color ?? 'primary'}
         href={link}
         onClick={stopPropagation}
         rel="noopener noreferrer"

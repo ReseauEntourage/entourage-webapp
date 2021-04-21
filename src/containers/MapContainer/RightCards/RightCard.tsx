@@ -2,6 +2,7 @@ import Box from '@material-ui/core/Box'
 import CloseIcon from '@material-ui/icons/Close'
 import Link from 'next/link'
 import React, { ReactNode } from 'react'
+import { Link as CustomLink } from 'src/components/Link'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import * as S from './RightCard.styles'
 
@@ -21,10 +22,10 @@ export function RightCard(props: RightCardProps) {
     <S.Container>
       <S.Scroll>
         <Box display="flex" justifyContent="flex-end" marginRight={1}>
-          <Link href={href}>
-            <a>
+          <Link href={href} passHref={true}>
+            <CustomLink>
               <CloseIcon color="primary" fontSize="large" />
-            </a>
+            </CustomLink>
           </Link>
         </Box>
         <Box marginX={4}>

@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
 import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedEntourage } from 'src/components/FeedEntourage'
+import { Link as CustomLink } from 'src/components/Link'
 import { FeedItemIcon } from 'src/components/Map'
 import { openModal } from 'src/components/Modal'
 import { constants } from 'src/constants'
@@ -82,8 +83,16 @@ export function FeedList() {
 
     return (
       <S.ListItem key={feedItem.uuid}>
-        <Link as={`/actions/${feedItem.uuid}`} href="/actions/[actionId]">
-          <S.ClickableItem onClick={() => sendEvent('Action__Feed__ListItem')}>
+        <Link
+          as={`/actions/${feedItem.uuid}`}
+          href="/actions/[actionId]"
+          passHref={true}
+        >
+          <CustomLink
+            disableHover={true}
+            onClick={() => sendEvent('Action__Feed__ListItem')}
+            style={{ width: '100%' }}
+          >
             <FeedEntourage
               icon={(
                 <FeedItemIcon
@@ -98,7 +107,7 @@ export function FeedList() {
               profilePictureURL={feedItem.author.avatarUrl}
               secondText={secondText}
             />
-          </S.ClickableItem>
+          </CustomLink>
         </Link>
       </S.ListItem>
     )

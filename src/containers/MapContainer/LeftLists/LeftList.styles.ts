@@ -1,4 +1,4 @@
-import { Box, ButtonBase } from '@material-ui/core'
+import { Box } from '@material-ui/core'
 import styled from 'styled-components'
 import { devices, colors } from 'src/styles'
 
@@ -33,11 +33,4 @@ export const Scroll = styled.div`
   position: relative;
   height: 100%;
   overflow: auto;
-`
-
-export const ClickableItem = styled(ButtonBase).attrs(() => ({
-  disableRipple: true,
-}))`
-  text-align: left;
-  flex: 1;
 `

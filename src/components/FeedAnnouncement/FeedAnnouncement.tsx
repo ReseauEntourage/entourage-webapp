@@ -1,8 +1,7 @@
-import { Link as MaterialLink } from '@material-ui/core/'
 import Typography from '@material-ui/core/Typography'
 import Link from 'next/link'
 import React from 'react'
-import { Button } from 'src/components/Button'
+import { Link as CustomLink } from 'src/components/Link'
 import { variants } from 'src/styles'
 
 import * as S from './FeedAnnouncement.styles'
@@ -31,42 +30,34 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
   const linkTarget = isExternal ? '_blank' : '_self'
 
   const imageLink = (!url || isExternal) ? (
-    <MaterialLink href={url} onClick={onClick} target={linkTarget}>
+    <CustomLink href={url} onClick={onClick} target={linkTarget}>
       {image}
-    </MaterialLink>
+    </CustomLink>
   ) : (
-    <Link href={url}>
-      <a>
-        <MaterialLink onClick={onClick}>
-          {image}
-        </MaterialLink>
-      </a>
+    <Link href={url} passHref={true}>
+      <CustomLink onClick={onClick}>
+        {image}
+      </CustomLink>
     </Link>
   )
 
   const buttonLink = (!url || isExternal) ? (
-    <Button
+    <CustomLink
       color="secondary"
       href={url}
       onClick={onClick}
-      size="medium"
       target={linkTarget}
-      variant="text"
     >
       {action}
-    </Button>
+    </CustomLink>
   ) : (
-    <Link href={url}>
-      <a>
-        <Button
-          color="secondary"
-          onClick={onClick}
-          size="medium"
-          variant="text"
-        >
-          {action}
-        </Button>
-      </a>
+    <Link href={url} passHref={true}>
+      <CustomLink
+        color="secondary"
+        onClick={onClick}
+      >
+        {action}
+      </CustomLink>
     </Link>
   )
 
@@ -80,7 +71,7 @@ export function FeedAnnouncement(props: FeedAnnouncementProps) {
           <Typography variant={variants.title2}>{title}</Typography>
         </S.TitleContainer>
         <S.ContentContainer>
-          <Typography variant={variants.bodyRegular}>
+          <Typography variant={variants.footNote}>
             {body}
           </Typography>
         </S.ContentContainer>

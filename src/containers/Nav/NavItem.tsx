@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
+import { Link as CustomLink } from 'src/components/Link'
 import * as S from './NavItem.styles'
 
 interface NavItemProps extends React.HTMLProps<HTMLDivElement> {
@@ -26,9 +27,9 @@ export function NavItem(props: NavItemProps) {
   if (href) {
     return (
       <Link href={href}>
-        <S.InternalLink>
+        <CustomLink>
           {content}
-        </S.InternalLink>
+        </CustomLink>
       </Link>
     )
   }
