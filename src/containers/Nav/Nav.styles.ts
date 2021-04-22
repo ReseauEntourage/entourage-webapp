@@ -9,7 +9,6 @@ import { NavItem as NotStyledNavItem } from './NavItem'
 // See: https://www.sipios.com/blog-tech/how-to-use-styled-components-with-material-ui-in-a-react-app
 
 export const ConnectButton = styled(Button)`
-  margin-left: ${theme.spacing(2)}px;
   & > * {
     margin-right: ${theme.spacing(1)}px;
   }
@@ -34,7 +33,7 @@ export const AppBar = styled(AppBarMUI)`
 `
 
 export const AccountContainer = styled.div`
-  margin-left: ${theme.spacing(10)}px;
+  margin-left: ${theme.spacing(4)}px;
 `
 
 export const Grow = styled.div`
