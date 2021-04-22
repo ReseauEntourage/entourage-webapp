@@ -17,6 +17,7 @@ export function POIList() {
       <S.ListItem key={poi.uuid}>
         <Link as={`/pois/${poi.uuid}`} href="/pois/[poiId]" passHref={true}>
           <CustomLink
+            component="button"
             disableHover={true}
             onClick={() => sendEvent('Action__POIs__ListItem')}
             style={{ width: '100%' }}

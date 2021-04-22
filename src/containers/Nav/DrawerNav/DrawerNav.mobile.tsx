@@ -18,6 +18,7 @@ import { FeedBackButton } from '../NavNotificationBar'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
 import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
+import { Avatar } from 'src/components/Avatar'
 import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
@@ -29,7 +30,8 @@ import { theme, variants } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
-  const iAmLogged = !!useMe()
+  const me = useMe()
+  const iAmLogged = !!me
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
   const { currentRoute } = useCurrentRoute()
 
@@ -107,16 +109,17 @@ export function DrawerNavMobile() {
       </List>
       <Divider />
       <List>
-        {iAmLogged && (
-          <ListItem key="profil" button={true} onClick={openModalProfile}>
-            <NavItem
-              icon={<PersonIcon />}
-              label={texts.nav.profile}
-              onClick={onClickDrawerClose}
-            />
-          </ListItem>
-
-        )}
+        {
+          (iAmLogged && !!me) && (
+            <ListItem key="profil" button={true} onClick={openModalProfile}>
+              <NavItem
+                icon={<Avatar src={me.avatarUrl} style={{ width: 24, height: 24 }} />}
+                label={texts.nav.profile}
+                onClick={onClickDrawerClose}
+              />
+            </ListItem>
+          )
+        }
         <ListItem key="connect" button={true} onClick={iAmLogged ? onClickLogout : onClickSignIn}>
           <NavItem
             icon={iAmLogged ? <ExitToAppIcon /> : <PersonIcon />}

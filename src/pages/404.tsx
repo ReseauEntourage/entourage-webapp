@@ -2,6 +2,7 @@ import { Box, Typography } from '@material-ui/core'
 import Link from 'next/link'
 import React from 'react'
 import { Button } from 'src/components/Button'
+import { Link as CustomLink } from 'src/components/Link'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import { StatelessPage } from 'src/utils/types'
@@ -33,10 +34,12 @@ const Custom404: StatelessPage<Props> = () => {
       >
         <Typography align="center" variant={variants.title1}>{texts.nav.error.message}</Typography>
       </Box>
-      <Link href="/actions">
-        <Button>
-          {texts.nav.error.back}
-        </Button>
+      <Link href="/actions" passHref={true}>
+        <CustomLink>
+          <Button>
+            {texts.nav.error.back}
+          </Button>
+        </CustomLink>
       </Link>
     </Box>
   )
