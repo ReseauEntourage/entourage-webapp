@@ -1,57 +1,60 @@
-import { Link as MaterialLink } from '@material-ui/core'
 import Link from 'next/link'
 import React from 'react'
 import { useActionId } from '../useActionId'
 import { useNextFeed } from '../useNextFeed'
+import { Link as CustomLink } from 'src/components/Link'
 import { EventMarker, MarkerWrapper, ActionMarker } from 'src/components/Map'
 import { useFirebase } from 'src/utils/hooks'
+import { assertCondition } from 'src/utils/misc'
 
 export function useActionMarkers() {
   const actionId = useActionId()
   const { feeds, isLoading } = useNextFeed()
   const { sendEvent } = useFirebase()
 
-  const feedsMarkersContent = feeds.map((feed) => {
-    const { location, uuid, groupType } = feed
-    return (
-      <MarkerWrapper
-        key={uuid}
-        lat={location.latitude}
-        lng={location.longitude}
-      >
-        <Link
-          as={`/actions/${uuid}`}
-          href="/actions/[actionId]"
-        >
-          <MaterialLink
-            onClick={() => sendEvent('Action__Feed__MapItem')}
-            style={{
-              textDecoration: 'none',
-            }}
-          >
-            {
-              groupType === 'outing'
-                ? (
-                  <EventMarker
-                    key={uuid}
-                    isActive={uuid === actionId}
-                    tooltip={feed.title}
-                  />
-                )
-                : (
-                  <ActionMarker
-                    key={uuid}
-                    isActive={uuid === actionId}
-                    tooltip={feed.title}
-                  />
-                )
-            }
+  const feedsMarkersContent = feeds
+    .filter((feedItem) => feedItem.itemType === 'Entourage')
+    .map((feedItem) => {
+      assertCondition(feedItem.itemType === 'Entourage')
 
-          </MaterialLink>
-        </Link>
-      </MarkerWrapper>
-    )
-  })
+      const { location, uuid, groupType } = feedItem
+      return (
+        <MarkerWrapper
+          key={uuid}
+          lat={location.latitude}
+          lng={location.longitude}
+        >
+          <Link
+            as={`/actions/${uuid}`}
+            href="/actions/[actionId]"
+            passHref={true}
+          >
+            <CustomLink
+              onClick={() => sendEvent('Action__Feed__MapItem')}
+            >
+              {
+                groupType === 'outing'
+                  ? (
+                    <EventMarker
+                      key={uuid}
+                      isActive={uuid === actionId}
+                      tooltip={feedItem.title}
+                    />
+                  )
+                  : (
+                    <ActionMarker
+                      key={uuid}
+                      isActive={uuid === actionId}
+                      tooltip={feedItem.title}
+                    />
+                  )
+              }
+
+            </CustomLink>
+          </Link>
+        </MarkerWrapper>
+      )
+    })
 
   return { feedsMarkersContent, isLoading }
 }

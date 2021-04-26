@@ -7,7 +7,9 @@ export const Container = styled.div<{ isActive: boolean; }>`
   padding: ${theme.spacing(3, 2)};
   align-items: center;
   background-color: ${(props) => props.isActive && colors.main.greyLight};
-
+  &:hover {
+    background-color: ${colors.main.greyLight};
+  }
 `
 
 export const Picture = styled.div`
@@ -16,6 +18,7 @@ export const Picture = styled.div`
 
 export const Texts = styled.div`
   overflow: hidden;
+  text-align: left;
 `
 
 export const Title = styled(Typography).attrs(() => ({

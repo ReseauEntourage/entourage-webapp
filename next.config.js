@@ -1,18 +1,47 @@
+
 // eslint-disable-next-line
 require('dotenv').config()
 
+const SentryWebpackPlugin = require('@sentry/webpack-plugin');
 const withCSS = require('@zeit/next-css')
+
+const dev = process.env.NODE_ENV !== 'production';
 
 module.exports = withCSS({
   cssLoaderOptions: {
     url: false
   },
-  webpack(config) {
+  webpack(config, options) {
+    if (!options.isServer) {
+      config.resolve.alias['@sentry/node'] = '@sentry/react';
+    }
+
     config.resolve.modules.push(__dirname)
+
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"]
     });
+
+    if (!dev && process.env.HEROKU_APP_ID) {
+      config.plugins.push(
+        new SentryWebpackPlugin({
+          authToken: process.env.SENTRY_AUTH_TOKEN,
+          org: process.env.HEROKU_APP_NAME,
+          project: process.env.HEROKU_APP_NAME,
+
+          include: '.',
+          ignore: [
+            'node_modules',
+            'next.config.js',
+            'jest.config.js',
+            'jest.setupTests.js',
+            'public'
+          ],
+        })
+      );
+    }
+
     return config
   },
   env: {

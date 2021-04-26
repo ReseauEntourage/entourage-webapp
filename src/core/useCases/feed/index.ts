@@ -1,5 +1,5 @@
 export type { IFeedGateway } from './IFeedGateway'
-export type { FeedState, FeedItem } from './feed.reducer'
+export type { FeedState, FeedEntourage } from './feed.reducer'
 export type { Dependencies } from './feed.saga'
 export { feedReducer, RequestStatus } from './feed.reducer'
 export { feedSaga } from './feed.saga'

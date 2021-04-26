@@ -17,7 +17,7 @@ export function PrivateRoute(props: PrivateRouteProps) {
     const shouldRedirect = !iAmLogged && !iAmLogging
 
     if (shouldRedirect) {
-      router.push('/')
+      router.push('/actions')
     }
   }, [iAmLogged, iAmLogging, router])
 

@@ -14,10 +14,6 @@ export const Label = materialStyled('div')(({ theme }) => ({
   marginLeft: theme.spacing(1),
 }))
 
-export const InternalLink = materialStyled('a')(() => ({
-  textDecoration: 'none',
-}))
-
 export const ActiveContainer = styled.div<{ isActive?: boolean; }>`
   color: ${(props) => props.isActive && colors.main.primary};
   font-weight: ${(props) => props.isActive && 'bold'};

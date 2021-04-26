@@ -3,6 +3,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Link from 'next/link'
 import React from 'react'
 import { ConversationItem } from 'src/components/Conversations'
+import { Link as CustomLink } from 'src/components/Link'
 import {
   useQueryMyFeeds,
   useQueryEntouragesWithMembers,
@@ -39,44 +40,47 @@ export function ConversationsList(props: ConversationsListProps) {
 
   return (
     <S.Container>
-      {dataMyFeeds
-        .filter((feed) => feed.data.joinStatus === 'accepted' || feed.data.joinStatus === 'pending')
-        .map((feed) => {
-          const feedUuid = feed.data.uuid
+      {
+        dataMyFeeds
+          .filter((feed) => feed.data.joinStatus === 'accepted' || feed.data.joinStatus === 'pending')
+          .map((feed) => {
+            const feedUuid = feed.data.uuid
 
-          const entourageWithMembers = entouragesWithMembersPending.find((entourage) => {
-            return entourage.entourageUuid === feedUuid
-          })
+            const entourageWithMembers = entouragesWithMembersPending.find((entourage) => {
+              return entourage.entourageUuid === feedUuid
+            })
 
-          const pendingMembers = entourageWithMembers?.members ?? []
+            const pendingMembers = entourageWithMembers?.members ?? []
 
-          return (
-            <S.ListItem
-              key={feedUuid}
-            >
-              <Link
-                as={`/messages/${feedUuid}`}
-                href="/messages/[messageId]"
+            return (
+              <S.ListItem
+                key={feedUuid}
               >
-                <a>
-                  <ConversationItem
-                    excerpt={(
-                      <ConversationItemExcerpt
-                        feedJoinStatus={feed.data.joinStatus}
-                        iAmAuthor={feed.data.author.id === me.id}
-                        pendingMembers={pendingMembers}
-                        text={feed.data.lastMessage?.text ?? ''}
-                      />
-                    )}
-                    isActive={feedUuid === entourageUuid}
-                    profilePictureURL={feed.data.author.avatarUrl}
-                    title={feed.data.title}
-                  />
-                </a>
-              </Link>
-            </S.ListItem>
-          )
-        })}
+                <Link
+                  as={`/messages/${feedUuid}`}
+                  href="/messages/[messageId]"
+                  passHref={true}
+                >
+                  <CustomLink disableHover={true} style={{ width: '100%' }}>
+                    <ConversationItem
+                      excerpt={(
+                        <ConversationItemExcerpt
+                          feedJoinStatus={feed.data.joinStatus}
+                          iAmAuthor={feed.data.author.id === me.id}
+                          pendingMembers={pendingMembers}
+                          text={feed.data.lastMessage?.text ?? ''}
+                        />
+                      )}
+                      isActive={feedUuid === entourageUuid}
+                      profilePictureURL={feed.data.author.avatarUrl}
+                      title={feed.data.title}
+                    />
+                  </CustomLink>
+                </Link>
+              </S.ListItem>
+            )
+          })
+      }
     </S.Container>
   )
 }

@@ -31,13 +31,30 @@ export class HTTPFeedGateway implements IFeedGateway {
         latitude: data.filters.location.center.lat,
         longitude: data.filters.location.center.lng,
         pageToken: data.nextPageToken ?? undefined,
+        announcements: 'v1',
       },
     }).then((res) => {
       const { nextPageToken, feeds } = res.data
       const items = feeds.map((item) => {
-        assertCondition(item.type === 'Entourage')
+        assertCondition(item.type === 'Entourage' || item.type === 'Announcement')
+
+        if (item.type === 'Announcement') {
+          return {
+            itemType: item.type,
+            id: item.data.id,
+            uuid: item.data.uuid,
+            title: item.data.title,
+            body: item.data.body,
+            imageUrl: item.data.imageUrl,
+            action: item.data.action,
+            url: item.data.url,
+            webappUrl: item.data.webappUrl,
+            iconUrl: item.data.iconUrl,
+          }
+        }
 
         return {
+          itemType: item.type,
           author: {
             id: item.data.author.id,
             partner: item.data.author.partner,

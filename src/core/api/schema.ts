@@ -8,6 +8,7 @@ import {
   FeedEntourageType,
   FeedGroupType,
   FeedItemTour,
+  FeedItemAnnouncement,
   FeedItemEntourage,
   FeedJoinStatus,
   FeedStatus,
@@ -240,7 +241,7 @@ export const schema = {
     },
     data: null,
     response: {} as {
-      feeds: (FeedItemEntourage | FeedItemTour)[];
+      feeds: (FeedItemEntourage | FeedItemTour | FeedItemAnnouncement)[];
       nextPageToken?: string;
     },
   },
@@ -490,7 +491,5 @@ export const schema = {
     },
   },
 }
-
-export type FeedItem = typeof schema['/feeds GET']['response']['feeds'][0]['data']
 
 validateSchema<TypeScriptRequestSchemaConf>(schema)

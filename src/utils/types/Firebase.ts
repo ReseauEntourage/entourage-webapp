@@ -10,6 +10,7 @@ export const FirebaseEvents = [
   'Action__LoginOrSignup__Cancel',
   'View__Workshop',
   'Action__Workshop__Participate',
+  'Action__Workshop__Card',
   'Action__Workshop__Dismiss',
   'Action__Workshop__DismissNotInterested',
   'Action__Workshop__DismissAlready',

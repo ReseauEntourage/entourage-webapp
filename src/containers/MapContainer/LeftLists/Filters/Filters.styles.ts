@@ -52,15 +52,6 @@ export const Switch = styled.div<ElementProps>`
   `}
 `
 
-export const SectionTitle = styled(Typography).attrs(() => ({
-  variant: variants.title2,
-}))`
-  padding: ${theme.spacing(1, 0)};
-  grid-area: title;
-  display: flex;
-  align-items: center;
-`
-
 export const MenuContainer = styled.div`
   a {
     text-decoration: none !important;
@@ -91,10 +82,10 @@ export const Title = styled(Typography).attrs(() => ({
     justify-content: center;
   `
 
-export const Circle = styled.div<{isActive: boolean; }>`
+export const Circle = styled.div<{ isActive: boolean; }>`
   height: 60px;
-  line-height: 60px;  
-  width: 60px;  
+  line-height: 60px;
+  width: 60px;
   border-radius: 50%;
   text-align: center;
   cursor: pointer;
@@ -102,7 +93,7 @@ export const Circle = styled.div<{isActive: boolean; }>`
     border: 1px solid ${isActive ? colors.main.primary : colors.main.grey};
     color: ${isActive ? colors.main.primary : colors.main.grey};
     &:hover {
-      box-shadow: 0 0 0 7px ${colors.borderColor}; 
+      box-shadow: 0 0 0 7px ${colors.borderColor};
     }
   `}
 `

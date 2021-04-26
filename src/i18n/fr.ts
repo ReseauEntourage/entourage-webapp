@@ -73,10 +73,14 @@ export const texts = {
     pois: 'Lieux solidaires',
     messages: 'Messages',
     takeAction: 'Passer à l\'action',
-    profile: 'Mon Profil',
+    profile: 'Mon profil',
     signIn: 'Connexion / Inscription',
     logout: 'Déconnexion',
     manage: 'Gérer',
+    error: {
+      message: 'Désolé, la page demandée est introuvable...',
+      back: 'Retour à l\'accueil',
+    },
   },
   labels: {
     save: 'Enregistrer',

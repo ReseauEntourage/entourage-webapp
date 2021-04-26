@@ -9,10 +9,11 @@ import { useCurrentFeedItem } from 'src/containers/MapContainer'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { AppState } from 'src/core/boostrapStore'
 import { selectIsUpdatingJoinStatus, selectJoinRequestStatus, feedActions } from 'src/core/useCases/feed'
+
 import { useMe } from 'src/hooks/useMe'
 import { colors } from 'src/styles'
 import { useDelayLoadingNext } from 'src/utils/hooks'
-import { assertIsDefined } from 'src/utils/misc'
+import { assertCondition, assertIsDefined } from 'src/utils/misc'
 import { ModalLeaveEntourage } from './ModalLeaveEntourage'
 
 export function ParticipateButton() {
@@ -27,6 +28,8 @@ export function ParticipateButton() {
   const me = useMe()
 
   const participateLoading = useDelayLoadingNext(joinRequestPending)
+
+  assertCondition(feedItem.itemType === 'Entourage')
 
   const iAmCreator = me?.id === feedItem.author.id
 

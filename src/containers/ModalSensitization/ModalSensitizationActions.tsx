@@ -54,7 +54,7 @@ export function ModalSensitizationActions(props: ModalSensitizationActions) {
       <Button onClick={dismiss} variant="outlined">
         {modalTexts.dismiss}
       </Button>
-      <Button href={constants.WORKSHOP_LINK} onClick={onWorkshopClick} target="_blank">
+      <Button href={constants.WORKSHOP_LINK_POPUP} onClick={onWorkshopClick} target="_blank">
         {modalTexts.participate}
       </Button>
     </>

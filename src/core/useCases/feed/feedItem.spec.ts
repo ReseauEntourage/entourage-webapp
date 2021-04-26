@@ -12,7 +12,7 @@ import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
-import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState } from './feed.reducer'
+import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState, FeedEntourage } from './feed.reducer'
 import { feedSaga } from './feed.saga'
 import {
   selectCurrentFeedItem,
@@ -428,7 +428,7 @@ describe('Feed Item', () => {
           abc: {
             ...fakeFeedData.items.abc,
             joinStatus: 'not_requested' as FeedJoinStatus,
-          },
+          } as FeedEntourage,
         },
       }
 
@@ -497,7 +497,7 @@ describe('Feed Item', () => {
           abc: {
             ...fakeFeedData.items.abc,
             joinStatus: 'accepted' as FeedJoinStatus,
-          },
+          } as FeedEntourage,
         },
       }
 
@@ -563,7 +563,7 @@ describe('Feed Item', () => {
           abc: {
             ...fakeFeedData.items.abc,
             status,
-          },
+          } as FeedEntourage,
         },
         selectedItemUuid: 'abc',
       }

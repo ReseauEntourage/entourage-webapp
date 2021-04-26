@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router'
 import { texts } from 'src/i18n'
+import { Route } from 'src/utils/types'
 
-export type Path = '/actions' | '/pois' | '/messages' | '/'
-
-const routeTitles: Record<Path, string> = {
+const routeTitles: Record<Route, string> = {
   '/actions': texts.nav.pageTitles.actions,
   '/pois': texts.nav.pageTitles.pois,
   '/messages': texts.nav.pageTitles.messages,
@@ -11,7 +10,7 @@ const routeTitles: Record<Path, string> = {
 }
 
 interface CurrentRoute {
-  currentRoute: Path;
+  currentRoute: Route;
   routeTitle: string;
 }
 

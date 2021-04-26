@@ -1,4 +1,5 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
+import * as Sentry from '@sentry/react'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
 import Head from 'next/head'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -133,7 +134,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
       : content
 
     return (
-      <>
+      <Sentry.ErrorBoundary fallback="An error has occurred">
         <Head>
           <title>{texts.nav.pageTitles.main}</title>
           <link href="/favicon.ico" rel="icon" />
@@ -152,7 +153,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
             </StylesProvider>
           </>
         </SSRDataContext.Provider>
-      </>
+      </Sentry.ErrorBoundary>
     )
   }
 }
