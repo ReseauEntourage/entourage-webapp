@@ -14,7 +14,7 @@ import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
 import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
-import { selectGeolocation, selectLocation, selectLocationIsInit } from './location.selectors'
+import { selectGeolocation, selectLocation, selectLocationIsInit, selectMapHasMoved } from './location.selectors'
 
 function configureStoreWithLocation(
   params: {
@@ -55,6 +55,18 @@ describe('Location', () => {
 
   it(`
     Given the initial state
+    When user moves the map
+    Then the map should be moved
+  `, () => {
+    const store = configureStoreWithLocation({})
+
+    store.dispatch(publicActions.setMapHasMoved(true))
+
+    expect(selectMapHasMoved(store.getState())).toStrictEqual(true)
+  })
+
+  it(`
+    Given the initial state
     When user wants to update all filters
     Then filters should be updated
   `, () => {
@@ -63,6 +75,7 @@ describe('Location', () => {
       displayAddress: 'Nantes',
       center: { lat: 2, lng: 3 },
       zoom: 12,
+      mapHasMoved: defaultLocationState.mapHasMoved,
     }
 
     store.dispatch(publicActions.setLocation({
@@ -127,6 +140,7 @@ describe('Location', () => {
     expect(selectLocation(store.getState())).toStrictEqual({
       ...position,
       displayAddress: fakeLocationData.displayAddress,
+      mapHasMoved: defaultLocationState.mapHasMoved,
     })
   })
 
@@ -163,6 +177,7 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...fakeLocationData,
         zoom: defaultLocationState.zoom,
+        mapHasMoved: defaultLocationState.mapHasMoved,
       })
 
       expect(selectGeolocation(store.getState())).toStrictEqual({
@@ -292,6 +307,7 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...entourageCities.lyon,
         zoom: defaultLocationState.zoom,
+        mapHasMoved: defaultLocationState.mapHasMoved,
       })
       expect(selectCurrentFeedItemUuid(store.getState())).toBe(null)
       expect(selectLocationIsInit(store.getState())).toBe(true)
@@ -322,6 +338,7 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...entourageCities.lyon,
         zoom: defaultLocationState.zoom,
+        mapHasMoved: defaultLocationState.mapHasMoved,
       })
       expect(selectCurrentPOIUuid(store.getState())).toBe(null)
       expect(selectLocationIsInit(store.getState())).toBe(true)
@@ -359,6 +376,7 @@ describe('Location', () => {
           lng: user.address?.longitude,
         },
         zoom: defaultLocationState.zoom,
+        mapHasMoved: defaultLocationState.mapHasMoved,
       }
 
       expect(selectLocation(store.getState())).toStrictEqual(defaultPosition)
@@ -399,6 +417,7 @@ describe('Location', () => {
       expect(selectLocation(store.getState())).toStrictEqual({
         ...fakeLocationData,
         zoom: defaultPositionData.zoom,
+        mapHasMoved: defaultLocationState.mapHasMoved,
       })
 
       expect(selectGeolocation(store.getState())).toStrictEqual({
@@ -424,9 +443,9 @@ describe('Location', () => {
         coordinates: fakeLocationData.center,
       })
 
-      store.dispatch(publicActions.initLocation())
-
       geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+
+      store.dispatch(publicActions.initLocation())
 
       await store.waitForActionEnd()
 

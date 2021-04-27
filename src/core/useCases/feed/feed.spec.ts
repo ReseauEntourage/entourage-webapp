@@ -1,6 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { locationActions, LocationState, selectLocation } from '../location'
+import { commonActions } from '../common'
+import { locationActions, LocationState, selectLocation, selectMapHasMoved } from '../location'
 import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
@@ -79,28 +80,43 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
-      And user sets position filters
+      And user fetches data
     Then items should be fetched
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
 
     store.dispatch(publicActions.init())
 
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
+    store.dispatch(commonActions.fetchData())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given the initial state
+    When feed is init
+      And user moves the map
+      And user fetched data
+    Then the map should not be moved
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+    store.dispatch(locationActions.setMapHasMoved(true))
+    store.dispatch(commonActions.fetchData())
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectMapHasMoved(store.getState())).toStrictEqual(false)
   })
 
   it(`
@@ -281,8 +297,8 @@ describe('Feed', () => {
       And user update time range to 1 day
     Then store should be updated with a 24 hours time range
       And items should be fetched once
-      And retrieve feed gateway method should have been called with a 24 hours time range 
-        and default locations and types 
+      And retrieve feed gateway method should have been called with a 24 hours time range
+        and default locations and types
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
@@ -314,9 +330,9 @@ describe('Feed', () => {
   it(`
     Given initial state
     When user init feed
-      And user set position filters
+      And user fetches data
       And user cancels feed
-      And user sets a new position filter again
+      And user fetches data again
     Then items should be fetched only once
   `, async () => {
     const feedGateway = new TestFeedGateway()
@@ -333,6 +349,8 @@ describe('Feed', () => {
       location: nextLocation,
     }))
 
+    store.dispatch(commonActions.fetchData())
+
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
 
@@ -342,11 +360,14 @@ describe('Feed', () => {
       displayAddress: 'Nantes',
       center: { lat: 5, lng: 6 },
       zoom: 65,
+      mapHasMoved: false,
     }
 
     store.dispatch(locationActions.setLocation({
       location: nextNextLocation,
     }))
+
+    store.dispatch(commonActions.fetchData())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -357,23 +378,16 @@ describe('Feed', () => {
 
   it(`
     Given user has not any items
-    When user set position filters
+    When user fetches data
     Then items should be fetching during request
       And items should not be fetching after request succeeded
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
     const store = configureStoreWithFeed({ dependencies: { feedGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
 
     store.dispatch(publicActions.init())
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
+    store.dispatch(commonActions.fetchData())
 
     expect(selectFeedIsFetching(store.getState())).toEqual(true)
 
@@ -459,6 +473,7 @@ describe('Feed', () => {
   it(`
     Given there is feed items return by the server
     When user changes position filters
+      And fetches new data
     Then should retrieve feed gateway method have been called the second time with next position filters
   `, async () => {
     const feedGateway = new TestFeedGateway()
@@ -479,6 +494,8 @@ describe('Feed', () => {
     store.dispatch(locationActions.setLocation({
       location: nextLocation,
     }))
+
+    store.dispatch(commonActions.fetchData())
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()

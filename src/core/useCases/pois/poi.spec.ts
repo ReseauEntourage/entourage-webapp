@@ -10,7 +10,7 @@ import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
-import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
+import { poisSaga } from './pois.saga'
 import {
   selectPOIList,
   selectCurrentPOI,
@@ -298,7 +298,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: 1,
           center: {
             lat: poiDetailsFromGateway.latitude,
             lng: poiDetailsFromGateway.longitude,
@@ -420,7 +420,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: 1,
           center: {
             lat: selectLocation(store.getState()).center.lat,
             lng: selectLocation(store.getState()).center.lng,
@@ -488,7 +488,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: 1,
         },
       },
     })

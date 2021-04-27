@@ -1,6 +1,6 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
+import { CommonActionType } from '../common'
 import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
-import { LocationActionType } from '../location/location.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
@@ -36,6 +36,7 @@ function* retrieveFeed() {
     },
   )
   yield put(actions.retrieveFeedSuccess(response))
+  yield put(locationActions.setMapHasMoved(false))
 }
 
 function* retrieveFeedNextPage() {
@@ -87,6 +88,7 @@ function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
             displayAddress: response.displayAddress,
           },
         }))
+        yield put(actions.retrieveFeed())
       }
     }
   } else if (!entourageUuid) {
@@ -148,7 +150,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
+    const bgRetrieveFeed = yield takeEvery(CommonActionType.FETCH_DATA, retrieveFeed)
     yield take(FeedActionType.CANCEL_FEED)
     yield cancel(bgRetrieveFeed)
   }

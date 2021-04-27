@@ -128,6 +128,7 @@ export const texts = {
     navActions: {
       mapButton: 'Carte',
       returnButton: 'Retour',
+      refresh: 'Rechercher dans cette zone',
     },
     profilModal: {
       modalTitle: 'Mon profil',

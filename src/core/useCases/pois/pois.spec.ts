@@ -1,6 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-import { locationActions, LocationState, selectLocation } from '../location'
+import { commonActions } from '../common'
+import { locationActions, LocationState, selectLocation, selectMapHasMoved } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
@@ -10,7 +11,7 @@ import { fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
 import { defaultPOIsState } from './pois.reducer'
-import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
+import { poisSaga } from './pois.saga'
 import {
   selectPOIsFilters,
   selectIsActiveFilter,
@@ -53,8 +54,70 @@ describe('POIs', () => {
   it(`
    Given initial state
      When user hasn't init POIs
-      And user sets position filters
+      And user fetches data
     Then POIs should not be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(commonActions.fetchData())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given initial state
+    When user init POIs
+      And user fetches data
+    Then POIs should be fetched
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(commonActions.fetchData())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given the initial state
+    When POI is init
+      And user moves the map
+      And user fetched data
+    Then the map should not be moved
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.init())
+    store.dispatch(locationActions.setMapHasMoved(true))
+    store.dispatch(commonActions.fetchData())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectMapHasMoved(store.getState())).toStrictEqual(false)
+  })
+
+  it(`
+    Given initial state
+    When user init POIs
+      And user fetches data
+      And user cancels POIs
+      And user fetches data again
+    Then items should be fetched only once
   `, async () => {
     const poisGateway = new TestPOIsGateway()
     poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
@@ -64,14 +127,161 @@ describe('POIs', () => {
       center: { lat: 2, lng: 3 },
       zoom: 12,
     }
+    store.dispatch(publicActions.init())
+
     store.dispatch(locationActions.setLocation({
       location: nextLocation,
     }))
 
+    store.dispatch(commonActions.fetchData())
+
     poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(0)
+    store.dispatch(publicActions.cancel())
+
+    const nextNextLocation: Partial<LocationState> = {
+      displayAddress: 'Nantes',
+      center: { lat: 5, lng: 6 },
+      zoom: 65,
+      mapHasMoved: defaultLocationState.mapHasMoved,
+    }
+
+    store.dispatch(locationActions.setLocation({
+      location: nextNextLocation,
+    }))
+
+    store.dispatch(commonActions.fetchData())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(selectLocation(store.getState())).toStrictEqual(nextNextLocation)
+  })
+
+  it(`
+    Given user has not any POIs
+    When user fetches data
+    Then POIs should be fetching during request
+      And POIs should not be fetching after request succeeded
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(commonActions.fetchData())
+
+    expect(selectPOIsIsFetching(store.getState())).toEqual(true)
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectPOIsIsFetching(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given POIs request is idle
+    When no action is trigger by user
+    Then POIs request should still be idle
+  `, () => {
+    const poisGateway = new TestPOIsGateway()
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    expect(selectPOIsIsIdle(store.getState())).toEqual(true)
+  })
+
+  it(`
+    Given POIs request is idle
+    When user retrieve POIs successfully
+    Then POIs should not be idle
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.retrievePOIs())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectPOIsIsIdle(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given there is POIs returned by the server
+    When user retrieve POIs for the first time
+    Then POIs items should be fetching until request is succeeded
+      And should retrieve POIs successfully with items
+      And should fetching state be false after server response
+      And should retrieve POIs gateway method have been called with position filters values
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+    const deferredValue = { pois: [fakePOIsData.pois.abc] }
+    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+    store.dispatch(publicActions.retrievePOIs())
+
+    expect(selectPOIsIsFetching(store.getState())).toEqual(true)
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectPOIList(store.getState())).toEqual([fakePOIsData.pois.abc])
+    expect(selectPOIsIsFetching(store.getState())).toEqual(false)
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          distance: 1,
+        },
+      },
+    })
+  })
+
+  it(`
+    Given there is POIs returned by the server
+    When user changes position filters
+      And fetches new data
+    Then should retrieve POIs gateway method have been called the second time with next position filters
+  `, async () => {
+    const poisGateway = new TestPOIsGateway()
+
+    const deferredValue = { pois: [fakePOIsData.pois.abc] }
+    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
+
+    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+    const nextLocation: Partial<LocationState> = {
+      displayAddress: 'Lyon',
+      center: { lat: 5, lng: 6 },
+      zoom: 13,
+    }
+
+    store.dispatch(publicActions.init())
+    store.dispatch(locationActions.setLocation({
+      location: nextLocation,
+    }))
+
+    store.dispatch(commonActions.fetchData())
+
+    poisGateway.retrievePOIs.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
+      filters: {
+        location: {
+          center: nextLocation.center,
+          distance: 1,
+        },
+      },
+    })
   })
 
   it(`
@@ -98,7 +308,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: 1,
         },
         categories: formatPOIsCategories([FilterPOICategory.EATING]),
       },
@@ -156,7 +366,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: 1,
         },
       },
     })
@@ -230,7 +440,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: 1,
         },
         categories: formatPOIsCategories([FilterPOICategory.PARTNERS]),
         partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
@@ -299,7 +509,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: 1,
         },
       },
     })
@@ -367,210 +577,13 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: 1,
         },
         categories: formatPOIsCategories([
           ...initialFilters,
           FilterPOICategory.PARTNERS,
         ]),
         partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
-      },
-    })
-  })
-
-  it(`
-    Given initial state
-    When user init POIs
-      And user sets position filters
-    Then POIs should be fetched
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
-
-    store.dispatch(publicActions.init())
-
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
-  })
-
-  it(`
-    Given initial state
-    When user init POIs
-      And user sets position filters
-      And user cancels POIs
-      And user sets a new position filter again
-    Then items should be fetched only once
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
-    store.dispatch(publicActions.init())
-
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    store.dispatch(publicActions.cancel())
-
-    const nextNextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 5, lng: 6 },
-      zoom: 65,
-    }
-
-    store.dispatch(locationActions.setLocation({
-      location: nextNextLocation,
-    }))
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
-    expect(selectLocation(store.getState())).toStrictEqual(nextNextLocation)
-  })
-
-  it(`
-    Given user has not any POIs
-    When user set position filters
-    Then POIs should be fetching during request
-      And POIs should not be fetching after request succeeded
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
-
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Nantes',
-      center: { lat: 2, lng: 3 },
-      zoom: 12,
-    }
-    store.dispatch(publicActions.init())
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
-
-    expect(selectPOIsIsFetching(store.getState())).toEqual(true)
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(selectPOIsIsFetching(store.getState())).toEqual(false)
-  })
-
-  it(`
-    Given POIs request is idle
-    When no action is trigger by user
-    Then POIs request should still be idle
-  `, () => {
-    const poisGateway = new TestPOIsGateway()
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-
-    expect(selectPOIsIsIdle(store.getState())).toEqual(true)
-  })
-
-  it(`
-    Given POIs request is idle
-    When user retrieve POIs successfully
-    Then POIs should not be idle
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-
-    store.dispatch(publicActions.retrievePOIs())
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(selectPOIsIsIdle(store.getState())).toEqual(false)
-  })
-
-  it(`
-    Given there is POIs returned by the server
-    When user retrieve POIs for the first time
-    Then POIs items should be fetching until request is succeeded
-      And should retrieve POIs successfully with items
-      And should fetching state be false after server response
-      And should retrieve POIs gateway method have been called with position filters values
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-    const deferredValue = { pois: [fakePOIsData.pois.abc] }
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-
-    store.dispatch(publicActions.retrievePOIs())
-
-    expect(selectPOIsIsFetching(store.getState())).toEqual(true)
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(selectPOIList(store.getState())).toEqual([fakePOIsData.pois.abc])
-    expect(selectPOIsIsFetching(store.getState())).toEqual(false)
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
-    expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
-      filters: {
-        location: {
-          center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
-        },
-      },
-    })
-  })
-
-  it(`
-    Given there is POIs returned by the server
-    When user changes position filters
-    Then should retrieve POIs gateway method have been called the second time with next position filters
-  `, async () => {
-    const poisGateway = new TestPOIsGateway()
-
-    const deferredValue = { pois: [fakePOIsData.pois.abc] }
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValue)
-
-    const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
-    const nextLocation: Partial<LocationState> = {
-      displayAddress: 'Lyon',
-      center: { lat: 5, lng: 6 },
-      zoom: 13,
-    }
-
-    store.dispatch(publicActions.init())
-    store.dispatch(locationActions.setLocation({
-      location: nextLocation,
-    }))
-
-    poisGateway.retrievePOIs.resolveDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
-    expect(poisGateway.retrievePOIs).toHaveBeenNthCalledWith(1, {
-      filters: {
-        location: {
-          center: nextLocation.center,
-          zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
-        },
       },
     })
   })

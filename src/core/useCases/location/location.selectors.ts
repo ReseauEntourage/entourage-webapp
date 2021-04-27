@@ -17,3 +17,7 @@ export function selectGeolocation(state: AppState) {
 export function selectLocationIsInit(state: AppState) {
   return state.location.isInit
 }
+
+export function selectMapHasMoved(state: AppState) {
+  return state.location.mapHasMoved
+}

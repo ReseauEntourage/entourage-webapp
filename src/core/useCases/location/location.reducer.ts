@@ -65,6 +65,7 @@ export interface LocationState {
     displayAddress: string;
     googlePlaceId: string | null;
   } | null;
+  mapHasMoved: boolean;
 }
 
 export const defaultLocationState: LocationState = {
@@ -73,6 +74,7 @@ export const defaultLocationState: LocationState = {
   zoom: constants.DEFAULT_LOCATION.ZOOM,
   isInit: false,
   geolocation: null,
+  mapHasMoved: false,
 }
 
 function locationPureReducer(
@@ -84,6 +86,13 @@ function locationPureReducer(
       return {
         ...state,
         ...action.payload.location,
+        isInit: true,
+      }
+    }
+
+    case LocationActionType.SET_INIT_LOCATION: {
+      return {
+        ...state,
         isInit: true,
       }
     }
@@ -105,11 +114,18 @@ function locationPureReducer(
       }
     }
 
+    case LocationActionType.SET_MAP_HAS_MOVED: {
+      return {
+        ...state,
+        mapHasMoved: action.payload,
+      }
+    }
+
     default:
       return state
   }
 }
 
 export const locationReducer = persistReducer('location', locationPureReducer, {
-  blacklist: ['isInit'],
+  blacklist: ['isInit', 'mapHasMoved'],
 })

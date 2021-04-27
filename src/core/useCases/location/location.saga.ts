@@ -1,5 +1,6 @@
 import { call, getContext, put, select } from 'redux-saga/effects'
 import { AuthUserActionType } from '../authUser/authUser.actions'
+import { commonActions } from '../common'
 import { feedActions, selectCurrentFeedItemUuid } from '../feed'
 import { poisActions, selectCurrentPOIUuid } from '../pois'
 import { selectUser } from 'src/core/useCases/authUser'
@@ -7,7 +8,7 @@ import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { LocationActionType, actions, LocationActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
-import { Cities, entourageCities, IGeolocationService, selectLocation } from '.'
+import { Cities, entourageCities, IGeolocationService, locationActions } from '.'
 
 export interface Dependencies {
   geolocationService: IGeolocationService;
@@ -31,6 +32,7 @@ function* initLocationSaga() {
           displayAddress: user.address.displayAddress,
         },
       }))
+      yield put(commonActions.fetchData())
     } else {
       yield put(actions.getGeolocation({
         updateLocationFilter: true,
@@ -44,6 +46,7 @@ function* initLocationSaga() {
           ...defaultCity,
         },
       }))
+      yield put(commonActions.fetchData())
       yield put(feedActions.removeCurrentItemUuid())
       yield put(poisActions.removeCurrentPOIUuid())
     }
@@ -71,6 +74,7 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
             displayAddress: placeAddress.placeAddress,
           },
         }))
+        yield put(commonActions.fetchData())
       }
       yield put(actions.setGeolocation({
         geolocation: {
@@ -82,14 +86,8 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
     }
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
-      // Call action with the same position so that the initialized saga can get its data from gateway
-      const location: ReturnType<typeof selectLocation> = yield select(selectLocation)
-
-      yield put(actions.setLocation({
-        location: {
-          ...location,
-        },
-      }))
+      yield put(locationActions.setInitLocation())
+      yield put(commonActions.fetchData())
     }
   }
 }

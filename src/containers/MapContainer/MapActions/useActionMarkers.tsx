@@ -30,6 +30,7 @@ export function useActionMarkers() {
             passHref={true}
           >
             <CustomLink
+              disableHover={true}
               onClick={() => sendEvent('Action__Feed__MapItem')}
             >
               {

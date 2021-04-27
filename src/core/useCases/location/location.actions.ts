@@ -3,10 +3,12 @@ import { LocationState } from './location.reducer'
 
 export const LocationActionType = {
   INIT_LOCATION: 'LOCATION/INIT_LOCATION',
+  SET_INIT_LOCATION: 'LOCATION/SET_INIT_LOCATION',
   SET_LOCATION: 'LOCATION/SET_LOCATION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
   SET_GEOLOCATION: 'LOCATION/SET_GEOLOCATION',
+  SET_MAP_HAS_MOVED: 'LOCATION/MAP_HAS_MOVED',
 } as const
 
 export type LocationActionType = keyof typeof LocationActionType;
@@ -16,6 +18,12 @@ export type LocationActionType = keyof typeof LocationActionType;
 function initLocation() {
   return {
     type: LocationActionType.INIT_LOCATION,
+  }
+}
+
+function setInitLocation() {
+  return {
+    type: LocationActionType.SET_INIT_LOCATION,
   }
 }
 
@@ -54,12 +62,21 @@ function getGeolocation(payload: {
   }
 }
 
+function setMapHasMoved(payload: boolean) {
+  return {
+    type: LocationActionType.SET_MAP_HAS_MOVED,
+    payload,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
   setLocation,
   initLocation,
   getGeolocation,
+  setMapHasMoved,
+  setInitLocation,
 }
 
 const privateActions = {

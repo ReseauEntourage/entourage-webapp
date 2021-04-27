@@ -1,4 +1,5 @@
 import { call, put, getContext, select } from 'redux-saga/effects'
+import { commonActions } from '../common'
 import { locationActions } from '../location'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
@@ -222,6 +223,7 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
         displayAddress: response.address.displayAddress,
       },
     }))
+    yield put(commonActions.fetchData())
   }
 
   yield put(actions.updateUserSuccess({ user: response }))

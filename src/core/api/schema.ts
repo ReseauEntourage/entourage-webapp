@@ -345,7 +345,7 @@ export const schema = {
       v: 2;
       categoryIds?: POICategoriesIds;
       partnersFilters?: POIPartnersFilters;
-      distance: number;
+      distance?: number;
       latitude: number;
       longitude: number;
     },

@@ -29,6 +29,7 @@ export function usePOIMarkers() {
           passHref={true}
         >
           <CustomLink
+            disableHover={true}
             onClick={() => sendEvent('Action__POIs__MapItem')}
           >
             <POIMarker
