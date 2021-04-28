@@ -59,6 +59,13 @@ export interface LocationState {
   };
   zoom: number;
   isInit: boolean;
+  mapPosition: {
+    center: {
+      lat: number;
+      lng: number;
+    };
+    zoom: number;
+  };
   geolocation: {
     lat: number;
     lng: number;
@@ -71,6 +78,10 @@ export const defaultLocationState: LocationState = {
   displayAddress: constants.DEFAULT_LOCATION.DISPLAY_ADDRESS,
   center: constants.DEFAULT_LOCATION.CENTER,
   zoom: constants.DEFAULT_LOCATION.ZOOM,
+  mapPosition: {
+    center: constants.DEFAULT_LOCATION.CENTER,
+    zoom: constants.DEFAULT_LOCATION.ZOOM,
+  },
   isInit: false,
   geolocation: null,
 }
@@ -85,6 +96,16 @@ function locationPureReducer(
         ...state,
         ...action.payload.location,
         isInit: true,
+      }
+    }
+
+    case LocationActionType.SET_MAP_POSITION: {
+      return {
+        ...state,
+        mapPosition: {
+          ...state.mapPosition,
+          ...action.payload,
+        },
       }
     }
 

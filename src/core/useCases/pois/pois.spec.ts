@@ -3,6 +3,7 @@ import { PartialAppDependencies } from '../Dependencies'
 import { locationActions, LocationState, selectLocation } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
 import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
 import { TestPOIsGateway } from './TestPOIsGateway'
@@ -10,7 +11,7 @@ import { fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
 import { defaultPOIsState } from './pois.reducer'
-import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
+import { poisSaga } from './pois.saga'
 import {
   selectPOIsFilters,
   selectIsActiveFilter,
@@ -98,7 +99,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
         categories: formatPOIsCategories([FilterPOICategory.EATING]),
       },
@@ -156,7 +157,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
       },
     })
@@ -230,7 +231,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
         categories: formatPOIsCategories([FilterPOICategory.PARTNERS]),
         partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
@@ -299,7 +300,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
       },
     })
@@ -367,7 +368,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
         categories: formatPOIsCategories([
           ...initialFilters,
@@ -533,7 +534,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: defaultLocationState.center,
-          zoom: calculateDistanceFromZoom(defaultLocationState.zoom),
+          distance: constants.POI_DISTANCE,
         },
       },
     })
@@ -569,7 +570,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: nextLocation.center,
-          zoom: calculateDistanceFromZoom(nextLocation.zoom as number),
+          distance: constants.POI_DISTANCE,
         },
       },
     })

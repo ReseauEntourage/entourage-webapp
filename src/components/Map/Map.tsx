@@ -1,7 +1,7 @@
 import GoogleMapReact, { ChangeEventValue } from 'google-map-react'
 import React, { useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { locationActions, selectLocation } from 'src/core/useCases/location'
+import { locationActions, selectMapPosition } from 'src/core/useCases/location'
 import { useFirebase } from 'src/utils/hooks'
 import { AnyToFix } from 'src/utils/types'
 
@@ -33,7 +33,7 @@ const roundCoordinates = (coordinates: google.maps.LatLngLiteral): google.maps.L
 
 export function Map(props: Props) {
   const { children } = props
-  const position = useSelector(selectLocation)
+  const position = useSelector(selectMapPosition)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
   const prevOnChangeValue = useRef(position.center)
@@ -44,9 +44,14 @@ export function Map(props: Props) {
     // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
     const positionHasChanged = (
       coordinatesHasChanged(
-        roundCoordinates(position.center), roundedCoordinates,
+        roundCoordinates(position.center),
+        roundedCoordinates,
       ) // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
-      && coordinatesHasChanged(roundCoordinates(prevOnChangeValue.current), roundedCoordinates))
+      && coordinatesHasChanged(
+        roundCoordinates(prevOnChangeValue.current),
+        roundedCoordinates,
+      )
+    )
       || position.zoom !== value.zoom
 
     if (positionHasChanged) {
@@ -54,12 +59,9 @@ export function Map(props: Props) {
 
       sendEvent('Action__Map__PanZoom')
 
-      dispatch(locationActions.setLocation({
-        location: {
-          center: roundCoordinates(value.center),
-          zoom: value.zoom,
-        },
-        getDisplayAddressFromCoordinates: true,
+      dispatch(locationActions.setMapPosition({
+        center: roundedCoordinates,
+        zoom: value.zoom,
       }))
     }
   }

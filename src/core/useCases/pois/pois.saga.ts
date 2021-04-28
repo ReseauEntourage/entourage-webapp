@@ -39,7 +39,7 @@ function* retrievePOIs() {
       filters: {
         location: {
           center,
-          distance: 1,
+          distance: constants.POI_DISTANCE,
         },
         categories,
         partners,
@@ -70,6 +70,13 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
       yield put(actions.retrievePOIDetailsSuccess(response))
 
       if (poisIsIdle) {
+        yield put(locationActions.setMapPosition({
+          center: {
+            lat: response.poiDetails.latitude,
+            lng: response.poiDetails.longitude,
+          },
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        }))
         yield put(locationActions.setLocation({
           location: {
             center: {
@@ -77,6 +84,7 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
               lng: response.poiDetails.longitude,
             },
             displayAddress: response.poiDetails.address,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
           },
         }))
       }

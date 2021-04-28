@@ -14,7 +14,13 @@ import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
 import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
-import { selectGeolocation, selectLocation, selectLocationIsInit } from './location.selectors'
+import {
+  selectGeolocation,
+  selectLocation,
+  selectLocationIsInit,
+  selectMapHasMoved,
+  selectMapPosition,
+} from './location.selectors'
 
 function configureStoreWithLocation(
   params: {
@@ -37,12 +43,14 @@ function configureStoreWithLocation(
 
 describe('Location', () => {
   const { geolocation: defaultGeolocationData, ...defaultPositionData } = defaultLocationState
+
+  const { isInit, mapPosition, ...restDefaultPositionData } = defaultPositionData
+
   const fakeGeolocationData = {
     ...fakeLocationData.center,
     displayAddress: fakeLocationData.displayAddress,
     googlePlaceId: 'placeId',
   }
-  const { isInit, ...restDefaultPositionData } = defaultPositionData
 
   it(`
     Given initial state
@@ -55,7 +63,7 @@ describe('Location', () => {
 
   it(`
     Given the initial state
-    When user wants to update all filters
+    When user wants to update position filters
     Then filters should be updated
   `, () => {
     const store = configureStoreWithLocation({})
@@ -75,7 +83,7 @@ describe('Location', () => {
   it(`
     Given the initial state
     When user wants to partially update position filters
-    Then filters should be updated and merge with existing filters
+    Then filters should be updated and merged with existing filters
   `, () => {
     const store = configureStoreWithLocation({})
     const position: Partial<LocationState> = {
@@ -89,6 +97,40 @@ describe('Location', () => {
 
     expect(selectLocation(store.getState())).toStrictEqual({
       ...restDefaultPositionData,
+      ...position,
+    })
+  })
+
+  it(`
+    Given the initial state
+    When user wants to update map position
+    Then map position should be updated
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapPosition(store.getState())).toStrictEqual(position)
+  })
+
+  it(`
+    Given the initial state
+    When user wants to partially update map position
+    Then map position should be updated and merged with existing filters
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      ...mapPosition,
       ...position,
     })
   })
@@ -437,5 +479,50 @@ describe('Location', () => {
       expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
       expect(selectLocationIsInit(store.getState())).toBe(true)
     })
+  })
+
+  it(`
+    Given the initial state
+    When map position is different than position filter
+    Then map has moved button should be visible
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    const positionFilter: Partial<LocationState> = {
+      center: { lat: 1, lng: 5 },
+      zoom: 5,
+    }
+
+    store.dispatch(publicActions.setLocation({
+      location: positionFilter,
+    }))
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapHasMoved(store.getState())).toBe(true)
+  })
+
+  it(`
+    Given the initial state
+    When map position is equal to position filter
+    Then map has moved button should be hidden
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setLocation({
+      location: position,
+    }))
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapHasMoved(store.getState())).toBe(false)
   })
 })

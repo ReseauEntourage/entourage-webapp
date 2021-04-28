@@ -1,5 +1,6 @@
 import { call, put, getContext, select } from 'redux-saga/effects'
 import { locationActions } from '../location'
+import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
@@ -213,6 +214,13 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
   const response: CallReturnType<typeof updateMe> = yield call(updateMe, updatedData)
 
   if (response.address) {
+    yield put(locationActions.setMapPosition({
+      center: {
+        lat: response.address.latitude,
+        lng: response.address.longitude,
+      },
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+    }))
     yield put(locationActions.setLocation({
       location: {
         center: {
@@ -220,6 +228,7 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
           lng: response.address.longitude,
         },
         displayAddress: response.address.displayAddress,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       },
     }))
   }

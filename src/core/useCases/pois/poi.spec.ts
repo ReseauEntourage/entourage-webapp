@@ -6,6 +6,7 @@ import { selectCurrentFeedItem } from '../feed'
 import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
@@ -298,7 +299,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          distance: 1,
+          distance: constants.POI_DISTANCE,
           center: {
             lat: poiDetailsFromGateway.latitude,
             lng: poiDetailsFromGateway.longitude,
@@ -420,7 +421,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          distance: 1,
+          distance: constants.POI_DISTANCE,
           center: {
             lat: selectLocation(store.getState()).center.lat,
             lng: selectLocation(store.getState()).center.lng,
@@ -488,7 +489,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-          distance: 1,
+          distance: constants.POI_DISTANCE,
         },
       },
     })
