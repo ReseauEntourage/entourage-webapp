@@ -3,7 +3,10 @@ import { POICategoriesIds, POIPartnersFilters } from 'src/core/api'
 import { POI, POIDetails } from './pois.reducer'
 
 interface POIsFilter {
-  location: Pick<LocationState, 'center' | 'zoom'>;
+  location: {
+    center: LocationState['center'];
+    distance: number;
+  };
   categories?: POICategoriesIds;
   partners?: POIPartnersFilters;
 }
