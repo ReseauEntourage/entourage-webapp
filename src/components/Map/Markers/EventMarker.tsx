@@ -3,7 +3,7 @@ import SvgIcon from '@material-ui/core/SvgIcon'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Event } from 'src/assets'
-import { selectLocation } from 'src/core/useCases/location'
+import { selectMapPosition } from 'src/core/useCases/location'
 import { colors } from 'src/styles'
 import { getMarkerSize, roundToEven } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
@@ -17,7 +17,7 @@ interface Props {
 // eslint-disable-next-line
 export function EventMarker(props: Props) {
   const { isActive, tooltip } = props
-  const position = useSelector(selectLocation)
+  const position = useSelector(selectMapPosition)
   const { zoom } = position
   const size = getMarkerSize(zoom)
 
