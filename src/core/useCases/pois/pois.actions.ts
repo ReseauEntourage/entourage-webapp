@@ -11,7 +11,7 @@ export const POIsActionType = {
   RETRIEVE_POIS: 'POIS/RETRIEVE_POIS',
   RETRIEVE_POIS_STARTED: 'POIS/RETRIEVE_POIS_STARTED',
   RETRIEVE_POIS_SUCCEEDED: 'POIS/RETRIEVE_POIS_SUCCEEDED',
-  RETRIEVE_POI_DETAILS_ENDED: 'POIS/RETRIEVE_POI_DETAILS_ENDED',
+  RETRIEVE_POI_DETAILS_STARTED: 'POIS/RETRIEVE_POI_DETAILS_STARTED',
   RETRIEVE_POI_DETAILS_SUCCEEDED: 'POIS/RETRIEVE_POI_DETAILS_SUCCEEDED',
   SET_CURRENT_POI_UUID: 'POIS/SET_CURRENT_POI_UUID',
   REMOVE_CURRENT_POI_UUID: 'POIS/REMOVE_CURRENT_POI_UUID',
@@ -47,12 +47,6 @@ function retrievePOIsStarted() {
   }
 }
 
-function retrievePOIDetailsEnded() {
-  return {
-    type: POIsActionType.RETRIEVE_POI_DETAILS_ENDED,
-  }
-}
-
 function retrievePOIsSuccess(
   payload: {
     pois: POIsState['pois'][string][];
@@ -61,6 +55,12 @@ function retrievePOIsSuccess(
   return {
     type: POIsActionType.RETRIEVE_POIS_SUCCEEDED,
     payload,
+  }
+}
+
+function retrievePOIDetailsStarted() {
+  return {
+    type: POIsActionType.RETRIEVE_POI_DETAILS_STARTED,
   }
 }
 
@@ -116,7 +116,7 @@ export const publicActions = {
 const privateActions = {
   retrievePOIsStarted,
   retrievePOIsSuccess,
-  retrievePOIDetailsEnded,
+  retrievePOIDetailsStarted,
   retrievePOIDetailsSuccess,
 }
 

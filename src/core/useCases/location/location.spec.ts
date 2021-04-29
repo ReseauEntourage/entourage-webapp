@@ -2,18 +2,19 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { selectCurrentFeedItemUuid } from '../feed'
+import { feedActions, selectCurrentFeedItemUuid } from '../feed'
 import { defaultFeedState } from '../feed/feed.reducer'
-import { selectCurrentPOIUuid } from '../pois'
+import { poisActions, selectCurrentPOIUuid } from '../pois'
 import { defaultPOIsState } from '../pois/pois.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
 import { constants } from 'src/constants'
+import { EntourageCities } from 'src/utils/types'
 import { TestGeolocationService } from './TestGeolocationService'
 import { fakeLocationData } from './__mocks__'
 import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
-import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
+import { defaultLocationState, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
 import {
   selectGeolocation,
@@ -347,8 +348,7 @@ describe('Location', () => {
   describe('Default user location', () => {
     it(`
       Given initial state
-      When the default position is initialized
-        And the selected feed item uuid is a city
+      When the selected feed item uuid is a city
       The position filter should be set to the cities coordinates with default zoom value
         And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
@@ -359,7 +359,6 @@ describe('Location', () => {
         initialAppState: {
           feed: {
             ...defaultFeedState,
-            selectedItemUuid: 'lyon',
           },
           location: {
             ...defaultLocationState,
@@ -373,16 +372,16 @@ describe('Location', () => {
         dependencies: { geolocationService },
       })
 
-      store.dispatch(publicActions.initLocation())
+      store.dispatch(feedActions.setCurrentFeedItemUuid('lyon'))
 
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
+        ...EntourageCities.lyon,
         zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
       expect(selectMapPosition(store.getState())).toStrictEqual({
-        center: entourageCities.lyon.center,
+        center: EntourageCities.lyon.center,
         zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
 
@@ -392,8 +391,7 @@ describe('Location', () => {
 
     it(`
       Given initial state
-      When the default position is initialized
-        And the selected POI uuid is a city
+      When the selected POI uuid is a city
       The position filter should be set to the cities coordinates with default zoom value
         And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
@@ -404,7 +402,6 @@ describe('Location', () => {
         initialAppState: {
           pois: {
             ...defaultPOIsState,
-            selectedPOIUuid: 'lyon',
           },
           location: {
             ...defaultLocationState,
@@ -418,16 +415,16 @@ describe('Location', () => {
         dependencies: { geolocationService },
       })
 
-      store.dispatch(publicActions.initLocation())
+      store.dispatch(poisActions.setCurrentPOIUuid('lyon'))
 
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
+        ...EntourageCities.lyon,
         zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
       expect(selectMapPosition(store.getState())).toStrictEqual({
-        center: entourageCities.lyon.center,
+        center: EntourageCities.lyon.center,
         zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
 

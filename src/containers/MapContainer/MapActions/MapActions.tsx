@@ -28,7 +28,7 @@ export function MapActions() {
   })
 
   useEffect(() => {
-    dispatch(feedActions.setCurrentItemUuid(actionId || null))
+    dispatch(feedActions.setCurrentFeedItemUuid(actionId || null))
   }, [actionId, dispatch])
 
   const { feedsMarkersContent, isLoading } = useActionMarkers()
