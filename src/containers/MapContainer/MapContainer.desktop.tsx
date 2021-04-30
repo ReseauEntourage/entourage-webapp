@@ -1,6 +1,5 @@
 import React from 'react'
 import { Map } from 'src/components/Map'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
@@ -15,7 +14,6 @@ export function MapContainerDesktop(props: MapContainerProps) {
         <Map>
           {markers}
         </Map>
-        {isLoading && <OverlayLoader />}
       </S.MapContainer>
       {
         cards && (

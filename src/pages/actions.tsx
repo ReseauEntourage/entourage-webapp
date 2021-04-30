@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import React from 'react'
-import { OverlayLoader } from 'src/components/OverlayLoader'
+import { SplashScreen } from 'src/components/SplashScreen'
 import { MapActions } from 'src/containers/MapContainer'
 import { texts } from 'src/i18n'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
@@ -16,7 +16,7 @@ const Actions: StatelessPage<Props> = () => {
       <Head>
         <title>{texts.nav.pageTitles.actions} - {texts.nav.pageTitles.main}</title>
       </Head>
-      { !googleMapApiIsLoaded ? <OverlayLoader /> : <MapActions /> }
+      { !googleMapApiIsLoaded ? <SplashScreen /> : <MapActions /> }
     </>
   )
 }

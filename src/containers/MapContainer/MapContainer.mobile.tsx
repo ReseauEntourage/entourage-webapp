@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Map } from 'src/components/Map'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { texts } from 'src/i18n'
 import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
@@ -26,12 +25,10 @@ export function MapContainerMobile(props: MapContainerProps) {
           <Map>
             {markers}
           </Map>
-          {isLoading && <OverlayLoader />}
           <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
             <S.ReturnIcon />
             {texts.content.navActions.returnButton}
           </S.FabMap>
-
         </S.MapContainer>
       ) : (
         <>

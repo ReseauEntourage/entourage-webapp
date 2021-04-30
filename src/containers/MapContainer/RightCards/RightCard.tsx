@@ -24,7 +24,7 @@ export function RightCard(props: RightCardProps) {
         <Box display="flex" justifyContent="flex-end" marginRight={1}>
           <Link href={href} passHref={true}>
             <CustomLink>
-              <CloseIcon color="primary" fontSize="large" />
+              <CloseIcon color="primary" />
             </CustomLink>
           </Link>
         </Box>
