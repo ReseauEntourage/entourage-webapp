@@ -6,7 +6,7 @@ export const ActionsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   @media ${devices.desktop} {
-    margin: ${theme.spacing(2, 4)};
+    margin: ${theme.spacing(2, 0)};
   }
 `
 

@@ -10,7 +10,7 @@ import { ReactQueryConfigProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
-import { OverlayLoader } from 'src/components/OverlayLoader'
+import { SplashScreen } from 'src/components/SplashScreen'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api, LoggedUser } from 'src/core/api'
@@ -107,7 +107,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     const persistorWrappedContent = this.persistor ? (
       <PersistGate
-        loading={<OverlayLoader />}
+        loading={<SplashScreen />}
         onBeforeLift={() => {
           if (this.store && authUserData && !authUserData.anonymous) {
             this.store.dispatch(authUserActions.setUser({

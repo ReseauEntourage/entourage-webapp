@@ -4,8 +4,9 @@ import { POIList } from '../LeftLists'
 import { POIFilters } from '../LeftLists/Filters'
 import { POICards } from '../RightCards/POICards/POICards'
 import { usePOIId } from '../usePOIId'
+import { SplashScreen } from 'src/components/SplashScreen'
 import { MapContainer } from 'src/containers/MapContainer'
-import { poisActions, selectPOIDetailsIsFetching } from 'src/core/useCases/pois'
+import { poisActions, selectPOIDetailsIsFetching, selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { useFirebase, useMount } from 'src/utils/hooks'
 import { useCurrentPOI } from './useCurrentPOI'
 import { usePOIMarkers } from './usePOIMarkers'
@@ -16,6 +17,7 @@ export function MapPOIs() {
   const poiDetailsFetching = useSelector(selectPOIDetailsIsFetching)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
+  const poisIsIdle = useSelector(selectPOIsIsIdle)
 
   const { poisMarkersContent, isLoading } = usePOIMarkers()
 
@@ -34,12 +36,15 @@ export function MapPOIs() {
   }, [poiId, dispatch])
 
   return (
-    <MapContainer
-      cards={cards}
-      filters={<POIFilters />}
-      isLoading={isLoading}
-      list={<POIList />}
-      markers={poisMarkersContent}
-    />
+    <>
+      <MapContainer
+        cards={cards}
+        filters={<POIFilters />}
+        isLoading={isLoading}
+        list={<POIList />}
+        markers={poisMarkersContent}
+      />
+      <SplashScreen in={poisIsIdle} />
+    </>
   )
 }

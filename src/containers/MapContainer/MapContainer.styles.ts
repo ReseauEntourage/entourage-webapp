@@ -44,6 +44,6 @@ export const MapContainer = styled.div`
 `
 
 export const RightCardsContainer = styled(Box)`
-  width: 500px;
+  width: 400px;
   z-index: 2;
 `
