@@ -2,10 +2,11 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { firebaseSaga } from '../firebase'
 import { TestFirebaseService } from '../firebase/TestFirebaseService'
-import { locationSaga, selectLocation } from '../location'
+import { locationSaga, selectLocation, selectMapPosition } from '../location'
 import { TestGeolocationService } from '../location/TestGeolocationService'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
 import { assertIsDefined } from 'src/utils/misc'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
@@ -1319,6 +1320,11 @@ describe('Auth User', () => {
           },
           location: {
             ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
           },
         },
         dependencies: { authUserGateway },
@@ -1339,21 +1345,26 @@ describe('Auth User', () => {
 
       await store.waitForActionEnd()
 
-      const { geolocation: defaultGeolocationData, ...defaultPositionData } = defaultLocationState
-      const { isInit, mapPosition, ...restDefaultPositionData } = defaultPositionData
-
       expect(authUserGateway.updateMe).toHaveBeenCalledWith(newUserData)
       expect(authUserGateway.updateMeAddress).toHaveBeenCalledWith(newAddress)
 
       expect(selectUserIsUpdating(store.getState())).toBe(false)
       expect(selectUser(store.getState())).toStrictEqual(updatedUser)
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...restDefaultPositionData,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
         center: {
           lat: updatedAddress.latitude,
           lng: updatedAddress.longitude,
         },
         displayAddress: updatedAddress.displayAddress,
+      })
+
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: {
+          lat: updatedAddress.latitude,
+          lng: updatedAddress.longitude,
+        },
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
     })
   })

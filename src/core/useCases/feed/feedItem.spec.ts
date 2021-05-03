@@ -2,10 +2,18 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
+import {
+  Cities,
+  entourageCities,
+  selectLocation,
+  selectLocationIsInit,
+  locationSaga,
+  selectMapPosition,
+} from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -162,6 +170,8 @@ describe('Feed Item', () => {
     When user set selected item uuid
     Then item should be retrieved from gateway
       And feed should be retrieved with position of item
+      And position filter should be set to position of item
+      And map position should be set to position of item
   `, async () => {
     const itemsFromGateway = createFeedItemList()
 
@@ -197,6 +207,14 @@ describe('Feed Item', () => {
             itemsUuids: [],
             selectedItemUuid: null,
           },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
+          },
         },
       },
     )
@@ -215,7 +233,7 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: selectLocation(store.getState()).zoom,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
           center: {
             lat: 1,
             lng: 2,
@@ -223,6 +241,23 @@ describe('Feed Item', () => {
         },
         types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
         timeRange: defaultFeedState.filters.timeRange,
+      },
+    })
+
+    expect(selectLocation(store.getState())).toStrictEqual({
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+      center: {
+        lat: 1,
+        lng: 2,
+      },
+      displayAddress: deferredValueRetrieveFeedItem.displayAddress,
+    })
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+      center: {
+        lat: 1,
+        lng: 2,
       },
     })
   })
