@@ -126,6 +126,7 @@ export const schema = {
         title: string;
         updatedAt: DateISO;
         uuid: string;
+        online: boolean;
       };
     },
   },
