@@ -24,7 +24,7 @@ export function formatWebLink(url: string): { formattedUrl: string; isExternal: 
   }
 
   if (url.includes(env.SERVER_URL)) {
-    const formattedUrl = `/${url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length)}`
+    const formattedUrl = `${url.substring(url.indexOf(env.SERVER_URL) + env.SERVER_URL.length)}`
     return {
       formattedUrl,
       isExternal: false,

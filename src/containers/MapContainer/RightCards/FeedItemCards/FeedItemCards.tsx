@@ -9,10 +9,13 @@ import { openModal } from 'src/components/Modal'
 import { ActionCard, EventCard } from 'src/components/RightCards'
 import { UsersList } from 'src/components/UsersList'
 import { useCurrentFeedItem } from 'src/containers/MapContainer'
+import { MetaData } from 'src/containers/MetaData'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
+import { env } from 'src/core/env'
 import { useQueryEntourageUsers } from 'src/core/store'
 import { FeedEntourage } from 'src/core/useCases/feed'
 import { useMe } from 'src/hooks/useMe'
+import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
 import { Actions } from './Actions'
@@ -40,55 +43,80 @@ export function FeedItemCards() {
   let card: React.ReactNode
 
   if (feedItem.groupType === 'action') {
-    const { author, title, description, entourageType, metadata } = feedItem
+    const { author, title, description, entourageType, metadata, uuid } = feedItem
     const { partner } = author
 
     const organizerName = partner ? partner.name : author.displayName
     const createdAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
     const updatedAtDistance = formatDistance(new Date(feedItem.updatedAt), new Date(), { locale: fr })
-    const dataLabel = `Crée il y a ${createdAtDistance} - actif il y a ${updatedAtDistance}`
-    const organizerLabelActionType = entourageType === 'contribution'
-      ? 'Contribution'
-      : 'Demande'
+    const dataLabel = `${texts.content.map.actions.createAt} ${createdAtDistance}`
+      + ` - ${texts.content.map.actions.activeAt} ${updatedAtDistance}`
+    const organizerLabelActionType = texts.content.map.actions[entourageType]
 
     const organizerLabel = (
       <div>
-        <div>{organizerLabelActionType} par <b>{organizerName}</b></div>
+        <div>{organizerLabelActionType} {texts.content.map.actions.by} <b>{organizerName}</b></div>
         <div>à {metadata.displayAddress}</div>
       </div>
     )
 
+    const pronoun = partner ? texts.content.map.actions.shareTitles.their : texts.content.map.actions.shareTitles.his
+
+    const shareTitle = entourageType === 'contribution'
+      ? `${texts.content.map.actions.shareTitles.help} ${organizerName}`
+      + ` ${texts.content.map.actions.shareTitles.realize} ${pronoun} ${texts.content.map.actions.shareTitles.action}`
+      : `${texts.content.map.actions.shareTitles.comeToHelp} ${organizerName}`
+
     card = (
-      <ActionCard
-        actions={<Actions iAmCreator={iAmCreator} />}
-        dateLabel={dataLabel}
-        description={description}
-        isAssociation={!!partner}
-        onClickAvatar={onClickAuthorAvatar}
-        organizerLabel={organizerLabel}
-        organizerPictureURL={author.avatarUrl}
-        title={title}
-      />
+      <>
+        <MetaData
+          description={`${title}. ${description}`}
+          title={shareTitle}
+          url={`${env.SERVER_URL}/actions/${uuid}`}
+        />
+        <ActionCard
+          actions={<Actions iAmCreator={iAmCreator} />}
+          dateLabel={dataLabel}
+          description={description}
+          isAssociation={!!partner}
+          onClickAvatar={onClickAuthorAvatar}
+          organizerLabel={organizerLabel}
+          organizerPictureURL={author.avatarUrl}
+          title={title}
+        />
+      </>
     )
   }
 
   if (feedItem.groupType === 'outing') {
-    const startDate = new Date(feedItem.metadata.startsAt)
-    const endDate = new Date(feedItem.metadata.endsAt)
+    const { author, title, description, metadata, uuid } = feedItem
+    const { partner } = author
+
+    const organizerName = partner ? partner.name : author.displayName
+    const startDate = new Date(metadata.startsAt)
+    const endDate = new Date(metadata.endsAt)
     const formattedEndHour = format(endDate, "H'h'mm", { locale: fr })
     const formattedStartDate = format(startDate, "iiii d MMMM 'de' H'h'mm", { locale: fr })
     const dateLabel = capitalize(`${formattedStartDate} à ${formattedEndHour}`)
 
+    const shareTitle = `${texts.content.map.actions.shareTitles.participate} ${organizerName}`
     card = (
-      <EventCard
-        actions={<Actions iAmCreator={iAmCreator} />}
-        address={feedItem.metadata.displayAddress}
-        dateLabel={dateLabel}
-        description={feedItem.description}
-        organizerLabel={feedItem.author.displayName}
-        organizerPictureURL={feedItem.author.avatarUrl}
-        title={feedItem.title}
-      />
+      <>
+        <MetaData
+          description={`${title}. ${description}`}
+          title={shareTitle}
+          url={`${env.SERVER_URL}/actions/${uuid}`}
+        />
+        <EventCard
+          actions={<Actions iAmCreator={iAmCreator} />}
+          address={feedItem.metadata.displayAddress}
+          dateLabel={dateLabel}
+          description={feedItem.description}
+          organizerLabel={feedItem.author.displayName}
+          organizerPictureURL={feedItem.author.avatarUrl}
+          title={feedItem.title}
+        />
+      </>
     )
   }
 
@@ -104,7 +132,7 @@ export function FeedItemCards() {
           overflow="hidden"
         >
           <Typography style={{ textTransform: 'uppercase' }} variant={variants.title1}>
-            Participants
+            {texts.content.map.actions.participants}
           </Typography>
           <UsersList
             onClickUser={onClickUser}

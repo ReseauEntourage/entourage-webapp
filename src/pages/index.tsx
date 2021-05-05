@@ -1,6 +1,6 @@
-import Head from 'next/head'
 import React from 'react'
-import { texts } from '../i18n'
+import { MetaData } from 'src/containers/MetaData'
+import { env } from 'src/core/env'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -8,9 +8,7 @@ interface Props {}
 const Home: StatelessPage<Props> = () => {
   return (
     <>
-      <Head>
-        <title>{texts.nav.pageTitles.main}</title>
-      </Head>
+      <MetaData url={env.SERVER_URL} />
     </>
   )
 }
