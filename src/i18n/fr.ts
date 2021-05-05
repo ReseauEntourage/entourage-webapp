@@ -57,6 +57,11 @@ export const texts = {
       pois: 'Lieux solidaires',
       messages: 'Messages',
     },
+    pageDescriptions: {
+      main: 'Rejoignez le réseau solidaire Entourage, pour venir en aide aux personnes isolées en précarité de votre quartier !',
+      pois: 'Retrouvez toutes les structures solidaires de votre quartier sur la carte des lieux solidaires de notre application !',
+      actions: 'Retrouvez toutes les actions solidaires autour de vous, ou proposez la votre pour venir en aide aux personnes isolées en précarité de votre quartier !',
+    },
     notificationBar: {
       welcome: 'Bienvenue sur la nouvelle version de l\'application Entourage !',
       feedback: 'Donnez-nous votre avis !',
@@ -109,13 +114,28 @@ export const texts = {
         },
         disableFilters: 'Désactiver filtres',
       },
-      rightCards: {
+      actions: {
         share: 'Partager',
         edit: 'Modifier',
         close: 'Clôturer',
         report: 'Signaler',
         reopen: 'Rouvrir',
         hasBeenClosed: 'Cette action solidaire a été clôturée.',
+        participants: 'Participants',
+        contribution: 'Contribution',
+        ask_for_help: 'Demande',
+        by: 'par',
+        createAt: 'Crée il y a',
+        activeAt: 'actif il y a',
+        shareTitles: {
+          help: 'Aidez',
+          realize: 'à réaliser',
+          their: 'leur',
+          his: 'son',
+          action: 'action solidaire',
+          comeToHelp: 'Venez en aide à',
+          participate: 'Venez participer à l\'événement de',
+        },
       },
       pois: {
         directions: 'Itinéraire',
@@ -123,6 +143,7 @@ export const texts = {
         audience: 'Public',
         languages: 'Langues',
         contact: 'Contact',
+        shareDescription: 'Retrouvez toutes les informations sur cette structure sur la carte des lieux solidaires de notre application !',
       },
     },
     navActions: {

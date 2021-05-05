@@ -7,6 +7,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { Button as ButtonBase } from 'src/components/Button'
 import { Modal } from 'src/components/Modal'
+import { env } from 'src/core/env'
 import { theme } from 'src/styles'
 
 const Button = styled(ButtonBase)`
@@ -32,7 +33,7 @@ const colors = {
 export function ModalShare(props: ModalShareProps) {
   const { title, content, entourageUuid } = props
 
-  const linkURL = `${window.location.origin}/actions/${entourageUuid}`
+  const linkURL = `${env.SERVER_URL}/actions/${entourageUuid}`
 
   const twitterText = `${title} ${linkURL} #chaleurHumaine`
   const twitterHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`
