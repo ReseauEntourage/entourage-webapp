@@ -105,6 +105,44 @@ describe('Feed', () => {
 
   it(`
     Given initial state
+     When user hasn't init feed
+      And location asks to retrieve data
+    Then items should not be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(locationActions.retrieveRelevantData())
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(0)
+  })
+
+  it(`
+    Given initial state
+    When user init feed
+      And location asks to retrieve data
+    Then items should be fetched
+  `, async () => {
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+    const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+    store.dispatch(publicActions.init())
+
+    store.dispatch(locationActions.retrieveRelevantData())
+
+    feedGateway.retrieveFeedItems.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+  })
+
+  it(`
+    Given initial state
     When user init feed
       And user toogle action types filters
     Then items should be fetched
@@ -281,8 +319,8 @@ describe('Feed', () => {
       And user update time range to 1 day
     Then store should be updated with a 24 hours time range
       And items should be fetched once
-      And retrieve feed gateway method should have been called with a 24 hours time range 
-        and default locations and types 
+      And retrieve feed gateway method should have been called with a 24 hours time range
+        and default locations and types
   `, async () => {
     const feedGateway = new TestFeedGateway()
     feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })

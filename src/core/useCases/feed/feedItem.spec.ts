@@ -3,8 +3,6 @@ import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import {
-  Cities,
-  entourageCities,
   selectLocation,
   selectLocationIsInit,
   locationSaga,
@@ -16,6 +14,7 @@ import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
 import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
+import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
 import { createFeedItemList, fakeFeedData } from './__mocks__'
 
@@ -108,7 +107,7 @@ describe('Feed Item', () => {
       },
     })
 
-    store.dispatch(publicActions.setCurrentItemUuid('abc'))
+    store.dispatch(publicActions.setCurrentFeedItemUuid('abc'))
 
     expect(selectCurrentFeedItem(store.getState())).toEqual(fakeFeedData.items.abc)
     expect(selectCurrentPOI(store.getState())).toEqual(null)
@@ -140,8 +139,9 @@ describe('Feed Item', () => {
   })
 
   it(`
-    Given feed has selected item
-    When user select a new current item uuid
+    Given feed items have been retrieved from gateway
+      And feed has selected item uuid
+    When user selects a new current item uuid
     Then prev and next selected item should be truthy
       And prev and next selected items should be different
        And selected POI should be null
@@ -150,7 +150,7 @@ describe('Feed Item', () => {
 
     const prevSelectedItem = selectCurrentFeedItem(store.getState())
 
-    store.dispatch(publicActions.setCurrentItemUuid(Object.keys(itemsEntities)[2]))
+    store.dispatch(publicActions.setCurrentFeedItemUuid(Object.keys(itemsEntities)[2]))
 
     feedGateway.retrieveFeedItems.resolveDeferredValue()
     await store.waitForActionEnd()
@@ -167,7 +167,8 @@ describe('Feed Item', () => {
   it(`
     Given feed has no cached items
        And has selected item uuid
-    When user set selected item uuid
+    When feed has been initialized
+     And user set selected item uuid
     Then item should be retrieved from gateway
       And feed should be retrieved with position of item
       And position filter should be set to position of item with default zoom value
@@ -224,7 +225,7 @@ describe('Feed Item', () => {
     // --------------------------------------------------
 
     store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+    store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
     await store.waitForActionEnd()
@@ -266,7 +267,8 @@ describe('Feed Item', () => {
     Given feed has no cached items
       And has no selected item uuid
       And location has not been initialized
-    When item uuid is set to null
+    When feed has been initialized
+      And item uuid is set to null
     Then location should be initialized
   `, async () => {
     const itemsFromGateway = createFeedItemList()
@@ -312,7 +314,7 @@ describe('Feed Item', () => {
     // --------------------------------------------------
 
     store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+    store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
     await store.waitForActionEnd()
@@ -324,7 +326,8 @@ describe('Feed Item', () => {
     Given feed has no cached items
       And has no selected item uuid
       And location has been initialized
-    When item uuid is set to null
+    When feed has been initialized
+      And item uuid is set to null
     Then feed should be retrieved from gateway
   `, async () => {
     const itemsFromGateway = createFeedItemList()
@@ -366,7 +369,7 @@ describe('Feed Item', () => {
     // --------------------------------------------------
 
     store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+    store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
     await store.waitForActionEnd()
@@ -389,7 +392,8 @@ describe('Feed Item', () => {
   it(`
     Given feed has no cached items
       And has selected item uuid
-    When item uuid is a city id
+    When feed has been initialized
+      And item uuid is set as a city id
     Then item should not be retrieved from gateway
       And feed should be retrieved from the gateway with city coordinates
   `, async () => {
@@ -431,12 +435,12 @@ describe('Feed Item', () => {
       },
     )
 
-    const selectedItemUuid = Object.keys(entourageCities)[0]
+    const selectedItemUuid = Object.keys(EntourageCities)[0]
 
     // --------------------------------------------------
 
     store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentItemUuid(selectedItemUuid))
+    store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
 
     resolveAllDeferredValue()
     await store.waitForActionEnd()
@@ -445,7 +449,7 @@ describe('Feed Item', () => {
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
       filters: {
         location: {
-          center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
+          center: EntourageCities[Object.keys(EntourageCities)[0] as Cities].center,
           zoom: selectLocation(store.getState()).zoom,
         },
         types: formatFeedTypes(defaultFeedState.filters.actionTypes, defaultFeedState.filters.events),

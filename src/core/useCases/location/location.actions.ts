@@ -3,7 +3,10 @@ import { LocationState } from './location.reducer'
 
 export const LocationActionType = {
   INIT_LOCATION: 'LOCATION/INIT_LOCATION',
+  RETRIEVE_SELECTED_ITEM_DETAILS: 'LOCATION/RETRIEVE_SELECTED_ITEM_DETAILS',
+  RETRIEVE_RELEVANT_DATA: 'LOCATION/RETRIEVE_RELEVANT_DATA',
   SET_LOCATION: 'LOCATION/SET_LOCATION',
+  SET_LOCATION_IS_INIT: 'LOCATION/SET_LOCATION_IS_INIT',
   SET_MAP_POSITION: 'LOCATION/SET_MAP_POSITION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
@@ -17,6 +20,24 @@ export type LocationActionType = keyof typeof LocationActionType;
 function initLocation() {
   return {
     type: LocationActionType.INIT_LOCATION,
+  }
+}
+
+function setLocationIsInit() {
+  return {
+    type: LocationActionType.SET_LOCATION_IS_INIT,
+  }
+}
+
+function retrieveSelectedItemDetails() {
+  return {
+    type: LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+  }
+}
+
+function retrieveRelevantData() {
+  return {
+    type: LocationActionType.RETRIEVE_RELEVANT_DATA,
   }
 }
 
@@ -65,15 +86,18 @@ function getGeolocation(payload: {
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
-  setLocation,
   initLocation,
+  setLocationIsInit,
+  setLocation,
   getGeolocation,
   setMapPosition,
+  retrieveRelevantData,
 }
 
 const privateActions = {
   setDisplayAddress,
   setGeolocation,
+  retrieveSelectedItemDetails,
 }
 
 export const actions = {
