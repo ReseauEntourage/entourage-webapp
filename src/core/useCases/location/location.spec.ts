@@ -2,9 +2,11 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { feedActions, selectCurrentFeedItemUuid } from '../feed'
+import { feedActions, feedSaga, selectCurrentFeedItemUuid } from '../feed'
+import { TestFeedGateway } from '../feed/TestFeedGateway'
 import { defaultFeedState } from '../feed/feed.reducer'
-import { poisActions, selectCurrentPOIUuid } from '../pois'
+import { poisActions, poisSaga, selectCurrentPOIUuid } from '../pois'
+import { TestPOIsGateway } from '../pois/TestPOIsGateway'
 import { defaultPOIsState } from '../pois/pois.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
@@ -39,7 +41,7 @@ function configureStoreWithLocation(
       ...initialAppState,
     },
     dependencies,
-    sagas: [locationSaga],
+    sagas: [locationSaga, poisSaga, feedSaga],
   })
 }
 
@@ -348,7 +350,7 @@ describe('Location', () => {
   describe('Default user location', () => {
     it(`
       Given initial state
-      When the selected feed item uuid is a city
+      When the selected feed item uuid is set as a city
       The position filter should be set to the cities coordinates with default zoom value
         And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
@@ -391,7 +393,7 @@ describe('Location', () => {
 
     it(`
       Given initial state
-      When the selected POI uuid is a city
+      When the selected POI uuid is set as a city
       The position filter should be set to the cities coordinates with default zoom value
         And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
@@ -545,24 +547,31 @@ describe('Location', () => {
     it(`
       Given initial state
       When the default position is initialized
+        And feed is initialized
         And no query id is present
         And the user is not logged in or doesn't have a default address
         And the user has blocked his geolocation
       The position filter should be set to the default state position
         And the map position should be set to the default state position
         And the location should be initialized
+        And feed items should be retrieved from gateway
     `, async () => {
       const geolocationService = new TestGeolocationService()
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
 
-      const store = configureStoreWithLocation({ dependencies: { geolocationService } })
+      const store = configureStoreWithLocation({ dependencies: { geolocationService, feedGateway } })
 
       geolocationService.getGeolocation.mockDeferredValueOnce({
         coordinates: fakeLocationData.center,
       })
 
+      store.dispatch(feedActions.init())
+
       store.dispatch(publicActions.initLocation())
 
       geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
 
       await store.waitForActionEnd()
 
@@ -576,6 +585,53 @@ describe('Location', () => {
 
       expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
       expect(selectLocationIsInit(store.getState())).toBe(true)
+
+      expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
+    })
+
+    it(`
+      Given initial state
+      When the default position is initialized
+        And POIs is initialized
+        And no query id is present
+        And the user is not logged in or doesn't have a default address
+        And the user has blocked his geolocation
+      The position filter should be set to the default state position
+        And the map position should be set to the default state position
+        And the location should be initialized
+        And POIs should be retrieved from gateway
+    `, async () => {
+      const geolocationService = new TestGeolocationService()
+      const poisGateway = new TestPOIsGateway()
+      poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+      const store = configureStoreWithLocation({ dependencies: { geolocationService, poisGateway } })
+
+      geolocationService.getGeolocation.mockDeferredValueOnce({
+        coordinates: fakeLocationData.center,
+      })
+
+      store.dispatch(poisActions.init())
+
+      store.dispatch(publicActions.initLocation())
+
+      geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+      poisGateway.retrievePOIs.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(selectLocation(store.getState())).toStrictEqual({
+        ...restDefaultPositionData,
+      })
+
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
+      expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
+      expect(selectLocationIsInit(store.getState())).toBe(true)
+
+      expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
     })
   })
 

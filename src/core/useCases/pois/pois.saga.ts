@@ -93,8 +93,11 @@ export function* poisSaga() {
 
   while (yield take(POIsActionType.INIT_POIS)) {
     const setLocationRetrievePOIs = yield takeEvery(LocationActionType.SET_LOCATION, retrievePOIs)
-    const retrieveDataRetrievePOIs = yield takeEvery(LocationActionType.RETRIEVE_DATA, retrievePOIs)
-    const retrieveItemRetrievePOI = yield takeEvery(LocationActionType.RETRIEVE_ITEM, retrieveCurrentPOI)
+    const retrieveDataRetrievePOIs = yield takeEvery(LocationActionType.RETRIEVE_RELEVANT_DATA, retrievePOIs)
+    const retrieveItemRetrievePOI = yield takeEvery(
+      LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+      retrieveCurrentPOI,
+    )
     yield take(POIsActionType.CANCEL_POIS)
     yield cancel(setLocationRetrievePOIs)
     yield cancel(retrieveDataRetrievePOIs)

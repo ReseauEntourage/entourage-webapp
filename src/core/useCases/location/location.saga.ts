@@ -37,11 +37,10 @@ function* checkIfCitySaga(action: FeedActions['setCurrentFeedItemUuid'] | POIsAc
       yield put(feedActions.removeCurrentFeedItemUuid())
       yield put(poisActions.removeCurrentPOIUuid())
     } else {
-      yield put(actions.retrieveItem())
+      yield put(actions.retrieveSelectedItemDetails())
     }
   } else if (locationIsInit) {
-    // Condition to fetch data when changing pages
-    yield put(actions.retrieveData())
+    yield put(actions.retrieveRelevantData())
   } else {
     yield put(locationActions.initLocation())
   }
@@ -112,8 +111,8 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
     }
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
-      yield put(actions.setLocationInit())
-      yield put(actions.retrieveData())
+      yield put(actions.setLocationIsInit())
+      yield put(actions.retrieveRelevantData())
     }
   }
 }

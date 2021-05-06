@@ -474,7 +474,7 @@ describe('POIs', () => {
     Given POIs have no cached items
       And has selected POI uuid
     When POIs have been initialized
-      And POI uuid is a city id
+      And POI uuid set as a city id
     Then POI details should not be retrieved from gateway
       And POIs should be retrieved from the gateway with city coordinates
   `, async () => {

@@ -142,8 +142,11 @@ export function* feedSaga() {
 
   while (yield take(FeedActionType.INIT_FEED)) {
     const setLocationRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
-    const retrieveDataRetrieveFeed = yield takeEvery(LocationActionType.RETRIEVE_DATA, retrieveFeed)
-    const retrieveItemRetrieveFeedItem = yield takeEvery(LocationActionType.RETRIEVE_ITEM, retrieveCurrentFeedItem)
+    const retrieveDataRetrieveFeed = yield takeEvery(LocationActionType.RETRIEVE_RELEVANT_DATA, retrieveFeed)
+    const retrieveItemRetrieveFeedItem = yield takeEvery(
+      LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+      retrieveCurrentFeedItem,
+    )
     yield take(FeedActionType.CANCEL_FEED)
     yield cancel(setLocationRetrieveFeed)
     yield cancel(retrieveDataRetrieveFeed)

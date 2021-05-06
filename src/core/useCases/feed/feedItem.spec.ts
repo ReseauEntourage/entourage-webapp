@@ -393,7 +393,7 @@ describe('Feed Item', () => {
     Given feed has no cached items
       And has selected item uuid
     When feed has been initialized
-      And item uuid is a city id
+      And item uuid is set as a city id
     Then item should not be retrieved from gateway
       And feed should be retrieved from the gateway with city coordinates
   `, async () => {
