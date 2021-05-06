@@ -198,6 +198,7 @@ export function feedReducer(
       return {
         ...state,
         selectedItemUuid: action.payload,
+        nextPageToken: action.payload ? state.nextPageToken : null,
       }
     }
 

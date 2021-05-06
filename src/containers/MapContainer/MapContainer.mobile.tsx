@@ -2,7 +2,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Map } from 'src/components/Map'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { selectMapHasMoved } from 'src/core/useCases/location'
 import { useRefreshData } from 'src/hooks/useRefreshData'
 import { texts } from 'src/i18n'
@@ -53,7 +52,6 @@ export function MapContainerMobile(props: MapContainerProps) {
             <ChevronLeftIcon />
             {texts.content.navActions.returnButton}
           </S.FabMap>
-          {isLoading && <OverlayLoader />}
         </S.MapContainer>
       ) : (
         <>

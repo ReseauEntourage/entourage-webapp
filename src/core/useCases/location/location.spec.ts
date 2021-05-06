@@ -182,8 +182,8 @@ describe('Location', () => {
         And wants to update the position filter
         And the user has activated his geolocation
       The position filter should be set to the user's geolocation
-        And the map position should be set to the user's geolocation
-        And the geolocation value should be updated to the user's geolocation
+        And the map position should be set to the user's geolocation with default zoom value
+        And the geolocation value should be updated to the user's geolocation with default zoom value
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -349,8 +349,8 @@ describe('Location', () => {
       Given initial state
       When the default position is initialized
         And the selected feed item uuid is a city
-      The position filter should be set to the cities coordinates
-        And the map position should be set to the cities coordinates
+      The position filter should be set to the cities coordinates with default zoom value
+        And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -394,8 +394,8 @@ describe('Location', () => {
       Given initial state
       When the default position is initialized
         And the selected POI uuid is a city
-      The position filter should be set to the cities coordinates
-        And the map position should be set to the cities coordinates
+      The position filter should be set to the cities coordinates with default zoom value
+        And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -440,8 +440,8 @@ describe('Location', () => {
       When the default position is initialized
         And no query id is present
         And the user is logged in and has a default address
-      The position filter should be set to the user's default coordinates
-        And the map position should be set to the user's default coordinates
+      The position filter should be set to the user's default coordinates with default zoom value
+        And the map position should be set to the user's default coordinates with default zoom value
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()

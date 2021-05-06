@@ -1308,7 +1308,8 @@ describe('Auth User', () => {
         And the new user data should have been sent to the gateway
         And the new user address should have been sent to the gateway
         And the user data should be updated
-        And the map position should be set to the user's new address
+        And the position filter should be set to the user's new address with default zoom value
+        And the map position should be set to the user's new address with default zoom value
     `, async () => {
       const authUserGateway = new TestAuthUserGateway()
 

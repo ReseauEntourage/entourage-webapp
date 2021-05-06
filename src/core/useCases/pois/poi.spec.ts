@@ -255,8 +255,8 @@ describe('POIs', () => {
     When user sets selected POI uuid
     Then POI should be retrieved from gateway
       And POIs should be retrieved with position of POI
-      And position filter should be set to position of POI
-      And map position should be set to position of POI
+      And position filter should be set to position of POI with default zoom value
+      And map position should be set to position of POI with default zoom value
   `, async () => {
     const poisFromGateway = createPOIList()
     const poiDetailsFromGateway = createPOIDetails()

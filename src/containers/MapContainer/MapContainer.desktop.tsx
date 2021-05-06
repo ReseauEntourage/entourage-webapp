@@ -1,7 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Map } from 'src/components/Map'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { selectMapHasMoved } from 'src/core/useCases/location'
 import { useRefreshData } from 'src/hooks/useRefreshData'
 import { texts } from 'src/i18n'
@@ -37,7 +36,6 @@ export function MapContainerDesktop(props: MapContainerProps) {
             </S.FabContainer>
           )
         }
-        {isLoading && <OverlayLoader />}
       </S.MapContainer>
       {
         cards && (

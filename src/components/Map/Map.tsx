@@ -39,17 +39,20 @@ export function Map(props: Props) {
   const prevOnChangeValue = useRef(position.center)
 
   function onChange(value: ChangeEventValue) {
-    const roundedCoordinates = roundCoordinates(value.center)
+    const roundedNewCoordinates = roundCoordinates(value.center)
+    const roundedCurrentCoordinates = roundCoordinates(position.center)
+    const roundedPreviousCoordinates = roundCoordinates(prevOnChangeValue.current)
 
-    // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
     const positionHasChanged = (
+      // use coordinatesHasChanged so that tiny fluctuations of the map's center position are ignored
       coordinatesHasChanged(
-        roundCoordinates(position.center),
-        roundedCoordinates,
-      ) // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
+        roundedCurrentCoordinates,
+        roundedNewCoordinates,
+      )
+      // use prevOnChangeValue to avoid loop updates of the value when the map moves because of a state update
       && coordinatesHasChanged(
-        roundCoordinates(prevOnChangeValue.current),
-        roundedCoordinates,
+        roundedPreviousCoordinates,
+        roundedNewCoordinates,
       )
     )
       || position.zoom !== value.zoom
@@ -60,7 +63,7 @@ export function Map(props: Props) {
       sendEvent('Action__Map__PanZoom')
 
       dispatch(locationActions.setMapPosition({
-        center: roundedCoordinates,
+        center: roundedNewCoordinates,
         zoom: value.zoom,
       }))
     }

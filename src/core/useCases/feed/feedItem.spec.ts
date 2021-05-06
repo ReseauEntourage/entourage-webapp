@@ -170,8 +170,8 @@ describe('Feed Item', () => {
     When user set selected item uuid
     Then item should be retrieved from gateway
       And feed should be retrieved with position of item
-      And position filter should be set to position of item
-      And map position should be set to position of item
+      And position filter should be set to position of item with default zoom value
+      And map position should be set to position of item with default zoom value
   `, async () => {
     const itemsFromGateway = createFeedItemList()
 
