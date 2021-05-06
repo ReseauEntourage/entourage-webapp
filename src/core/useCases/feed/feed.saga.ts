@@ -1,6 +1,7 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
 import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
 import { LocationActionType } from '../location/location.actions'
+import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
@@ -81,10 +82,15 @@ function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
       const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
       if (feedIsIdle) {
+        yield put(locationActions.setMapPosition({
+          center: response.center,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        }))
         yield put(locationActions.setLocation({
           location: {
             center: response.center,
             displayAddress: response.displayAddress,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
           },
         }))
       }

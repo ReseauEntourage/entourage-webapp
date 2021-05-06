@@ -3,14 +3,22 @@ import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import { selectCurrentFeedItem } from '../feed'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
+import {
+  Cities,
+  entourageCities,
+  selectLocation,
+  selectLocationIsInit,
+  locationSaga,
+  selectMapPosition,
+} from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
-import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
+import { poisSaga } from './pois.saga'
 import {
   selectPOIList,
   selectCurrentPOI,
@@ -247,6 +255,8 @@ describe('POIs', () => {
     When user sets selected POI uuid
     Then POI should be retrieved from gateway
       And POIs should be retrieved with position of POI
+      And position filter should be set to position of POI with default zoom value
+      And map position should be set to position of POI with default zoom value
   `, async () => {
     const poisFromGateway = createPOIList()
     const poiDetailsFromGateway = createPOIDetails()
@@ -280,6 +290,14 @@ describe('POIs', () => {
             selectedPOIUuid: null,
             isIdle: true,
           },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
+          },
         },
       },
     )
@@ -298,13 +316,30 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: constants.POI_DISTANCE,
           center: {
             lat: poiDetailsFromGateway.latitude,
             lng: poiDetailsFromGateway.longitude,
           },
         },
       },
+    })
+
+    expect(selectLocation(store.getState())).toStrictEqual({
+      center: {
+        lat: poiDetailsFromGateway.latitude,
+        lng: poiDetailsFromGateway.longitude,
+      },
+      displayAddress: poisFromGateway[0].address,
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+    })
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      center: {
+        lat: poiDetailsFromGateway.latitude,
+        lng: poiDetailsFromGateway.longitude,
+      },
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
     })
   })
 
@@ -420,7 +455,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: constants.POI_DISTANCE,
           center: {
             lat: selectLocation(store.getState()).center.lat,
             lng: selectLocation(store.getState()).center.lng,
@@ -488,7 +523,7 @@ describe('POIs', () => {
       filters: {
         location: {
           center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: constants.POI_DISTANCE,
         },
       },
     })

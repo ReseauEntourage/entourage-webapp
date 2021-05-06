@@ -9,15 +9,6 @@ import { IPOIsGateway } from './IPOIsGateway'
 import { POIsActionType, actions, POIsActions } from './pois.actions'
 import { selectCurrentPOI, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
 
-export const calculateDistanceFromZoom = (zoom: number) => {
-  if (zoom <= constants.DEFAULT_LOCATION.ZOOM) {
-    return constants.POI_MAX_DISTANCE
-  } if (zoom >= constants.POI_DISTANCE_BREAKPOINT) {
-    return constants.POI_MIN_DISTANCE
-  }
-  return (constants.POI_MAX_DISTANCE - constants.POI_MIN_DISTANCE) / 2
-}
-
 export interface Dependencies {
   poisGateway: IPOIsGateway;
 }
@@ -29,7 +20,7 @@ function* retrievePOIs() {
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
 
   const { fetching, filters: categoryFilters } = poisState
-  const { zoom, center } = positionState
+  const { center } = positionState
 
   if (fetching) {
     return
@@ -48,7 +39,7 @@ function* retrievePOIs() {
       filters: {
         location: {
           center,
-          zoom: calculateDistanceFromZoom(zoom),
+          distance: constants.POI_DISTANCE,
         },
         categories,
         partners,
@@ -79,6 +70,13 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
       yield put(actions.retrievePOIDetailsSuccess(response))
 
       if (poisIsIdle) {
+        yield put(locationActions.setMapPosition({
+          center: {
+            lat: response.poiDetails.latitude,
+            lng: response.poiDetails.longitude,
+          },
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        }))
         yield put(locationActions.setLocation({
           location: {
             center: {
@@ -86,6 +84,7 @@ function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
               lng: response.poiDetails.longitude,
             },
             displayAddress: response.poiDetails.address,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
           },
         }))
       }

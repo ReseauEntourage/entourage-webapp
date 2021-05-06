@@ -1,7 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { POICategory } from 'src/core/api'
-import { selectLocation } from 'src/core/useCases/location'
+import { selectMapPosition } from 'src/core/useCases/location'
 import { getMarkerSize, roundToEven } from 'src/utils/misc'
 
 import { BaseMarker } from './BaseMarker'
@@ -15,7 +15,7 @@ interface Props {
 
 export function POIMarker(props: Props) {
   const { category, isActive, tooltip } = props
-  const { zoom } = useSelector(selectLocation)
+  const { zoom } = useSelector(selectMapPosition)
   const size = getMarkerSize(zoom)
 
   const displaySize = isActive ? size * 2 : roundToEven(size)

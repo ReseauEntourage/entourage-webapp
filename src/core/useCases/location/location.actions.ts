@@ -4,6 +4,7 @@ import { LocationState } from './location.reducer'
 export const LocationActionType = {
   INIT_LOCATION: 'LOCATION/INIT_LOCATION',
   SET_LOCATION: 'LOCATION/SET_LOCATION',
+  SET_MAP_POSITION: 'LOCATION/SET_MAP_POSITION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
   SET_GEOLOCATION: 'LOCATION/SET_GEOLOCATION',
@@ -20,11 +21,18 @@ function initLocation() {
 }
 
 function setLocation(payload: {
-  location: Partial<LocationState>;
+  location: Partial<Pick<LocationState, 'zoom' | 'center' | 'displayAddress'>>;
   getDisplayAddressFromCoordinates?: boolean;
 }) {
   return {
     type: LocationActionType.SET_LOCATION,
+    payload,
+  }
+}
+
+function setMapPosition(payload: Partial<LocationState['mapPosition']>) {
+  return {
+    type: LocationActionType.SET_MAP_POSITION,
     payload,
   }
 }
@@ -60,6 +68,7 @@ export const publicActions = {
   setLocation,
   initLocation,
   getGeolocation,
+  setMapPosition,
 }
 
 const privateActions = {

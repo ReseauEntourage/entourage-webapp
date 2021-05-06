@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
+import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
 import { useFirebase } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsNumber, assertIsString } from 'src/utils/misc'
@@ -36,6 +37,15 @@ export function SearchCity(props: SearchCityProps) {
     assertIsString(address)
 
     dispatch(
+      locationActions.setMapPosition({
+        center: {
+          lat,
+          lng,
+        },
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      }),
+    )
+    dispatch(
       locationActions.setLocation({
         location: {
           center: {
@@ -43,6 +53,7 @@ export function SearchCity(props: SearchCityProps) {
             lng,
           },
           displayAddress: address,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
         },
       }),
     )
