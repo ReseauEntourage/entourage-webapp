@@ -3,14 +3,21 @@ import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
 import { selectCurrentFeedItem } from '../feed'
-import { Cities, entourageCities, selectLocation, selectLocationIsInit, locationSaga } from '../location'
+import {
+  selectLocation,
+  selectLocationIsInit,
+  locationSaga,
+  selectMapPosition,
+} from '../location'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { constants } from 'src/constants'
+import { Cities, EntourageCities } from 'src/utils/types'
 import { TestPOIsGateway } from './TestPOIsGateway'
 import { createPOIDetails, createPOIList, fakePOIsData } from './__mocks__'
 
 import { publicActions } from './pois.actions'
-import { calculateDistanceFromZoom, poisSaga } from './pois.saga'
+import { poisSaga } from './pois.saga'
 import {
   selectPOIList,
   selectCurrentPOI,
@@ -97,7 +104,8 @@ describe('POIs', () => {
 
   it(`
     Given POIs have been retrieved from gateway
-    When user selects a POI that has never been selected before
+    When POIs have been initialized
+      And user selects a POI that has never been selected before
     Then POI details should be fetching until request is succeeded
       And POI details should be retrieved successfully from gateway
       And selected POI be defined with these POI details
@@ -129,6 +137,7 @@ describe('POIs', () => {
     poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
     poisGateway.retrievePOI.resolveDeferredValue()
 
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
     expect(selectPOIDetailsIsFetching(store.getState())).toEqual(true)
 
@@ -227,9 +236,11 @@ describe('POIs', () => {
     const prevSelectedItem = selectCurrentPOI(store.getState())
 
     poisGateway.retrievePOI.resolveDeferredValue()
+    poisGateway.retrievePOIs.resolveDeferredValue()
+
+    store.dispatch(publicActions.init())
     store.dispatch(publicActions.setCurrentPOIUuid(Object.keys(poisEntities)[2]))
 
-    poisGateway.retrievePOIs.resolveDeferredValue()
     await store.waitForActionEnd()
 
     const nextSelectedItem = selectCurrentPOI(store.getState())
@@ -244,9 +255,12 @@ describe('POIs', () => {
   it(`
     Given POIs have no cached items
       And has selected POI uuid
-    When user sets selected POI uuid
+    When POIs have been initialized
+      And user sets selected POI uuid
     Then POI should be retrieved from gateway
       And POIs should be retrieved with position of POI
+      And position filter should be set to position of POI with default zoom value
+      And map position should be set to position of POI with default zoom value
   `, async () => {
     const poisFromGateway = createPOIList()
     const poiDetailsFromGateway = createPOIDetails()
@@ -280,6 +294,14 @@ describe('POIs', () => {
             selectedPOIUuid: null,
             isIdle: true,
           },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
+          },
         },
       },
     )
@@ -298,13 +320,30 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: constants.POI_DISTANCE,
           center: {
             lat: poiDetailsFromGateway.latitude,
             lng: poiDetailsFromGateway.longitude,
           },
         },
       },
+    })
+
+    expect(selectLocation(store.getState())).toStrictEqual({
+      center: {
+        lat: poiDetailsFromGateway.latitude,
+        lng: poiDetailsFromGateway.longitude,
+      },
+      displayAddress: poisFromGateway[0].address,
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+    })
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      center: {
+        lat: poiDetailsFromGateway.latitude,
+        lng: poiDetailsFromGateway.longitude,
+      },
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
     })
   })
 
@@ -370,7 +409,8 @@ describe('POIs', () => {
     Given POIs have no cached items
       And has no selected POI uuid
       And location has been initialized
-    When POI uuid is set to null
+    When POIs have been initialized
+     And POI uuid is set to null
     Then POIs should be retrieved from gateway
   `, async () => {
     const poisFromGateway = createPOIList()
@@ -420,7 +460,7 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          distance: constants.POI_DISTANCE,
           center: {
             lat: selectLocation(store.getState()).center.lat,
             lng: selectLocation(store.getState()).center.lng,
@@ -433,7 +473,8 @@ describe('POIs', () => {
   it(`
     Given POIs have no cached items
       And has selected POI uuid
-    When POI uuid is a city id
+    When POIs have been initialized
+      And POI uuid set as a city id
     Then POI details should not be retrieved from gateway
       And POIs should be retrieved from the gateway with city coordinates
   `, async () => {
@@ -473,7 +514,7 @@ describe('POIs', () => {
       },
     )
 
-    const selectedPOIId = Object.keys(entourageCities)[0]
+    const selectedPOIId = Object.keys(EntourageCities)[0]
 
     // --------------------------------------------------
 
@@ -487,8 +528,8 @@ describe('POIs', () => {
     expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
       filters: {
         location: {
-          center: entourageCities[Object.keys(entourageCities)[0] as Cities].center,
-          zoom: calculateDistanceFromZoom(selectLocation(store.getState()).zoom),
+          center: EntourageCities[Object.keys(EntourageCities)[0] as Cities].center,
+          distance: constants.POI_DISTANCE,
         },
       },
     })

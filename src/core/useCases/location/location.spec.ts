@@ -2,19 +2,29 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { selectCurrentFeedItemUuid } from '../feed'
+import { feedActions, feedSaga, selectCurrentFeedItemUuid } from '../feed'
+import { TestFeedGateway } from '../feed/TestFeedGateway'
 import { defaultFeedState } from '../feed/feed.reducer'
-import { selectCurrentPOIUuid } from '../pois'
+import { poisActions, poisSaga, selectCurrentPOIUuid } from '../pois'
+import { TestPOIsGateway } from '../pois/TestPOIsGateway'
 import { defaultPOIsState } from '../pois/pois.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
+import { constants } from 'src/constants'
+import { EntourageCities } from 'src/utils/types'
 import { TestGeolocationService } from './TestGeolocationService'
 import { fakeLocationData } from './__mocks__'
 import { publicActions } from './location.actions'
 import { LocationErrorGeolocationRefused } from './location.errors'
-import { defaultLocationState, entourageCities, LocationState } from './location.reducer'
+import { defaultLocationState, LocationState } from './location.reducer'
 import { locationSaga } from './location.saga'
-import { selectGeolocation, selectLocation, selectLocationIsInit } from './location.selectors'
+import {
+  selectGeolocation,
+  selectLocation,
+  selectLocationIsInit,
+  selectMapHasMoved,
+  selectMapPosition,
+} from './location.selectors'
 
 function configureStoreWithLocation(
   params: {
@@ -31,18 +41,20 @@ function configureStoreWithLocation(
       ...initialAppState,
     },
     dependencies,
-    sagas: [locationSaga],
+    sagas: [locationSaga, poisSaga, feedSaga],
   })
 }
 
 describe('Location', () => {
   const { geolocation: defaultGeolocationData, ...defaultPositionData } = defaultLocationState
+
+  const { isInit, mapPosition, ...restDefaultPositionData } = defaultPositionData
+
   const fakeGeolocationData = {
     ...fakeLocationData.center,
     displayAddress: fakeLocationData.displayAddress,
     googlePlaceId: 'placeId',
   }
-  const { isInit, ...restDefaultPositionData } = defaultPositionData
 
   it(`
     Given initial state
@@ -55,7 +67,7 @@ describe('Location', () => {
 
   it(`
     Given the initial state
-    When user wants to update all filters
+    When user wants to update position filters
     Then filters should be updated
   `, () => {
     const store = configureStoreWithLocation({})
@@ -75,7 +87,7 @@ describe('Location', () => {
   it(`
     Given the initial state
     When user wants to partially update position filters
-    Then filters should be updated and merge with existing filters
+    Then filters should be updated and merged with existing filters
   `, () => {
     const store = configureStoreWithLocation({})
     const position: Partial<LocationState> = {
@@ -89,6 +101,40 @@ describe('Location', () => {
 
     expect(selectLocation(store.getState())).toStrictEqual({
       ...restDefaultPositionData,
+      ...position,
+    })
+  })
+
+  it(`
+    Given the initial state
+    When user wants to update map position
+    Then map position should be updated
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapPosition(store.getState())).toStrictEqual(position)
+  })
+
+  it(`
+    Given the initial state
+    When user wants to partially update map position
+    Then map position should be updated and merged with existing filters
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      ...mapPosition,
       ...position,
     })
   })
@@ -139,7 +185,8 @@ describe('Location', () => {
         And wants to update the position filter
         And the user has activated his geolocation
       The position filter should be set to the user's geolocation
-        And the geolocation value should be updated to the user's geolocation
+        And the map position should be set to the user's geolocation with default zoom value
+        And the geolocation value should be updated to the user's geolocation with default zoom value
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -152,7 +199,19 @@ describe('Location', () => {
         googlePlaceId: fakeGeolocationData.googlePlaceId,
       })
 
-      const store = configureStoreWithLocation({ dependencies: { geolocationService } })
+      const store = configureStoreWithLocation({
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
+          },
+        },
+        dependencies: { geolocationService },
+      })
 
       store.dispatch(publicActions.getGeolocation({ updateLocationFilter: true }))
 
@@ -162,7 +221,15 @@ describe('Location', () => {
 
       expect(selectLocation(store.getState())).toStrictEqual({
         ...fakeLocationData,
-        zoom: defaultLocationState.zoom,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      })
+
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: {
+          lat: fakeGeolocationData.lat,
+          lng: fakeGeolocationData.lng,
+        },
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
 
       expect(selectGeolocation(store.getState())).toStrictEqual({
@@ -176,6 +243,7 @@ describe('Location', () => {
         And doesn't want to update the position filter
         And the user has activated his geolocation
       The position filter should stay at the default value
+        And the map position should stay at the default value
         And the geolocation value should be updated to the user's geolocation
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -201,6 +269,10 @@ describe('Location', () => {
         ...restDefaultPositionData,
       })
 
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
       expect(selectGeolocation(store.getState())).toStrictEqual({
         ...fakeGeolocationData,
       })
@@ -212,6 +284,7 @@ describe('Location', () => {
         And wants to update the position filter
         And the user has blocked his geolocation
       The position filter should stay at the default value
+        And the map position should stay at the default value
         And the geolocation value should stay at the default value
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -231,6 +304,10 @@ describe('Location', () => {
         ...restDefaultPositionData,
       })
 
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
       expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
     })
 
@@ -240,6 +317,7 @@ describe('Location', () => {
         And doesn't want to update the position filter
         And the user has blocked his geolocation
       The position filter should stay at the default value
+        And the map position should stay at the default value
         And the geolocation value should stay at the default value
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -259,6 +337,10 @@ describe('Location', () => {
         ...restDefaultPositionData,
       })
 
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
       expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
     })
   })
@@ -268,9 +350,9 @@ describe('Location', () => {
   describe('Default user location', () => {
     it(`
       Given initial state
-      When the default position is initialized
-        And the selected feed item uuid is a city
-      The position filter should be set to the cities coordinates
+      When the selected feed item uuid is set as a city
+      The position filter should be set to the cities coordinates with default zoom value
+        And the map position should be set to the cities coordinates with default zoom value
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -279,29 +361,42 @@ describe('Location', () => {
         initialAppState: {
           feed: {
             ...defaultFeedState,
-            selectedItemUuid: 'lyon',
+          },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
           },
         },
         dependencies: { geolocationService },
       })
 
-      store.dispatch(publicActions.initLocation())
+      store.dispatch(feedActions.setCurrentFeedItemUuid('lyon'))
 
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
-        zoom: defaultLocationState.zoom,
+        ...EntourageCities.lyon,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: EntourageCities.lyon.center,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      })
+
       expect(selectCurrentFeedItemUuid(store.getState())).toBe(null)
       expect(selectLocationIsInit(store.getState())).toBe(true)
     })
 
     it(`
       Given initial state
-      When the default position is initialized
-        And the selected POI uuid is a city
-      The position filter should be set to the cities coordinates
+      When the selected POI uuid is set as a city
+      The position filter should be set to the cities coordinates with default zoom value
+        And the map position should be set to the cities coordinates with default zoom value
+        And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
@@ -309,20 +404,32 @@ describe('Location', () => {
         initialAppState: {
           pois: {
             ...defaultPOIsState,
-            selectedPOIUuid: 'lyon',
+          },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
           },
         },
         dependencies: { geolocationService },
       })
 
-      store.dispatch(publicActions.initLocation())
+      store.dispatch(poisActions.setCurrentPOIUuid('lyon'))
 
       await store.waitForActionEnd()
 
       expect(selectLocation(store.getState())).toStrictEqual({
-        ...entourageCities.lyon,
-        zoom: defaultLocationState.zoom,
+        ...EntourageCities.lyon,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       })
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: EntourageCities.lyon.center,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      })
+
       expect(selectCurrentPOIUuid(store.getState())).toBe(null)
       expect(selectLocationIsInit(store.getState())).toBe(true)
     })
@@ -332,7 +439,8 @@ describe('Location', () => {
       When the default position is initialized
         And no query id is present
         And the user is logged in and has a default address
-      The position filter should be set to the user's default coordinates
+      The position filter should be set to the user's default coordinates with default zoom value
+        And the map position should be set to the user's default coordinates with default zoom value
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
@@ -343,6 +451,14 @@ describe('Location', () => {
           authUser: {
             ...defaultAuthUserState,
             user,
+          },
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
           },
         },
         dependencies: { geolocationService },
@@ -358,10 +474,15 @@ describe('Location', () => {
           lat: user.address?.latitude,
           lng: user.address?.longitude,
         },
-        zoom: defaultLocationState.zoom,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
       }
 
       expect(selectLocation(store.getState())).toStrictEqual(defaultPosition)
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: defaultPosition.center,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      })
+
       expect(selectLocationIsInit(store.getState())).toBe(true)
     })
 
@@ -372,11 +493,22 @@ describe('Location', () => {
         And the user is not logged in or doesn't have a default address
         And the user has activated his geolocation
       The position filter should be set to the user's geolocation
+        And the map position should be set to the user's geolocation
         And the location should be initialized
     `, async () => {
       const geolocationService = new TestGeolocationService()
 
       const store = configureStoreWithLocation({
+        initialAppState: {
+          location: {
+            ...defaultLocationState,
+            zoom: 45,
+            mapPosition: {
+              ...defaultLocationState.mapPosition,
+              zoom: 45,
+            },
+          },
+        },
         dependencies: { geolocationService },
       })
 
@@ -401,6 +533,11 @@ describe('Location', () => {
         zoom: defaultPositionData.zoom,
       })
 
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        center: fakeLocationData.center,
+        zoom: defaultPositionData.zoom,
+      })
+
       expect(selectGeolocation(store.getState())).toStrictEqual({
         ...fakeGeolocationData,
       })
@@ -410,23 +547,31 @@ describe('Location', () => {
     it(`
       Given initial state
       When the default position is initialized
+        And feed is initialized
         And no query id is present
         And the user is not logged in or doesn't have a default address
         And the user has blocked his geolocation
       The position filter should be set to the default state position
+        And the map position should be set to the default state position
         And the location should be initialized
+        And feed items should be retrieved from gateway
     `, async () => {
       const geolocationService = new TestGeolocationService()
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
 
-      const store = configureStoreWithLocation({ dependencies: { geolocationService } })
+      const store = configureStoreWithLocation({ dependencies: { geolocationService, feedGateway } })
 
       geolocationService.getGeolocation.mockDeferredValueOnce({
         coordinates: fakeLocationData.center,
       })
 
+      store.dispatch(feedActions.init())
+
       store.dispatch(publicActions.initLocation())
 
       geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
 
       await store.waitForActionEnd()
 
@@ -434,8 +579,104 @@ describe('Location', () => {
         ...restDefaultPositionData,
       })
 
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
       expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
       expect(selectLocationIsInit(store.getState())).toBe(true)
+
+      expect(feedGateway.retrieveFeedItems).toHaveBeenCalledTimes(1)
     })
+
+    it(`
+      Given initial state
+      When the default position is initialized
+        And POIs is initialized
+        And no query id is present
+        And the user is not logged in or doesn't have a default address
+        And the user has blocked his geolocation
+      The position filter should be set to the default state position
+        And the map position should be set to the default state position
+        And the location should be initialized
+        And POIs should be retrieved from gateway
+    `, async () => {
+      const geolocationService = new TestGeolocationService()
+      const poisGateway = new TestPOIsGateway()
+      poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+      const store = configureStoreWithLocation({ dependencies: { geolocationService, poisGateway } })
+
+      geolocationService.getGeolocation.mockDeferredValueOnce({
+        coordinates: fakeLocationData.center,
+      })
+
+      store.dispatch(poisActions.init())
+
+      store.dispatch(publicActions.initLocation())
+
+      geolocationService.getGeolocation.rejectDeferredValue(new LocationErrorGeolocationRefused())
+      poisGateway.retrievePOIs.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(selectLocation(store.getState())).toStrictEqual({
+        ...restDefaultPositionData,
+      })
+
+      expect(selectMapPosition(store.getState())).toStrictEqual({
+        ...mapPosition,
+      })
+
+      expect(selectGeolocation(store.getState())).toStrictEqual(defaultGeolocationData)
+      expect(selectLocationIsInit(store.getState())).toBe(true)
+
+      expect(poisGateway.retrievePOIs).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it(`
+    Given the initial state
+    When map position is different than position filter
+    Then map has moved button should be visible
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    const positionFilter: Partial<LocationState> = {
+      center: { lat: 1, lng: 5 },
+      zoom: 5,
+    }
+
+    store.dispatch(publicActions.setLocation({
+      location: positionFilter,
+    }))
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapHasMoved(store.getState())).toBe(true)
+  })
+
+  it(`
+    Given the initial state
+    When map position is equal to position filter
+    Then map has moved button should be hidden
+  `, () => {
+    const store = configureStoreWithLocation({})
+    const position: Partial<LocationState> = {
+      center: { lat: 2, lng: 3 },
+      zoom: 12,
+    }
+
+    store.dispatch(publicActions.setLocation({
+      location: position,
+    }))
+
+    store.dispatch(publicActions.setMapPosition(position))
+
+    expect(selectMapHasMoved(store.getState())).toBe(false)
   })
 })

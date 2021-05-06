@@ -89,10 +89,10 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
         fetching: false,
       }
 
-    case POIsActionType.RETRIEVE_POI_DETAILS_ENDED:
+    case POIsActionType.RETRIEVE_POI_DETAILS_STARTED:
       return {
         ...state,
-        detailsFetching: false,
+        detailsFetching: true,
       }
 
     case POIsActionType.RETRIEVE_POI_DETAILS_SUCCEEDED:
@@ -110,7 +110,6 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       return {
         ...state,
         selectedPOIUuid: action.payload,
-        detailsFetching: true,
       }
     }
 

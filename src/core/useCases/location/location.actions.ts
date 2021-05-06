@@ -3,7 +3,11 @@ import { LocationState } from './location.reducer'
 
 export const LocationActionType = {
   INIT_LOCATION: 'LOCATION/INIT_LOCATION',
+  RETRIEVE_SELECTED_ITEM_DETAILS: 'LOCATION/RETRIEVE_SELECTED_ITEM_DETAILS',
+  RETRIEVE_RELEVANT_DATA: 'LOCATION/RETRIEVE_RELEVANT_DATA',
   SET_LOCATION: 'LOCATION/SET_LOCATION',
+  SET_LOCATION_IS_INIT: 'LOCATION/SET_LOCATION_IS_INIT',
+  SET_MAP_POSITION: 'LOCATION/SET_MAP_POSITION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
   SET_GEOLOCATION: 'LOCATION/SET_GEOLOCATION',
@@ -19,12 +23,37 @@ function initLocation() {
   }
 }
 
+function setLocationIsInit() {
+  return {
+    type: LocationActionType.SET_LOCATION_IS_INIT,
+  }
+}
+
+function retrieveSelectedItemDetails() {
+  return {
+    type: LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+  }
+}
+
+function retrieveRelevantData() {
+  return {
+    type: LocationActionType.RETRIEVE_RELEVANT_DATA,
+  }
+}
+
 function setLocation(payload: {
-  location: Partial<LocationState>;
+  location: Partial<Pick<LocationState, 'zoom' | 'center' | 'displayAddress'>>;
   getDisplayAddressFromCoordinates?: boolean;
 }) {
   return {
     type: LocationActionType.SET_LOCATION,
+    payload,
+  }
+}
+
+function setMapPosition(payload: Partial<LocationState['mapPosition']>) {
+  return {
+    type: LocationActionType.SET_MAP_POSITION,
     payload,
   }
 }
@@ -57,14 +86,18 @@ function getGeolocation(payload: {
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
-  setLocation,
   initLocation,
+  setLocationIsInit,
+  setLocation,
   getGeolocation,
+  setMapPosition,
+  retrieveRelevantData,
 }
 
 const privateActions = {
   setDisplayAddress,
   setGeolocation,
+  retrieveSelectedItemDetails,
 }
 
 export const actions = {

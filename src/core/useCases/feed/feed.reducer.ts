@@ -54,6 +54,7 @@ export interface FeedEntourage {
   groupType: FeedGroupType;
   joinStatus: FeedJoinStatus;
   status: FeedStatus;
+  online: boolean;
 }
 
 export interface FeedAnnouncement {
@@ -125,6 +126,7 @@ export function feedReducer(
         nextPageToken: null,
       }
     }
+
     case FeedActionType.RETRIEVE_FEED_STARTED:
     case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_STARTED: {
       return {
@@ -198,6 +200,7 @@ export function feedReducer(
       return {
         ...state,
         selectedItemUuid: action.payload,
+        nextPageToken: action.payload ? state.nextPageToken : null,
       }
     }
 

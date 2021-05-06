@@ -2,7 +2,7 @@ import { Tooltip } from '@material-ui/core'
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { constants } from 'src/constants'
-import { selectLocation } from 'src/core/useCases/location'
+import { selectMapPosition } from 'src/core/useCases/location'
 import { colors } from 'src/styles'
 import { getPixelPerMeter } from 'src/utils/misc'
 import { BaseMarker } from './BaseMarker'
@@ -26,7 +26,7 @@ interface Props {
 // eslint-disable-next-line
 export function ActionMarker(props: Props) {
   const { isActive, tooltip } = props
-  const position = useSelector(selectLocation)
+  const position = useSelector(selectMapPosition)
   const { zoom, center: { lat } } = position
   const size = getMarkerSize(lat, zoom)
 

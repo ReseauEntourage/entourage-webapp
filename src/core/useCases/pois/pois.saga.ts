@@ -1,22 +1,13 @@
 import { call, put, select, getContext, take, cancel } from 'redux-saga/effects'
-import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
+import { locationActions, selectLocation } from '../location'
 import { LocationActionType } from '../location/location.actions'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
 import { IPOIsGateway } from './IPOIsGateway'
-import { POIsActionType, actions, POIsActions } from './pois.actions'
-import { selectCurrentPOI, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
-
-export const calculateDistanceFromZoom = (zoom: number) => {
-  if (zoom <= constants.DEFAULT_LOCATION.ZOOM) {
-    return constants.POI_MAX_DISTANCE
-  } if (zoom >= constants.POI_DISTANCE_BREAKPOINT) {
-    return constants.POI_MIN_DISTANCE
-  }
-  return (constants.POI_MAX_DISTANCE - constants.POI_MIN_DISTANCE) / 2
-}
+import { POIsActionType, actions } from './pois.actions'
+import { selectCurrentPOI, selectCurrentPOIUuid, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
 
 export interface Dependencies {
   poisGateway: IPOIsGateway;
@@ -29,7 +20,7 @@ function* retrievePOIs() {
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
 
   const { fetching, filters: categoryFilters } = poisState
-  const { zoom, center } = positionState
+  const { center } = positionState
 
   if (fetching) {
     return
@@ -48,7 +39,7 @@ function* retrievePOIs() {
       filters: {
         location: {
           center,
-          zoom: calculateDistanceFromZoom(zoom),
+          distance: constants.POI_DISTANCE,
         },
         categories,
         partners,
@@ -58,47 +49,40 @@ function* retrievePOIs() {
   yield put(actions.retrievePOIsSuccess(response))
 }
 
-function* setCurrentPOIUuid(action: POIsActions['setCurrentPOIUuid']) {
+function* retrieveCurrentPOI() {
   const currentPOI: ReturnType<typeof selectCurrentPOI> = yield select(selectCurrentPOI)
   const poisIsIdle: ReturnType<typeof selectPOIsIsIdle> = yield select(selectPOIsIsIdle)
-  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
-  const poiUuid = action.payload
+  const poiUuid: ReturnType<typeof selectCurrentPOIUuid> = yield select(selectCurrentPOIUuid)
 
   if (!currentPOI && poiUuid) {
-    const isCityId = entourageCities[poiUuid as Cities]
+    yield put(actions.retrievePOIDetailsStarted())
 
-    if (isCityId) {
-      yield put(locationActions.initLocation())
-      yield put(actions.retrievePOIDetailsEnded())
-    } else {
-      const dependencies: Dependencies = yield getContext('dependencies')
-      const { retrievePOI } = dependencies.poisGateway
+    const dependencies: Dependencies = yield getContext('dependencies')
+    const { retrievePOI } = dependencies.poisGateway
 
-      const response: CallReturnType<typeof retrievePOI> = yield call(retrievePOI, { poiUuid })
+    const response: CallReturnType<typeof retrievePOI> = yield call(retrievePOI, { poiUuid })
 
-      yield put(actions.retrievePOIDetailsSuccess(response))
+    yield put(actions.retrievePOIDetailsSuccess(response))
 
-      if (poisIsIdle) {
-        yield put(locationActions.setLocation({
-          location: {
-            center: {
-              lat: response.poiDetails.latitude,
-              lng: response.poiDetails.longitude,
-            },
-            displayAddress: response.poiDetails.address,
+    if (poisIsIdle) {
+      yield put(locationActions.setMapPosition({
+        center: {
+          lat: response.poiDetails.latitude,
+          lng: response.poiDetails.longitude,
+        },
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      }))
+      yield put(locationActions.setLocation({
+        location: {
+          center: {
+            lat: response.poiDetails.latitude,
+            lng: response.poiDetails.longitude,
           },
-        }))
-      }
+          displayAddress: response.poiDetails.address,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        },
+      }))
     }
-  } else {
-    if (!poiUuid) {
-      if (locationIsInit) {
-        yield put(actions.retrievePOIs())
-      } else {
-        yield put(locationActions.initLocation())
-      }
-    }
-    yield put(actions.retrievePOIDetailsEnded())
   }
 }
 
@@ -107,10 +91,16 @@ export function* poisSaga() {
   yield takeEvery(POIsActionType.TOGGLE_POIS_FILTER, retrievePOIs)
   yield takeEvery(POIsActionType.RESET_POIS_FILTERS, retrievePOIs)
 
-  yield takeEvery(POIsActionType.SET_CURRENT_POI_UUID, setCurrentPOIUuid)
   while (yield take(POIsActionType.INIT_POIS)) {
-    const bgRetrievePOIs = yield takeEvery(LocationActionType.SET_LOCATION, retrievePOIs)
+    const setLocationRetrievePOIs = yield takeEvery(LocationActionType.SET_LOCATION, retrievePOIs)
+    const retrieveDataRetrievePOIs = yield takeEvery(LocationActionType.RETRIEVE_RELEVANT_DATA, retrievePOIs)
+    const retrieveItemRetrievePOI = yield takeEvery(
+      LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+      retrieveCurrentPOI,
+    )
     yield take(POIsActionType.CANCEL_POIS)
-    yield cancel(bgRetrievePOIs)
+    yield cancel(setLocationRetrievePOIs)
+    yield cancel(retrieveDataRetrievePOIs)
+    yield cancel(retrieveItemRetrievePOI)
   }
 }

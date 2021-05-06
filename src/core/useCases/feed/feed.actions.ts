@@ -98,14 +98,14 @@ function updateItem(payload: Partial<FeedState['items'][string]>) {
   }
 }
 
-function setCurrentItemUuid(payload: string | null) {
+function setCurrentFeedItemUuid(payload: string | null) {
   return {
     type: FeedActionType.SET_CURRENT_ITEM_UUID,
     payload,
   }
 }
 
-function removeCurrentItemUuid() {
+function removeCurrentFeedItemUuid() {
   return {
     type: FeedActionType.REMOVE_CURRENT_ITEM_UUID,
   }
@@ -196,12 +196,12 @@ export const publicActions = {
   retrieveFeedNextPageStarted,
   retrieveFeedNextPage,
   updateItem,
-  setCurrentItemUuid,
+  setCurrentFeedItemUuid,
   joinEntourage,
   leaveEntourage,
   closeEntourage,
   reopenEntourage,
-  removeCurrentItemUuid,
+  removeCurrentFeedItemUuid,
   toggleActionTypesFilter,
   toggleEventsFilter,
   setTimeRangeFilter,

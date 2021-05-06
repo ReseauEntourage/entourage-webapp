@@ -96,12 +96,12 @@ export function Actions(props: ActionsProps) {
     return iAmCreator ? (
       <S.ReopenContainer>
         <Button loading={isUpdatingStatus} onClick={onClickReopen} variant="outlined">
-          {texts.content.map.rightCards.reopen}
+          {texts.content.map.actions.reopen}
         </Button>
       </S.ReopenContainer>
     ) : (
       <S.NoActions>
-        {texts.content.map.rightCards.hasBeenClosed}
+        {texts.content.map.actions.hasBeenClosed}
       </S.NoActions>
     )
   }
@@ -109,21 +109,21 @@ export function Actions(props: ActionsProps) {
   return (
     <S.ActionsContainer>
       <ParticipateButton />
-      <Button onClick={onClickShare} variant="outlined">{texts.content.map.rightCards.share}</Button>
+      <Button onClick={onClickShare} variant="outlined">{texts.content.map.actions.share}</Button>
       {iAmCreator ? (
         <>
           <Button
             onClick={feedItem.groupType === 'action' ? onClickUpdateAction : onClickUpdateEvent}
             variant="outlined"
           >
-            {texts.content.map.rightCards.edit}
+            {texts.content.map.actions.edit}
           </Button>
           <Button loading={isUpdatingStatus} onClick={onClickClose} variant="outlined">
-            {texts.content.map.rightCards.close}
+            {texts.content.map.actions.close}
           </Button>
         </>
       ) : (
-        <Button onClick={onClickReport} variant="outlined">{texts.content.map.rightCards.report}</Button>
+        <Button onClick={onClickReport} variant="outlined">{texts.content.map.actions.report}</Button>
       )}
     </S.ActionsContainer>
   )

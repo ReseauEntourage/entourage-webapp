@@ -26,7 +26,7 @@ export class HTTPPOIsGateway implements IPOIsGateway {
       name: '/pois GET',
       params: {
         v: 2,
-        distance: data.filters.location.zoom,
+        distance: data.filters.location.distance,
         longitude: data.filters.location.center.lng,
         latitude: data.filters.location.center.lat,
         categoryIds: data.filters.categories,

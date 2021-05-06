@@ -1,12 +1,13 @@
 import { call, put, select, getContext, cancel, take } from 'redux-saga/effects'
-import { Cities, entourageCities, locationActions, selectLocation, selectLocationIsInit } from '../location'
+import { locationActions, selectLocation } from '../location'
 import { LocationActionType } from '../location/location.actions'
+import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
-import { selectCurrentFeedItem, selectFeed, selectFeedIsIdle } from './feed.selectors'
+import { selectCurrentFeedItem, selectCurrentFeedItemUuid, selectFeed, selectFeedIsIdle } from './feed.selectors'
 
 export interface Dependencies {
   feedGateway: IFeedGateway;
@@ -63,37 +64,33 @@ function* retrieveFeedNextPage() {
   yield put(actions.retrieveFeedNextPageSuccess(response))
 }
 
-function* setCurrentItemUuid(action: FeedActions['setCurrentItemUuid']) {
+function* retrieveCurrentFeedItem() {
   const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
   const feedIsIdle: ReturnType<typeof selectFeedIsIdle> = yield select(selectFeedIsIdle)
-  const locationIsInit: ReturnType<typeof selectLocationIsInit> = yield select(selectLocationIsInit)
-  const entourageUuid = action.payload
+  const entourageUuid: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
 
   if (!currentItem && entourageUuid) {
-    const isCityId = entourageCities[entourageUuid as Cities]
+    const dependencies: Dependencies = yield getContext('dependencies')
+    const { retrieveFeedItem } = dependencies.feedGateway
 
-    if (isCityId) {
-      yield put(locationActions.initLocation())
-    } else {
-      const dependencies: Dependencies = yield getContext('dependencies')
-      const { retrieveFeedItem } = dependencies.feedGateway
+    const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
-      const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
-
-      if (feedIsIdle) {
+    if (feedIsIdle) {
+      if (response.groupType === 'outing' && response.online) {
+        yield call(retrieveFeed)
+      } else {
+        yield put(locationActions.setMapPosition({
+          center: response.center,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        }))
         yield put(locationActions.setLocation({
           location: {
             center: response.center,
             displayAddress: response.displayAddress,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
           },
         }))
       }
-    }
-  } else if (!entourageUuid) {
-    if (locationIsInit) {
-      yield put(actions.retrieveFeed())
-    } else {
-      yield put(locationActions.initLocation())
     }
   }
 }
@@ -142,14 +139,21 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.TOGGLE_EVENTS_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.SET_TIME_RANGE_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
-  yield takeEvery(FeedActionType.SET_CURRENT_ITEM_UUID, setCurrentItemUuid)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
   yield takeEvery(FeedActionType.LEAVE_ENTOURAGE, leaveEntourage)
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
+
   while (yield take(FeedActionType.INIT_FEED)) {
-    const bgRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
+    const setLocationRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)
+    const retrieveDataRetrieveFeed = yield takeEvery(LocationActionType.RETRIEVE_RELEVANT_DATA, retrieveFeed)
+    const retrieveItemRetrieveFeedItem = yield takeEvery(
+      LocationActionType.RETRIEVE_SELECTED_ITEM_DETAILS,
+      retrieveCurrentFeedItem,
+    )
     yield take(FeedActionType.CANCEL_FEED)
-    yield cancel(bgRetrieveFeed)
+    yield cancel(setLocationRetrieveFeed)
+    yield cancel(retrieveDataRetrieveFeed)
+    yield cancel(retrieveItemRetrieveFeedItem)
   }
 }

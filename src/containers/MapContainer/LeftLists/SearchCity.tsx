@@ -2,13 +2,11 @@ import dynamic from 'next/dynamic'
 import React, { useCallback } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
-import { OverlayLoader } from 'src/components/OverlayLoader'
-import { selectFeedIsIdle } from 'src/core/useCases/feed'
+import { constants } from 'src/constants'
 import { locationActions, selectLocation } from 'src/core/useCases/location'
-import { selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { useFirebase } from 'src/utils/hooks'
 import { getDetailPlacesService, assertIsNumber, assertIsString } from 'src/utils/misc'
-import { Filters } from './Filters/Filters'
+import { Filters } from './Filters'
 import * as S from './SearchCity.styles'
 
 const GoogleMapLocation = dynamic(() => import('src/components/GoogleMapLocation'), { ssr: false })
@@ -22,8 +20,6 @@ export function SearchCity(props: SearchCityProps) {
   const position = useSelector(selectLocation)
   const dispatch = useDispatch()
   const { sendEvent } = useFirebase()
-  const feedIsIdle = useSelector(selectFeedIsIdle)
-  const poisIsIdle = useSelector(selectPOIsIsIdle)
 
   const defaultValue = position.displayAddress
 
@@ -41,6 +37,15 @@ export function SearchCity(props: SearchCityProps) {
     assertIsString(address)
 
     dispatch(
+      locationActions.setMapPosition({
+        center: {
+          lat,
+          lng,
+        },
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      }),
+    )
+    dispatch(
       locationActions.setLocation({
         location: {
           center: {
@@ -48,6 +53,7 @@ export function SearchCity(props: SearchCityProps) {
             lng,
           },
           displayAddress: address,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
         },
       }),
     )
@@ -59,10 +65,6 @@ export function SearchCity(props: SearchCityProps) {
       updateLocationFilter: true,
     }))
   }, [dispatch, sendEvent])
-
-  if (feedIsIdle && poisIsIdle) {
-    return <OverlayLoader />
-  }
 
   return (
     <S.Container>

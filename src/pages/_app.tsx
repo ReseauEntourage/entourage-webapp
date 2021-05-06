@@ -1,7 +1,6 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import * as Sentry from '@sentry/react'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
-import Head from 'next/head'
 import { PersistGate } from 'redux-persist/integration/react'
 import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
@@ -10,15 +9,16 @@ import { ReactQueryConfigProvider } from 'react-query'
 import { Provider } from 'react-redux'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
-import { OverlayLoader } from 'src/components/OverlayLoader'
+import { SplashScreen } from 'src/components/SplashScreen'
+import { MetaData } from 'src/containers/MetaData'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api, LoggedUser } from 'src/core/api'
 import { bootstrapStore } from 'src/core/boostrapStore'
+import { env } from 'src/core/env'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
-import { texts } from 'src/i18n'
 import { theme } from 'src/styles'
 import { isSSR, initFacebookApp } from 'src/utils/misc'
 
@@ -107,7 +107,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     const persistorWrappedContent = this.persistor ? (
       <PersistGate
-        loading={<OverlayLoader />}
+        loading={<SplashScreen />}
         onBeforeLift={() => {
           if (this.store && authUserData && !authUserData.anonymous) {
             this.store.dispatch(authUserActions.setUser({
@@ -135,12 +135,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     return (
       <Sentry.ErrorBoundary fallback="An error has occurred">
-        <Head>
-          <title>{texts.nav.pageTitles.main}</title>
-          <link href="/favicon.ico" rel="icon" />
-          <base href="/" />
-          <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-        </Head>
+        <MetaData url={`${env.SERVER_URL}/actions`} />
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
           <>
