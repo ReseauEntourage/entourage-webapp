@@ -74,6 +74,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           displayCategory: item.data.displayCategory,
           joinStatus: item.data.joinStatus,
           status: item.data.status,
+          online: item.data.online,
         }
       })
 
@@ -164,6 +165,8 @@ export class HTTPFeedGateway implements IFeedGateway {
           lat: res.data.entourage.location.latitude,
           lng: res.data.entourage.location.longitude,
         },
+        online: res.data.entourage.online,
+        groupType: res.data.entourage.groupType,
       }
     })
   }

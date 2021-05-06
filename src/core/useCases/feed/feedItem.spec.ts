@@ -12,11 +12,11 @@ import { defaultLocationState } from '../location/location.reducer'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
-import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { FeedGroupType, FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
-import { createFeedItemList, fakeFeedData } from './__mocks__'
+import { createFeedItem, createFeedItemList, fakeFeedData } from './__mocks__'
 
 import { publicActions } from './feed.actions'
 import { JoinRequestStatus, FeedState, RequestStatus, defaultFeedState, FeedEntourage } from './feed.reducer'
@@ -186,6 +186,8 @@ describe('Feed Item', () => {
         lng: 2,
       },
       displayAddress: 'Marseille',
+      groupType: 'action' as FeedGroupType,
+      online: false,
     }
 
     const feedGateway = new TestFeedGateway()
@@ -260,6 +262,100 @@ describe('Feed Item', () => {
         lat: 1,
         lng: 2,
       },
+    })
+  })
+
+  it(`
+    Given feed has no cached items
+       And has selected item uuid
+       And selected item is an online event
+    When user set selected item uuid
+    Then item should be retrieved from gateway
+      And feed should be retrieved with default position
+      And position filter should be set to default position with default zoom value
+      And map position should be set to default position with default zoom value
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+
+    const onlineEvent: FeedEntourage = {
+      ...createFeedItem(),
+      groupType: 'outing',
+      online: true,
+    }
+    const deferredValueRetrieveFeedItems = {
+      nextPageToken: null,
+      items: [
+        onlineEvent,
+        ...itemsFromGateway,
+      ],
+    }
+    const deferredValueRetrieveFeedItem = {
+      center: {
+        lat: onlineEvent.location.latitude,
+        lng: onlineEvent.location.longitude,
+      },
+      displayAddress: 'Montmartre',
+      groupType: onlineEvent.groupType,
+      online: onlineEvent.online,
+    }
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
+    feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+      feedGateway.retrieveFeedItem.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithFeed(
+      {
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+            nextPageToken: null,
+          },
+        },
+      },
+    )
+
+    // online item
+    const selectedItemUuid = itemsFromGateway[0].uuid
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
+    expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({
+      filters: {
+        location: {
+          center: defaultLocationState.center,
+          zoom: defaultLocationState.zoom,
+        },
+        types: 'am,ao,ai,ak,ar,as,cm,co,ci,ck,cr,cs,ou',
+        timeRange: defaultFeedState.filters.timeRange,
+      },
+    })
+
+    expect(selectLocation(store.getState())).toStrictEqual({
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+      center: defaultLocationState.center,
+      displayAddress: defaultLocationState.displayAddress,
+    })
+
+    expect(selectMapPosition(store.getState())).toStrictEqual({
+      center: defaultLocationState.center,
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
     })
   })
 
@@ -409,6 +505,8 @@ describe('Feed Item', () => {
         lng: 2,
       },
       displayAddress: 'Marseille',
+      groupType: 'action' as FeedGroupType,
+      online: false,
     }
 
     const feedGateway = new TestFeedGateway()

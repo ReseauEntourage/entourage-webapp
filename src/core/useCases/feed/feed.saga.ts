@@ -76,17 +76,21 @@ function* retrieveCurrentFeedItem() {
     const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
     if (feedIsIdle) {
-      yield put(locationActions.setMapPosition({
-        center: response.center,
-        zoom: constants.DEFAULT_LOCATION.ZOOM,
-      }))
-      yield put(locationActions.setLocation({
-        location: {
+      if (response.groupType === 'outing' && response.online) {
+        yield call(retrieveFeed)
+      } else {
+        yield put(locationActions.setMapPosition({
           center: response.center,
-          displayAddress: response.displayAddress,
           zoom: constants.DEFAULT_LOCATION.ZOOM,
-        },
-      }))
+        }))
+        yield put(locationActions.setLocation({
+          location: {
+            center: response.center,
+            displayAddress: response.displayAddress,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
+          },
+        }))
+      }
     }
   }
 }
