@@ -6,7 +6,7 @@ export const LocationActionType = {
   RETRIEVE_SELECTED_ITEM_DETAILS: 'LOCATION/RETRIEVE_SELECTED_ITEM_DETAILS',
   RETRIEVE_RELEVANT_DATA: 'LOCATION/RETRIEVE_RELEVANT_DATA',
   SET_LOCATION: 'LOCATION/SET_LOCATION',
-  SET_LOCATION_IS_INIT: 'LOCATION/SET_LOCATION_IS_INIT',
+  SET_LOCATION_IS_INITIALIZED: 'LOCATION/SET_LOCATION_IS_INITIALIZED',
   SET_MAP_POSITION: 'LOCATION/SET_MAP_POSITION',
   SET_DISPLAY_ADDRESS: 'LOCATION/SET_DISPLAY_ADDRESS',
   GET_GEOLOCATION: 'LOCATION/GET_GEOLOCATION',
@@ -23,9 +23,9 @@ function initLocation() {
   }
 }
 
-function setLocationIsInit() {
+function setLocationIsInitialized() {
   return {
-    type: LocationActionType.SET_LOCATION_IS_INIT,
+    type: LocationActionType.SET_LOCATION_IS_INITIALIZED,
   }
 }
 
@@ -87,7 +87,7 @@ function getGeolocation(payload: {
 
 export const publicActions = {
   initLocation,
-  setLocationIsInit,
+  setLocationIsInitialized,
   setLocation,
   getGeolocation,
   setMapPosition,
