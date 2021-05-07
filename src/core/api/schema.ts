@@ -14,7 +14,6 @@ import {
   FeedStatus,
   FeedType,
   FeedTypesFilter,
-  Location,
   POICategoriesIds,
   User,
   UserPartner,
@@ -28,6 +27,7 @@ import {
   POIItem,
   POIDetailsItem,
   POIPartnersFilters,
+  Message,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -273,41 +273,7 @@ export const schema = {
     data: null,
     response: {} as {
       feeds: {
-        data: {
-          author: {
-            avatarUrl: string;
-            displayName: string;
-            id: number;
-            partner: null; // TO DEFINED
-          };
-          createdAt: DateISO;
-          description: string;
-          displayCategory: FeedDisplayCategory;
-          entourageType: FeedEntourageType;
-          groupType: FeedGroupType;
-          id: number;
-          joinStatus: FeedJoinStatus;
-          lastMessage?: {
-            author: {
-              firstName: string;
-              lastName: string;
-            };
-            text: string;
-          };
-          location: Location;
-          metadata: {
-            city: string;
-            displayAddress: string;
-          };
-          numberOfPeople: number;
-          numberOfUnreadMessages: number;
-          public: boolean;
-          shareUrl: string;
-          status: FeedStatus;
-          title: string;
-          updatedAt: DateISO;
-          uuid: string;
-        };
+        data: Message;
         heatmapSize: number;
         type: FeedType;
       }[];

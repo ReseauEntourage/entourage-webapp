@@ -2,6 +2,7 @@ import { StateFromReducersMapObject } from 'redux'
 import { authUserReducer } from './authUser'
 import { feedReducer } from './feed'
 import { locationReducer } from './location'
+import { messagesReducer } from './messages'
 import { poisReducer } from './pois'
 
 export const reducers = {
@@ -9,6 +10,7 @@ export const reducers = {
   feed: feedReducer,
   pois: poisReducer,
   location: locationReducer,
+  messages: messagesReducer,
 }
 
 export type AppState = StateFromReducersMapObject<typeof reducers>

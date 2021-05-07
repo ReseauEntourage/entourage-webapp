@@ -307,6 +307,42 @@ export interface FeedItemTour {
   type: 'Tour';
 }
 
+export interface Message {
+  author: {
+    avatarUrl: string;
+    displayName: string;
+    id: number;
+    partner: null; // TO DEFINED
+  };
+  createdAt: DateISO;
+  description: string;
+  displayCategory: FeedDisplayCategory;
+  entourageType: FeedEntourageType;
+  groupType: FeedGroupType;
+  id: number;
+  joinStatus: FeedJoinStatus;
+  lastMessage?: {
+    author: {
+      firstName: string;
+      lastName: string;
+    };
+    text: string;
+  };
+  location: Location;
+  metadata: {
+    city: string;
+    displayAddress: string;
+  };
+  numberOfPeople: number;
+  numberOfUnreadMessages: number;
+  public: boolean;
+  shareUrl: string;
+  status: FeedStatus;
+  title: string;
+  updatedAt: DateISO;
+  uuid: string;
+}
+
 export interface DTOCreateEntourageAsAction {
   description: string;
   displayCategory: FeedDisplayCategory;
