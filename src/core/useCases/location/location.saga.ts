@@ -111,7 +111,7 @@ function* getGeolocationSaga(action: LocationActions['getGeolocation']) {
     }
   } catch (error) {
     if (error instanceof LocationErrorGeolocationRefused) {
-      yield put(actions.setLocationIsInit())
+      yield put(actions.setLocationIsInitialized())
       yield put(actions.retrieveRelevantData())
     }
   }

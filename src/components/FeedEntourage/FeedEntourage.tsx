@@ -1,7 +1,9 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import React from 'react'
+import { People } from 'src/assets'
 import { Avatar } from 'src/components/Avatar'
+import { variants } from 'src/styles'
 import * as S from './FeedEntourage.styles'
 
 interface FeedEntourageProps {
@@ -10,6 +12,7 @@ interface FeedEntourageProps {
   primaryText: string;
   profilePictureURL?: string;
   secondText: string;
+  numberOfPeople: number;
 }
 
 export function FeedEntourage(props: FeedEntourageProps) {
@@ -19,6 +22,7 @@ export function FeedEntourage(props: FeedEntourageProps) {
     isActive,
     profilePictureURL,
     icon,
+    numberOfPeople,
   } = props
 
   const primaryTextCropped = primaryText.length < 100
@@ -41,9 +45,17 @@ export function FeedEntourage(props: FeedEntourageProps) {
         </Box>
       </div>
       <Box flexGrow="1" />
-      <Box display="flex">
+      <Box alignItems="flex-end" display="flex" flexDirection="column" justifyContent="center">
+        <S.NumberContainer>
+          <S.NumberIcon
+            component={People}
+            viewBox="0 0 58 50"
+          />
+          <Box>
+            <Typography variant={variants.footNote}>{numberOfPeople}</Typography>
+          </Box>
+        </S.NumberContainer>
         <Avatar alt="Profile" src={profilePictureURL} />
-        {/* <AvatarNumber /> */}
       </Box>
     </S.Container>
   )

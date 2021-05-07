@@ -103,6 +103,7 @@ export function FeedList() {
                 />
               )}
               isActive={feedItem.uuid === actionId}
+              numberOfPeople={feedItem.numberOfPeople}
               primaryText={feedItem.title}
               profilePictureURL={feedItem.author.avatarUrl}
               secondText={secondText}

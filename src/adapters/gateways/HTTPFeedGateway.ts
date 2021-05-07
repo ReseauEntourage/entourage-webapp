@@ -75,6 +75,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           joinStatus: item.data.joinStatus,
           status: item.data.status,
           online: item.data.online,
+          numberOfPeople: item.data.numberOfPeople,
         }
       })
 

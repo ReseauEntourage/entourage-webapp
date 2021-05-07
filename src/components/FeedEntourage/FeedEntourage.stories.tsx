@@ -14,6 +14,7 @@ export const Base = () => (
       icon={(
         <Event style={{ color: colors.main.primary, fontSize: 22 }} />
       )}
+      numberOfPeople={3}
       primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
       secondText="Créé ce mois-ci par Ines"
@@ -28,6 +29,7 @@ export const Active = () => (
         <Event style={{ color: colors.main.primary, fontSize: 22 }} />
       )}
       isActive={true}
+      numberOfPeople={3}
       primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
       secondText="Créé ce mois-ci par Ines"
