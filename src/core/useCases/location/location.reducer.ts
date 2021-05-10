@@ -50,7 +50,7 @@ function locationPureReducer(
       }
     }
 
-    case LocationActionType.SET_LOCATION_IS_INIT: {
+    case LocationActionType.SET_LOCATION_IS_INITIALIZED: {
       return {
         ...state,
         isInit: true,
