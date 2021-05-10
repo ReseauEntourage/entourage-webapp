@@ -33,6 +33,9 @@ function* retrieveConversationsSaga() {
     },
   )
   yield put(actions.retrieveConversationsSuccess(response))
+  if (response.conversations.length === 0) {
+    yield put(actions.decrementPageNumber())
+  }
 }
 /*
 

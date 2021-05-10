@@ -2,31 +2,45 @@ import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useQueryMyFeeds } from 'src/core/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { SplashScreen } from '../../components/SplashScreen'
+import {
+  messagesActions,
+  selectConversationList,
+  selectMessagesIsFetching,
+  selectMessagesIsIdle,
+} from 'src/core/useCases/messages'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
 import * as S from './Messages.styles'
 import { useEntourageUuid } from './useEntourageUuid'
 
 export function MessagesDesktop() {
-  const { data: dataMyFeeds } = useQueryMyFeeds()
+  const conversations = useSelector(selectConversationList)
+  const isIdle = useSelector(selectMessagesIsIdle)
+  const dispatch = useDispatch()
   const entourageUuid = useEntourageUuid()
   const router = useRouter()
-  const firstConversationId = dataMyFeeds?.[0]?.data.id
+  const firstConversationId = conversations?.[0]?.id
 
   useEffect(() => {
-    if (!entourageUuid && firstConversationId) {
-      router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
+    // TODO FIX THIS
+    if (entourageUuid) {
+      dispatch(messagesActions.retrieveConversations())
+    } else if (!entourageUuid) {
+      if (firstConversationId) {
+        router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
+      } else {
+        dispatch(messagesActions.retrieveConversations())
+      }
+    } else if (entourageUuid) {
+      dispatch(messagesActions.retrieveConversations())
     }
-  }, [entourageUuid, firstConversationId, router])
+  }, [dispatch, entourageUuid, firstConversationId, router])
 
-  const isReady = dataMyFeeds && (dataMyFeeds.length === 0 || entourageUuid)
-
-  if (!isReady) {
+  if (isIdle) {
     return (
-      <Box alignItems="center" display="flex" height="100%" justifyContent="center">
-        <CircularProgress variant="indeterminate" />
-      </Box>
+      <SplashScreen />
     )
   }
 

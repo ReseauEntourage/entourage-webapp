@@ -1,5 +1,6 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
+import { authUserActions } from '../authUser'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestMessagesGateway } from './TestMessagesGateway'
 import { fakeMessagesData } from './__mocks__'
@@ -100,9 +101,20 @@ describe('Messages', () => {
       And should retrieve messages gateway method have been called with next page number
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    const deferredValue = { conversations: [fakeMessagesData.conversations.abc, fakeMessagesData.conversations.def] }
+    const deferredValue = { conversations: [fakeMessagesData.conversations.def] }
     messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
-    const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
+    const store = configureStoreWithMessages({ dependencies: { messagesGateway },
+      initialAppState: {
+        ...defaultInitialAppState,
+        messages: {
+          ...defaultMessagesState,
+          conversationsUuids: ['abc'],
+          conversations: {
+            abc: fakeMessagesData.conversations.abc,
+          },
+        },
+      },
+    })
 
     store.dispatch(publicActions.retrieveNextConversations())
 
@@ -127,12 +139,45 @@ describe('Messages', () => {
   })
 
   it(`
+    Given there is messages returned by the server
+    When user retrieve next page of messages
+      And next page of messages is empty
+    Then messages should be fetching until request is succeeded
+      And should retrieve messages successfully with no items
+      And should fetching state be false after server response
+      And page number should not be incremented
+      And should retrieve messages gateway method have been called with next page number
+  `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [] })
+    const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
+
+    store.dispatch(publicActions.retrieveNextConversations())
+
+    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+
+    store.dispatch(publicActions.retrieveNextConversations())
+
+    messagesGateway.retrieveConversations.resolveDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
+      page: 1,
+    })
+
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(0)
+  })
+
+  it(`
     Given messages are fetching
     When user want to retrieve messages
     Then the second request should never start
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [fakeMessagesData.conversations.abc] })
+
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
     store.dispatch(publicActions.retrieveConversations())
@@ -154,7 +199,8 @@ describe('Messages', () => {
       And the page number should not be incremented
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [fakeMessagesData.conversations.def] })
+
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
     store.dispatch(publicActions.retrieveNextConversations())
@@ -171,5 +217,25 @@ describe('Messages', () => {
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
 
     expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+  })
+
+  it(`
+      Given initial state
+      When user logs out
+        And user is set to null
+      Then messages state should go back to default value
+      `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        ...defaultInitialAppState,
+        messages: fakeMessagesData,
+      },
+    })
+    store.dispatch(authUserActions.setUser(null))
+    await store.waitForActionEnd()
+
+    expect(store.getState().messages).toEqual(defaultMessagesState)
   })
 })

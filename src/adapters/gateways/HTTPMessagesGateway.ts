@@ -17,6 +17,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
           lastMessage: conversation.data.lastMessage,
           title: conversation.data.title,
           uuid: conversation.data.uuid,
+          id: conversation.data.id,
         }
       })
 

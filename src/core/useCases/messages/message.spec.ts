@@ -1,19 +1,35 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
-
+import { createUser } from '../authUser/__mocks__'
+import { defaultAuthUserState } from '../authUser/authUser.reducer'
+import { selectCurrentFeedItem } from '../feed'
+import {
+  selectLocation,
+  selectLocationIsInit,
+  locationSaga,
+  selectMapPosition,
+} from '../location'
+import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
+import { Cities, EntourageCities } from 'src/utils/types'
 import { TestMessagesGateway } from './TestMessagesGateway'
-import { createConversationItem } from './__mocks__'
+import {
+  createConversationItem,
+  createConversationList,
+  createConversationMessages,
+  fakeMessagesData,
+} from './__mocks__'
 
 import { publicActions } from './messages.actions'
 import { messagesSaga } from './messages.saga'
 import {
-
+  selectConversationList,
+  selectCurrentConversation,
+  selectConversationMessagesIsFetching, selectCanFetchMoreMessages, selectCurrentConversationMessages,
 } from './messages.selectors'
 
-/*
-function configureStoreWithPOIs(
+function configureStoreWithMessages(
   params: {
     dependencies?: PartialAppDependencies;
     initialAppState?: PartialAppState;
@@ -28,45 +44,41 @@ function configureStoreWithPOIs(
       ...initialAppState,
     },
     dependencies,
-    sagas: [messagesSaga, locationSaga],
+    sagas: [messagesSaga],
   })
 }
 
-function configureStoreWithSelectedPOIs() {
-  const poisFromStore = createPOIList()
-  const poisFromGateway = createPOIList()
+function configureStoreWithSelectedMessages() {
+  const conversationsFromStore = createConversationList()
+  const conversationsFromGateway = createConversationList()
 
-  const poisEntities = poisFromStore.reduce((acc, item) => ({
+  const conversationsEntities = conversationsFromStore.reduce((acc, item) => ({
     ...acc,
     [item.uuid]: item,
   }), {})
 
-  const poiDetailsFromStore = {
-    ...createConversationItem(),
-    uuid: Object.keys(poisEntities)[0],
+  const conversationMessagesFromStore = {
+    [Object.keys(conversationsEntities)[0]]: createConversationMessages(),
   }
 
-  const poiDetailsFromGateway = {
-    ...createConversationItem(),
-    uuid: Object.keys(poisEntities)[2],
-  }
+  const conversationMessagesFromGateway = createConversationMessages()
 
-  const poisGateway = new TestMessagesGateway()
-  poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: poisFromGateway })
-  poisGateway.retrievePOI.mockDeferredValueOnce({ poiDetails: poiDetailsFromGateway })
+  const messagesGateway = new TestMessagesGateway()
+  messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: conversationsFromGateway })
+  messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(
+    { conversationMessages: conversationMessagesFromGateway },
+  )
 
-  const store = configureStoreWithPOIs(
+  const store = configureStoreWithMessages(
     {
-      dependencies: { poisGateway },
+      dependencies: { messagesGateway },
       initialAppState: {
-        pois: {
-          ...fakePOIsData,
-          pois: poisEntities,
-          poisUuids: Object.keys(poisEntities),
-          selectedPOIUuid: Object.keys(poisEntities)[0],
-          detailedPOIs: {
-            [Object.keys(poisEntities)[0]]: poiDetailsFromStore,
-          },
+        messages: {
+          ...fakeMessagesData,
+          conversations: conversationsEntities,
+          conversationsUuids: Object.keys(conversationsEntities),
+          selectedConversationUuid: Object.keys(conversationsEntities)[0],
+          conversationsMessages: conversationMessagesFromStore,
           isIdle: false,
         },
       },
@@ -75,135 +87,125 @@ function configureStoreWithSelectedPOIs() {
 
   return {
     store,
-    poisGateway,
-    poisEntities,
+    messagesGateway,
+    conversationsEntities,
   }
 }
 
-describe('POIs', () => {
+describe('Messages', () => {
   it(`
-    Given POIs are at initial state
+    Given messages are at initial state
     When no action is triggered,
-    Then selected POI should be null
+    Then selected conversation should be null
   `, () => {
-    const store = configureStoreWithPOIs({})
+    const store = configureStoreWithMessages({})
 
-    expect(selectCurrentPOI(store.getState())).toEqual(null)
+    expect(selectCurrentConversation(store.getState())).toEqual(null)
   })
 
   it(`
-    Given POIs have been retrieved from gateway
-    When POIs have been initialized
-      And user selects a POI that has never been selected before
-    Then POI details should be fetching until request is succeeded
-      And POI details should be retrieved successfully from gateway
-      And selected POI be defined with these POI details
-      And details fetching state be false after server response
-      And selected feed item should be null
+    Given messages have been retrieved from gateway
+    When user selects a conversation that has never been selected before
+    Then conversation messages should be fetching until request is succeeded
+      And conversation messages should be retrieved successfully from gateway
+      And selected conversation be defined with these conversation messages
+      And messages fetching state be false after server response
   `, async () => {
-    const poisGateway = new TestMessagesGateway()
+    const messagesGateway = new TestMessagesGateway()
 
-    const store = configureStoreWithPOIs({
-      dependencies: { poisGateway },
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
       initialAppState: {
-        pois: {
-          ...fakePOIsData,
+        messages: {
+          ...fakeMessagesData,
           isIdle: false,
         },
       },
     })
-    const poiDetailsFromGateway = {
-      ...createConversationItem(),
-      uuid: 'abc',
+    const conversationMessagesFromGateway = [
+      ...createConversationMessages(),
+    ]
+
+    const deferredValueRetrieveConversations = {
+      conversationMessages: conversationMessagesFromGateway,
     }
 
-    const deferredValueRetrievePOI = {
-      poiDetails: poiDetailsFromGateway,
-    }
+    const selectedConversationId = 'abc'
 
-    const selectedPOIId = poiDetailsFromGateway.uuid
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
 
-    poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
-    poisGateway.retrievePOI.resolveDeferredValue()
-
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
-    expect(selectPOIDetailsIsFetching(store.getState())).toEqual(true)
+    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
+    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
 
     await store.waitForActionEnd()
 
-    expect(poisGateway.retrievePOI).toHaveBeenCalledWith({ poiUuid: selectedPOIId })
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
-    expect(selectCurrentPOI(store.getState())).toEqual(poiDetailsFromGateway)
-    expect(selectPOIDetailsIsFetching(store.getState())).toEqual(false)
+    expect(selectCurrentConversation(store.getState())).toEqual(conversationMessagesFromGateway)
+    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
 
     expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
-    Given POIs have been retrieved from gateway
-    When user selects a POI that has already been selected before
-    Then POI should not be retrieved from gateway
-      And selected POI be defined with these POI details
-      And selected feed item should be null
+    Given messages have been retrieved from gateway
+    When user selects a conversation that has already been selected before
+    Then conversation should not be retrieved from gateway
+      And selected conversation be defined with these conversation messages
   `, async () => {
-    const poisGateway = new TestMessagesGateway()
-    const poiDetailsFromGateway = {
-      ...createConversationItem(),
-      uuid: 'abc',
-    }
-    const store = configureStoreWithPOIs({
-      dependencies: { poisGateway },
+    const messagesGateway = new TestMessagesGateway()
+    const conversationMessagesFromGateway = createConversationMessages()
+
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
       initialAppState: {
-        pois: {
-          ...fakePOIsData,
-          selectedPOIUuid: 'abc',
-          detailedPOIs: {
-            abc: poiDetailsFromGateway,
+        messages: {
+          ...fakeMessagesData,
+          selectedConversationUuid: 'abc',
+          conversationsMessages: {
+            abc: conversationMessagesFromGateway,
           },
           isIdle: false,
         },
       },
     })
 
-    const deferredValueRetrievePOI = {
-      poiDetails: {
-        ...createConversationItem(),
-        uuid: 'abc',
-      },
+    const deferredValueRetrieveConversations = {
+      conversationMessages: createConversationMessages(),
     }
 
-    poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
-    poisGateway.retrievePOI.resolveDeferredValue()
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
 
     await store.waitForActionEnd()
 
-    expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledTimes(0)
 
-    expect(selectCurrentPOI(store.getState())).toEqual(poiDetailsFromGateway)
+    expect(selectCurrentConversation(store.getState())).toEqual(conversationMessagesFromGateway)
 
     expect(selectCurrentFeedItem(store.getState())).toEqual(null)
   })
 
   it(`
-    Given POIs have been retrieved from gateway
-      And POIs has selected POI uuid
-    When user fetch new POIs
-    Then POIs should changes
+    Given messages have been retrieved from gateway
+      And messages has selected conversation uuid
+    When user fetch new messages
+    Then messages should changes
       And selected item should never change
   `, async () => {
-    const { store, poisGateway } = configureStoreWithSelectedPOIs()
+    const { store, messagesGateway } = configureStoreWithSelectedMessages()
 
-    const prevItems = selectPOIList(store.getState())
-    const prevSelectedItem = selectCurrentPOI(store.getState())
+    const prevItems = selectConversationList(store.getState())
+    const prevSelectedItem = selectCurrentConversation(store.getState())
 
-    store.dispatch(publicActions.retrievePOIs())
+    store.dispatch(publicActions.retrieveConversations())
 
-    poisGateway.retrievePOIs.resolveDeferredValue()
+    messagesGateway.retrieveConversations.resolveDeferredValue()
     await store.waitForActionEnd()
 
-    const nextItems = selectPOIList(store.getState())
-    const nextSelectedItem = selectCurrentPOI(store.getState())
+    const nextItems = selectConversationList(store.getState())
+    const nextSelectedItem = selectCurrentConversation(store.getState())
 
     expect(nextItems).toBeTruthy()
     expect(prevItems).not.toEqual(nextItems)
@@ -213,26 +215,24 @@ describe('POIs', () => {
   })
 
   it(`
-    Given POIs have been retrieved from gateway
-      And POIs has selected POI uuid
-    When user selects a new current POI uuid
-    Then prev and next selected POI should be truthy
-      And prev and next selected POI should be different
-      And selected feed item should be null
+    Given messages have been retrieved from gateway
+      And messages has selected conversation uuid
+    When user selects a new current conversation uuid
+    Then prev and next selected conversation should be truthy
+      And prev and next selected conversation should be different
   `, async () => {
-    const { store, poisGateway, poisEntities } = configureStoreWithSelectedPOIs()
+    const { store, messagesGateway, conversationsEntities } = configureStoreWithSelectedMessages()
 
-    const prevSelectedItem = selectCurrentPOI(store.getState())
+    const prevSelectedItem = selectCurrentConversation(store.getState())
 
-    poisGateway.retrievePOI.resolveDeferredValue()
-    poisGateway.retrievePOIs.resolveDeferredValue()
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+    messagesGateway.retrieveConversations.resolveDeferredValue()
 
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(Object.keys(poisEntities)[2]))
+    store.dispatch(publicActions.setCurrentConversationUuid(Object.keys(conversationsEntities)[2]))
 
     await store.waitForActionEnd()
 
-    const nextSelectedItem = selectCurrentPOI(store.getState())
+    const nextSelectedItem = selectCurrentConversation(store.getState())
 
     expect(prevSelectedItem).toBeTruthy()
     expect(nextSelectedItem).toBeTruthy()
@@ -242,286 +242,225 @@ describe('POIs', () => {
   })
 
   it(`
-    Given POIs have no cached items
-      And has selected POI uuid
-    When POIs have been initialized
-      And user sets selected POI uuid
-    Then POI should be retrieved from gateway
-      And POIs should be retrieved with position of POI
-      And position filter should be set to position of POI with default zoom value
-      And map position should be set to position of POI with default zoom value
+    Given messages have not been retrieved from gateway
+      And has selected conversation uuid
+    When user sets selected conversation uuid
+    Then conversation should be retrieved from gateway
   `, async () => {
-    const poisFromGateway = createPOIList()
-    const poiDetailsFromGateway = createConversationItem()
+    const conversationsFromGateway = createConversationList()
+    const conversationMessagesFromGateway = createConversationMessages()
 
-    const deferredValueRetrievePOIs = {
-      pois: poisFromGateway,
+    const deferredValueRetrieveConversations = {
+      conversations: conversationsFromGateway,
     }
-    const deferredValueRetrievePOI = {
-      poiDetails: poiDetailsFromGateway,
+    const deferredValueRetrieveConversationMessages = {
+      conversationMessages: conversationMessagesFromGateway,
     }
 
-    const poisGateway = new TestMessagesGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
-    poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
+    const messagesGateway = new TestMessagesGateway()
+    messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValueRetrieveConversations)
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversationMessages)
 
     const resolveAllDeferredValue = () => {
-      poisGateway.retrievePOIs.resolveDeferredValue()
-      poisGateway.retrievePOI.resolveDeferredValue()
+      messagesGateway.retrieveConversations.resolveDeferredValue()
+      messagesGateway.retrieveConversationMessages.resolveDeferredValue()
     }
 
-    const store = configureStoreWithPOIs(
+    const store = configureStoreWithMessages(
       {
         dependencies: {
-          poisGateway,
+          messagesGateway,
         },
         initialAppState: {
-          pois: {
-            ...fakePOIsData,
-            pois: {},
-            poisUuids: [],
-            selectedPOIUuid: null,
+          messages: {
+            ...fakeMessagesData,
+            conversations: {},
+            conversationsUuids: [],
+            selectedConversationUuid: null,
             isIdle: true,
-          },
-          location: {
-            ...defaultLocationState,
-            zoom: 45,
-            mapPosition: {
-              ...defaultLocationState.mapPosition,
-              zoom: 45,
-            },
           },
         },
       },
     )
 
-    const selectedPOIId = poisFromGateway[0].uuid
+    const selectedConversationId = conversationsFromGateway[0].uuid
 
     // --------------------------------------------------
 
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
+    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
 
     resolveAllDeferredValue()
     await store.waitForActionEnd()
 
-    expect(poisGateway.retrievePOI).toHaveBeenCalledWith({ poiUuid: selectedPOIId })
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
-      filters: {
-        location: {
-          distance: constants.POI_DISTANCE,
-          center: {
-            lat: poiDetailsFromGateway.latitude,
-            lng: poiDetailsFromGateway.longitude,
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
+    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 0 })
+  })
+
+  it(`
+    Given messages have not been retrieved from gateway
+      And has no selected conversation uuid
+    When conversation uuid is set to null
+    Then messages should be retrieved from gateway
+  `, async () => {
+    const conversationsFromGateway = createConversationList()
+
+    const deferredValueRetrieveConversations = {
+      conversations: conversationsFromGateway,
+    }
+
+    const messagesGateway = new TestMessagesGateway()
+    messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValueRetrieveConversations)
+
+    const resolveAllDeferredValue = () => {
+      messagesGateway.retrieveConversations.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithMessages(
+      {
+        dependencies: {
+          messagesGateway,
+        },
+        initialAppState: {
+          messages: {
+            ...fakeMessagesData,
+            conversations: {},
+            conversationsUuids: [],
+            selectedConversationUuid: null,
+            isIdle: true,
           },
         },
       },
-    })
+    )
 
-    expect(selectLocation(store.getState())).toStrictEqual({
-      center: {
-        lat: poiDetailsFromGateway.latitude,
-        lng: poiDetailsFromGateway.longitude,
-      },
-      displayAddress: poisFromGateway[0].address,
-      zoom: constants.DEFAULT_LOCATION.ZOOM,
-    })
+    const selectedConversationId = null
 
-    expect(selectMapPosition(store.getState())).toStrictEqual({
-      center: {
-        lat: poiDetailsFromGateway.latitude,
-        lng: poiDetailsFromGateway.longitude,
-      },
-      zoom: constants.DEFAULT_LOCATION.ZOOM,
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({
+      page: 0,
     })
   })
 
   it(`
-    Given POIs have no cached items
-      And has no selected POI uuid
-      And location has not been initialized
-    When POI uuid is set to null
-    Then location should be initialized
+    Given messages have been retrieved from gateway
+    When there is a multiple of 25 message in the list
+    Then user should be able to fetch more
   `, async () => {
-    const poisFromGateway = createPOIList()
+    const messagesGateway = new TestMessagesGateway()
 
-    const deferredValueRetrievePOIs = {
-      pois: poisFromGateway,
-    }
-
-    const poisGateway = new TestMessagesGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
-
-    const resolveAllDeferredValue = () => {
-      poisGateway.retrievePOIs.resolveDeferredValue()
-    }
-
-    const store = configureStoreWithPOIs(
-      {
-        dependencies: {
-          poisGateway,
-        },
-        initialAppState: {
-          location: {
-            ...defaultLocationState,
-            isInit: false,
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        messages: {
+          ...fakeMessagesData,
+          conversations: {
+            abc: createConversationItem(),
           },
-          authUser: {
-            ...defaultAuthUserState,
-            user: createUser(),
+          conversationsMessages: {
+            abc: Array(50).fill(createConversationMessages()[0]),
           },
-          pois: {
-            ...fakePOIsData,
-            pois: {},
-            poisUuids: [],
-            selectedPOIUuid: null,
-            isIdle: true,
-          },
-        },
-      },
-    )
-
-    const selectedPOIId = null
-
-    // --------------------------------------------------
-
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
-
-    resolveAllDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(selectLocationIsInit(store.getState())).toBe(true)
-  })
-
-  it(`
-    Given POIs have no cached items
-      And has no selected POI uuid
-      And location has been initialized
-    When POIs have been initialized
-     And POI uuid is set to null
-    Then POIs should be retrieved from gateway
-  `, async () => {
-    const poisFromGateway = createPOIList()
-
-    const deferredValueRetrievePOIs = {
-      pois: poisFromGateway,
-    }
-
-    const poisGateway = new TestMessagesGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
-
-    const resolveAllDeferredValue = () => {
-      poisGateway.retrievePOIs.resolveDeferredValue()
-    }
-
-    const store = configureStoreWithPOIs(
-      {
-        dependencies: {
-          poisGateway,
-        },
-        initialAppState: {
-          location: {
-            ...defaultLocationState,
-            isInit: true,
-          },
-          pois: {
-            ...fakePOIsData,
-            pois: {},
-            poisUuids: [],
-            selectedPOIUuid: null,
-            isIdle: true,
-          },
-        },
-      },
-    )
-
-    const selectedPOIId = null
-
-    // --------------------------------------------------
-
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
-
-    resolveAllDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
-      filters: {
-        location: {
-          distance: constants.POI_DISTANCE,
-          center: {
-            lat: selectLocation(store.getState()).center.lat,
-            lng: selectLocation(store.getState()).center.lng,
-          },
+          isIdle: false,
         },
       },
     })
+
+    await store.waitForActionEnd()
+
+    expect(selectCanFetchMoreMessages(store.getState())).toBeTruthy()
   })
 
   it(`
-    Given POIs have no cached items
-      And has selected POI uuid
-    When POIs have been initialized
-      And POI uuid set as a city id
-    Then POI details should not be retrieved from gateway
-      And POIs should be retrieved from the gateway with city coordinates
+    Given messages have been retrieved from gateway
+    When there is not a multiple of 25 messages in the list
+    Then user should not be able to fetch more
   `, async () => {
-    const poisFromGateway = createPOIList()
-    const poiDetailsFromGateway = createConversationItem()
+    const messagesGateway = new TestMessagesGateway()
 
-    const deferredValueRetrievePOIs = {
-      pois: poisFromGateway,
-    }
-    const deferredValueRetrievePOI = {
-      poiDetails: poiDetailsFromGateway,
-    }
-
-    const poisGateway = new TestMessagesGateway()
-    poisGateway.retrievePOIs.mockDeferredValueOnce(deferredValueRetrievePOIs)
-    poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
-
-    const resolveAllDeferredValue = () => {
-      poisGateway.retrievePOIs.resolveDeferredValue()
-      poisGateway.retrievePOI.resolveDeferredValue()
-    }
-
-    const store = configureStoreWithPOIs(
-      {
-        dependencies: {
-          poisGateway,
-        },
-        initialAppState: {
-          pois: {
-            ...fakePOIsData,
-            pois: {},
-            poisUuids: [],
-            selectedPOIUuid: null,
-            isIdle: true,
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        messages: {
+          ...fakeMessagesData,
+          conversations: {
+            abc: createConversationItem(),
           },
-        },
-      },
-    )
-
-    const selectedPOIId = Object.keys(EntourageCities)[0]
-
-    // --------------------------------------------------
-
-    store.dispatch(publicActions.init())
-    store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
-
-    resolveAllDeferredValue()
-    await store.waitForActionEnd()
-
-    expect(poisGateway.retrievePOI).toHaveBeenCalledTimes(0)
-    expect(poisGateway.retrievePOIs).toHaveBeenCalledWith({
-      filters: {
-        location: {
-          center: EntourageCities[Object.keys(EntourageCities)[0] as Cities].center,
-          distance: constants.POI_DISTANCE,
+          conversationsMessages: {
+            abc: Array(34).fill(createConversationMessages()[0]),
+          },
+          isIdle: false,
         },
       },
     })
+
+    await store.waitForActionEnd()
+
+    expect(selectCanFetchMoreMessages(store.getState())).toBeFalsy()
+  })
+
+  it(`
+    Given messages have been retrieved from gateway
+    When there a multiple of 25 messages in the list
+      And user asks to fetch more
+    Then older messages should be fetched from gateway
+      And older messages should be added to existing messages
+  `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+
+    const messagesFromStore = Array(25).fill(createConversationMessages()[0])
+
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        messages: {
+          ...fakeMessagesData,
+          conversations: {
+            abc: createConversationItem(),
+          },
+          conversationsMessages: {
+            abc: messagesFromStore,
+          },
+          isIdle: false,
+        },
+      },
+    })
+
+    await store.waitForActionEnd()
+
+    expect(selectCanFetchMoreMessages(store.getState())).toBeFalsy()
+
+    const conversationMessagesFromGateway = [
+      ...createConversationMessages(),
+    ]
+
+    const deferredValueRetrieveConversations = {
+      conversationMessages: [
+        ...Array(25).fill(conversationMessagesFromGateway[0]),
+      ],
+    }
+
+    const selectedConversationId = 'abc'
+
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+
+    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
+    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
+
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
+
+    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+
+    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
+      ...messagesFromStore,
+      ...deferredValueRetrieveConversations.conversationMessages,
+    ])
   })
 })
-*/
+

@@ -107,7 +107,7 @@ export const publicActions = {
   init,
   cancel,
   retrievePOIs,
-  setCurrentPOIUuid,
+  setCurrentPOIUuid: setCurrentConversationUuid,
   removeCurrentPOIUuid,
   togglePOIsFilter,
   resetPOIsFilters,

@@ -1,4 +1,6 @@
-import { FeedJoinStatus } from 'src/core/api'
+import { AuthUserAction, AuthUserActionType } from '../authUser/authUser.actions'
+import { FeedJoinStatus, User } from 'src/core/api'
+import { DateISO } from 'src/utils/types'
 import { MessagesAction, MessagesActionType } from './messages.actions'
 
 export interface ConversationItem {
@@ -12,6 +14,20 @@ export interface ConversationItem {
   };
   title: string;
   uuid: string;
+  id: number;
+}
+
+export interface ConversationMessage {
+  content: string;
+  createdAt: DateISO;
+  id: number;
+  messageType: 'text';
+  user: {
+    avatarUrl: User['avatarUrl'];
+    displayName: NonNullable<User['displayName']>;
+    id: NonNullable<User['id']>;
+    partner: User['partner'];
+  };
 }
 
 export interface MessagesState {
@@ -19,10 +35,14 @@ export interface MessagesState {
   fetching: boolean;
   conversationsUuids: string[];
   conversations: {
-    [itemUuid: string]: ConversationItem;
+    [conversationUuid: string]: ConversationItem;
+  };
+  conversationsMessages: {
+    [conversationUuid: string]: ConversationMessage[];
   };
   selectedConversationUuid: string | null;
   page: number;
+  messagesFetching: boolean;
 }
 
 export const defaultMessagesState: MessagesState = {
@@ -32,9 +52,14 @@ export const defaultMessagesState: MessagesState = {
   conversations: {},
   selectedConversationUuid: null,
   page: 0,
+  conversationsMessages: {},
+  messagesFetching: false,
 }
 
-export function messagesReducer(state: MessagesState = defaultMessagesState, action: MessagesAction): MessagesState {
+export function messagesReducer(
+  state: MessagesState = defaultMessagesState,
+  action: MessagesAction | AuthUserAction,
+): MessagesState {
   switch (action.type) {
     case MessagesActionType.RETRIEVE_CONVERSATIONS_STARTED: {
       return {
@@ -44,6 +69,10 @@ export function messagesReducer(state: MessagesState = defaultMessagesState, act
     }
 
     case MessagesActionType.RETRIEVE_CONVERSATIONS_SUCCEEDED: {
+      const newConversations = action.payload.conversations.filter(
+        (conversation) => !state.conversationsUuids.includes(conversation.uuid),
+      )
+
       return {
         ...state,
         isIdle: false,
@@ -55,7 +84,11 @@ export function messagesReducer(state: MessagesState = defaultMessagesState, act
             }
           }, state.conversations,
         ),
-        conversationsUuids: action.payload.conversations.map((item: ConversationItem) => item.uuid),
+
+        conversationsUuids: [
+          ...state.conversationsUuids,
+          ...newConversations.map((item: ConversationItem) => item.uuid),
+        ],
         fetching: false,
       }
     }
@@ -71,6 +104,23 @@ export function messagesReducer(state: MessagesState = defaultMessagesState, act
       return {
         ...state,
         selectedConversationUuid: action.payload,
+      }
+    }
+
+    case MessagesActionType.DECREMENT_PAGE_NUMBER: {
+      return {
+        ...state,
+        page: state.page > 0 ? state.page - 1 : 0,
+      }
+    }
+
+    case AuthUserActionType.SET_USER: {
+      if (!action.payload) {
+        return defaultMessagesState
+      }
+
+      return {
+        ...state,
       }
     }
 

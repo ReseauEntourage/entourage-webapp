@@ -10,9 +10,10 @@ export const MessagesActionType = {
   RETRIEVE_NEXT_CONVERSATIONS: 'MESSAGES/RETRIEVE_NEXT_CONVERSATIONS',
   RETRIEVE_CONVERSATIONS_STARTED: 'MESSAGES/RETRIEVE_CONVERSATIONS_STARTED',
   RETRIEVE_CONVERSATIONS_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATIONS_SUCCEEDED',
-  RETRIEVE_CONVERSATION_DETAILS_STARTED: 'MESSAGES/RETRIEVE_CONVERSATION_DETAILS_STARTED',
-  RETRIEVE_CONVERSATION_DETAILS_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_DETAILS_SUCCEEDED',
+  RETRIEVE_CONVERSATION_MESSAGES_STARTED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_STARTED',
+  RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED',
   SET_CURRENT_CONVERSATION_UUID: 'MESSAGES/SET_CURRENT_CONVERSATION_UUID',
+  DECREMENT_PAGE_NUMBER: 'MESSAGES/DECREMENT_PAGE_NUMBER',
 } as const
 
 export type MessagesActionType = keyof typeof MessagesActionType;
@@ -28,6 +29,12 @@ function retrieveConversations() {
 function retrieveNextConversations() {
   return {
     type: MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS,
+  }
+}
+
+function decrementPageNumber() {
+  return {
+    type: MessagesActionType.DECREMENT_PAGE_NUMBER,
   }
 }
 
@@ -47,27 +54,25 @@ function retrieveConversationsSuccess(
     payload,
   }
 }
-/*
 
-function retrievePOIDetailsStarted() {
+function retrieveConversationMessagesStarted() {
   return {
-    type: MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_STARTED,
+    type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_STARTED,
   }
 }
 
-function retrievePOIDetailsSuccess(
+function retrieveConversationMessagesSuccess(
   payload: {
-    poiDetails: MessagesState['detailedConversations'][string];
+    conversationMessages: MessagesState['conversationsMessages'][string];
   },
 ) {
   return {
-    type: MessagesActionType.RETRIEVE_POI_DETAILS_SUCCEEDED,
+    type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED,
     payload,
   }
 }
-*/
 
-function setCurrentPOIUuid(payload: string | null) {
+function setCurrentConversationUuid(payload: string | null) {
   return {
     type: MessagesActionType.SET_CURRENT_CONVERSATION_UUID,
     payload,
@@ -78,12 +83,13 @@ function setCurrentPOIUuid(payload: string | null) {
 export const publicActions = {
   retrieveConversations,
   retrieveNextConversations,
-  setCurrentPOIUuid,
+  setCurrentConversationUuid,
 }
 
 const privateActions = {
   retrieveConversationsStarted,
   retrieveConversationsSuccess,
+  decrementPageNumber,
 }
 
 export const actions = {
