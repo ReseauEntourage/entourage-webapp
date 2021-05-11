@@ -1,9 +1,10 @@
+import { AppContext } from 'next/app'
 import React from 'react'
 import { SplashScreen } from 'src/components/SplashScreen'
 import { MapPOIs } from 'src/containers/MapContainer'
-import { MetaData } from 'src/containers/MetaData'
-import { env } from 'src/core/env'
-import { texts } from 'src/i18n'
+import { POIsMetadata } from 'src/containers/POIsMetadata'
+import { wrapperStore } from 'src/core/boostrapStore'
+import { poisActions, selectPOIsIsIdle, selectPOIsIsFetching, selectPOIDetailsIsFetching } from 'src/core/useCases/pois'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
@@ -14,19 +15,33 @@ const POIs: StatelessPage<Props> = () => {
 
   return (
     <>
-      <MetaData
-        description={texts.nav.pageDescriptions.pois}
-        title={`${texts.nav.pageTitles.pois} - ${texts.nav.pageTitles.main}`}
-        url={`${env.SERVER_URL}/pois`}
-      />
+      <POIsMetadata />
       { !googleMapApiIsLoaded ? <SplashScreen /> : <MapPOIs /> }
     </>
   )
 }
 
-// Actions.getInitialProps = async (ctx) => {
-//    Wait until React Queries support SSR. Coming soon
-//    see https://github.com/tannerlinsley/react-query/issues/14
-// }
+POIs.getInitialProps = wrapperStore.getInitialPageProps((store) => {
+  return (ctx: AppContext['ctx']) => {
+    const poiId = ctx.query.poiId as string
+
+    return new Promise((resolve) => {
+      store.subscribe(() => {
+        const POIsIsIdle = selectPOIsIsIdle(store.getState())
+        const POIsIsFetching = selectPOIsIsFetching(store.getState())
+        const POIDetailsIsFetching = selectPOIDetailsIsFetching(store.getState())
+
+        const isReady = !POIsIsIdle && !POIsIsFetching && !POIDetailsIsFetching
+
+        if (isReady) {
+          resolve()
+        }
+      })
+
+      store.dispatch(poisActions.init())
+      store.dispatch(poisActions.setCurrentPOIUuid(poiId))
+    })
+  }
+})
 
 export default POIs

@@ -1,3 +1,4 @@
+import { createWrapper } from 'next-redux-wrapper'
 import { StateFromReducersMapObject } from 'redux'
 import { persistStore } from 'redux-persist'
 import { HTTPMessagesGateway } from '../adapters/gateways/HTTPMessagesGateway'
@@ -45,9 +46,13 @@ export function bootstrapStore() {
     dependencies,
   })
 
-  const persistor = persistStore(store)
+  // @ts-expect-error
+  // eslint-disable-next-line
+  store.__persistor = persistStore(store)
 
-  return { store, persistor }
+  return { store }
 }
 
 export type AppState = StateFromReducersMapObject<typeof reducers>;
+
+export const wrapperStore = createWrapper(() => bootstrapStore().store)

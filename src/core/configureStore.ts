@@ -1,3 +1,4 @@
+import { HYDRATE } from 'next-redux-wrapper'
 import {
   createStore,
   combineReducers,
@@ -50,7 +51,23 @@ export function configureStore<
     },
   })
 
-  const rootReducer = combineReducers(reducers)
+  const combinedReducer = combineReducers(reducers)
+
+  type RootReducerState = Parameters<typeof combinedReducer>[0]
+  type RootReducerAction = Parameters<typeof combinedReducer>[1]
+
+  const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
+    if (action.type === HYDRATE) {
+      const nextState = {
+        ...state,
+        ...action.payload,
+      }
+
+      return nextState
+    }
+
+    return combinedReducer(state, action)
+  }
 
   const composeEnhancers = dev && typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
     ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({})

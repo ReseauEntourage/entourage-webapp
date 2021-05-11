@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { POIList } from '../LeftLists'
 import { POIFilters } from '../LeftLists/Filters'
@@ -25,15 +25,10 @@ export function MapPOIs() {
 
   useMount(() => {
     sendEvent('View__POIs')
-    dispatch(poisActions.init())
     return () => {
       dispatch(poisActions.cancel())
     }
   })
-
-  useEffect(() => {
-    dispatch(poisActions.setCurrentPOIUuid(poiId || null))
-  }, [poiId, dispatch])
 
   return (
     <>
