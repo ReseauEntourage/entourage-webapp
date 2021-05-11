@@ -10,7 +10,7 @@ interface LeftListProps {
   filters?: JSX.Element;
 }
 
-export function LeftList(props: LeftListProps) {
+export const LeftList = React.memo((props: LeftListProps) => {
   const { isLoading, list, filters } = props
 
   return (
@@ -29,4 +29,4 @@ export function LeftList(props: LeftListProps) {
       <Box />
     </S.Container>
   )
-}
+})
