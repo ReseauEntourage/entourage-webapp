@@ -25,7 +25,7 @@ export function selectPOIDetailsIsFetching(state: AppState) {
 export const selectPOIList = createSelector(
   (state: AppState) => state.pois.poisUuids,
   (state: AppState) => state.pois.pois,
-  (poisUuids, pois) => poisUuids.map((poiId) => {
+  (poisUuids: POIsState['poisUuids'], pois: POIsState['pois']) => poisUuids.map((poiId) => {
     return pois[poiId]
   }),
 )
