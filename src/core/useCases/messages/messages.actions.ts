@@ -12,8 +12,10 @@ export const MessagesActionType = {
   RETRIEVE_CONVERSATIONS_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATIONS_SUCCEEDED',
   RETRIEVE_CONVERSATION_MESSAGES_STARTED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_STARTED',
   RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED',
+  RETRIEVE_OLDER_CONVERSATION_MESSAGES: 'MESSAGES/RETRIEVE_OLDER_CONVERSATION_MESSAGES',
   SET_CURRENT_CONVERSATION_UUID: 'MESSAGES/SET_CURRENT_CONVERSATION_UUID',
   DECREMENT_PAGE_NUMBER: 'MESSAGES/DECREMENT_PAGE_NUMBER',
+  SEND_MESSAGE: 'MESSAGES/SEND_MESSAGE',
 } as const
 
 export type MessagesActionType = keyof typeof MessagesActionType;
@@ -63,11 +65,19 @@ function retrieveConversationMessagesStarted() {
 
 function retrieveConversationMessagesSuccess(
   payload: {
+    conversationUuid: string;
     conversationMessages: MessagesState['conversationsMessages'][string];
   },
 ) {
   return {
     type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED,
+    payload,
+  }
+}
+
+function retrieveOlderConversationMessages(payload: { before: string | null; }) {
+  return {
+    type: MessagesActionType.RETRIEVE_OLDER_CONVERSATION_MESSAGES,
     payload,
   }
 }
@@ -78,17 +88,30 @@ function setCurrentConversationUuid(payload: string | null) {
     payload,
   }
 }
+
+function sendMessage(payload: {
+  message: string;
+}) {
+  return {
+    type: MessagesActionType.SEND_MESSAGE,
+    payload,
+  }
+}
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
   retrieveConversations,
   retrieveNextConversations,
   setCurrentConversationUuid,
+  retrieveOlderConversationMessages,
+  sendMessage,
 }
 
 const privateActions = {
   retrieveConversationsStarted,
   retrieveConversationsSuccess,
+  retrieveConversationMessagesStarted,
+  retrieveConversationMessagesSuccess,
   decrementPageNumber,
 }
 

@@ -1,5 +1,3 @@
-import Box from '@material-ui/core/Box'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -7,7 +5,6 @@ import { SplashScreen } from '../../components/SplashScreen'
 import {
   messagesActions,
   selectConversationList,
-  selectMessagesIsFetching,
   selectMessagesIsIdle,
 } from 'src/core/useCases/messages'
 import { ConversationDetail } from './ConversationDetail'

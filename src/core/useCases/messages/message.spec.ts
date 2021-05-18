@@ -2,17 +2,8 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { selectCurrentFeedItem } from '../feed'
-import {
-  selectLocation,
-  selectLocationIsInit,
-  locationSaga,
-  selectMapPosition,
-} from '../location'
-import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
-import { constants } from 'src/constants'
-import { Cities, EntourageCities } from 'src/utils/types'
+import { uniqIntId } from 'src/utils/misc'
 import { TestMessagesGateway } from './TestMessagesGateway'
 import {
   createConversationItem,
@@ -22,11 +13,15 @@ import {
 } from './__mocks__'
 
 import { publicActions } from './messages.actions'
+import { ConversationMessage } from './messages.reducer'
 import { messagesSaga } from './messages.saga'
 import {
   selectConversationList,
   selectCurrentConversation,
-  selectConversationMessagesIsFetching, selectCanFetchMoreMessages, selectCurrentConversationMessages,
+  selectConversationMessagesIsFetching,
+  selectCanFetchMoreMessages,
+  selectCurrentConversationMessages,
+  selectLastMessageDateFromConversation,
 } from './messages.selectors'
 
 function configureStoreWithMessages(
@@ -92,7 +87,7 @@ function configureStoreWithSelectedMessages() {
   }
 }
 
-describe('Messages', () => {
+describe('Conversation', () => {
   it(`
     Given messages are at initial state
     When no action is triggered,
@@ -108,7 +103,8 @@ describe('Messages', () => {
     When user selects a conversation that has never been selected before
     Then conversation messages should be fetching until request is succeeded
       And conversation messages should be retrieved successfully from gateway
-      And selected conversation be defined with these conversation messages
+      And selected conversation be defined with the conversation details
+      And selected conversation messages be defined with these conversation messages
       And messages fetching state be false after server response
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
@@ -142,17 +138,18 @@ describe('Messages', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
-    expect(selectCurrentConversation(store.getState())).toEqual(conversationMessagesFromGateway)
-    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+    expect(selectCurrentConversation(store.getState())).toEqual(fakeMessagesData.conversations[selectedConversationId])
+    expect(selectCurrentConversationMessages(store.getState())).toEqual(conversationMessagesFromGateway)
 
-    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
+    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
   })
 
   it(`
     Given messages have been retrieved from gateway
     When user selects a conversation that has already been selected before
     Then conversation should not be retrieved from gateway
-      And selected conversation be defined with these conversation messages
+      And selected conversation be defined with the conversation details
+      And selected conversation messages be defined with these conversation messages
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
     const conversationMessagesFromGateway = createConversationMessages()
@@ -182,22 +179,23 @@ describe('Messages', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledTimes(0)
 
-    expect(selectCurrentConversation(store.getState())).toEqual(conversationMessagesFromGateway)
-
-    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
+    expect(selectCurrentConversation(store.getState())).toEqual(fakeMessagesData.conversations.abc)
+    expect(selectCurrentConversationMessages(store.getState())).toEqual(conversationMessagesFromGateway)
   })
 
   it(`
     Given messages have been retrieved from gateway
       And messages has selected conversation uuid
     When user fetch new messages
-    Then messages should changes
+    Then conversation details should change
+      And conversation messages should change
       And selected item should never change
   `, async () => {
     const { store, messagesGateway } = configureStoreWithSelectedMessages()
 
     const prevItems = selectConversationList(store.getState())
-    const prevSelectedItem = selectCurrentConversation(store.getState())
+    const prevSelectedConversation = selectCurrentConversation(store.getState())
+    const prevSelectedConversationMessages = selectCurrentConversationMessages(store.getState())
 
     store.dispatch(publicActions.retrieveConversations())
 
@@ -205,25 +203,32 @@ describe('Messages', () => {
     await store.waitForActionEnd()
 
     const nextItems = selectConversationList(store.getState())
-    const nextSelectedItem = selectCurrentConversation(store.getState())
+    const nextSelectedConversation = selectCurrentConversation(store.getState())
+    const nextSelectedConversationMessages = selectCurrentConversationMessages(store.getState())
 
     expect(nextItems).toBeTruthy()
     expect(prevItems).not.toEqual(nextItems)
 
-    expect(nextSelectedItem).toBeTruthy()
-    expect(prevSelectedItem).toEqual(nextSelectedItem)
+    expect(nextSelectedConversation).toBeTruthy()
+    expect(prevSelectedConversation).toEqual(nextSelectedConversation)
+
+    expect(nextSelectedConversationMessages).toBeTruthy()
+    expect(prevSelectedConversationMessages).toEqual(nextSelectedConversationMessages)
   })
 
   it(`
     Given messages have been retrieved from gateway
       And messages has selected conversation uuid
     When user selects a new current conversation uuid
-    Then prev and next selected conversation should be truthy
-      And prev and next selected conversation should be different
+    Then prev and next selected conversation details should be truthy
+      And prev and next selected conversation messages should be truthy
+      And prev and next selected conversation details should be different
+      And prev and next selected conversation messages should be different
   `, async () => {
     const { store, messagesGateway, conversationsEntities } = configureStoreWithSelectedMessages()
 
-    const prevSelectedItem = selectCurrentConversation(store.getState())
+    const prevSelectedConversation = selectCurrentConversation(store.getState())
+    const prevSelectedConversationMessages = selectCurrentConversationMessages(store.getState())
 
     messagesGateway.retrieveConversationMessages.resolveDeferredValue()
     messagesGateway.retrieveConversations.resolveDeferredValue()
@@ -231,21 +236,25 @@ describe('Messages', () => {
     store.dispatch(publicActions.setCurrentConversationUuid(Object.keys(conversationsEntities)[2]))
 
     await store.waitForActionEnd()
+    const nextSelectedConversation = selectCurrentConversation(store.getState())
+    const nextSelectedConversationMessages = selectCurrentConversationMessages(store.getState())
 
-    const nextSelectedItem = selectCurrentConversation(store.getState())
+    expect(prevSelectedConversation).toBeTruthy()
+    expect(nextSelectedConversation).toBeTruthy()
 
-    expect(prevSelectedItem).toBeTruthy()
-    expect(nextSelectedItem).toBeTruthy()
+    expect(prevSelectedConversation).not.toEqual(nextSelectedConversation)
 
-    expect(prevSelectedItem).not.toEqual(nextSelectedItem)
-    expect(selectCurrentFeedItem(store.getState())).toEqual(null)
+    expect(prevSelectedConversationMessages).toBeTruthy()
+    expect(nextSelectedConversationMessages).toBeTruthy()
+
+    expect(prevSelectedConversationMessages).not.toEqual(nextSelectedConversationMessages)
   })
 
   it(`
     Given messages have not been retrieved from gateway
       And has selected conversation uuid
     When user sets selected conversation uuid
-    Then conversation should be retrieved from gateway
+      Then conversation messages should be retrieved from gateway
   `, async () => {
     const conversationsFromGateway = createConversationList()
     const conversationMessagesFromGateway = createConversationMessages()
@@ -290,6 +299,7 @@ describe('Messages', () => {
     store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
 
     resolveAllDeferredValue()
+
     await store.waitForActionEnd()
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
@@ -300,7 +310,7 @@ describe('Messages', () => {
     Given messages have not been retrieved from gateway
       And has no selected conversation uuid
     When conversation uuid is set to null
-    Then messages should be retrieved from gateway
+    Then conversations should be retrieved from gateway
   `, async () => {
     const conversationsFromGateway = createConversationList()
 
@@ -358,6 +368,7 @@ describe('Messages', () => {
       initialAppState: {
         messages: {
           ...fakeMessagesData,
+          selectedConversationUuid: 'abc',
           conversations: {
             abc: createConversationItem(),
           },
@@ -386,6 +397,7 @@ describe('Messages', () => {
       initialAppState: {
         messages: {
           ...fakeMessagesData,
+          selectedConversationUuid: 'abc',
           conversations: {
             abc: createConversationItem(),
           },
@@ -406,18 +418,24 @@ describe('Messages', () => {
     Given messages have been retrieved from gateway
     When there a multiple of 25 messages in the list
       And user asks to fetch more
-    Then older messages should be fetched from gateway
+    Then the oldest message date should really be the oldest message date
+      And older messages should be fetched from gateway
+      And gateway should have been called with the oldest message date
       And older messages should be added to existing messages
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
 
     const messagesFromStore = Array(25).fill(createConversationMessages()[0])
 
+    const oldestDate = '1998-04-22T06:00:00Z'
+    messagesFromStore[messagesFromStore.length - 1].createdAt = oldestDate
+
     const store = configureStoreWithMessages({
       dependencies: { messagesGateway },
       initialAppState: {
         messages: {
           ...fakeMessagesData,
+          selectedConversationUuid: 'abc',
           conversations: {
             abc: createConversationItem(),
           },
@@ -431,7 +449,7 @@ describe('Messages', () => {
 
     await store.waitForActionEnd()
 
-    expect(selectCanFetchMoreMessages(store.getState())).toBeFalsy()
+    expect(selectCanFetchMoreMessages(store.getState())).toBeTruthy()
 
     const conversationMessagesFromGateway = [
       ...createConversationMessages(),
@@ -448,18 +466,227 @@ describe('Messages', () => {
     messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
     messagesGateway.retrieveConversationMessages.resolveDeferredValue()
 
-    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
-    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
+    const lastMessageDate = selectLastMessageDateFromConversation(store.getState())
+
+    store.dispatch(publicActions.retrieveOlderConversationMessages({
+      before: lastMessageDate,
+    }))
 
     await store.waitForActionEnd()
 
-    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
+    expect(lastMessageDate).toStrictEqual(oldestDate)
 
-    expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({
+      entourageUuid: selectedConversationId, before: oldestDate,
+    })
 
     expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
       ...messagesFromStore,
       ...deferredValueRetrieveConversations.conversationMessages,
+    ])
+  })
+
+  it(`
+    Given messages have been retrieved from gateway
+      And user has selected a conversation
+      And the conversation messages have been retrieved
+    When user sends a new message
+    Then the new message should be sent to gateway
+      And the selected conversation messages list should be retrieved from gateway
+      And the selected conversation messages list should contain the new message
+      And the new message should be set as the last message of the conversation
+  `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+
+    const storeConversation = createConversationItem()
+    const storeMessages = Array(50).fill(createConversationMessages()[0])
+
+    const loggedInUser = createUser()
+
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        authUser: {
+          ...defaultAuthUserState,
+          user: loggedInUser,
+        },
+        messages: {
+          ...fakeMessagesData,
+          selectedConversationUuid: 'abc',
+          conversations: {
+            abc: storeConversation,
+          },
+          conversationsMessages: {
+            abc: storeMessages,
+          },
+          isIdle: false,
+        },
+      },
+    })
+
+    const newMessageParams = { message: 'Bonsoir' }
+
+    const newMessageEntity: ConversationMessage = {
+      content: newMessageParams.message,
+      createdAt: '2021-04-22T06:00:00Z',
+      id: uniqIntId(),
+      messageType: 'text',
+      user: {
+        avatarUrl: loggedInUser.avatarUrl,
+        displayName: `${loggedInUser.firstName} ${loggedInUser.lastName[0]}`,
+        id: loggedInUser.id,
+        partner: null,
+      },
+    }
+
+    messagesGateway.sendMessage.mockDeferredValueOnce()
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce({
+      conversationMessages: [
+        ...storeMessages,
+        newMessageEntity,
+      ],
+    })
+
+    messagesGateway.sendMessage.resolveDeferredValue()
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+
+    store.dispatch(publicActions.sendMessage(newMessageParams))
+
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.sendMessage).toHaveBeenCalledWith({
+      entourageUuid: 'abc', message: newMessageParams.message,
+    })
+
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({
+      entourageUuid: 'abc',
+    })
+
+    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
+      ...storeMessages,
+      newMessageEntity,
+    ])
+
+    expect(selectCurrentConversation(store.getState())).toStrictEqual({
+      ...storeConversation,
+      lastMessage: {
+        text: newMessageParams.message,
+      },
+    })
+  })
+
+  it(`
+    Given user starts a new conversation
+    When user sends a new message
+    Then the new message should be sent to gateway
+      And the new conversation messages list should be retrieved from gateway
+      And the new conversation messages list should contain only the new message
+      And the conversation list should retrieved from gateway
+      And the conversation list should be updated with the newly created conversation
+  `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+
+    const storeConversation = {
+      ...createConversationItem(),
+      uuid: 'abc',
+    }
+
+    const newConversation = {
+      ...createConversationItem(),
+      uuid: 'def',
+    }
+    const storeMessages = Array(50).fill(createConversationMessages()[0])
+
+    const loggedInUser = createUser()
+
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        authUser: {
+          ...defaultAuthUserState,
+          user: loggedInUser,
+        },
+        messages: {
+          ...fakeMessagesData,
+          conversationsUuids: ['abc'],
+          selectedConversationUuid: 'def',
+          conversations: {
+            abc: storeConversation,
+            def: newConversation,
+          },
+          conversationsMessages: {
+            abc: storeMessages,
+            def: [],
+          },
+          isIdle: false,
+        },
+      },
+    })
+
+    const newMessageParams = { message: 'Bonsoir' }
+
+    const newMessageEntity: ConversationMessage = {
+      content: newMessageParams.message,
+      createdAt: '2021-04-22T06:00:00Z',
+      id: uniqIntId(),
+      messageType: 'text',
+      user: {
+        avatarUrl: loggedInUser.avatarUrl,
+        displayName: `${loggedInUser.firstName} ${loggedInUser.lastName[0]}`,
+        id: loggedInUser.id,
+        partner: null,
+      },
+    }
+
+    const updatedConversation = {
+      ...newConversation,
+      lastMessage: {
+        text: newMessageParams.message,
+      },
+      uuid: 'def',
+    }
+
+    const deferredValueRetrieveConversations = {
+      conversations: [
+        storeConversation,
+        updatedConversation,
+      ],
+    }
+
+    messagesGateway.sendMessage.mockDeferredValueOnce()
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce({
+      conversationMessages: [
+        newMessageEntity,
+      ],
+    })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValueRetrieveConversations)
+
+    store.dispatch(publicActions.sendMessage(newMessageParams))
+
+    messagesGateway.sendMessage.resolveDeferredValue()
+    messagesGateway.retrieveConversations.resolveDeferredValue()
+    messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.sendMessage).toHaveBeenCalledWith({
+      entourageUuid: 'def',
+      message: newMessageParams.message,
+    })
+
+    expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
+      page: 1,
+    })
+
+    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
+      newMessageEntity,
+    ])
+
+    expect(selectCurrentConversation(store.getState())).toStrictEqual(updatedConversation)
+
+    expect(selectConversationList(store.getState())).toStrictEqual([
+      storeConversation,
+      updatedConversation,
     ])
   })
 })

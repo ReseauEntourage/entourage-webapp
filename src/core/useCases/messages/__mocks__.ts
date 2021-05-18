@@ -36,8 +36,8 @@ export function createConversationMessages(): ConversationMessage[] {
   return [
     {
       content: 'Bonjour',
-      createdAt: '1977-04-22T06:00:00Z',
-      id: 123,
+      createdAt: '2000-04-22T06:00:00Z',
+      id: uniqIntId(),
       messageType: 'text',
       user: {
         avatarUrl: 'https://avatar.com',
@@ -48,8 +48,8 @@ export function createConversationMessages(): ConversationMessage[] {
     },
     {
       content: 'Aurevoir',
-      createdAt: '1977-05-22T06:00:00Z',
-      id: 456,
+      createdAt: '1999-05-22T06:00:00Z',
+      id: uniqIntId(),
       messageType: 'text',
       user: {
         avatarUrl: 'https://avatar.com',

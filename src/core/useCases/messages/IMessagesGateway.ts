@@ -7,8 +7,13 @@ export interface IMessagesGateway {
 
   retrieveConversationMessages(data: {
     entourageUuid: ConversationItem['uuid'];
-    before: string;
+    before?: string;
   }): Promise<{
     conversationMessages: ConversationMessage[];
   }>;
+
+  sendMessage(data: {
+    entourageUuid: ConversationItem['uuid'];
+    message: string;
+  }): Promise<void | null>;
 }

@@ -27,7 +27,7 @@ export interface ConversationMessage {
     displayName: NonNullable<User['displayName']>;
     id: NonNullable<User['id']>;
     partner: User['partner'];
-  };
+  } | null;
 }
 
 export interface MessagesState {
@@ -100,6 +100,13 @@ export function messagesReducer(
       }
     }
 
+    case MessagesActionType.DECREMENT_PAGE_NUMBER: {
+      return {
+        ...state,
+        page: state.page > 0 ? state.page - 1 : 0,
+      }
+    }
+
     case MessagesActionType.SET_CURRENT_CONVERSATION_UUID: {
       return {
         ...state,
@@ -107,11 +114,51 @@ export function messagesReducer(
       }
     }
 
-    case MessagesActionType.DECREMENT_PAGE_NUMBER: {
+    case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_STARTED: {
       return {
         ...state,
-        page: state.page > 0 ? state.page - 1 : 0,
+        messagesFetching: true,
       }
+    }
+
+    case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: {
+      const messagesInStore = state.conversationsMessages[action.payload.conversationUuid] ?? []
+      const messagesIds = messagesInStore.map((message) => message.id)
+
+      const newMessages = action.payload.conversationMessages.filter(
+        (message) => !messagesIds.includes(message.id),
+      )
+
+      return {
+        ...state,
+        conversationsMessages: {
+          ...state.conversationsMessages,
+          [action.payload.conversationUuid]: [
+            ...messagesInStore,
+            ...newMessages,
+          ],
+        },
+        messagesFetching: false,
+      }
+    }
+
+    case MessagesActionType.SEND_MESSAGE: {
+      if (state.selectedConversationUuid) {
+        return {
+          ...state,
+          conversations: {
+            ...state.conversations,
+            [state.selectedConversationUuid]: {
+              ...state.conversations[state.selectedConversationUuid],
+              lastMessage: {
+                text: action.payload.message,
+              },
+            },
+          },
+        }
+      }
+
+      return { ...state }
     }
 
     case AuthUserActionType.SET_USER: {

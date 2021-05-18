@@ -17,6 +17,7 @@ export function selectMessagesIsFetching(state: AppState) {
 }
 
 export function selectConversationList(state: AppState) {
+  // TODO Use reselect
   return state.messages.conversationsUuids.map((conversationUuid) => {
     return state.messages.conversations[conversationUuid]
   })
@@ -42,6 +43,15 @@ export function selectCurrentConversation(state: AppState) {
 export function selectCurrentConversationMessages(state: AppState) {
   const { selectedConversationUuid, conversationsMessages } = state.messages
   return selectedConversationUuid ? conversationsMessages[selectedConversationUuid] : null
+}
+
+export function selectLastMessageDateFromConversation(state: AppState) {
+  const messages = selectCurrentConversationMessages(state)
+  if (!messages || messages.length === 0) {
+    return null
+  }
+  const lastMessage = messages[messages.length - 1]
+  return lastMessage.createdAt
 }
 
 export function selectCanFetchMoreMessages(state: AppState) {

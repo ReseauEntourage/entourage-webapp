@@ -11,7 +11,7 @@ export const constants = {
       lat: 48.856491799999986,
       lng: 2.334808400000014,
     },
-    ZOOM: 15,
+    ZOOM: 14,
   },
   POI_DISTANCE: 1,
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',

@@ -2,11 +2,11 @@ import { api } from 'src/core/api'
 import { IMessagesGateway } from 'src/core/useCases/messages'
 
 export class HTTPMessagesGateway implements IMessagesGateway {
-  retrieveConversations: IMessagesGateway['retrieveConversations'] = (data) => {
+  retrieveConversations: IMessagesGateway['retrieveConversations'] = ({ page }) => {
     return api.request({
       name: '/myfeeds GET',
       params: {
-        page: data.page,
+        page,
       },
     }).then((res) => {
       const { feeds } = res.data
@@ -24,6 +24,49 @@ export class HTTPMessagesGateway implements IMessagesGateway {
       return {
         conversations: items,
       }
+    })
+  }
+
+  retrieveConversationMessages: IMessagesGateway['retrieveConversationMessages'] = ({ entourageUuid, before }) => {
+    return api.request({
+      name: '/entourages/:entourageId/chat_messages GET',
+      pathParams: {
+        entourageUuid,
+      },
+      params: {
+        before,
+      },
+    }).then((res) => {
+      const { chatMessages } = res.data
+      const items = chatMessages.map((chatMessage) => {
+        return {
+          content: chatMessage.content,
+          createdAt: chatMessage.createdAt,
+          id: chatMessage.id,
+          messageType: chatMessage.messageType,
+          user: chatMessage.user,
+        }
+      })
+
+      return {
+        conversationMessages: items,
+      }
+    })
+  }
+
+  sendMessage: IMessagesGateway['sendMessage'] = ({ entourageUuid, message }) => {
+    return api.request({
+      name: '/entourages/:entourageId/chat_messages POST',
+      pathParams: {
+        entourageUuid,
+      },
+      data: {
+        chatMessage: {
+          content: message,
+        },
+      },
+    }).then(() => {
+      return null
     })
   }
 }

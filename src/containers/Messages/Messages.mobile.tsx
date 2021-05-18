@@ -11,6 +11,7 @@ export function MessagesMobile() {
   const entourageUuid = useEntourageUuid()
   const { data: dataMyFeeds } = useQueryMyFeeds()
 
+  // TODO USE REDUX
   if (!dataMyFeeds) {
     return (
       <Box alignItems="center" display="flex" height="100%" justifyContent="center">

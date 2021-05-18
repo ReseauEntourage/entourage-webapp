@@ -167,7 +167,7 @@ export function feedReducer(
         ),
         itemsUuids: [
           ...state.itemsUuids,
-          ...action.payload.items.map((item) => item.uuid),
+          ...action.payload.items.map((item: FeedState['items'][number]) => item.uuid),
         ],
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
@@ -301,7 +301,7 @@ export function feedReducer(
     }
 
     case FeedActionType.TOGGLE_ACTION_TYPES_FILTER: {
-      const currentActionTypesFilters = state.filters.actionTypes[action.payload.type]
+      const currentActionTypesFilters = state.filters.actionTypes[action.payload.type as FilterEntourageType]
 
       if (action.payload.category) {
         return {
@@ -326,7 +326,7 @@ export function feedReducer(
           actionTypes: {
             ...state.filters.actionTypes,
             [action.payload.type]: currentActionTypesFilters.length === 0
-              ? defaultFeedState.filters.actionTypes[action.payload.type]
+              ? defaultFeedState.filters.actionTypes[action.payload.type as FilterEntourageType]
               : [],
           },
         },
