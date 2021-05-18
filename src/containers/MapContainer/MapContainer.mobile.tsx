@@ -22,16 +22,18 @@ export function MapContainerMobile(props: MapContainerProps) {
   return (
     <S.Container>
       { isMapOpen ? (
-        <S.MapContainer>
-          <Map>
-            {markers}
-          </Map>
+        <>
+          <S.MapContainer>
+            <Map>
+              {markers}
+            </Map>
+            <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
+              <ChevronLeftIcon />
+              {texts.content.navActions.returnButton}
+            </S.FabMap>
+          </S.MapContainer>
           <RefreshButton />
-          <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
-            <ChevronLeftIcon />
-            {texts.content.navActions.returnButton}
-          </S.FabMap>
-        </S.MapContainer>
+        </>
       ) : (
         <>
           <LeftList filters={filters} isLoading={isLoading} list={list} />
@@ -41,7 +43,6 @@ export function MapContainerMobile(props: MapContainerProps) {
           </S.FabFeed>
         </>
       ) }
-
     </S.Container>
   )
 }

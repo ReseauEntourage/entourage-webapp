@@ -15,7 +15,7 @@ export const NavIcon = styled(NavigationIcon)`
 `
 
 export const FabFeed = styled(FabMUI)`
-  position: absolute;
+  position: fixed;
   bottom: ${theme.spacing(2)}px;
   left: 50%;
   transform: translateX(-50%);
@@ -34,7 +34,7 @@ export const FabMap = styled(FabMUI)`
 export const MapContainer = styled.div`
   flex: 1;
   position: relative;
-  z-index:1;
+  z-index: 1;
 `
 
 export const RightCardsContainer = styled(Box)`

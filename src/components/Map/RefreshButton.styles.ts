@@ -17,6 +17,7 @@ export const FabContainer = styled.div`
   right: 0;
   z-index: 2;
   @media ${devices.mobile} {
+    position: fixed;
     top: inherit;
     bottom: ${theme.spacing(2)}px;
   }
