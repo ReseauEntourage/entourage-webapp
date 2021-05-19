@@ -1,9 +1,6 @@
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Map } from 'src/components/Map'
-import { selectMapHasMoved } from 'src/core/useCases/location'
-import { useRefreshData } from 'src/hooks/useRefreshData'
+import { Map, RefreshButton } from 'src/components/Map'
 import { texts } from 'src/i18n'
 import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
@@ -13,9 +10,6 @@ export function MapContainerMobile(props: MapContainerProps) {
   const { markers, cards, list, isLoading, filters } = props
 
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
-
-  const mapHasMoved = useSelector(selectMapHasMoved)
-  const refreshData = useRefreshData()
 
   if (cards) {
     return (
@@ -32,22 +26,7 @@ export function MapContainerMobile(props: MapContainerProps) {
           <Map>
             {markers}
           </Map>
-          {
-            mapHasMoved
-            && (
-              <S.FabContainer>
-                <S.FabRefresh
-                  color="primary"
-                  onClick={refreshData}
-                  size="small"
-                  variant="extended"
-                >
-                  <S.RefreshIcon />
-                  {texts.content.navActions.refresh}
-                </S.FabRefresh>
-              </S.FabContainer>
-            )
-          }
+          <RefreshButton />
           <S.FabMap color="primary" onClick={() => setIsMapOpen(false)} size="small" variant="extended">
             <ChevronLeftIcon />
             {texts.content.navActions.returnButton}
