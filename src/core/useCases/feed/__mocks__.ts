@@ -1,10 +1,11 @@
-import uniqid from 'uniqid'
-import { uniqIntId } from 'src/utils/misc'
+import { uniqIntId, uniqStringId } from 'src/utils/misc'
 import { FeedState, FeedEntourage, defaultFeedState, FeedAnnouncement } from './feed.reducer'
 
 export function createFeedItem() {
   return {
     itemType: 'Entourage',
+    groupType: 'action',
+    online: false,
     author: {
       id: uniqIntId(),
       avatarUrl: '...',
@@ -15,7 +16,7 @@ export function createFeedItem() {
     updatedAt: new Date().toISOString(),
     description: 'Description',
     id: uniqIntId(),
-    uuid: uniqid(),
+    uuid: uniqStringId(),
     title: 'Title',
     location: {
       latitude: 12,

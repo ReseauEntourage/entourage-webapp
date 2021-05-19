@@ -17,8 +17,10 @@ function* retrieveFeed() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveFeedItems } = dependencies.feedGateway
   const feedState: ReturnType<typeof selectFeed> = yield select(selectFeed)
+  const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
+
   const positionState: ReturnType<typeof selectLocation> = yield select(selectLocation)
-  const { nextPageToken, fetching, filters } = feedState
+  const { nextPageToken, fetching, filters, isIdle } = feedState
   const { zoom, center } = positionState
 
   if (fetching) {
@@ -36,7 +38,19 @@ function* retrieveFeed() {
       nextPageToken: nextPageToken || undefined,
     },
   )
-  yield put(actions.retrieveFeedSuccess(response))
+
+  if (isIdle && currentItem) {
+    const filteredItems = response.items.filter((item) => item.uuid !== currentItem.uuid)
+    yield put(actions.retrieveFeedSuccess({
+      ...response,
+      items: [
+        currentItem,
+        ...filteredItems,
+      ],
+    }))
+  } else {
+    yield put(actions.retrieveFeedSuccess(response))
+  }
 }
 
 function* retrieveFeedNextPage() {
@@ -76,8 +90,9 @@ function* retrieveCurrentFeedItem() {
     const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
     if (feedIsIdle) {
-      if (response.groupType === 'outing' && response.online) {
-        yield call(retrieveFeed)
+      yield put(actions.insertFeedItem(response.item))
+      if (response.item.groupType === 'outing' && response.item.online) {
+        yield put(actions.retrieveFeed())
       } else {
         yield put(locationActions.setMapPosition({
           center: response.center,

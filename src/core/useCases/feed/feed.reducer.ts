@@ -205,6 +205,16 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.INSERT_FEED_ITEM: {
+      return {
+        ...state,
+        items: {
+          ...state.items,
+          [action.payload.uuid]: action.payload,
+        },
+      }
+    }
+
     case FeedActionType.REMOVE_CURRENT_ITEM_UUID: {
       return {
         ...state,
