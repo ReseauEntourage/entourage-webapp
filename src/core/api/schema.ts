@@ -101,33 +101,7 @@ export const schema = {
     params: null,
     data: null,
     response: {} as {
-      entourage: {
-        author: User;
-        createdAt: DateISO;
-        description: string;
-        displayCategory: FeedDisplayCategory;
-        entourageType: FeedEntourageType;
-        groupType: FeedGroupType;
-        id: number | null;
-        joinStatus: FeedJoinStatus;
-        location: {
-          latitude: number;
-          longitude: number;
-        };
-        metadata: {
-          city: string;
-          displayAddress: string;
-        };
-        numberOfPeople: number;
-        numberOfUnreadMessages: number;
-        public: boolean;
-        shareUrl: string;
-        status: FeedStatus;
-        title: string;
-        updatedAt: DateISO;
-        uuid: string;
-        online: boolean;
-      };
+      entourage: FeedItemEntourage['data'];
     },
   },
   '/entourages/:entourageId/chat_messages GET': {
