@@ -1,3 +1,5 @@
+import { createSelector } from 'reselect'
+
 import { FeedStatus } from 'src/core/api'
 import { assertCondition } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
@@ -19,11 +21,13 @@ export function selectFeedIsFetching(state: AppState) {
   return state.feed.fetching
 }
 
-export function selectFeedItems(state: AppState) {
-  return state.feed.itemsUuids.map((itemUuid) => {
-    return state.feed.items[itemUuid]
-  })
-}
+export const selectFeedItems = createSelector(
+  (state: AppState) => state.feed.itemsUuids,
+  (state: AppState) => state.feed.items,
+  (itemsUuids: FeedState['itemsUuids'], items: FeedState['items']) => itemsUuids.map((itemUuid) => {
+    return items[itemUuid]
+  }),
+)
 
 export function selectHasNextPageToken(state: AppState) {
   return !!state.feed.nextPageToken

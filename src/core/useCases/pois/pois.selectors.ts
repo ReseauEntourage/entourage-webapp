@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect'
 import { FilterPOICategory, FilterPOIPartner } from 'src/utils/types'
 import { POIsState } from './pois.reducer'
 
@@ -21,11 +22,13 @@ export function selectPOIDetailsIsFetching(state: AppState) {
   return state.pois.detailsFetching
 }
 
-export function selectPOIList(state: AppState) {
-  return state.pois.poisUuids.map((poiId) => {
-    return state.pois.pois[poiId]
-  })
-}
+export const selectPOIList = createSelector(
+  (state: AppState) => state.pois.poisUuids,
+  (state: AppState) => state.pois.pois,
+  (poisUuids: POIsState['poisUuids'], pois: POIsState['pois']) => poisUuids.map((poiId) => {
+    return pois[poiId]
+  }),
+)
 
 export function selectCurrentPOIUuid(state: AppState) {
   return state.pois.selectedPOIUuid
