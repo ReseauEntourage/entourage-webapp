@@ -11,7 +11,6 @@ import {
 import { messagesActions, selectConversationList } from 'src/core/useCases/messages'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { useOnScroll } from 'src/utils/hooks'
-import { assertIsDefined } from 'src/utils/misc'
 import { ConversationItemExcerpt } from './ConversationItemExcerpt'
 import * as S from './ConversationsList.styles'
 
@@ -31,11 +30,6 @@ export function ConversationsList(props: ConversationsListProps) {
       dispatch(messagesActions.retrieveNextConversations())
     },
   })
-
-  if (!conversations) {
-    // can't null because it's already fetch in a parent Component
-    assertIsDefined(conversations, 'ConversationsList: conversations can\'t be null')
-  }
 
   if (!entouragesWithMembersPending) {
     return (

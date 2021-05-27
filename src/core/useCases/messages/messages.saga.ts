@@ -4,10 +4,12 @@ import { takeEvery } from 'src/core/utils/takeEvery'
 import { IMessagesGateway } from './IMessagesGateway'
 import { MessagesActionType, actions, MessagesActions } from './messages.actions'
 import {
-  selectCurrentConversation, selectCurrentConversationMessages,
+  selectConversationIsInList,
+  selectCurrentConversation,
   selectCurrentConversationUuid,
   selectMessages,
-  selectMessagesCurrentPage, selectMessagesIsIdle,
+  selectMessagesCurrentPage,
+  selectMessagesIsIdle,
 } from './messages.selectors'
 
 export interface Dependencies {
@@ -35,27 +37,24 @@ function* retrieveConversationsSaga() {
     },
   )
   yield put(actions.retrieveConversationsSuccess(response))
+  yield put(actions.retrieveConversationDetailsIfNeeded())
+
   if (response.conversations.length === 0) {
     yield put(actions.decrementPageNumber())
   }
 }
 
-function* retrieveCurrentConversationMessages() {
-  const currentConversationMessages: ReturnType<
-    typeof selectCurrentConversationMessages
-  > = yield select(
-    selectCurrentConversationMessages,
-  )
+function* retrieveCurrentConversationMessagesSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { retrieveConversationMessages } = dependencies.messagesGateway
+
   const messagesIsIdle: ReturnType<typeof selectMessagesIsIdle> = yield select(selectMessagesIsIdle)
   const entourageUuid: ReturnType<typeof selectCurrentConversationUuid> = yield select(selectCurrentConversationUuid)
 
   if (!entourageUuid) {
     yield put(actions.retrieveConversations())
-  } else if (!currentConversationMessages && entourageUuid) {
+  } else {
     yield put(actions.retrieveConversationMessagesStarted())
-
-    const dependencies: Dependencies = yield getContext('dependencies')
-    const { retrieveConversationMessages } = dependencies.messagesGateway
 
     const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
       {
@@ -66,14 +65,39 @@ function* retrieveCurrentConversationMessages() {
       conversationUuid: entourageUuid,
       conversationMessages: response.conversationMessages,
     }))
+  }
 
-    if (messagesIsIdle) {
-      yield put(actions.retrieveConversations())
-    }
+  if (messagesIsIdle) {
+    yield put(actions.retrieveConversations())
+  } else {
+    yield put(actions.retrieveConversationDetailsIfNeeded())
   }
 }
 
-function* retrieveCurrentConversationOlderMessages(action: MessagesActions['retrieveOlderConversationMessages']) {
+function* retrieveCurrentConversationDetailsIfNeededSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+
+  const entourageUuid: ReturnType<typeof selectCurrentConversationUuid> = yield select(selectCurrentConversationUuid)
+  const currentConversationDetails: ReturnType<typeof selectCurrentConversation> = yield select(
+    selectCurrentConversation,
+  )
+  const messagesIsIdle: ReturnType<typeof selectMessagesIsIdle> = yield select(selectMessagesIsIdle)
+
+  const { retrieveConversation } = dependencies.messagesGateway
+
+  if (!messagesIsIdle && entourageUuid && !currentConversationDetails) {
+    const conversationDetails: CallReturnType<typeof retrieveConversation> = yield call(
+      retrieveConversation,
+      {
+        entourageUuid,
+      },
+    )
+
+    yield put(actions.insertConversation(conversationDetails))
+  }
+}
+
+function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['retrieveOlderConversationMessages']) {
   const currentConversation: ReturnType<typeof selectCurrentConversation> = yield select(selectCurrentConversation)
   const messagesIsIdle: ReturnType<typeof selectMessagesIsIdle> = yield select(selectMessagesIsIdle)
   const entourageUuid: ReturnType<typeof selectCurrentConversationUuid> = yield select(selectCurrentConversationUuid)
@@ -104,16 +128,11 @@ function* retrieveCurrentConversationOlderMessages(action: MessagesActions['retr
 
 function* sendMessageSaga(action: MessagesActions['sendMessage']) {
   const entourageUuid: ReturnType<typeof selectCurrentConversationUuid> = yield select(selectCurrentConversationUuid)
-  const conversationMessages: ReturnType<
-    typeof selectCurrentConversationMessages
-  > = yield select(
-    selectCurrentConversationMessages,
-  )
+  const conversationIsInList: ReturnType<typeof selectConversationIsInList> = yield select(selectConversationIsInList)
+
   const { message } = action.payload
 
   if (entourageUuid) {
-    yield put(actions.retrieveConversationMessagesStarted())
-
     const dependencies: Dependencies = yield getContext('dependencies')
     const { sendMessage, retrieveConversationMessages, retrieveConversations } = dependencies.messagesGateway
 
@@ -123,9 +142,7 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
         message,
       })
 
-    const responseMessages: CallReturnType<
-      typeof retrieveConversationMessages
-    > = yield call(
+    const responseMessages: CallReturnType<typeof retrieveConversationMessages> = yield call(
       retrieveConversationMessages,
       {
         entourageUuid,
@@ -137,18 +154,16 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
       conversationMessages: responseMessages.conversationMessages,
     }))
 
-    if (!conversationMessages || conversationMessages.length === 0) {
-      const responseConversation: CallReturnType<
-        typeof retrieveConversations
-      > = yield call(
+    if (!conversationIsInList) {
+      const responseConversations: CallReturnType<typeof retrieveConversations> = yield call(
         retrieveConversations,
         {
-          page: 1,
+          page: 0,
         },
       )
 
       yield put(actions.retrieveConversationsSuccess({
-        conversations: responseConversation.conversations,
+        conversations: responseConversations.conversations,
       }))
     }
   }
@@ -157,8 +172,10 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
 export function* messagesSaga() {
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATIONS, retrieveConversationsSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveConversationsSaga)
+  yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
+    retrieveCurrentConversationDetailsIfNeededSaga)
 
-  yield takeEvery(MessagesActionType.SET_CURRENT_CONVERSATION_UUID, retrieveCurrentConversationMessages)
-  yield takeEvery(MessagesActionType.RETRIEVE_OLDER_CONVERSATION_MESSAGES, retrieveCurrentConversationOlderMessages)
+  yield takeEvery(MessagesActionType.SET_CURRENT_CONVERSATION_UUID, retrieveCurrentConversationMessagesSaga)
+  yield takeEvery(MessagesActionType.RETRIEVE_OLDER_CONVERSATION_MESSAGES, retrieveCurrentConversationOlderMessagesSaga)
   yield takeEvery(MessagesActionType.SEND_MESSAGE, sendMessageSaga)
 }

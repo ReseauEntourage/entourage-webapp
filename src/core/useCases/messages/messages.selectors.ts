@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect'
 import { MessagesState } from './messages.reducer'
 
 interface AppState {
@@ -16,12 +17,13 @@ export function selectMessagesIsFetching(state: AppState) {
   return state.messages.fetching
 }
 
-export function selectConversationList(state: AppState) {
-  // TODO Use reselect
-  return state.messages.conversationsUuids.map((conversationUuid) => {
-    return state.messages.conversations[conversationUuid]
-  })
-}
+export const selectConversationList = createSelector(
+  (state: AppState) => state.messages.conversationsUuids,
+  (state: AppState) => state.messages.conversations,
+  (conversationsUuids, conversations) => conversationsUuids.map((conversationUuid) => {
+    return conversations[conversationUuid]
+  }),
+)
 
 export function selectMessagesCurrentPage(state: AppState) {
   return state.messages.page
@@ -33,6 +35,10 @@ export function selectCurrentConversationUuid(state: AppState) {
 
 export function selectConversationMessagesIsFetching(state: AppState) {
   return state.messages.messagesFetching
+}
+
+export function selectConversationIsInList(state: AppState) {
+  return state.messages.conversationsUuids.includes(selectCurrentConversationUuid(state))
 }
 
 export function selectCurrentConversation(state: AppState) {

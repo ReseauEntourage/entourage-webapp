@@ -9,5 +9,10 @@ export class TestMessagesGateway implements IMessagesGateway {
     'retrieveConversationMessages',
   )
 
+  retrieveConversation =
+  jestFn<IMessagesGateway['retrieveConversation']>(
+    'retrieveConversation',
+  )
+
   sendMessage = jestFn<IMessagesGateway['sendMessage']>('sendMessage')
 }

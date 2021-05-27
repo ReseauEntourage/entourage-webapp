@@ -1,11 +1,11 @@
 import { AuthUserAction, AuthUserActionType } from '../authUser/authUser.actions'
-import { FeedJoinStatus, User } from 'src/core/api'
+import { FeedGroupType, FeedJoinStatus, User } from 'src/core/api'
 import { DateISO } from 'src/utils/types'
 import { MessagesAction, MessagesActionType } from './messages.actions'
 
 export interface ConversationItem {
   author: {
-    avatarUrl: string;
+    avatarUrl?: string;
     id: number;
   };
   joinStatus: FeedJoinStatus;
@@ -14,7 +14,7 @@ export interface ConversationItem {
   };
   title: string;
   uuid: string;
-  id: number;
+  groupType: FeedGroupType;
 }
 
 export interface ConversationMessage {
@@ -27,7 +27,7 @@ export interface ConversationMessage {
     displayName: NonNullable<User['displayName']>;
     id: NonNullable<User['id']>;
     partner: User['partner'];
-  } | null;
+  };
 }
 
 export interface MessagesState {
@@ -86,8 +86,8 @@ export function messagesReducer(
         ),
 
         conversationsUuids: [
-          ...state.conversationsUuids,
           ...newConversations.map((item: ConversationItem) => item.uuid),
+          ...state.conversationsUuids,
         ],
         fetching: false,
       }
@@ -134,8 +134,8 @@ export function messagesReducer(
         conversationsMessages: {
           ...state.conversationsMessages,
           [action.payload.conversationUuid]: [
-            ...messagesInStore,
             ...newMessages,
+            ...messagesInStore,
           ],
         },
         messagesFetching: false,
@@ -159,6 +159,16 @@ export function messagesReducer(
       }
 
       return { ...state }
+    }
+
+    case MessagesActionType.INSERT_CONVERSATION: {
+      return {
+        ...state,
+        conversations: {
+          ...state.conversations,
+          [action.payload.uuid]: action.payload,
+        },
+      }
     }
 
     case AuthUserActionType.SET_USER: {

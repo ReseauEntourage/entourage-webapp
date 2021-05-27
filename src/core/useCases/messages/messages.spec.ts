@@ -125,8 +125,8 @@ describe('Messages', () => {
 
     expect(selectConversationList(store.getState())).toEqual(
       [
-        fakeMessagesData.conversations.abc,
         fakeMessagesData.conversations.def,
+        fakeMessagesData.conversations.abc,
       ],
     )
     expect(selectMessagesIsFetching(store.getState())).toEqual(false)

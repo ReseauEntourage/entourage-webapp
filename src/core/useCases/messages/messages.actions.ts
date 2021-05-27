@@ -12,7 +12,9 @@ export const MessagesActionType = {
   RETRIEVE_CONVERSATIONS_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATIONS_SUCCEEDED',
   RETRIEVE_CONVERSATION_MESSAGES_STARTED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_STARTED',
   RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED',
+  RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED',
   RETRIEVE_OLDER_CONVERSATION_MESSAGES: 'MESSAGES/RETRIEVE_OLDER_CONVERSATION_MESSAGES',
+  INSERT_CONVERSATION: 'MESSAGES/INSERT_CONVERSATION',
   SET_CURRENT_CONVERSATION_UUID: 'MESSAGES/SET_CURRENT_CONVERSATION_UUID',
   DECREMENT_PAGE_NUMBER: 'MESSAGES/DECREMENT_PAGE_NUMBER',
   SEND_MESSAGE: 'MESSAGES/SEND_MESSAGE',
@@ -75,6 +77,19 @@ function retrieveConversationMessagesSuccess(
   }
 }
 
+function retrieveConversationDetailsIfNeeded() {
+  return {
+    type: MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
+  }
+}
+
+function insertConversation(payload: MessagesState['conversations'][string]) {
+  return {
+    type: MessagesActionType.INSERT_CONVERSATION,
+    payload,
+  }
+}
+
 function retrieveOlderConversationMessages(payload: { before: string | null; }) {
   return {
     type: MessagesActionType.RETRIEVE_OLDER_CONVERSATION_MESSAGES,
@@ -113,6 +128,8 @@ const privateActions = {
   retrieveConversationMessagesStarted,
   retrieveConversationMessagesSuccess,
   decrementPageNumber,
+  insertConversation,
+  retrieveConversationDetailsIfNeeded,
 }
 
 export const actions = {

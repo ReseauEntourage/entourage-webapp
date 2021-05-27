@@ -18,6 +18,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
           title: conversation.data.title,
           uuid: conversation.data.uuid,
           id: conversation.data.id,
+          groupType: conversation.data.groupType,
         }
       })
 
@@ -50,6 +51,25 @@ export class HTTPMessagesGateway implements IMessagesGateway {
 
       return {
         conversationMessages: items,
+      }
+    })
+  }
+
+  retrieveConversation(data: { entourageUuid: string; }) {
+    return api.request({
+      name: '/entourages/:entourageId GET',
+      pathParams: {
+        entourageUuid: data.entourageUuid,
+      },
+    }).then((res) => {
+      const { entourage } = res.data
+      return {
+        author: entourage.author,
+        joinStatus: entourage.joinStatus,
+        title: entourage.title,
+        uuid: entourage.uuid,
+        id: entourage.id,
+        groupType: entourage.groupType,
       }
     })
   }

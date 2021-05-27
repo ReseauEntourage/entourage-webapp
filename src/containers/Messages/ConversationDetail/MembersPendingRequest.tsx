@@ -1,11 +1,12 @@
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
+import { selectCurrentConversation } from '../../../core/useCases/messages'
 import { Button, ButtonsList } from 'src/components/Button'
 import { PendingNotif } from 'src/components/Conversations'
 import {
   useQueryMembersPending,
-  useQueryEntourageFromMyFeeds,
   useMutateAcceptEntourageUser,
   useMutateDeleteEntourageUser,
 } from 'src/core/store'
@@ -23,9 +24,10 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
 
   const [deleting, setDeleting] = useDelayLoading()
   const [accepting, setAccepting] = useDelayLoading()
+  // TODO REPLACE QUERYS
   const { membersPending } = useQueryMembersPending(entourageUuid)
   const me = useMeNonNullable()
-  const entourage = useQueryEntourageFromMyFeeds(entourageUuid)
+  const entourage = useSelector(selectCurrentConversation)
   const iAmAuthor = me.id === entourage?.author.id
 
   const [accepteEntourageUser] = useMutateAcceptEntourageUser()

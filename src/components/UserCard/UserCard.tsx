@@ -1,7 +1,8 @@
+import Link from 'next/link'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
-import { openModal } from 'src/components/Modal'
+import { openModal, useModalContext } from 'src/components/Modal'
 import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
 import { PartnerCard } from 'src/components/PartnerCard'
 import * as S from './UserCard.styles'
@@ -29,6 +30,8 @@ export function UserCard(props: UserCardProps) {
     actionsCount,
     partner,
   } = props
+
+  const { onClose } = useModalContext()
 
   const onClick = React.useCallback(() => {
     if (partner) {
@@ -64,7 +67,9 @@ export function UserCard(props: UserCardProps) {
       )}
       {allowContact && (
         <S.ContactBtn>
-          <Button href={`/messages/${conversationUuid}`}>Contacter</Button>
+          <Link as={`/messages/${conversationUuid}`} href="/messages/[messagesId]">
+            <Button onClick={onClose}>Contacter</Button>
+          </Link>
         </S.ContactBtn>
       )}
     </S.Container>

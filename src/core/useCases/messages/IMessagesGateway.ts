@@ -5,6 +5,8 @@ export interface IMessagesGateway {
     conversations: ConversationItem[];
   }>;
 
+  retrieveConversation(data: { entourageUuid: string; }): Promise<ConversationItem>;
+
   retrieveConversationMessages(data: {
     entourageUuid: ConversationItem['uuid'];
     before?: string;

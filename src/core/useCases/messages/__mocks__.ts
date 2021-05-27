@@ -13,7 +13,7 @@ export function createConversationItem(): ConversationItem {
       text: 'test',
     },
     title: 'Test conversation titre',
-    id: uniqIntId(),
+    groupType: 'action',
   }
 }
 

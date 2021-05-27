@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { SplashScreen } from '../../components/SplashScreen'
+import { OverlayLoader } from 'src/components/OverlayLoader'
+import { SplashScreen } from 'src/components/SplashScreen'
 import {
   messagesActions,
   selectConversationList,
@@ -18,22 +19,23 @@ export function MessagesDesktop() {
   const dispatch = useDispatch()
   const entourageUuid = useEntourageUuid()
   const router = useRouter()
-  const firstConversationId = conversations?.[0]?.id
+  const firstConversationId = conversations?.[0]?.uuid
 
   useEffect(() => {
-    // TODO FIX THIS
-    if (entourageUuid) {
-      dispatch(messagesActions.retrieveConversations())
-    } else if (!entourageUuid) {
+    if (!entourageUuid) {
       if (firstConversationId) {
         router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
       } else {
         dispatch(messagesActions.retrieveConversations())
       }
-    } else if (entourageUuid) {
-      dispatch(messagesActions.retrieveConversations())
     }
   }, [dispatch, entourageUuid, firstConversationId, router])
+
+  useEffect(() => {
+    if (entourageUuid) {
+      dispatch(messagesActions.setCurrentConversationUuid(entourageUuid || null))
+    }
+  }, [dispatch, entourageUuid])
 
   if (isIdle) {
     return (
@@ -44,11 +46,13 @@ export function MessagesDesktop() {
   return (
     <S.Container>
       <ConversationsList entourageUuid={entourageUuid} />
-      {entourageUuid ? (
-        <S.ConversationDetailContainer>
-          <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} />
-        </S.ConversationDetailContainer>
-      ) : null}
+      <S.ConversationDetailContainer>
+        {
+          entourageUuid
+            ? <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} />
+            : <OverlayLoader />
+        }
+      </S.ConversationDetailContainer>
     </S.Container>
   )
 }
