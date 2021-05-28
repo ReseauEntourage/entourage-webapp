@@ -31,7 +31,7 @@ const roundCoordinates = (coordinates: google.maps.LatLngLiteral): google.maps.L
   }
 }
 
-export function Map(props: Props) {
+export const Map = React.memo((props: Props) => {
   const { children } = props
   const position = useSelector(selectMapPosition)
   const dispatch = useDispatch()
@@ -80,4 +80,4 @@ export function Map(props: Props) {
       {children}
     </GoogleMapReact>
   )
-}
+})

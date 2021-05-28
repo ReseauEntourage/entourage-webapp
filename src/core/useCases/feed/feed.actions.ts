@@ -13,6 +13,7 @@ export const FeedActionType = {
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
+  INSERT_FEED_ITEM: 'FEED/INSERT_FEED_ITEM',
   REMOVE_CURRENT_ITEM_UUID: 'FEED/REMOVE_CURRENT_ITEM_UUID',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
@@ -101,6 +102,13 @@ function updateItem(payload: Partial<FeedState['items'][string]>) {
 function setCurrentFeedItemUuid(payload: string | null) {
   return {
     type: FeedActionType.SET_CURRENT_ITEM_UUID,
+    payload,
+  }
+}
+
+function insertFeedItem(payload: FeedState['items'][string]) {
+  return {
+    type: FeedActionType.INSERT_FEED_ITEM,
     payload,
   }
 }
@@ -210,6 +218,7 @@ export const publicActions = {
 const privateActions = {
   retrieveFeedStarted,
   retrieveFeedSuccess,
+  insertFeedItem,
   retrieveFeedNextPageSuccess,
   joinEntourageSucceeded,
   leaveEntourageSucceeded,

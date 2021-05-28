@@ -20,8 +20,7 @@ export interface IFeedGateway {
   retrieveFeedItem(data: { entourageUuid: string; }): Promise<{
     center: LocationState['center'];
     displayAddress: LocationState['displayAddress'];
-    online: FeedEntourage['online'];
-    groupType: FeedEntourage['groupType'];
+    item: FeedEntourage;
   }>;
 
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;

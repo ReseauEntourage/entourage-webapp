@@ -12,7 +12,7 @@ import { defaultLocationState } from '../location/location.reducer'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
-import { FeedGroupType, FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { FeedJoinStatus, FeedStatus } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -116,7 +116,8 @@ describe('Feed Item', () => {
   it(`
     Given feed has selected item
     When user fetch new items
-    Then items uuid should changes And selected items should never change
+    Then items uuid should changes
+    And selected items should never change
   `, async () => {
     const { store, feedGateway } = configureStoreWithSelectedItems()
 
@@ -175,19 +176,20 @@ describe('Feed Item', () => {
       And map position should be set to position of item with default zoom value
   `, async () => {
     const itemsFromGateway = createFeedItemList()
+    const selectedItemUuid = itemsFromGateway[0].uuid
 
     const deferredValueRetrieveFeedItems = {
       nextPageToken: null,
       items: itemsFromGateway,
     }
+
     const deferredValueRetrieveFeedItem = {
       center: {
         lat: 1,
         lng: 2,
       },
       displayAddress: 'Marseille',
-      groupType: 'action' as FeedGroupType,
-      online: false,
+      item: itemsFromGateway[0],
     }
 
     const feedGateway = new TestFeedGateway()
@@ -221,8 +223,6 @@ describe('Feed Item', () => {
         },
       },
     )
-
-    const selectedItemUuid = itemsFromGateway[0].uuid
 
     // --------------------------------------------------
 
@@ -268,6 +268,72 @@ describe('Feed Item', () => {
   it(`
     Given feed has no cached items
        And has selected item uuid
+    When feed has been initialized
+     And user set selected item uuid
+     And item has been retrieved from the gateway
+     And feed has been retrieved with position of item
+     And item is not in the retrieved feed
+    Then item should be added to the top of the feed
+  `, async () => {
+    const itemsFromGateway = createFeedItemList()
+
+    const deferredValueRetrieveFeedItems = {
+      nextPageToken: null,
+      items: itemsFromGateway,
+    }
+
+    const retrievedItem = createFeedItem()
+
+    const deferredValueRetrieveFeedItem = {
+      center: {
+        lat: 1,
+        lng: 2,
+      },
+      displayAddress: 'Marseille',
+      item: retrievedItem,
+    }
+
+    const feedGateway = new TestFeedGateway()
+    feedGateway.retrieveFeedItems.mockDeferredValueOnce(deferredValueRetrieveFeedItems)
+    feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
+    const resolveAllDeferredValue = () => {
+      feedGateway.retrieveFeedItems.resolveDeferredValue()
+      feedGateway.retrieveFeedItem.resolveDeferredValue()
+    }
+
+    const store = configureStoreWithFeed(
+      {
+        dependencies: {
+          feedGateway,
+        },
+        initialAppState: {
+          feed: {
+            ...fakeFeedData,
+            items: {},
+            itemsUuids: [],
+            selectedItemUuid: null,
+          },
+        },
+      },
+    )
+
+    // --------------------------------------------------
+
+    store.dispatch(publicActions.init())
+    store.dispatch(publicActions.setCurrentFeedItemUuid(retrievedItem.uuid))
+
+    resolveAllDeferredValue()
+    await store.waitForActionEnd()
+
+    expect(selectFeedItems(store.getState())).toStrictEqual([
+      retrievedItem,
+      ...deferredValueRetrieveFeedItems.items,
+    ])
+  })
+
+  it(`
+    Given feed has no cached items
+       And has selected item uuid
        And selected item is an online event
     When user set selected item uuid
     Then item should be retrieved from gateway
@@ -277,8 +343,11 @@ describe('Feed Item', () => {
   `, async () => {
     const itemsFromGateway = createFeedItemList()
 
+    // online item
+    const selectedItemUuid = itemsFromGateway[0].uuid
+
     const onlineEvent: FeedEntourage = {
-      ...createFeedItem(),
+      ...itemsFromGateway[0],
       groupType: 'outing',
       online: true,
     }
@@ -295,8 +364,7 @@ describe('Feed Item', () => {
         lng: onlineEvent.location.longitude,
       },
       displayAddress: 'Montmartre',
-      groupType: onlineEvent.groupType,
-      online: onlineEvent.online,
+      item: onlineEvent,
     }
 
     const feedGateway = new TestFeedGateway()
@@ -323,9 +391,6 @@ describe('Feed Item', () => {
         },
       },
     )
-
-    // online item
-    const selectedItemUuid = itemsFromGateway[0].uuid
 
     // --------------------------------------------------
 
@@ -495,6 +560,8 @@ describe('Feed Item', () => {
   `, async () => {
     const itemsFromGateway = createFeedItemList()
 
+    const selectedItemUuid = Object.keys(EntourageCities)[0]
+
     const deferredValueRetrieveFeedItems = {
       nextPageToken: null,
       items: itemsFromGateway,
@@ -505,8 +572,10 @@ describe('Feed Item', () => {
         lng: 2,
       },
       displayAddress: 'Marseille',
-      groupType: 'action' as FeedGroupType,
-      online: false,
+      item: {
+        ...createFeedItem(),
+        uuid: selectedItemUuid,
+      },
     }
 
     const feedGateway = new TestFeedGateway()
@@ -532,8 +601,6 @@ describe('Feed Item', () => {
         },
       },
     )
-
-    const selectedItemUuid = Object.keys(EntourageCities)[0]
 
     // --------------------------------------------------
 
