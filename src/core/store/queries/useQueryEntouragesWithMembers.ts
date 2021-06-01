@@ -1,11 +1,12 @@
 import { useQuery } from 'react-query'
+import { useSelector } from 'react-redux'
 import { api, FeedJoinStatus } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
-import { useQueryMyFeeds } from './useQueryMyFeeds'
+import { selectConversationList } from 'src/core/useCases/messages'
 
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
-  const { data: dataMyFeeds } = useQueryMyFeeds()
-  const entourageUuids = dataMyFeeds?.map((feed) => feed.data.uuid)
+  const conversationList = useSelector(selectConversationList)
+  const entourageUuids = conversationList.map((conversation) => conversation.uuid)
 
   const { data: entourageMembers } = useQuery(
     entourageUuids ? [queryKeys.entourageUsers, { entourageUuids }] : null,

@@ -1,5 +1,6 @@
 import { StateFromReducersMapObject } from 'redux'
 import { persistStore } from 'redux-persist'
+import { HTTPMessagesGateway } from '../adapters/gateways/HTTPMessagesGateway'
 import { HTTPPOIsGateway } from '../adapters/gateways/HTTPPOIsGateway'
 import { FirebaseService } from '../adapters/services/FirebaseService'
 import { HTTPAuthUserGateway } from 'src/adapters/gateways/HTTPAuthUserGateway'
@@ -13,6 +14,7 @@ import { authUserSaga } from './useCases/authUser'
 import { feedSaga } from './useCases/feed'
 import { firebaseSaga } from './useCases/firebase'
 import { locationSaga } from './useCases/location'
+import { messagesSaga } from './useCases/messages'
 import { poisSaga } from './useCases/pois'
 import { reducers } from './useCases/reducers'
 
@@ -23,6 +25,7 @@ export function bootstrapStore() {
     poisSaga,
     locationSaga,
     firebaseSaga,
+    messagesSaga,
   ]
 
   const dependencies: AppDependencies = {
@@ -33,6 +36,7 @@ export function bootstrapStore() {
     authUserSensitizationStorage: new LocalAuthUserSensitizationStorage(),
     geolocationService: new GeolocationService(),
     firebaseService: new FirebaseService(),
+    messagesGateway: new HTTPMessagesGateway(),
   }
 
   const store = configureStore({

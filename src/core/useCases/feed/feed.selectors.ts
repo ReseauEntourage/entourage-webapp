@@ -24,7 +24,7 @@ export function selectFeedIsFetching(state: AppState) {
 export const selectFeedItems = createSelector(
   (state: AppState) => state.feed.itemsUuids,
   (state: AppState) => state.feed.items,
-  (itemsUuids: FeedState['itemsUuids'], items: FeedState['items']) => itemsUuids.map((itemUuid) => {
+  (itemsUuids, items) => itemsUuids.map((itemUuid) => {
     return items[itemUuid]
   }),
 )

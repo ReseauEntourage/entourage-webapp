@@ -1,0 +1,8 @@
+export type { IMessagesGateway } from './IMessagesGateway'
+export type { MessagesState, ConversationItem } from './messages.reducer'
+export type { Dependencies } from './messages.saga'
+export { messagesReducer } from './messages.reducer'
+export { messagesSaga } from './messages.saga'
+export { publicActions as messagesActions } from './messages.actions'
+export * from './messages.selectors'
+export { MessagesErrorNoAcceptedInConversation } from './messages.errors'

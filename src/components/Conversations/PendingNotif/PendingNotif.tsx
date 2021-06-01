@@ -1,5 +1,8 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
+import { Link } from 'src/components/Link'
+import { openModal } from 'src/components/Modal'
+import { ModalUserCard } from 'src/containers/ModalUserCard'
 import * as S from './PendingNotif.styles'
 
 interface PendingNotifProps {
@@ -7,10 +10,11 @@ interface PendingNotifProps {
   pictureURL?: string | [string, string];
   rightContent?: JSX.Element;
   style?: React.CSSProperties;
+  userId?: number;
 }
 
 export function PendingNotif(props: PendingNotifProps) {
-  const { label, pictureURL, rightContent, style } = props
+  const { label, pictureURL, rightContent, style, userId } = props
 
   const avatar = Array.isArray(pictureURL)
     ? (
@@ -20,9 +24,17 @@ export function PendingNotif(props: PendingNotifProps) {
       </S.AvatarContainer>
     ) : <Avatar borderColor="white" src={pictureURL} />
 
+  const openUserModal = useCallback(() => {
+    if (userId) {
+      openModal(<ModalUserCard userId={userId} />)
+    }
+  }, [userId])
+
   return (
     <S.Container style={style}>
-      {avatar}
+      <Link onClick={openUserModal}>
+        {avatar}
+      </Link>
       {label && (
         <S.Label>
           {label}

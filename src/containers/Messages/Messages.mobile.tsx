@@ -1,21 +1,24 @@
-import Box from '@material-ui/core/Box'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import React from 'react'
-import { useQueryMyFeeds } from 'src/core/store'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { SplashScreen } from 'src/components/SplashScreen'
+import { messagesActions, selectMessagesIsIdle } from 'src/core/useCases/messages'
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
 import * as S from './Messages.styles'
 import { useEntourageUuid } from './useEntourageUuid'
 
 export function MessagesMobile() {
+  const isIdle = useSelector(selectMessagesIsIdle)
+  const dispatch = useDispatch()
   const entourageUuid = useEntourageUuid()
-  const { data: dataMyFeeds } = useQueryMyFeeds()
 
-  if (!dataMyFeeds) {
+  useEffect(() => {
+    dispatch(messagesActions.setCurrentConversationUuid(entourageUuid || null))
+  }, [dispatch, entourageUuid])
+
+  if (isIdle) {
     return (
-      <Box alignItems="center" display="flex" height="100%" justifyContent="center">
-        <CircularProgress variant="indeterminate" />
-      </Box>
+      <SplashScreen />
     )
   }
 

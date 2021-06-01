@@ -1,8 +1,10 @@
 import { useWatch } from 'react-hook-form'
-import React, { useRef, useCallback, useEffect } from 'react'
+import React, { useRef, useCallback, useEffect, useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { Message } from '../Message'
 import { useForm, TextField } from 'src/components/Form'
 import { SendButton } from 'src/components/SendButton'
+import { messagesActions } from 'src/core/useCases/messages'
 import { useOnScroll, usePrevious, useMount } from 'src/utils/hooks'
 import * as S from './Messages.styles'
 
@@ -24,8 +26,15 @@ interface FormFields {
   content: string;
 }
 
+function valueIsDefined<T>(val: T): boolean {
+  return val !== undefined && val !== null
+}
+
 function useMessagesScroll(messages: MessageProps['messages'], fetchMore: MessageProps['fetchMore']) {
   const messagesContainerRef = useRef<HTMLDivElement | null>(null)
+  const [scrollHeight, setScrollHeight] = useState(0)
+  const [disableTopScrollDetection, setDisableTopScrollDetection] = useState(true)
+  const [conversationHasChanged, setConversationHasChanged] = useState(true)
 
   const { onScroll, isAtBottom, isAtTop } = useOnScroll()
 
@@ -33,30 +42,72 @@ function useMessagesScroll(messages: MessageProps['messages'], fetchMore: Messag
   const prevLastMessage = usePrevious(lastMessage)
   const lastMessageHasChanged = lastMessage && prevLastMessage && lastMessage.id !== prevLastMessage.id
 
+  const prevScrollHeight = usePrevious(scrollHeight)
+
   const scrollToBottom = useCallback(() => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight
     }
-  }, [messagesContainerRef])
+  }, [])
 
   const isAtTopPrev = usePrevious(isAtTop)
   const fetchMoreIsNeeded = isAtTop && isAtTopPrev === false
 
   useMount(() => {
-    if (messages.length > 0) {
+    setDisableTopScrollDetection(true)
+    setConversationHasChanged(true)
+  })
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      setScrollHeight(messagesContainerRef.current.scrollHeight)
+    }
+
+    const hasFinishedChangingConversation = valueIsDefined(scrollHeight)
+      && valueIsDefined(prevScrollHeight)
+      && prevScrollHeight === 0
+      && scrollHeight > 0
+
+    if (hasFinishedChangingConversation) {
+      setConversationHasChanged(false)
+    }
+  }, [messages, prevScrollHeight, scrollHeight])
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      const hasFetchedOlderMessages = scrollHeight
+        && prevScrollHeight
+        && scrollHeight > prevScrollHeight
+        && !disableTopScrollDetection
+        && !conversationHasChanged
+
+      if (scrollHeight && prevScrollHeight && hasFetchedOlderMessages) {
+        messagesContainerRef.current.scrollTop = scrollHeight - prevScrollHeight
+      }
+    }
+  }, [conversationHasChanged, disableTopScrollDetection, prevScrollHeight, scrollHeight])
+
+  useEffect(() => {
+    if (!conversationHasChanged) {
       scrollToBottom()
     }
-  })
+  }, [conversationHasChanged, scrollToBottom])
 
   useEffect(() => {
     if (fetchMoreIsNeeded) {
       fetchMore()
     }
 
+    if (isAtBottom) {
+      setDisableTopScrollDetection(true)
+    } else {
+      setDisableTopScrollDetection(false)
+    }
+
     if (isAtBottom && lastMessageHasChanged) {
       scrollToBottom()
     }
-  }, [fetchMore, fetchMoreIsNeeded, isAtBottom, lastMessageHasChanged, scrollToBottom])
+  }, [disableTopScrollDetection, fetchMore, fetchMoreIsNeeded, isAtBottom, lastMessageHasChanged, scrollToBottom])
 
   return {
     onScroll,
@@ -78,7 +129,11 @@ function useMessagesForm(onSendMessage: MessageProps['onSendMessage']) {
       return
     }
 
-    onSendMessage(getValues().content)
+    if (getValues().content.trim() === '') {
+      return
+    }
+
+    await onSendMessage(getValues().content)
 
     setValue('content', '')
   }, [getValues, onSendMessage, setValue, trigger])
@@ -94,13 +149,22 @@ export function Messages(props: MessageProps) {
   const { messages, fetchMore, meUserId, onSendMessage } = props
   const { register, onSubmit, content } = useMessagesForm(onSendMessage)
   const { onScroll, messagesContainerRef } = useMessagesScroll(messages, fetchMore)
+  const dispatch = useDispatch()
 
-  const onKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
-      onSubmit()
+  const onKeyPress = async (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault()
+      await onSubmit()
     }
   }
+
+  useMount(() => {
+    const refreshMessages = setInterval(() => {
+      dispatch(messagesActions.retrieveConversationMessages())
+    }, 60 * 1e3)
+
+    return () => clearTimeout(refreshMessages)
+  })
 
   return (
     <S.Container>
@@ -110,6 +174,7 @@ export function Messages(props: MessageProps) {
             key={message.id}
             author={message.authorName}
             authorAvatarURL={message.authorAvatarURL}
+            authorId={message.authorId}
             content={message.content}
             date={message.date}
             isMe={message.authorId === meUserId}

@@ -1,17 +1,16 @@
 import Box from '@material-ui/core/Box'
 import { useRouter } from 'next/router'
 import React, { useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Messages, TopBar } from 'src/components/Conversations'
 import { openModal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import {
-  useQueryEntourageChatMessages,
-  useMutateCreateEntourageChatMessage,
-  useQueryEntourageFromMyFeeds,
-  useQueryEntourage,
-  queryKeys,
-} from 'src/core/store'
+  messagesActions,
+  selectCurrentConversation,
+  selectCurrentConversationMessages,
+} from 'src/core/useCases/messages'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { useFirebase } from 'src/utils/hooks'
 import { assertIsDefined } from 'src/utils/misc'
@@ -19,28 +18,30 @@ import * as S from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
 
 interface ConversationDetailProps {
-  entourageUuid: string;
+  entourageUuid?: string;
 }
 
 export function ConversationDetail(props: ConversationDetailProps) {
+  const dispatch = useDispatch()
   const { entourageUuid } = props
   const router = useRouter()
+  const currentConversation = useSelector(selectCurrentConversation)
+  const messages = useSelector(selectCurrentConversationMessages)
 
-  const entourageFromMyFeed = useQueryEntourageFromMyFeeds(entourageUuid)
-
-  const entourageFromAPI = useQueryEntourage(entourageFromMyFeed ? undefined : entourageUuid)
-
-  const entourage = entourageFromMyFeed || entourageFromAPI.data?.data.entourage
-  const isNewConversation = !entourageFromMyFeed
+  const entourage = currentConversation
 
   const joinStatus = entourage?.joinStatus
   const userIsAccepted = joinStatus === 'accepted'
 
-  const { data: messages, fetchMore } = useQueryEntourageChatMessages(userIsAccepted ? entourageUuid : null)
-  const [createcChatMessage] = useMutateCreateEntourageChatMessage(
-    entourageUuid,
-    isNewConversation ? [queryKeys.myFeeds] : undefined,
-  )
+  const fetchMore = useCallback(() => {
+    if (messages) {
+      const lastMessage = messages[messages.length - 1]
+
+      dispatch(messagesActions.retrieveOlderConversationMessages({
+        before: lastMessage.createdAt,
+      }))
+    }
+  }, [dispatch, messages])
 
   const me = useMeNonNullable()
 
@@ -48,8 +49,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   const onClickSend = useCallback(async (messageContent) => {
     sendEvent('Action__Messages__WriteMessage')
-    await createcChatMessage({ content: messageContent }, { waitForRefetchQueries: true })
-  }, [createcChatMessage, sendEvent])
+    dispatch(messagesActions.sendMessage({ message: messageContent }))
+  }, [dispatch, sendEvent])
 
   const onClickTopBar = useCallback(() => {
     assertIsDefined(entourage)
@@ -65,16 +66,16 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   // must make a shallow copy because reverse() will mutate
   // and messages is cached
-  const reversedMessages = [...messages].reverse().map((message) => ({
+  const reversedMessages = messages ? [...messages].reverse().map((message) => ({
     authorAvatarURL: message.user.avatarUrl,
     authorName: message.user.displayName,
     authorId: message.user.id,
     content: message.content,
     date: message.createdAt,
     id: message.id,
-  }))
+  })) : []
 
-  if (!entourage) {
+  if (!entourageUuid || !entourage) {
     return (
       <S.Container>
         <Box alignItems="center" display="flex" height="100%" justifyContent="center">
@@ -90,6 +91,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   const { title } = entourage
 
+  const iAmAuthor = me.id === entourage.author.id
+
   return (
     <S.Container>
       <TopBar
@@ -97,7 +100,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
         onClickTopBar={onClickTopBar}
         title={title}
       />
-      {!isNewConversation && (
+      {iAmAuthor && (
         <MembersPendingRequest entourageUuid={entourageUuid} />
       )}
       {!userIsAccepted ? (
