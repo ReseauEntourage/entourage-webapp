@@ -3,6 +3,7 @@ import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IMessagesGateway } from './IMessagesGateway'
 import { MessagesActionType, actions, MessagesActions } from './messages.actions'
+import { MessagesErrorNoAcceptedInConversation } from './messages.errors'
 import {
   selectConversationIsInList,
   selectCurrentConversation,
@@ -56,15 +57,23 @@ function* retrieveCurrentConversationMessagesSaga() {
   } else {
     yield put(actions.retrieveConversationMessagesStarted())
 
-    const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
-      {
-        entourageUuid,
-      })
-
-    yield put(actions.retrieveConversationMessagesSuccess({
-      conversationUuid: entourageUuid,
-      conversationMessages: response.conversationMessages,
-    }))
+    try {
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+        {
+          entourageUuid,
+        })
+      yield put(actions.retrieveConversationMessagesSuccess({
+        conversationUuid: entourageUuid,
+        conversationMessages: response.conversationMessages,
+      }))
+    } catch (error) {
+      if (error instanceof MessagesErrorNoAcceptedInConversation) {
+        yield put(actions.retrieveConversationMessagesSuccess({
+          conversationUuid: entourageUuid,
+          conversationMessages: [],
+        }))
+      }
+    }
   }
 
   if (messagesIsIdle) {
@@ -93,7 +102,12 @@ function* retrieveCurrentConversationDetailsIfNeededSaga() {
       },
     )
 
-    yield put(actions.insertConversation(conversationDetails))
+    const mutatedConversationDetails = {
+      ...conversationDetails,
+      uuid: entourageUuid,
+    }
+
+    yield put(actions.insertConversation(mutatedConversationDetails))
   }
 }
 
@@ -158,7 +172,7 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
       const responseConversations: CallReturnType<typeof retrieveConversations> = yield call(
         retrieveConversations,
         {
-          page: 0,
+          page: 1,
         },
       )
 
@@ -176,6 +190,7 @@ export function* messagesSaga() {
     retrieveCurrentConversationDetailsIfNeededSaga)
 
   yield takeEvery(MessagesActionType.SET_CURRENT_CONVERSATION_UUID, retrieveCurrentConversationMessagesSaga)
+  yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES, retrieveCurrentConversationMessagesSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_OLDER_CONVERSATION_MESSAGES, retrieveCurrentConversationOlderMessagesSaga)
   yield takeEvery(MessagesActionType.SEND_MESSAGE, sendMessageSaga)
 }

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
+import { Link as CustomLink } from 'src/components/Link'
 import { openModal, useModalContext } from 'src/components/Modal'
 import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
 import { PartnerCard } from 'src/components/PartnerCard'
@@ -39,6 +40,8 @@ export function UserCard(props: UserCardProps) {
     }
   }, [partner])
 
+  // TODO FIX BUTTON LINK
+
   return (
     <S.Container>
       <S.Avatar>
@@ -67,8 +70,10 @@ export function UserCard(props: UserCardProps) {
       )}
       {allowContact && (
         <S.ContactBtn>
-          <Link as={`/messages/${conversationUuid}`} href="/messages/[messagesId]">
-            <Button onClick={onClose}>Contacter</Button>
+          <Link as={`/messages/${conversationUuid}`} href="/messages/[messagesId]" passHref={true}>
+            <CustomLink>
+              <Button onClick={onClose}>Contacter</Button>
+            </CustomLink>
           </Link>
         </S.ContactBtn>
       )}

@@ -11,7 +11,8 @@ import { messagesSaga } from './messages.saga'
 import {
   selectConversationList,
   selectMessagesCurrentPage,
-  selectMessagesIsFetching, selectMessagesIsIdle,
+  selectConversationsIsFetching,
+  selectMessagesIsIdle,
 
 } from './messages.selectors'
 
@@ -77,17 +78,17 @@ describe('Messages', () => {
 
     store.dispatch(publicActions.retrieveConversations())
 
-    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
     messagesGateway.retrieveConversations.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectConversationList(store.getState())).toEqual([fakeMessagesData.conversations.abc])
-    expect(selectMessagesIsFetching(store.getState())).toEqual(false)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(false)
 
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
     expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
-      page: 0,
+      page: 1,
     })
   })
 
@@ -118,23 +119,23 @@ describe('Messages', () => {
 
     store.dispatch(publicActions.retrieveNextConversations())
 
-    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
     messagesGateway.retrieveConversations.resolveDeferredValue()
     await store.waitForActionEnd()
 
     expect(selectConversationList(store.getState())).toEqual(
       [
-        fakeMessagesData.conversations.def,
         fakeMessagesData.conversations.abc,
+        fakeMessagesData.conversations.def,
       ],
     )
-    expect(selectMessagesIsFetching(store.getState())).toEqual(false)
-    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(false)
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(2)
 
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
     expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
-      page: 1,
+      page: 2,
     })
   })
 
@@ -154,9 +155,9 @@ describe('Messages', () => {
 
     store.dispatch(publicActions.retrieveNextConversations())
 
-    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
-    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(2)
 
     store.dispatch(publicActions.retrieveNextConversations())
 
@@ -164,10 +165,10 @@ describe('Messages', () => {
     await store.waitForActionEnd()
 
     expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
-      page: 1,
+      page: 2,
     })
 
-    expect(selectMessagesCurrentPage(store.getState())).toEqual(0)
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
   })
 
   it(`
@@ -182,7 +183,7 @@ describe('Messages', () => {
 
     store.dispatch(publicActions.retrieveConversations())
 
-    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
     store.dispatch(publicActions.retrieveConversations())
 
@@ -205,9 +206,9 @@ describe('Messages', () => {
 
     store.dispatch(publicActions.retrieveNextConversations())
 
-    expect(selectMessagesIsFetching(store.getState())).toEqual(true)
+    expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
-    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(2)
 
     store.dispatch(publicActions.retrieveNextConversations())
 
@@ -216,7 +217,7 @@ describe('Messages', () => {
 
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
 
-    expect(selectMessagesCurrentPage(store.getState())).toEqual(1)
+    expect(selectMessagesCurrentPage(store.getState())).toEqual(2)
   })
 
   it(`

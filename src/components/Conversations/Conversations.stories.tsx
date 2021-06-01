@@ -30,6 +30,7 @@ export const MessageExternalUser = () => (
   <Message
     author="Jeanne B. Association pour l'amitié"
     authorAvatarURL="https://i.pravatar.cc/100"
+    authorId={1}
     content={`
       Bonjour Mathieu,
       Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
@@ -42,6 +43,7 @@ export const MessageExternalUser = () => (
 
 export const MessageMe = () => (
   <Message
+    authorId={1}
     content={`
       Bonjour Mathieu,
       Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.

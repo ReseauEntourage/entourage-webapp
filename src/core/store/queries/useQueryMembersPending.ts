@@ -1,4 +1,3 @@
-import { assertIsDefined } from 'src/utils/misc'
 import { useQueryEntouragesWithMembers } from './useQueryEntouragesWithMembers'
 
 export function useQueryMembersPending(entourageUuid: string) {
@@ -13,10 +12,8 @@ export function useQueryMembersPending(entourageUuid: string) {
 
   const currentEntourage = entouragesWithMembers.find((entourage) => entourage.entourageUuid === entourageUuid)
 
-  assertIsDefined(currentEntourage)
-
   return {
     isLoading: false,
-    membersPending: currentEntourage.members,
+    membersPending: currentEntourage?.members ?? [],
   }
 }

@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy'
 import { AuthUserAction, AuthUserActionType } from '../authUser/authUser.actions'
 import { FeedGroupType, FeedJoinStatus, User } from 'src/core/api'
 import { DateISO } from 'src/utils/types'
@@ -21,7 +22,6 @@ export interface ConversationMessage {
   content: string;
   createdAt: DateISO;
   id: number;
-  messageType: 'text';
   user: {
     avatarUrl: User['avatarUrl'];
     displayName: NonNullable<User['displayName']>;
@@ -51,7 +51,7 @@ export const defaultMessagesState: MessagesState = {
   conversationsUuids: [],
   conversations: {},
   selectedConversationUuid: null,
-  page: 0,
+  page: 1,
   conversationsMessages: {},
   messagesFetching: false,
 }
@@ -86,8 +86,8 @@ export function messagesReducer(
         ),
 
         conversationsUuids: [
-          ...newConversations.map((item: ConversationItem) => item.uuid),
           ...state.conversationsUuids,
+          ...newConversations.map((item: ConversationItem) => item.uuid),
         ],
         fetching: false,
       }
@@ -122,21 +122,20 @@ export function messagesReducer(
     }
 
     case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: {
-      const messagesInStore = state.conversationsMessages[action.payload.conversationUuid] ?? []
-      const messagesIds = messagesInStore.map((message) => message.id)
-
-      const newMessages = action.payload.conversationMessages.filter(
-        (message) => !messagesIds.includes(message.id),
+      const uniqMessages = uniqBy(
+        [
+          ...action.payload.conversationMessages,
+          ...state.conversationsMessages[action.payload.conversationUuid
+          ] || [],
+        ], (message) => message.id,
       )
+      uniqMessages.sort((a, b) => b.id - a.id)
 
       return {
         ...state,
         conversationsMessages: {
           ...state.conversationsMessages,
-          [action.payload.conversationUuid]: [
-            ...newMessages,
-            ...messagesInStore,
-          ],
+          [action.payload.conversationUuid]: uniqMessages,
         },
         messagesFetching: false,
       }
@@ -144,6 +143,9 @@ export function messagesReducer(
 
     case MessagesActionType.SEND_MESSAGE: {
       if (state.selectedConversationUuid) {
+        const otherConversationsUuids = state.conversationsUuids.filter(
+          (conversationUuid) => conversationUuid !== state.selectedConversationUuid,
+        )
         return {
           ...state,
           conversations: {
@@ -155,6 +157,10 @@ export function messagesReducer(
               },
             },
           },
+          conversationsUuids: [
+            state.selectedConversationUuid,
+            ...otherConversationsUuids,
+          ],
         }
       }
 

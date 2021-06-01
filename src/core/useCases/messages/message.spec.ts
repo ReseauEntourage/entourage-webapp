@@ -1,3 +1,4 @@
+import uniqBy from 'lodash/uniqBy'
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
@@ -142,6 +143,58 @@ describe('Conversation', () => {
     expect(selectCurrentConversationMessages(store.getState())).toEqual(conversationMessagesFromGateway)
 
     expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+  })
+
+  it(`
+    Given messages have been retrieved from gateway
+    When user selects a conversation where he is not accepted
+    Then an error should be returned when conversation messages are retrieved from gateway
+      And selected conversation messages should be empty
+      And selected conversation be defined with the conversation details
+  `, async () => {
+    const messagesGateway = new TestMessagesGateway()
+
+    const store = configureStoreWithMessages({
+      dependencies: { messagesGateway },
+      initialAppState: {
+        messages: {
+          ...fakeMessagesData,
+          conversations: {
+            ...fakeMessagesData.conversations,
+            abc: {
+              ...fakeMessagesData.conversations.abc,
+              joinStatus: 'pending',
+            },
+          },
+          isIdle: false,
+        },
+      },
+    })
+    const conversationMessagesFromGateway = [
+      ...createConversationMessages(),
+    ]
+
+    const deferredValueRetrieveConversations = {
+      conversationMessages: conversationMessagesFromGateway,
+    }
+
+    const selectedConversationId = 'abc'
+
+    messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
+    messagesGateway.retrieveConversationMessages.rejectDeferredValue()
+
+    store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
+
+    await store.waitForActionEnd()
+
+    expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
+
+    expect(selectCurrentConversationMessages(store.getState())).toEqual(null)
+
+    expect(selectCurrentConversation(store.getState())).toEqual({
+      ...fakeMessagesData.conversations[selectedConversationId],
+      joinStatus: 'pending',
+    })
   })
 
   it(`
@@ -358,7 +411,7 @@ describe('Conversation', () => {
     await store.waitForActionEnd()
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
-    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 0 })
+    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 1 })
     // expect(messagesGateway.retrieveConversation).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
     expect(messagesGateway.retrieveConversation).toHaveBeenCalledTimes(0)
 
@@ -428,7 +481,7 @@ describe('Conversation', () => {
 
     await store.waitForActionEnd()
 
-    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 0 })
+    expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 1 })
     expect(messagesGateway.retrieveConversation).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
     expect(selectCurrentConversation(store.getState())).toBeTruthy()
@@ -484,7 +537,7 @@ describe('Conversation', () => {
     await store.waitForActionEnd()
 
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({
-      page: 0,
+      page: 1,
     })
   })
 
@@ -557,7 +610,10 @@ describe('Conversation', () => {
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
 
-    const messagesFromStore = Array(25).fill(createConversationMessages()[0])
+    const messagesFromStore = []
+    for (let i = 0; i < 25; i += 1) {
+      messagesFromStore.push(createConversationMessages()[0])
+    }
 
     const oldestDate = '1998-04-22T06:00:00Z'
     messagesFromStore[messagesFromStore.length - 1].createdAt = oldestDate
@@ -583,13 +639,14 @@ describe('Conversation', () => {
 
     expect(selectCanFetchMoreMessages(store.getState())).toBeTruthy()
 
-    const conversationMessagesFromGateway = [
-      ...createConversationMessages(),
-    ]
+    const messagesFromGateway = []
+    for (let i = 0; i < 25; i += 1) {
+      messagesFromGateway.push(createConversationMessages()[0])
+    }
 
     const deferredValueRetrieveConversations = {
       conversationMessages: [
-        ...Array(25).fill(conversationMessagesFromGateway[0]),
+        ...messagesFromGateway,
       ],
     }
 
@@ -612,10 +669,15 @@ describe('Conversation', () => {
       entourageUuid: selectedConversationId, before: oldestDate,
     })
 
-    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
-      ...deferredValueRetrieveConversations.conversationMessages,
-      ...messagesFromStore,
-    ])
+    const uniqMessages = uniqBy(
+      [
+        ...messagesFromStore,
+        ...deferredValueRetrieveConversations.conversationMessages || [],
+      ], (message) => message.id,
+    )
+    uniqMessages.sort((a, b) => b.id - a.id)
+
+    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual(uniqMessages)
   })
 
   it(`
@@ -631,7 +693,11 @@ describe('Conversation', () => {
     const messagesGateway = new TestMessagesGateway()
 
     const storeConversation = createConversationItem()
-    const storeMessages = Array(50).fill(createConversationMessages()[0])
+
+    const storeMessages = []
+    for (let i = 0; i < 50; i += 1) {
+      storeMessages.push(createConversationMessages()[0])
+    }
 
     const loggedInUser = createUser()
 
@@ -662,7 +728,6 @@ describe('Conversation', () => {
       content: newMessageParams.message,
       createdAt: '2021-04-22T06:00:00Z',
       id: uniqIntId(),
-      messageType: 'text',
       user: {
         avatarUrl: loggedInUser.avatarUrl,
         displayName: `${loggedInUser.firstName} ${loggedInUser.lastName[0]}`,
@@ -694,10 +759,15 @@ describe('Conversation', () => {
       entourageUuid: 'abc',
     })
 
-    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([
-      newMessageEntity,
-      ...storeMessages,
-    ])
+    const uniqMessages = uniqBy(
+      [
+        ...storeMessages,
+        newMessageEntity,
+      ], (message) => message.id,
+    )
+    uniqMessages.sort((a, b) => b.id - a.id)
+
+    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual(uniqMessages)
 
     expect(selectCurrentConversation(store.getState())).toStrictEqual({
       ...storeConversation,
@@ -713,7 +783,6 @@ describe('Conversation', () => {
     Then the new message should be sent to gateway
       And the new conversation messages list should be retrieved from gateway
       And the new conversation messages list should contain only the new message
-      And the conversation list should retrieved from gateway
       And the conversation list should be updated with the newly created conversation
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
@@ -727,7 +796,11 @@ describe('Conversation', () => {
       ...createConversationItem(),
       uuid: 'def',
     }
-    const storeMessages = Array(50).fill(createConversationMessages()[0])
+
+    const storeMessages = []
+    for (let i = 0; i < 50; i += 1) {
+      storeMessages.push(createConversationMessages()[0])
+    }
 
     const loggedInUser = createUser()
 
@@ -761,7 +834,6 @@ describe('Conversation', () => {
       content: newMessageParams.message,
       createdAt: '2021-04-22T06:00:00Z',
       id: uniqIntId(),
-      messageType: 'text',
       user: {
         avatarUrl: loggedInUser.avatarUrl,
         displayName: `${loggedInUser.firstName} ${loggedInUser.lastName[0]}`,
@@ -804,10 +876,6 @@ describe('Conversation', () => {
     expect(messagesGateway.sendMessage).toHaveBeenCalledWith({
       entourageUuid: 'def',
       message: newMessageParams.message,
-    })
-
-    expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
-      page: 0,
     })
 
     expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([

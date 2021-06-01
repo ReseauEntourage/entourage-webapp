@@ -73,7 +73,7 @@ export const Map = React.memo((props: Props) => {
     <GoogleMapReact
       center={position.center}
       onChange={(nextValue) => onChange(nextValue)}
-      options={{ fullscreenControl: false }}
+      options={{ fullscreenControl: false, clickableIcons: false }}
       yesIWantToUseGoogleMapApiInternals={true}
       zoom={position.zoom}
     >

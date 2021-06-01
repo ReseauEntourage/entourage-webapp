@@ -8,7 +8,6 @@ import { OverlayLoader } from 'src/components/OverlayLoader'
 import { ModalUserCard } from 'src/containers/ModalUserCard'
 import {
   messagesActions,
-  selectConversationIsInList,
   selectCurrentConversation,
   selectCurrentConversationMessages,
 } from 'src/core/useCases/messages'
@@ -19,26 +18,30 @@ import * as S from './ConversationDetail.styles'
 import { MembersPendingRequest } from './MembersPendingRequest'
 
 interface ConversationDetailProps {
-  entourageUuid: string;
+  entourageUuid?: string;
 }
 
 export function ConversationDetail(props: ConversationDetailProps) {
   const dispatch = useDispatch()
   const { entourageUuid } = props
   const router = useRouter()
-  const conversationIsInList = useSelector(selectConversationIsInList)
   const currentConversation = useSelector(selectCurrentConversation)
   const messages = useSelector(selectCurrentConversationMessages)
 
   const entourage = currentConversation
-  const isNewConversation = !conversationIsInList
 
   const joinStatus = entourage?.joinStatus
   const userIsAccepted = joinStatus === 'accepted'
 
   const fetchMore = useCallback(() => {
-    dispatch(messagesActions.retrieveNextConversations())
-  }, [dispatch])
+    if (messages) {
+      const lastMessage = messages[messages.length - 1]
+
+      dispatch(messagesActions.retrieveOlderConversationMessages({
+        before: lastMessage.createdAt,
+      }))
+    }
+  }, [dispatch, messages])
 
   const me = useMeNonNullable()
 
@@ -72,7 +75,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
     id: message.id,
   })) : []
 
-  if (!entourage) {
+  if (!entourageUuid || !entourage) {
     return (
       <S.Container>
         <Box alignItems="center" display="flex" height="100%" justifyContent="center">
@@ -88,6 +91,8 @@ export function ConversationDetail(props: ConversationDetailProps) {
 
   const { title } = entourage
 
+  const iAmAuthor = me.id === entourage.author.id
+
   return (
     <S.Container>
       <TopBar
@@ -95,7 +100,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
         onClickTopBar={onClickTopBar}
         title={title}
       />
-      {!isNewConversation && (
+      {iAmAuthor && (
         <MembersPendingRequest entourageUuid={entourageUuid} />
       )}
       {!userIsAccepted ? (

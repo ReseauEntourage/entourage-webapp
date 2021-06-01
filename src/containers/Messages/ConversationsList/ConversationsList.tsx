@@ -8,7 +8,12 @@ import { Link as CustomLink } from 'src/components/Link'
 import {
   useQueryEntouragesWithMembers,
 } from 'src/core/store'
-import { messagesActions, selectConversationList } from 'src/core/useCases/messages'
+import {
+  messagesActions,
+  selectConversationList,
+  selectConversationsIsFetching,
+  selectMessagesCurrentPage,
+} from 'src/core/useCases/messages'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { useOnScroll } from 'src/utils/hooks'
 import { ConversationItemExcerpt } from './ConversationItemExcerpt'
@@ -21,6 +26,9 @@ interface ConversationsListProps {
 export function ConversationsList(props: ConversationsListProps) {
   const { entourageUuid } = props
   const conversations = useSelector(selectConversationList)
+  const conversationsFetching = useSelector(selectConversationsIsFetching)
+  const currentPage = useSelector(selectMessagesCurrentPage)
+
   const dispatch = useDispatch()
   const me = useMeNonNullable()
   const { entouragesWithMembers: entouragesWithMembersPending } = useQueryEntouragesWithMembers('pending')
@@ -31,7 +39,7 @@ export function ConversationsList(props: ConversationsListProps) {
     },
   })
 
-  if (!entouragesWithMembersPending) {
+  if (conversationsFetching && currentPage === 1) {
     return (
       <S.Container>
         <Box alignItems="center" display="flex" height="100%" justifyContent="center">
@@ -48,7 +56,7 @@ export function ConversationsList(props: ConversationsListProps) {
       .map((conversation) => {
         const conversationUuid = conversation.uuid
 
-        const entourageWithMembers = entouragesWithMembersPending.find((entourage) => {
+        const entourageWithMembers = entouragesWithMembersPending?.find((entourage) => {
           return entourage.entourageUuid === conversationUuid
         })
 

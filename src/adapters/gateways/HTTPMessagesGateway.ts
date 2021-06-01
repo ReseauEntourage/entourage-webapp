@@ -1,5 +1,5 @@
 import { api } from 'src/core/api'
-import { IMessagesGateway } from 'src/core/useCases/messages'
+import { IMessagesGateway, MessagesErrorNoAcceptedInConversation } from 'src/core/useCases/messages'
 
 export class HTTPMessagesGateway implements IMessagesGateway {
   retrieveConversations: IMessagesGateway['retrieveConversations'] = ({ page }) => {
@@ -44,7 +44,6 @@ export class HTTPMessagesGateway implements IMessagesGateway {
           content: chatMessage.content,
           createdAt: chatMessage.createdAt,
           id: chatMessage.id,
-          messageType: chatMessage.messageType,
           user: chatMessage.user,
         }
       })
@@ -52,10 +51,19 @@ export class HTTPMessagesGateway implements IMessagesGateway {
       return {
         conversationMessages: items,
       }
+    }).catch((error) => {
+      if (error?.response?.status === 401) {
+        // temp fix until remove notifServerError
+        error.stopPropagation()
+
+        throw new MessagesErrorNoAcceptedInConversation()
+      }
+
+      throw error
     })
   }
 
-  retrieveConversation(data: { entourageUuid: string; }) {
+  retrieveConversation: IMessagesGateway['retrieveConversation'] = (data: { entourageUuid: string; }) => {
     return api.request({
       name: '/entourages/:entourageId GET',
       pathParams: {

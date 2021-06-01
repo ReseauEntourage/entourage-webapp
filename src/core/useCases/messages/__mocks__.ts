@@ -38,7 +38,6 @@ export function createConversationMessages(): ConversationMessage[] {
       content: 'Bonjour',
       createdAt: '2000-04-22T06:00:00Z',
       id: uniqIntId(),
-      messageType: 'text',
       user: {
         avatarUrl: 'https://avatar.com',
         id: 2,
@@ -50,7 +49,6 @@ export function createConversationMessages(): ConversationMessage[] {
       content: 'Aurevoir',
       createdAt: '1999-05-22T06:00:00Z',
       id: uniqIntId(),
-      messageType: 'text',
       user: {
         avatarUrl: 'https://avatar.com',
         id: 2,
@@ -58,5 +56,5 @@ export function createConversationMessages(): ConversationMessage[] {
         partner: null,
       },
     },
-  ]
+  ].sort((a, b) => b.id - a.id)
 }

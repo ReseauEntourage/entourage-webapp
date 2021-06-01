@@ -2,7 +2,6 @@ import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import React, { useCallback } from 'react'
 import { useSelector } from 'react-redux'
-import { selectCurrentConversation } from '../../../core/useCases/messages'
 import { Button, ButtonsList } from 'src/components/Button'
 import { PendingNotif } from 'src/components/Conversations'
 import {
@@ -10,6 +9,7 @@ import {
   useMutateAcceptEntourageUser,
   useMutateDeleteEntourageUser,
 } from 'src/core/store'
+import { selectCurrentConversation } from 'src/core/useCases/messages'
 import { useMeNonNullable } from 'src/hooks/useMe'
 import { colors } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
@@ -78,15 +78,18 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
             </Button>
           </ButtonsList>
         )}
+        userId={currentMemberPending.id}
       />
       {nextMemberPending && (
         <PendingNotif
           pictureURL={nextMemberPending.avatarUrl}
+
           style={{
             borderRadius: 0,
             borderTopLeftRadius: 5,
             borderBottomLeftRadius: 5,
           }}
+          userId={currentMemberPending.id}
         />
       )}
     </S.Container>

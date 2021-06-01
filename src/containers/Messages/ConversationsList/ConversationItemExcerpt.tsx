@@ -26,6 +26,7 @@ export function ConversationItemExcerpt(props: ConversationItemExcerptProps) {
       <PendingNotif
         label={label}
         pictureURL={pictureURL}
+        userId={pendingMembers[0].id}
       />
     )
   }

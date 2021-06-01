@@ -13,7 +13,7 @@ export function selectMessages(state: AppState) {
   return state.messages
 }
 
-export function selectMessagesIsFetching(state: AppState) {
+export function selectConversationsIsFetching(state: AppState) {
   return state.messages.fetching
 }
 
@@ -43,12 +43,12 @@ export function selectConversationIsInList(state: AppState) {
 
 export function selectCurrentConversation(state: AppState) {
   const { selectedConversationUuid, conversations } = state.messages
-  return selectedConversationUuid ? conversations[selectedConversationUuid] : null
+  return selectedConversationUuid ? conversations[selectedConversationUuid] ?? null : null
 }
 
 export function selectCurrentConversationMessages(state: AppState) {
   const { selectedConversationUuid, conversationsMessages } = state.messages
-  return selectedConversationUuid ? conversationsMessages[selectedConversationUuid] : null
+  return selectedConversationUuid ? conversationsMessages[selectedConversationUuid] ?? null : null
 }
 
 export function selectLastMessageDateFromConversation(state: AppState) {
