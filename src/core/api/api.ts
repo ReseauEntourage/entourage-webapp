@@ -46,14 +46,14 @@ addAxiosInterceptors(axiosInstance)
 
 type APIInstanceWithSSR = {
   request: typeof request;
-  ssr: (ctx: NextPageContext) => {
+  ssr: (ctx?: NextPageContext) => {
     request: typeof request;
   };
 }
 
 export const api: APIInstanceWithSSR = {
   request,
-  ssr: (ctx) => ({
+  ssr: (ctx?) => ({
     request: async (config) => {
       const token = getTokenFromCookies(ctx) || await createAnonymousUser(ctx)
 

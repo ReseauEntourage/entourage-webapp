@@ -22,7 +22,7 @@ export class HTTPPOIsGateway implements IPOIsGateway {
       }
     }
 
-    return api.request({
+    return api.ssr().request({
       name: '/pois GET',
       params: {
         v: 2,
@@ -61,7 +61,7 @@ export class HTTPPOIsGateway implements IPOIsGateway {
   }
 
   retrievePOI: IPOIsGateway['retrievePOI'] = (data) => {
-    return api.request({
+    return api.ssr().request({
       name: '/pois/:poiUuid GET',
       params: {
         v: 2,
