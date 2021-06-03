@@ -9,13 +9,14 @@ export function POIsMetadata() {
   const currentPoi = useSelector(selectCurrentPOI)
 
   const title = currentPoi?.name || `${texts.nav.pageTitles.pois} - ${texts.nav.pageTitles.main}`
-  const description = currentPoi?.description || texts.nav.pageDescriptions.pois
+  const description = currentPoi ? texts.content.map.pois.shareDescription : texts.nav.pageDescriptions.pois
+  const url = `${env.SERVER_URL}/pois${currentPoi ? `/${currentPoi.uuid}` : ''}`
 
   return (
     <MetaData
       description={description}
       title={title}
-      url={`${env.SERVER_URL}/pois`}
+      url={url}
     />
   )
 }

@@ -84,6 +84,7 @@ function* retrieveCurrentFeedItem() {
   const entourageUuid: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
 
   if (!currentItem && entourageUuid) {
+    // TODO Add feedItemDetailsFetching
     const dependencies: Dependencies = yield getContext('dependencies')
     const { retrieveFeedItem } = dependencies.feedGateway
 

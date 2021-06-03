@@ -22,7 +22,7 @@ const MessagesPage: StatelessPage<MessagesProps> = () => {
     <>
       <MetaData
         title={`${texts.nav.pageTitles.messages} - ${texts.nav.pageTitles.main}`}
-        url={`${env.SERVER_URL}/messages/${entourageUuid ?? ''}`}
+        url={`${env.SERVER_URL}/messages${entourageUuid ? `/${entourageUuid}` : ''}`}
       />
       <PrivateRoute>
         <Messages />

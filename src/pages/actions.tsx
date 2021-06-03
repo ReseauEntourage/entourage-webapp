@@ -1,32 +1,47 @@
+import { AppContext } from 'next/app'
 import React from 'react'
-import { SplashScreen } from 'src/components/SplashScreen'
+import { ActionsMetadata } from '../containers/ActionsMetadata'
+import { wrapperStore } from '../core/boostrapStore'
+import { feedActions, selectFeedIsFetching, selectFeedIsIdle } from '../core/useCases/feed'
 import { MapActions } from 'src/containers/MapContainer'
-import { MetaData } from 'src/containers/MetaData'
-import { env } from 'src/core/env'
-import { texts } from 'src/i18n'
-import { useLoadGoogleMapApi } from 'src/utils/misc'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
 
 const Actions: StatelessPage<Props> = () => {
-  const googleMapApiIsLoaded = useLoadGoogleMapApi()
-
   return (
     <>
-      <MetaData
-        description={texts.nav.pageDescriptions.actions}
-        title={`${texts.nav.pageTitles.actions} - ${texts.nav.pageTitles.main}`}
-        url={`${env.SERVER_URL}/actions`}
-      />
-      { !googleMapApiIsLoaded ? <SplashScreen /> : <MapActions /> }
+      <ActionsMetadata />
+      <MapActions />
     </>
   )
 }
 
-// Actions.getInitialProps = async (ctx) => {
-//    Wait until React Queries support SSR. Coming soon
-//    see https://github.com/tannerlinsley/react-query/issues/14
-// }
+Actions.getInitialProps = wrapperStore.getInitialPageProps((store) => {
+  return (ctx: AppContext['ctx']) => {
+    const poiId = ctx.query.actionId as string
+
+    if (poiId) {
+      return new Promise((resolve) => {
+        store.subscribe(() => {
+          const feedIsIdle = selectFeedIsIdle(store.getState())
+          const feedIsFetching = selectFeedIsFetching(store.getState())
+          // const feedItemDetailsIsFetching = selectFeedItemDetailsIsFetching(store.getState())
+
+          const isReady = !feedIsIdle && !feedIsFetching
+
+          if (isReady) {
+            resolve()
+          }
+        })
+
+        store.dispatch(feedActions.init())
+        store.dispatch(feedActions.setCurrentFeedItemUuid(poiId))
+      })
+    }
+
+    return Promise.resolve()
+  }
+})
 
 export default Actions

@@ -31,7 +31,7 @@ export function MetaData(props: MetaDataProps) {
 
   return (
     <Head>
-      <meta content={texts.nav.pageTitles.main} property="og:site_name" />
+      <meta content="Entourage" property="og:site_name" />
       <title>{title}</title>
       <meta content={title} name="twitter:title" />
       <meta content={title} property="og:title" />
