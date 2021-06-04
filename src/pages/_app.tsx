@@ -5,15 +5,14 @@ import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
+import { CookiesAuthUserTokenStorage } from '../adapters/storage/CookiesAuthUserTokenStorage'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
-import { MetaData } from 'src/containers/MetaData'
 import { Nav } from 'src/containers/Nav'
 import { PersistedStore } from 'src/containers/PersistedStore'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api, LoggedUser, assertsUserIsLogged } from 'src/core/api'
 import { wrapperStore } from 'src/core/boostrapStore'
-import { env } from 'src/core/env'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
@@ -42,7 +41,9 @@ class App extends NextApp<{ authUserData: LoggedUser; }> {
 
       // use to get token, either anonymous token or authenticated token
       if (isSSR) {
-        const meData = await api.ssr(appContext.ctx).request({
+        await CookiesAuthUserTokenStorage.initToken(appContext.ctx)
+
+        const meData = await api.request({
           name: '/users/me GET',
         })
 
@@ -94,9 +95,12 @@ class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     const SSRDataValue = { userAgent }
 
+    if (!isSSR) {
+      CookiesAuthUserTokenStorage.initToken().then()
+    }
+
     return (
       <Sentry.ErrorBoundary fallback="An error has occurred">
-        <MetaData url={`${env.SERVER_URL}/actions`} />
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
           <StylesProvider injectFirst={true}>

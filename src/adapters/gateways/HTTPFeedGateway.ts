@@ -23,7 +23,7 @@ export class HTTPFeedGateway implements IFeedGateway {
       }
     }
 
-    return api.ssr().request({
+    return api.request({
       name: '/feeds GET',
       params: {
         types: data.filters.types,
@@ -154,7 +154,7 @@ export class HTTPFeedGateway implements IFeedGateway {
   }
 
   retrieveFeedItem(data: { entourageUuid: string; }) {
-    return api.ssr().request({
+    return api.request({
       name: '/entourages/:entourageId GET',
       pathParams: {
         entourageUuid: data.entourageUuid,

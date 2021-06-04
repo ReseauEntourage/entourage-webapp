@@ -1,8 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosPromise, Method } from 'axios'
-import { NextPageContext } from 'next'
 import { Config, Response } from 'typescript-request-schema'
 import { env } from 'src/core/env'
-import { createAnonymousUser, getTokenFromCookies } from 'src/core/services'
 import { AnyToFix } from 'src/utils/types'
 import { addAxiosInterceptors } from './interceptors'
 import { schema, TypeScriptRequestSchemaConf } from './schema'
@@ -44,29 +42,10 @@ const request: Request = (config) => {
 
 addAxiosInterceptors(axiosInstance)
 
-type APIInstanceWithSSR = {
+type APIInstance = {
   request: typeof request;
-  ssr: (ctx?: NextPageContext) => {
-    request: typeof request;
-  };
 }
 
-export const api: APIInstanceWithSSR = {
+export const api: APIInstance = {
   request,
-  ssr: (ctx?) => ({
-    request: async (config) => {
-      const token = getTokenFromCookies(ctx) || await createAnonymousUser(ctx)
-
-      const configWithToken = {
-        ...config,
-        params: {
-          // @ts-expect-error
-          ...(config.params || {}),
-          token,
-        },
-      }
-
-      return request(configWithToken)
-    },
-  }),
 }

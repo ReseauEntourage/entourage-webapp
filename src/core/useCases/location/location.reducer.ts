@@ -1,5 +1,6 @@
 import { constants } from 'src/constants'
 import { persistReducer } from 'src/core/utils/persistReducer'
+import { isSSR } from 'src/utils/misc'
 import { LocationAction, LocationActionType } from './location.actions'
 
 export interface LocationState {
@@ -89,6 +90,6 @@ function locationPureReducer(
   }
 }
 
-export const locationReducer = persistReducer('location', locationPureReducer, {
+export const locationReducer = isSSR ? locationPureReducer : persistReducer('location', locationPureReducer, {
   blacklist: ['isInit'],
 })

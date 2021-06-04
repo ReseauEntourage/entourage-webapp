@@ -9,6 +9,7 @@ import { HTTPFeedGateway } from 'src/adapters/gateways/HTTPFeedGateway'
 import { GeolocationService } from 'src/adapters/services/GeolocationService'
 import { CookiesAuthUserTokenStorage } from 'src/adapters/storage/CookiesAuthUserTokenStorage'
 import { LocalAuthUserSensitizationStorage } from 'src/adapters/storage/LocalAuthUserSensitizationStorage'
+import { isSSR } from 'src/utils/misc'
 import { configureStore } from './configureStore'
 import { AppDependencies } from './useCases/Dependencies'
 import { authUserSaga } from './useCases/authUser'
@@ -46,9 +47,11 @@ export function bootstrapStore() {
     dependencies,
   })
 
-  // @ts-expect-error
-  // eslint-disable-next-line
-  store.__persistor = persistStore(store)
+  if (!isSSR) {
+    // @ts-expect-error
+    // eslint-disable-next-line
+    store.__persistor = persistStore(store)
+  }
 
   return { store }
 }
