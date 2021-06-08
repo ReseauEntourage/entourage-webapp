@@ -36,7 +36,9 @@ export function EventCard(props: EventCardProps) {
         <Typography variant={variants.footNote}>{dateLabel}</Typography>
       </Box>
       <Box>
-        <Typography variant={variants.footNote}>{address}</Typography>
+        <Linkify>
+          <Typography variant={variants.footNote}>{address}</Typography>
+        </Linkify>
       </Box>
       <Box alignItems="center" display="flex" justifyContent="flex-start" marginY={1}>
         <Box marginRight={1}>

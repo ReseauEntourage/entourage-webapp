@@ -89,7 +89,7 @@ export function FeedItemCards() {
   }
 
   if (feedItem.groupType === 'outing') {
-    const { author, title, description, metadata, uuid } = feedItem
+    const { author, title, description, metadata, uuid, online, eventUrl } = feedItem
     const { partner } = author
 
     const organizerName = partner ? partner.name : author.displayName
@@ -109,7 +109,11 @@ export function FeedItemCards() {
         />
         <EventCard
           actions={<Actions iAmCreator={iAmCreator} />}
-          address={feedItem.metadata.displayAddress}
+          address={
+            online && eventUrl
+              ? `${texts.content.map.actions.online} - ${eventUrl}`
+              : feedItem.metadata.displayAddress
+          }
           dateLabel={dateLabel}
           description={feedItem.description}
           organizerLabel={feedItem.author.displayName}
