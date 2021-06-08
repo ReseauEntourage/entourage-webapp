@@ -75,6 +75,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           joinStatus: item.data.joinStatus,
           status: item.data.status,
           online: item.data.online,
+          eventUrl: item.data.eventUrl,
           numberOfPeople: item.data.numberOfPeople,
         }
       })
@@ -188,6 +189,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           joinStatus: item.data.entourage.joinStatus,
           status: item.data.entourage.status,
           online: item.data.entourage.online,
+          eventUrl: item.data.entourage.eventUrl,
           numberOfPeople: item.data.entourage.numberOfPeople,
         },
       }

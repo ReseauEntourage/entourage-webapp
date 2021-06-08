@@ -124,6 +124,7 @@ export const texts = {
         participants: 'Participants',
         contribution: 'Contribution',
         ask_for_help: 'Demande',
+        online: 'En ligne',
         by: 'par',
         createAt: 'Crée il y a',
         activeAt: 'actif il y a',
