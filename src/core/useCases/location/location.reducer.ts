@@ -1,5 +1,4 @@
 import { constants } from 'src/constants'
-import { persistReducer } from 'src/core/utils/persistReducer'
 import { LocationAction, LocationActionType } from './location.actions'
 
 export interface LocationState {
@@ -37,7 +36,7 @@ export const defaultLocationState: LocationState = {
   geolocation: null,
 }
 
-function locationPureReducer(
+export function locationReducer(
   state: LocationState = defaultLocationState,
   action: LocationAction,
 ): LocationState {
@@ -88,7 +87,3 @@ function locationPureReducer(
       return state
   }
 }
-
-export const locationReducer = persistReducer('location', locationPureReducer, {
-  blacklist: ['isInit'],
-})

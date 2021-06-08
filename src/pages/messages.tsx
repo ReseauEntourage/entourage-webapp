@@ -1,5 +1,5 @@
 import React from 'react'
-import { Messages, useEntourageUuid } from 'src/containers/Messages'
+import { Messages as MessagesComponent, useEntourageUuid } from 'src/containers/Messages'
 
 import { MetaData } from 'src/containers/MetaData'
 import { PrivateRoute } from 'src/containers/PrivateRoute'
@@ -8,9 +8,9 @@ import { texts } from 'src/i18n'
 import { useFirebase, useMount } from 'src/utils/hooks'
 import { StatelessPage } from 'src/utils/types'
 
-interface MessagesProps {}
+interface Props {}
 
-const MessagesPage: StatelessPage<MessagesProps> = () => {
+export const MessagesPage = () => {
   const { sendEvent } = useFirebase()
   const entourageUuid = useEntourageUuid()
 
@@ -22,13 +22,17 @@ const MessagesPage: StatelessPage<MessagesProps> = () => {
     <>
       <MetaData
         title={`${texts.nav.pageTitles.messages} - ${texts.nav.pageTitles.main}`}
-        url={`${env.SERVER_URL}/messages/${entourageUuid ?? ''}`}
+        url={`${env.SERVER_URL}/messages${entourageUuid ? `/${entourageUuid}` : ''}`}
       />
       <PrivateRoute>
-        <Messages />
+        <MessagesComponent />
       </PrivateRoute>
     </>
   )
 }
 
-export default MessagesPage
+const Messages: StatelessPage<Props> = () => (
+  <MessagesPage />
+)
+
+export default Messages

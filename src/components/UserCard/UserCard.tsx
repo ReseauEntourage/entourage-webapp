@@ -40,8 +40,6 @@ export function UserCard(props: UserCardProps) {
     }
   }, [partner])
 
-  // TODO FIX BUTTON LINK
-
   return (
     <S.Container>
       <S.Avatar>

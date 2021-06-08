@@ -9,7 +9,7 @@ export const FirebaseActionType = {
   SEND_EVENT: 'FIREBASE/SEND_EVENT',
 } as const
 
-export type GeneratedFirebaseActionType = Record<FirebaseEvent, string>
+export type FirebaseActionType = keyof typeof FirebaseActionType;
 
 // ------------------------------------------------------------------------
 

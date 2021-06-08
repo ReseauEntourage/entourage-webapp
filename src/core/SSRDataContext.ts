@@ -1,8 +1,6 @@
 import { createContext, useContext } from 'react'
-import { AnyToFix } from 'src/utils/types'
 
 interface ContextValue {
-  me?: AnyToFix;
   userAgent: string;
 }
 

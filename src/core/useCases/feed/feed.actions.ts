@@ -8,6 +8,7 @@ export const FeedActionType = {
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
+  RETRIEVE_FEED_ITEM_DETAILS_STARTED: 'FEED/RETRIEVE_FEED_ITEM_DETAILS_STARTED',
   RETRIEVE_FEED_NEXT_PAGE: 'FEED/RETRIEVE_FEED_NEXT_PAGE',
   RETRIEVE_FEED_NEXT_PAGE_STARTED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_STARTED',
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
@@ -89,6 +90,12 @@ function retrieveFeedNextPageSuccess(
   return {
     type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
     payload,
+  }
+}
+
+function retrieveFeedItemDetailsStarted() {
+  return {
+    type: FeedActionType.RETRIEVE_FEED_ITEM_DETAILS_STARTED,
   }
 }
 
@@ -224,6 +231,7 @@ const privateActions = {
   leaveEntourageSucceeded,
   closeEntourageSucceeded,
   reopenEntourageSucceeded,
+  retrieveFeedItemDetailsStarted,
 }
 
 export const actions = {

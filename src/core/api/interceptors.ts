@@ -1,13 +1,12 @@
 import { AxiosInstance } from 'axios'
 import humps from 'humps'
+import { CookiesAuthUserTokenStorage } from 'src/adapters/storage/CookiesAuthUserTokenStorage'
 import { env } from 'src/core/env'
-import { getTokenFromCookies } from 'src/core/services'
 import { notifServerError } from 'src/utils/misc'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
   function getUserToken(): string | null {
-    // TODO: improve with token cache in memory for browser side
-    return getTokenFromCookies()
+    return CookiesAuthUserTokenStorage.authToken
   }
 
   client.interceptors.request.use((request) => {

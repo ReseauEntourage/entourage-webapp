@@ -1,6 +1,9 @@
+import { HYDRATE } from 'next-redux-wrapper'
 import { call, put, getContext, select } from 'redux-saga/effects'
 import { locationActions } from '../location'
+import { CookiesAuthUserTokenStorage } from 'src/adapters/storage/CookiesAuthUserTokenStorage'
 import { constants } from 'src/constants'
+import { createAnonymousUser } from 'src/core/services'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { PhoneLookUpResponse, IAuthUserGateway } from './IAuthUserGateway'
@@ -18,6 +21,7 @@ import {
   validateSMSCode,
   SMSCodeValidationsError,
 } from './authUser.validations'
+import { authUserActions } from './index'
 
 export interface Dependencies {
   authUserGateway: IAuthUserGateway;
@@ -236,6 +240,16 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
   yield put(actions.updateUserSuccess({ user: response }))
 }
 
+function* logoutSaga() {
+  const anonymousToken: CallReturnType<typeof createAnonymousUser> = yield call(createAnonymousUser)
+  CookiesAuthUserTokenStorage.setToken(anonymousToken)
+  yield put(authUserActions.setUser(null))
+}
+
+function* initUserSaga() {
+  yield put(authUserActions.initUser())
+}
+
 export function* authUserSaga() {
   yield takeEvery(AuthUserActionType.PHONE_LOOK_UP, phoneLookUpSaga)
   yield takeEvery(AuthUserActionType.CREATE_ACCOUNT, createAccountSaga)
@@ -245,8 +259,11 @@ export function* authUserSaga() {
   yield takeEvery(AuthUserActionType.CREATE_PASSWORD_SUCCEEDED, showSensitizationPopupSaga)
   yield takeEvery(AuthUserActionType.CREATE_PASSWORD, createPasswordSaga)
   yield takeEvery(AuthUserActionType.RESET_PASSWORD, resetPasswordSaga)
-  yield takeEvery(AuthUserActionType.SET_USER, showSensitizationPopupSaga)
+  yield takeEvery(AuthUserActionType.INIT_USER, showSensitizationPopupSaga)
   yield takeEvery(AuthUserActionType.HIDE_SENSITIZATION_POPUP, hideSensitizationPopupSaga)
   yield takeEvery(AuthUserActionType.UPDATE_USER, updateUserSaga)
+  yield takeEvery(AuthUserActionType.LOGOUT, logoutSaga)
+
+  yield takeEvery(HYDRATE, initUserSaga)
 }
 

@@ -33,6 +33,10 @@ export function selectHasNextPageToken(state: AppState) {
   return !!state.feed.nextPageToken
 }
 
+export function selectFeedItemDetailsIsFetching(state: AppState) {
+  return state.feed.feedItemDetailsIsFetching
+}
+
 export function selectCurrentFeedItemUuid(state: AppState) {
   return state.feed.selectedItemUuid
 }

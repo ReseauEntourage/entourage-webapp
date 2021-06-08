@@ -1,21 +1,17 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import * as Sentry from '@sentry/react'
-import NextApp, { AppContext, AppInitialProps } from 'next/app'
-import { PersistGate } from 'redux-persist/integration/react'
+import NextApp, { AppContext, AppProps } from 'next/app'
 import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
-import { Provider } from 'react-redux'
+import { CookiesAuthUserTokenStorage } from '../adapters/storage/CookiesAuthUserTokenStorage'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
-import { SplashScreen } from 'src/components/SplashScreen'
-import { MetaData } from 'src/containers/MetaData'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
-import { api, LoggedUser } from 'src/core/api'
-import { bootstrapStore } from 'src/core/boostrapStore'
-import { env } from 'src/core/env'
+import { api, assertsUserIsLogged } from 'src/core/api'
+import { wrapperStore } from 'src/core/boostrapStore'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
@@ -29,46 +25,58 @@ if (process.env.NODE_ENV !== 'production') {
 initSentry()
 initFacebookApp()
 
-export default class App extends NextApp<{ authUserData: LoggedUser; }> {
+class App extends NextApp<AppProps> {
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  store: ReturnType<typeof bootstrapStore>['store'] | null = null;
+  public static getInitialProps = wrapperStore.getInitialAppProps((store) => {
+    return async (appContext: AppContext) => {
+      const { req } = appContext.ctx
+      const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
 
-  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null;
+      // use to get token, either anonymous token or authenticated token
+      if (isSSR) {
+        await CookiesAuthUserTokenStorage.initToken(appContext.ctx)
 
-  static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
-    const { req } = appContext.ctx
-    const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
-    // calls page's `getInitialProps` and fills `appProps.pageProps`
-    const appProps = await NextApp.getInitialProps(appContext)
+        const meData = await api.request({
+          name: '/users/me GET',
+        })
 
-    let me
+        const { user } = meData.data
 
-    // use to get token, either anonymous token or authenticated token
-    if (isSSR) {
-      const meData = await api.ssr(appContext.ctx).request({
-        name: '/users/me GET',
-      })
+        if (user && !user.anonymous) {
+          assertsUserIsLogged(user)
 
-      // me = meData.data.user
-      me = {
-        data: {
-          user: meData.data.user,
+          store.dispatch(authUserActions.setUser({
+            id: user.id,
+            email: user.email || undefined,
+            hasPassword: user.hasPassword,
+            avatarUrl: user.avatarUrl || undefined,
+            partner: user.partner,
+            lastName: user.lastName || undefined,
+            firstName: user.firstName || undefined,
+            address: user.address || undefined,
+            about: user.about || undefined,
+            token: user.token,
+            stats: user.stats,
+            firstSignIn: user.firstSignIn || false,
+          }))
+        }
+      }
+
+      return {
+        pageProps: {
+          ...(appContext.Component.getInitialProps
+            ? await appContext.Component.getInitialProps({ ...appContext.ctx, store })
+            : {}
+          ),
         },
+        userAgent,
       }
     }
-
-    return {
-      ...appProps,
-      // @ts-ignore
-      me,
-      authUserData: me?.data.user,
-      userAgent,
-    }
-  }
+  })
 
   componentDidMount() {
     const jssStyles = document.querySelector('#jss-server-side')
@@ -78,77 +86,40 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   }
 
   render() {
-    // @ts-ignore
-    const { Component, pageProps, me, userAgent, authUserData } = this.props
+    // @ts-expect-error
+    const { Component, pageProps, userAgent } = this.props
 
-    const SSRDataValue = { me, userAgent }
+    const SSRDataValue = { userAgent }
 
-    if (!this.store) {
-      const { store, persistor } = bootstrapStore()
-      this.store = store
-      this.persistor = persistor
+    if (!isSSR) {
+      CookiesAuthUserTokenStorage.initToken().then()
     }
-
-    const content = (
-      <ReactQueryConfigProvider config={queryConfig}>
-        <Layout>
-          <>
-            <Layout.Nav>
-              <Nav />
-            </Layout.Nav>
-            <Layout.Page>
-              <Component {...pageProps} />
-              <ModalsListener />
-            </Layout.Page>
-          </>
-        </Layout>
-      </ReactQueryConfigProvider>
-    )
-
-    const persistorWrappedContent = this.persistor ? (
-      <PersistGate
-        loading={<SplashScreen />}
-        onBeforeLift={() => {
-          if (this.store && authUserData && !authUserData.anonymous) {
-            this.store.dispatch(authUserActions.setUser({
-              id: authUserData.id,
-              email: authUserData.email || undefined,
-              hasPassword: authUserData.hasPassword,
-              avatarUrl: authUserData.avatarUrl || undefined,
-              partner: authUserData.partner,
-              lastName: authUserData.lastName || undefined,
-              firstName: authUserData.firstName || undefined,
-              address: authUserData.address || undefined,
-              about: authUserData.about || undefined,
-              token: authUserData.token,
-              stats: authUserData.stats,
-              firstSignIn: authUserData.firstSignIn || false,
-            }))
-          }
-        }}
-        persistor={this.persistor}
-      >
-        {content}
-      </PersistGate>
-    )
-      : content
 
     return (
       <Sentry.ErrorBoundary fallback="An error has occurred">
-        <MetaData url={`${env.SERVER_URL}/actions`} />
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
-          <>
-            <StylesProvider injectFirst={true}>
-              <ThemeProvider theme={theme}>
-                <Provider store={this.store}>
-                  {persistorWrappedContent}
-                </Provider>
-              </ThemeProvider>
-            </StylesProvider>
-          </>
+          <StylesProvider injectFirst={true}>
+            <ThemeProvider theme={theme}>
+              <ReactQueryConfigProvider config={queryConfig}>
+                <Layout>
+                  <>
+                    <Layout.Nav>
+                      <Nav />
+                    </Layout.Nav>
+                    <Layout.Page>
+                      <Component {...pageProps} />
+                      <ModalsListener />
+                    </Layout.Page>
+                  </>
+                </Layout>
+              </ReactQueryConfigProvider>
+            </ThemeProvider>
+          </StylesProvider>
         </SSRDataContext.Provider>
       </Sentry.ErrorBoundary>
     )
   }
 }
+
+export default wrapperStore.withRedux(App)

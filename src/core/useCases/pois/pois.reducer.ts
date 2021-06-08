@@ -98,7 +98,6 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
     case POIsActionType.RETRIEVE_POI_DETAILS_SUCCEEDED:
       return {
         ...state,
-        isIdle: false,
         detailedPOIs: {
           ...state.detailedPOIs,
           [action.payload.poiDetails.uuid]: action.payload.poiDetails,

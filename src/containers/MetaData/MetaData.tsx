@@ -31,7 +31,7 @@ export function MetaData(props: MetaDataProps) {
 
   return (
     <Head>
-      <meta content={texts.nav.pageTitles.main} property="og:site_name" />
+      <meta content="Entourage" property="og:site_name" />
       <title>{title}</title>
       <meta content={title} name="twitter:title" />
       <meta content={title} property="og:title" />
@@ -45,6 +45,7 @@ export function MetaData(props: MetaDataProps) {
       <meta content={metaType} property="og:type" />
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="@R_Entourage" name="twitter:site" />
+      <meta content={constants.FB_APP_ID} property="fb:app_id" />
       <link href={constants.WEBAPP_PROD_LINK} rel="canonical" />
       <link href="/favicon.ico" rel="icon" />
       <base href="/" />

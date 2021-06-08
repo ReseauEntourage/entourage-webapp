@@ -7,6 +7,7 @@ import { TestGeolocationService } from '../location/TestGeolocationService'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
+import { createAnonymousUser } from 'src/core/services'
 import { assertIsDefined } from 'src/utils/misc'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
@@ -38,7 +39,6 @@ function createSilentAuthUserTokenStorage() {
   const authUserTokenStorage = new TestAuthUserTokenStorage()
   authUserTokenStorage.getToken.mockImplementation()
   authUserTokenStorage.setToken.mockImplementation()
-  authUserTokenStorage.removeToken.mockImplementation()
 
   return authUserTokenStorage
 }
@@ -868,8 +868,39 @@ describe('Auth User', () => {
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)
     })
 
-    // TODO
-    // it.skip('should remove user token on logout', () => {})
+    // TODO fix test
+    it.skip(`
+      Given initial state
+        And user is logged in
+      When user logs out
+      Then the user should be set to null
+        And the anonymous user token should be set into cookies`,
+    async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserTokenStorage = new TestAuthUserTokenStorage()
+      const user = createUser(false, false)
+
+      const anonymousUser = await createAnonymousUser()
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway, authUserTokenStorage },
+      })
+
+      store.dispatch(publicActions.logout())
+      await store.waitForActionEnd()
+
+      expect(selectUser(store.getState())).toBeFalsy()
+      expect(selectUser(store.getState())).toEqual(null)
+      expect(authUserTokenStorage.getToken).toEqual(anonymousUser)
+    })
   })
 
   describe('Giver user is not set', () => {
@@ -1066,6 +1097,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
 
       store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.initUser())
 
       await store.waitForActionEnd()
 
@@ -1160,6 +1192,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
       store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.initUser())
 
       await store.waitForActionEnd()
 

@@ -84,13 +84,15 @@ function* retrieveCurrentFeedItem() {
   const entourageUuid: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
 
   if (!currentItem && entourageUuid) {
+    yield put(actions.retrieveFeedItemDetailsStarted())
     const dependencies: Dependencies = yield getContext('dependencies')
     const { retrieveFeedItem } = dependencies.feedGateway
 
     const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
+    yield put(actions.insertFeedItem(response.item))
+
     if (feedIsIdle) {
-      yield put(actions.insertFeedItem(response.item))
       if (response.item.groupType === 'outing' && response.item.online) {
         yield put(actions.retrieveFeed())
       } else {
