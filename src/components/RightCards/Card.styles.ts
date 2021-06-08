@@ -1,4 +1,3 @@
-import Link from '@material-ui/core/Link'
 import Typography from '@material-ui/core/Typography'
 import styled from 'styled-components'
 import { variants, colors, theme } from 'src/styles'
@@ -28,11 +27,15 @@ export const Section = styled.div`
   margin-top: ${theme.spacing(2)}px;
 `
 
-export const SoliguideCard = styled(Link)`
+export const SoliguideCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: ${theme.spacing(1)}px;
-  background-color: ${colors.main.primary};
+  padding: ${theme.spacing(2)}px;
+  border: 1px ${colors.main.primary} solid;
+`
+
+export const SoliguideLogo = styled.img`
+  width: 100%;
 `
