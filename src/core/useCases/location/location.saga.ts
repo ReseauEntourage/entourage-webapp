@@ -144,5 +144,4 @@ export function* locationSaga() {
   yield takeEvery(LocationActionType.GET_GEOLOCATION, getGeolocationSaga)
   yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, initLocationSaga)
   yield takeEvery(AuthUserActionType.CREATE_PASSWORD_SUCCEEDED, initLocationSaga)
-  yield takeEvery(AuthUserActionType.SET_USER, initLocationSaga)
 }

@@ -1,6 +1,7 @@
 import { StateFromReducersMapObject } from 'redux'
 import { authUserReducer } from './authUser'
 import { feedReducer } from './feed'
+import { firebaseReducer } from './firebase'
 import { locationReducer } from './location'
 import { messagesReducer } from './messages'
 import { poisReducer } from './pois'
@@ -11,6 +12,7 @@ export const reducers = {
   pois: poisReducer,
   location: locationReducer,
   messages: messagesReducer,
+  firebase: firebaseReducer,
 }
 
 export type AppState = StateFromReducersMapObject<typeof reducers>

@@ -13,9 +13,4 @@ const Home: StatelessPage<Props> = () => {
   )
 }
 
-// Home.getInitialProps = async (ctx) => {
-//    Wait until React Queries support SSR. Coming soon
-//    see https://github.com/tannerlinsley/react-query/issues/14
-// }
-
 export default Home

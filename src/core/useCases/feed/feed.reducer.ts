@@ -73,6 +73,7 @@ export interface FeedAnnouncement {
 
 export interface FeedState {
   fetching: boolean;
+  feedItemDetailsIsFetching: boolean;
   filters: {
     actionTypes: Record<FilterEntourageType, FilterFeedCategory[]>;
     events: boolean;
@@ -91,6 +92,7 @@ export interface FeedState {
 
 export const defaultFeedState: FeedState = {
   fetching: false,
+  feedItemDetailsIsFetching: false,
   filters: {
     actionTypes: {
       [FilterEntourageType.CONTRIBUTION]: [
@@ -205,9 +207,17 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.RETRIEVE_FEED_ITEM_DETAILS_STARTED: {
+      return {
+        ...state,
+        feedItemDetailsIsFetching: true,
+      }
+    }
+
     case FeedActionType.INSERT_FEED_ITEM: {
       return {
         ...state,
+        feedItemDetailsIsFetching: false,
         items: {
           ...state.items,
           [action.payload.uuid]: action.payload,

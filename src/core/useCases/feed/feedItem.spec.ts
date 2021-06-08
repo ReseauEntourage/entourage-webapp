@@ -28,6 +28,7 @@ import {
   selectJoinRequestStatus,
   selectIsUpdatingStatus,
   selectStatus,
+  selectFeedItemDetailsIsFetching,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -171,6 +172,8 @@ describe('Feed Item', () => {
     When feed has been initialized
      And user set selected item uuid
     Then item should be retrieved from gateway
+      And feed item details should be fetching
+      And feed item details should not be fetching after having been retrieved
       And feed should be retrieved with position of item
       And position filter should be set to position of item with default zoom value
       And map position should be set to position of item with default zoom value
@@ -229,8 +232,12 @@ describe('Feed Item', () => {
     store.dispatch(publicActions.init())
     store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
 
+    expect(selectFeedItemDetailsIsFetching(store.getState())).toBeTruthy()
+
     resolveAllDeferredValue()
     await store.waitForActionEnd()
+
+    expect(selectFeedItemDetailsIsFetching(store.getState())).toBeFalsy()
 
     expect(feedGateway.retrieveFeedItem).toHaveBeenCalledWith({ entourageUuid: selectedItemUuid })
     expect(feedGateway.retrieveFeedItems).toHaveBeenCalledWith({

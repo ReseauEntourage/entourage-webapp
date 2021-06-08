@@ -1,9 +1,15 @@
 import { AppContext } from 'next/app'
 import React from 'react'
+import { selectLocationIsInit } from '../core/useCases/location'
 import { MapPOIs } from 'src/containers/MapContainer'
 import { POIsMetadata } from 'src/containers/POIsMetadata'
 import { wrapperStore } from 'src/core/boostrapStore'
-import { poisActions, selectPOIsIsIdle, selectPOIsIsFetching, selectPOIDetailsIsFetching } from 'src/core/useCases/pois'
+import {
+  poisActions,
+  selectPOIsIsIdle,
+  selectPOIsIsFetching,
+  selectPOIDetailsIsFetching,
+} from 'src/core/useCases/pois'
 import { StatelessPage } from 'src/utils/types'
 
 interface Props {}
@@ -23,15 +29,17 @@ POIs.getInitialProps = wrapperStore.getInitialPageProps((store) => {
 
     if (poiId) {
       return new Promise((resolve) => {
-        store.subscribe(() => {
+        const storeUnsubcribe = store.subscribe(() => {
           const POIsIsIdle = selectPOIsIsIdle(store.getState())
           const POIsIsFetching = selectPOIsIsFetching(store.getState())
           const POIDetailsIsFetching = selectPOIDetailsIsFetching(store.getState())
+          const locationIsInit = selectLocationIsInit(store.getState())
 
-          const isReady = !POIsIsIdle && !POIsIsFetching && !POIDetailsIsFetching
+          const isReady = !POIsIsIdle && !POIsIsFetching && !POIDetailsIsFetching && locationIsInit
 
           if (isReady) {
             resolve()
+            storeUnsubcribe()
           }
         })
 

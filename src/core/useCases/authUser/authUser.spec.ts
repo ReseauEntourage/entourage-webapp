@@ -7,6 +7,7 @@ import { TestGeolocationService } from '../location/TestGeolocationService'
 import { defaultLocationState } from '../location/location.reducer'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
+import { createAnonymousUser } from 'src/core/services'
 import { assertIsDefined } from 'src/utils/misc'
 import { PhoneLookUpResponse } from './IAuthUserGateway'
 import { TestAuthUserGateway } from './TestAuthUserGateway'
@@ -867,19 +868,19 @@ describe('Auth User', () => {
       expect(authUserTokenStorage.setToken).toHaveBeenCalledTimes(1)
     })
 
-    // TODO Fix test
-    it(`
+    // TODO fix test
+    it.skip(`
       Given initial state
         And user is logged in
       When user logs out
       Then the user should be set to null
         And the anonymous user token should be set into cookies`,
     async () => {
-      /* const authUserGateway = new TestAuthUserGateway()
+      const authUserGateway = new TestAuthUserGateway()
       const authUserTokenStorage = new TestAuthUserTokenStorage()
       const user = createUser(false, false)
 
-      // const anonymousUser = await createAnonymousUser()
+      const anonymousUser = await createAnonymousUser()
       const store = configureStoreWithAuthUser({
         initialAppState: {
           authUser: {
@@ -896,8 +897,9 @@ describe('Auth User', () => {
       store.dispatch(publicActions.logout())
       await store.waitForActionEnd()
 
+      expect(selectUser(store.getState())).toBeFalsy()
       expect(selectUser(store.getState())).toEqual(null)
-      // expect(authUserTokenStorage.getToken).toEqual(anonymousUser) */
+      expect(authUserTokenStorage.getToken).toEqual(anonymousUser)
     })
   })
 
@@ -933,7 +935,6 @@ describe('Auth User', () => {
       expect(firebaseService.setUser).toHaveBeenCalledWith(user.id.toString())
     })
 
-    // TODO CHANGE TEST
     it(`
       Given initial state
       When user is logged out
@@ -1096,6 +1097,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
 
       store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.initUser())
 
       await store.waitForActionEnd()
 
@@ -1190,6 +1192,7 @@ describe('Auth User', () => {
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
 
       store.dispatch(publicActions.setUser(user))
+      store.dispatch(publicActions.initUser())
 
       await store.waitForActionEnd()
 

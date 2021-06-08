@@ -1,1 +1,0 @@
-export { PersistedStore } from './PersistedStore'

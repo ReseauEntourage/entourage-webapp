@@ -18,6 +18,7 @@ export const AuthUserActionType = {
   RESET_PASSWORD_SUCCEEDED: 'AUTH/RESET_PASSWORD_SUCCEEDED',
   SET_ERRORS: 'AUTH/SET_ERRORS',
   RESET_FORM: 'AUTH/RESET_FORM',
+  INIT_USER: 'AUTH/INIT_USER',
   SET_USER: 'AUTH/SET_USER',
   SHOW_SENSITIZATION_POPUP: 'AUTH/SHOW_SENSITIZATION_POPUP',
   HIDE_SENSITIZATION_POPUP: 'AUTH/HIDE_SENSITIZATION_POPUP',
@@ -137,6 +138,12 @@ function resetForm() {
   }
 }
 
+function initUser() {
+  return {
+    type: AuthUserActionType.INIT_USER,
+  }
+}
+
 function setUser(payload: AuthUserState['user']) {
   return {
     type: AuthUserActionType.SET_USER,
@@ -200,6 +207,7 @@ export const publicActions = {
   createPassword,
   resetPassword,
   resetForm,
+  initUser,
   setUser,
   hideSensitizationPopup,
   updateUser,

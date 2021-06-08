@@ -45,6 +45,7 @@ export function MetaData(props: MetaDataProps) {
       <meta content={metaType} property="og:type" />
       <meta content="summary_large_image" name="twitter:card" />
       <meta content="@R_Entourage" name="twitter:site" />
+      <meta content={constants.FB_APP_ID} property="fb:app_id" />
       <link href={constants.WEBAPP_PROD_LINK} rel="canonical" />
       <link href="/favicon.ico" rel="icon" />
       <base href="/" />

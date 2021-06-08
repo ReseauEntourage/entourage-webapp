@@ -1,13 +1,13 @@
 import { HYDRATE } from 'next-redux-wrapper'
 import {
-  createStore,
-  combineReducers,
-  applyMiddleware,
-  StateFromReducersMapObject,
   ActionFromReducersMapObject,
-  Store,
-  PreloadedState,
+  applyMiddleware,
+  combineReducers,
   compose,
+  createStore,
+  PreloadedState,
+  StateFromReducersMapObject,
+  Store,
 } from 'redux'
 import createSagaMiddleware, { Saga } from 'redux-saga'
 import { all, call } from 'redux-saga/effects'
@@ -58,12 +58,10 @@ export function configureStore<
 
   const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
     if (action.type === HYDRATE) {
-      const nextState = {
+      return {
         ...state,
         ...action.payload,
       }
-
-      return nextState
     }
 
     return combinedReducer(state, action)

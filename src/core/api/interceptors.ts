@@ -6,7 +6,6 @@ import { notifServerError } from 'src/utils/misc'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
   function getUserToken(): string | null {
-    // TODO: improve with token cache in memory for browser side
     return CookiesAuthUserTokenStorage.authToken
   }
 

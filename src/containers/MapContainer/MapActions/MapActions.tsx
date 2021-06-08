@@ -34,10 +34,6 @@ export function MapActions() {
   })
 
   useEffect(() => {
-    dispatch(feedActions.setCurrentFeedItemUuid(actionId || null))
-  }, [actionId, dispatch])
-
-  useEffect(() => {
     if (googleMapApiIsLoaded) {
       const hasNotLoadedFromSSR = !actionId
       if (hasNotLoadedFromSSR) {

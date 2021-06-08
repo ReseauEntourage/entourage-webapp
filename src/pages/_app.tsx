@@ -9,7 +9,6 @@ import { CookiesAuthUserTokenStorage } from '../adapters/storage/CookiesAuthUser
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
 import { Nav } from 'src/containers/Nav'
-import { PersistedStore } from 'src/containers/PersistedStore'
 import { SSRDataContext } from 'src/core/SSRDataContext'
 import { api, LoggedUser, assertsUserIsLogged } from 'src/core/api'
 import { wrapperStore } from 'src/core/boostrapStore'
@@ -71,12 +70,6 @@ class App extends NextApp<{ authUserData: LoggedUser; }> {
 
       return {
         ...appProps,
-        pageProps: {
-          ...(appContext.Component.getInitialProps
-            ? await appContext.Component.getInitialProps({ ...appContext.ctx, store })
-            : {}
-          ),
-        },
         userAgent,
       }
     }
@@ -105,21 +98,19 @@ class App extends NextApp<{ authUserData: LoggedUser; }> {
         <SSRDataContext.Provider value={SSRDataValue}>
           <StylesProvider injectFirst={true}>
             <ThemeProvider theme={theme}>
-              <PersistedStore>
-                <ReactQueryConfigProvider config={queryConfig}>
-                  <Layout>
-                    <>
-                      <Layout.Nav>
-                        <Nav />
-                      </Layout.Nav>
-                      <Layout.Page>
-                        <Component {...pageProps} />
-                        <ModalsListener />
-                      </Layout.Page>
-                    </>
-                  </Layout>
-                </ReactQueryConfigProvider>
-              </PersistedStore>
+              <ReactQueryConfigProvider config={queryConfig}>
+                <Layout>
+                  <>
+                    <Layout.Nav>
+                      <Nav />
+                    </Layout.Nav>
+                    <Layout.Page>
+                      <Component {...pageProps} />
+                      <ModalsListener />
+                    </Layout.Page>
+                  </>
+                </Layout>
+              </ReactQueryConfigProvider>
             </ThemeProvider>
           </StylesProvider>
         </SSRDataContext.Provider>
