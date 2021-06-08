@@ -1,6 +1,6 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import * as Sentry from '@sentry/react'
-import NextApp, { AppContext } from 'next/app'
+import NextApp, { AppContext, AppProps } from 'next/app'
 import { hijackEffects } from 'stop-runaway-react-effects'
 import { Reset } from 'styled-reset'
 import React from 'react'
@@ -10,7 +10,7 @@ import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
 import { Nav } from 'src/containers/Nav'
 import { SSRDataContext } from 'src/core/SSRDataContext'
-import { api, LoggedUser, assertsUserIsLogged } from 'src/core/api'
+import { api, assertsUserIsLogged } from 'src/core/api'
 import { wrapperStore } from 'src/core/boostrapStore'
 import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
@@ -25,18 +25,16 @@ if (process.env.NODE_ENV !== 'production') {
 initSentry()
 initFacebookApp()
 
-class App extends NextApp<{ authUserData: LoggedUser; }> {
+class App extends NextApp<AppProps> {
   // Only uncomment this method if you have blocking data requirements for
   // every single page in your application. This disables the ability to
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  static getInitialProps = wrapperStore.getInitialAppProps((store) => {
+  public static getInitialProps = wrapperStore.getInitialAppProps((store) => {
     return async (appContext: AppContext) => {
       const { req } = appContext.ctx
       const userAgent = req ? req.headers['user-agent'] : navigator.userAgent
-
-      const appProps = await NextApp.getInitialProps(appContext)
 
       // use to get token, either anonymous token or authenticated token
       if (isSSR) {
@@ -69,7 +67,12 @@ class App extends NextApp<{ authUserData: LoggedUser; }> {
       }
 
       return {
-        ...appProps,
+        pageProps: {
+          ...(appContext.Component.getInitialProps
+            ? await appContext.Component.getInitialProps({ ...appContext.ctx, store })
+            : {}
+          ),
+        },
         userAgent,
       }
     }

@@ -12472,10 +12472,10 @@ nested-object-assign@^1.0.3:
   resolved "https://registry.yarnpkg.com/nested-object-assign/-/nested-object-assign-1.0.3.tgz#5aca69390d9affe5a612152b5f0843ae399ac597"
   integrity sha512-kgq1CuvLyUcbcIuTiCA93cQ2IJFSlRwXcN+hLcb2qLJwC2qrePHGZZa7IipyWqaWF6tQjdax2pQnVxdq19Zzwg==
 
-next-redux-wrapper@7.0.0-rc.2:
-  version "7.0.0-rc.2"
-  resolved "https://registry.yarnpkg.com/next-redux-wrapper/-/next-redux-wrapper-7.0.0-rc.2.tgz#8d6673ea2a1f1dbd98de710d928f739241fa2e37"
-  integrity sha512-3djAs4zdmwHJhA3vg7uhVazJcDlubsrU1qRm96GxFmuRHC3/2+lOh4q/1CnQHnBz9dQLNmTNcR6k22PSCYXpFg==
+next-redux-wrapper@7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/next-redux-wrapper/-/next-redux-wrapper-7.0.0.tgz#2aa60a4548a0609dc7466e6a3a68bc3a3203a2e0"
+  integrity sha512-ySb8ve8NfJs1//y9SCmlPkRaOhPvDnc4W8TyiTZun/vRrBFraB8bdeMwPcJiiTpOtVpU8OfxNxKXCjVnsRzbZQ==
 
 next-tick@~1.0.0:
   version "1.0.0"
