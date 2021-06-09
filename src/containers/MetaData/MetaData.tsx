@@ -49,6 +49,19 @@ export function MetaData(props: MetaDataProps) {
       <link href="/favicon.ico" rel="icon" />
       <base href="/" />
       <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+      {/* App Banner */ }
+      <meta content={texts.nav.pageTitles.main} name="smartbanner:title" />
+      <meta content="Association Entourage" name="smartbanner:author" />
+      <meta content="GRATUIT" name="smartbanner:price" />
+      <meta content=" - sur l'App Store" name="smartbanner:price-suffix-apple" />
+      <meta content=" - sur le Google Play Store" name="smartbanner:price-suffix-google" />
+      <meta content="/icon.png" name="smartbanner:icon-apple" />
+      <meta content="/icon.png" name="smartbanner:icon-google" />
+      <meta content="OUVRIR" name="smartbanner:button" />
+      <meta content={constants.IOS_LINK} name="smartbanner:button-url-apple" />
+      <meta content={constants.ANDROID_LINK} name="smartbanner:button-url-google" />
+      <meta content="android,ios" name="smartbanner:enabled-platforms" />
+      <meta content="Fermer" name="smartbanner:close-label" />
       {children}
     </Head>
   )

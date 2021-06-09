@@ -26,4 +26,6 @@ export const constants = {
     'https://www.lyon.fr/sites/lyonfr/files/content/documents/2019-01/Guide%20de%20l%20urgence%20sociale%202019_0.pdf',
   GUS_LYON_2021_URL: 'https://www.lyon.fr/sites/lyonfr/files/content/documents/2021-01/LYON_GUS_2021.pdf',
   WEBAPP_PROD_LINK: 'https://app.entourage.social/actions',
+  IOS_LINK: 'https://apps.apple.com/fr/app/entourage-r%C3%A9seau-solidaire/id1072244410',
+  ANDROID_LINK: 'https://play.google.com/store/apps/details?id=social.entourage.android',
 }
