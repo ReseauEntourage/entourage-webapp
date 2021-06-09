@@ -3,3 +3,5 @@ jest.mock('src/core/utils/persistReducer', () => {
     persistReducer: (key, reducer) => reducer,
   }
 })
+
+jest.mock('smartbanner.js/dist/smartbanner.min.js')
