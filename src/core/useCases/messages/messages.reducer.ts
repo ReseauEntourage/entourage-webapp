@@ -16,6 +16,7 @@ export interface ConversationItem {
   title: string;
   uuid: string;
   groupType: FeedGroupType;
+  updatedAt: DateISO;
 }
 
 export interface ConversationMessage {
@@ -72,23 +73,31 @@ export function messagesReducer(
       const newConversations = action.payload.conversations.filter(
         (conversation) => !state.conversationsUuids.includes(conversation.uuid),
       )
+      const updatedConversations = action.payload.conversations.reduce(
+        (acc: MessagesState['conversations'], item: MessagesState['conversations'][number]) => {
+          return {
+            ...acc,
+            [item.uuid]: item,
+          }
+        }, state.conversations,
+      )
+
+      const updatedConversationUuids = [
+        ...state.conversationsUuids,
+        ...newConversations.map((item: ConversationItem) => item.uuid),
+      ]
+
+      updatedConversationUuids.sort((a, b) => {
+        const dateA = new Date(updatedConversations[a].updatedAt)
+        const dateB = new Date(updatedConversations[b].updatedAt)
+        return dateB.getTime() - dateA.getTime()
+      })
 
       return {
         ...state,
         isIdle: false,
-        conversations: action.payload.conversations.reduce(
-          (acc: MessagesState['conversations'], item: MessagesState['conversations'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.conversations,
-        ),
-
-        conversationsUuids: [
-          ...state.conversationsUuids,
-          ...newConversations.map((item: ConversationItem) => item.uuid),
-        ],
+        conversations: updatedConversations,
+        conversationsUuids: updatedConversationUuids,
         fetching: false,
       }
     }
@@ -131,9 +140,8 @@ export function messagesReducer(
     case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: {
       const uniqMessages = uniqBy(
         [
+          ...state.conversationsMessages[action.payload.conversationUuid] || [],
           ...action.payload.conversationMessages,
-          ...state.conversationsMessages[action.payload.conversationUuid
-          ] || [],
         ], (message) => message.id,
       )
       uniqMessages.sort((a, b) => b.id - a.id)

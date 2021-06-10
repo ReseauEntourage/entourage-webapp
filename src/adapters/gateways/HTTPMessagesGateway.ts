@@ -19,6 +19,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
           uuid: conversation.data.uuid,
           id: conversation.data.id,
           groupType: conversation.data.groupType,
+          updatedAt: conversation.data.updatedAt,
         }
       })
 
@@ -78,6 +79,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
         uuid: entourage.uuid,
         id: entourage.id,
         groupType: entourage.groupType,
+        updatedAt: entourage.updatedAt,
       }
     })
   }
