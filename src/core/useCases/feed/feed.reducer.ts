@@ -55,6 +55,7 @@ export interface FeedEntourage {
   joinStatus: FeedJoinStatus;
   status: FeedStatus;
   online: boolean;
+  eventUrl: string;
   numberOfPeople: number;
 }
 

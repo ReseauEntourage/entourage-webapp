@@ -41,7 +41,7 @@ export function ModalUserCard(props: ModalUserCardProps) {
         allowContact={!userIsMe}
         allowReport={!userIsMe}
         avatarURL={user.avatarUrl}
-        conversationUuid={user.conversation.uuid}
+        conversationUuid={user?.conversation?.uuid}
         description={user.about}
         name={user.displayName}
         partner={user?.partner}

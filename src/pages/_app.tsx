@@ -20,7 +20,7 @@ import { initSentry } from 'src/core/sentry'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
 import { theme } from 'src/styles'
-import { isSSR, initFacebookApp } from 'src/utils/misc'
+import { isSSR, initFacebookApp, initAppStoreBanner } from 'src/utils/misc'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
@@ -28,6 +28,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 initSentry()
 initFacebookApp()
+initAppStoreBanner()
 
 export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // Only uncomment this method if you have blocking data requirements for

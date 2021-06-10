@@ -258,6 +258,7 @@ export interface FeedItemEntourage {
     updatedAt: DateISO;
     uuid: string;
     online: boolean;
+    eventUrl: string;
   };
   heatmapSize: number;
   type: 'Entourage';
