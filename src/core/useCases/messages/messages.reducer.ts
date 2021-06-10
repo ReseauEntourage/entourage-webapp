@@ -93,6 +93,13 @@ export function messagesReducer(
       }
     }
 
+    case MessagesActionType.RETRIEVE_CONVERSATIONS: {
+      return {
+        ...state,
+        page: 1,
+      }
+    }
+
     case MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS: {
       return {
         ...state,

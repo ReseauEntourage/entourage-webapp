@@ -94,6 +94,48 @@ export class HTTPFeedGateway implements IFeedGateway {
     })
   }
 
+  retrieveFeedItem(data: { entourageUuid: string; }) {
+    return api.request({
+      name: '/entourages/:entourageId GET',
+      pathParams: {
+        entourageUuid: data.entourageUuid,
+      },
+    }).then((item) => {
+      return {
+        displayAddress: item.data.entourage.metadata.displayAddress,
+        center: {
+          lat: item.data.entourage.location.latitude,
+          lng: item.data.entourage.location.longitude,
+        },
+        item: {
+          itemType: 'Entourage' as FeedItemEntourage['type'],
+          author: {
+            id: item.data.entourage.author.id,
+            partner: item.data.entourage.author.partner,
+            avatarUrl: item.data.entourage.author.avatarUrl,
+            displayName: item.data.entourage.author.displayName,
+          },
+          createdAt: item.data.entourage.createdAt,
+          updatedAt: item.data.entourage.updatedAt,
+          title: item.data.entourage.title,
+          description: item.data.entourage.description,
+          id: item.data.entourage.id,
+          uuid: item.data.entourage.uuid,
+          location: item.data.entourage.location,
+          metadata: item.data.entourage.metadata,
+          entourageType: item.data.entourage.entourageType,
+          groupType: item.data.entourage.groupType,
+          displayCategory: item.data.entourage.displayCategory,
+          joinStatus: item.data.entourage.joinStatus,
+          status: item.data.entourage.status,
+          online: item.data.entourage.online,
+          eventUrl: item.data.entourage.eventUrl,
+          numberOfPeople: item.data.entourage.numberOfPeople,
+        },
+      }
+    })
+  }
+
   joinEntourage: IFeedGateway['joinEntourage'] = (entourageUuid: string) => {
     return api.request({
       name: '/entourages/:entourageId/users POST',
@@ -151,48 +193,6 @@ export class HTTPFeedGateway implements IFeedGateway {
       },
     }).then(() => {
       return null
-    })
-  }
-
-  retrieveFeedItem(data: { entourageUuid: string; }) {
-    return api.request({
-      name: '/entourages/:entourageId GET',
-      pathParams: {
-        entourageUuid: data.entourageUuid,
-      },
-    }).then((item) => {
-      return {
-        displayAddress: item.data.entourage.metadata.displayAddress,
-        center: {
-          lat: item.data.entourage.location.latitude,
-          lng: item.data.entourage.location.longitude,
-        },
-        item: {
-          itemType: 'Entourage' as FeedItemEntourage['type'],
-          author: {
-            id: item.data.entourage.author.id,
-            partner: item.data.entourage.author.partner,
-            avatarUrl: item.data.entourage.author.avatarUrl,
-            displayName: item.data.entourage.author.displayName,
-          },
-          createdAt: item.data.entourage.createdAt,
-          updatedAt: item.data.entourage.updatedAt,
-          title: item.data.entourage.title,
-          description: item.data.entourage.description,
-          id: item.data.entourage.id,
-          uuid: item.data.entourage.uuid,
-          location: item.data.entourage.location,
-          metadata: item.data.entourage.metadata,
-          entourageType: item.data.entourage.entourageType,
-          groupType: item.data.entourage.groupType,
-          displayCategory: item.data.entourage.displayCategory,
-          joinStatus: item.data.entourage.joinStatus,
-          status: item.data.entourage.status,
-          online: item.data.entourage.online,
-          eventUrl: item.data.entourage.eventUrl,
-          numberOfPeople: item.data.entourage.numberOfPeople,
-        },
-      }
     })
   }
 }

@@ -21,6 +21,29 @@ function* retrieveConversationsSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveConversations } = dependencies.messagesGateway
   const messagesState: ReturnType<typeof selectMessages> = yield select(selectMessages)
+
+  const { fetching } = messagesState
+
+  if (fetching) {
+    return
+  }
+
+  yield put(actions.retrieveConversationsStarted())
+
+  const response: CallReturnType<typeof retrieveConversations> = yield call(
+    retrieveConversations,
+    {
+      page: 1,
+    },
+  )
+  yield put(actions.retrieveConversationsSuccess(response))
+  yield put(actions.retrieveConversationDetailsIfNeeded())
+}
+
+function* retrieveNextConversationsSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { retrieveConversations } = dependencies.messagesGateway
+  const messagesState: ReturnType<typeof selectMessages> = yield select(selectMessages)
   const currentPage: ReturnType<typeof selectMessagesCurrentPage> = yield select(selectMessagesCurrentPage)
 
   const { fetching } = messagesState
@@ -38,7 +61,6 @@ function* retrieveConversationsSaga() {
     },
   )
   yield put(actions.retrieveConversationsSuccess(response))
-  yield put(actions.retrieveConversationDetailsIfNeeded())
 
   if (response.conversations.length === 0) {
     yield put(actions.decrementPageNumber())
@@ -185,7 +207,7 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
 
 export function* messagesSaga() {
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATIONS, retrieveConversationsSaga)
-  yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveConversationsSaga)
+  yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveNextConversationsSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
     retrieveCurrentConversationDetailsIfNeededSaga)
 

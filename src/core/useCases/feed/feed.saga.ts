@@ -7,7 +7,7 @@ import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
-import { selectCurrentFeedItem, selectCurrentFeedItemUuid, selectFeed, selectFeedIsIdle } from './feed.selectors'
+import { selectCurrentFeedItem, selectCurrentFeedItemUuid, selectFeed } from './feed.selectors'
 
 export interface Dependencies {
   feedGateway: IFeedGateway;
@@ -80,7 +80,6 @@ function* retrieveFeedNextPage() {
 
 function* retrieveCurrentFeedItem() {
   const currentItem: ReturnType<typeof selectCurrentFeedItem> = yield select(selectCurrentFeedItem)
-  const feedIsIdle: ReturnType<typeof selectFeedIsIdle> = yield select(selectFeedIsIdle)
   const entourageUuid: ReturnType<typeof selectCurrentFeedItemUuid> = yield select(selectCurrentFeedItemUuid)
 
   if (!currentItem && entourageUuid) {
@@ -89,23 +88,21 @@ function* retrieveCurrentFeedItem() {
 
     const response: CallReturnType<typeof retrieveFeedItem> = yield call(retrieveFeedItem, { entourageUuid })
 
-    if (feedIsIdle) {
-      yield put(actions.insertFeedItem(response.item))
-      if (response.item.groupType === 'outing' && response.item.online) {
-        yield put(actions.retrieveFeed())
-      } else {
-        yield put(locationActions.setMapPosition({
+    yield put(actions.insertFeedItem(response.item))
+    if (response.item.groupType === 'outing' && response.item.online) {
+      yield put(actions.retrieveFeed())
+    } else {
+      yield put(locationActions.setMapPosition({
+        center: response.center,
+        zoom: constants.DEFAULT_LOCATION.ZOOM,
+      }))
+      yield put(locationActions.setLocation({
+        location: {
           center: response.center,
+          displayAddress: response.displayAddress,
           zoom: constants.DEFAULT_LOCATION.ZOOM,
-        }))
-        yield put(locationActions.setLocation({
-          location: {
-            center: response.center,
-            displayAddress: response.displayAddress,
-            zoom: constants.DEFAULT_LOCATION.ZOOM,
-          },
-        }))
-      }
+        },
+      }))
     }
   }
 }
