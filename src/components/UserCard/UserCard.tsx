@@ -13,7 +13,7 @@ interface UserCardProps {
   allowContact?: boolean;
   allowReport?: boolean;
   avatarURL?: string;
-  conversationUuid: string;
+  conversationUuid?: string;
   description: string;
   name: string;
   partner?: React.ComponentProps<typeof PartnerCard>;
@@ -68,7 +68,7 @@ export function UserCard(props: UserCardProps) {
           <Button color="secondary">Signaler</Button>
         </S.ReportBtn>
       )}
-      {allowContact && (
+      {allowContact && conversationUuid && (
         <S.ContactBtn>
           <Link as={`/messages/${conversationUuid}`} href="/messages/[messagesId]" passHref={true}>
             <CustomLink>
