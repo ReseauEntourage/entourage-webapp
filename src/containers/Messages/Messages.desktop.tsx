@@ -22,13 +22,15 @@ export function MessagesDesktop() {
 
   useEffect(() => {
     if (!entourageUuid) {
-      if (firstConversationId) {
-        router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
-      } else {
-        dispatch(messagesActions.retrieveConversations())
-      }
+      dispatch(messagesActions.retrieveConversations())
     }
-  }, [dispatch, entourageUuid, firstConversationId, router])
+  }, [dispatch, entourageUuid])
+
+  useEffect(() => {
+    if (!entourageUuid && firstConversationId) {
+      router.push('/messages/[messageId]', `/messages/${firstConversationId}`)
+    }
+  }, [entourageUuid, firstConversationId, router])
 
   useEffect(() => {
     if (entourageUuid) {
