@@ -1,6 +1,6 @@
 {
   "name": "entourage-webapp",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "private": true,
   "scripts": {
     "dev": "node server.js",
