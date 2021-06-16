@@ -15,6 +15,7 @@ export function createConversationItem(): ConversationItem {
     title: 'Test conversation titre',
     groupType: 'action',
     updatedAt: new Date().toISOString(),
+    numberOfUnreadMessages: 0,
   }
 }
 

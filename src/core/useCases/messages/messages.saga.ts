@@ -1,4 +1,6 @@
 import { call, put, select, getContext } from 'redux-saga/effects'
+import { selectUser } from '../authUser'
+import { AuthUserActionType } from '../authUser/authUser.actions'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IMessagesGateway } from './IMessagesGateway'
@@ -198,15 +200,23 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
         },
       )
 
-      yield put(actions.retrieveConversationsSuccess({
-        conversations: responseConversations.conversations,
-      }))
+      yield put(actions.retrieveConversationsSuccess(responseConversations))
     }
+  }
+}
+
+function* retrieveConversationsIfLoggedIn() {
+  const user: ReturnType<typeof selectUser> = yield select(selectUser)
+
+  if (user) {
+    yield put(actions.retrieveConversations())
   }
 }
 
 export function* messagesSaga() {
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATIONS, retrieveConversationsSaga)
+  yield takeEvery(AuthUserActionType.SET_USER, retrieveConversationsIfLoggedIn)
+  yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, retrieveConversationsIfLoggedIn)
   yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveNextConversationsSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
     retrieveCurrentConversationDetailsIfNeededSaga)

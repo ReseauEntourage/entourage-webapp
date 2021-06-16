@@ -17,6 +17,7 @@ export interface ConversationItem {
   uuid: string;
   groupType: FeedGroupType;
   updatedAt: DateISO;
+  numberOfUnreadMessages: number;
 }
 
 export interface ConversationMessage {
@@ -41,6 +42,7 @@ export interface MessagesState {
   conversationsMessages: {
     [conversationUuid: string]: ConversationMessage[];
   };
+  unreadConversations: number;
   selectedConversationUuid: string | null;
   page: number;
   messagesFetching: boolean;
@@ -51,6 +53,7 @@ export const defaultMessagesState: MessagesState = {
   fetching: false,
   conversationsUuids: [],
   conversations: {},
+  unreadConversations: 0,
   selectedConversationUuid: null,
   page: 1,
   conversationsMessages: {},
@@ -99,6 +102,7 @@ export function messagesReducer(
         conversations: updatedConversations,
         conversationsUuids: updatedConversationUuids,
         fetching: false,
+        unreadConversations: action.payload.unreadConversations ?? state.unreadConversations,
       }
     }
 
@@ -124,6 +128,20 @@ export function messagesReducer(
     }
 
     case MessagesActionType.SET_CURRENT_CONVERSATION_UUID: {
+      if (action.payload && state.conversations[action.payload]) {
+        return {
+          ...state,
+          selectedConversationUuid: action.payload,
+          conversations: {
+            ...state.conversations,
+            [action.payload]: {
+              ...state.conversations[action.payload],
+              numberOfUnreadMessages: 0,
+            },
+          },
+        }
+      }
+
       return {
         ...state,
         selectedConversationUuid: action.payload,
@@ -146,12 +164,21 @@ export function messagesReducer(
       )
       uniqMessages.sort((a, b) => b.id - a.id)
 
+      const mutatedConversations = state.conversations[action.payload.conversationUuid] ? {
+        ...state.conversations,
+        [action.payload.conversationUuid]: {
+          ...state.conversations[action.payload.conversationUuid],
+          numberOfUnreadMessages: 0,
+        },
+      } : state.conversations
+
       return {
         ...state,
         conversationsMessages: {
           ...state.conversationsMessages,
           [action.payload.conversationUuid]: uniqMessages,
         },
+        conversations: mutatedConversations,
         messagesFetching: false,
       }
     }
@@ -187,7 +214,10 @@ export function messagesReducer(
         ...state,
         conversations: {
           ...state.conversations,
-          [action.payload.uuid]: action.payload,
+          [action.payload.uuid]: {
+            ...action.payload,
+            numberOfUnreadMessages: 0,
+          },
         },
       }
     }

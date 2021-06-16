@@ -12,7 +12,7 @@ import {
   selectConversationList,
   selectMessagesCurrentPage,
   selectConversationsIsFetching,
-  selectMessagesIsIdle,
+  selectMessagesIsIdle, selectNumberOfUnreadConversations,
 
 } from './messages.selectors'
 
@@ -52,7 +52,7 @@ describe('Messages', () => {
     Then messages should not be idle
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [], unreadConversations: 0 })
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
     store.dispatch(publicActions.retrieveConversations())
@@ -70,9 +70,10 @@ describe('Messages', () => {
       And should retrieve messages successfully with items
       And should fetching state be false after server response
       And should retrieve messages gateway method have been called with default page number
+      And should number of unread messages be set to the number retrieved from gateway
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    const deferredValue = { conversations: [fakeMessagesData.conversations.abc] }
+    const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
     messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
@@ -85,6 +86,7 @@ describe('Messages', () => {
 
     expect(selectConversationList(store.getState())).toEqual([fakeMessagesData.conversations.abc])
     expect(selectConversationsIsFetching(store.getState())).toEqual(false)
+    expect(selectNumberOfUnreadConversations(store.getState())).toEqual(5)
 
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
     expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
@@ -102,7 +104,7 @@ describe('Messages', () => {
       And should retrieve messages gateway method have been called with next page number
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    const deferredValue = { conversations: [fakeMessagesData.conversations.def] }
+    const deferredValue = { conversations: [fakeMessagesData.conversations.def], unreadConversations: 0 }
     messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
     const store = configureStoreWithMessages({ dependencies: { messagesGateway },
       initialAppState: {
@@ -150,7 +152,7 @@ describe('Messages', () => {
       And should retrieve messages gateway method have been called with next page number
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [], unreadConversations: 0 })
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
     store.dispatch(publicActions.retrieveNextConversations())
@@ -177,7 +179,12 @@ describe('Messages', () => {
     Then the second request should never start
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [fakeMessagesData.conversations.abc] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce(
+      {
+        conversations: [fakeMessagesData.conversations.abc],
+        unreadConversations: 0,
+      },
+    )
 
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
@@ -200,7 +207,12 @@ describe('Messages', () => {
       And the page number should not be incremented
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
-    messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: [fakeMessagesData.conversations.def] })
+    messagesGateway.retrieveConversations.mockDeferredValueOnce(
+      {
+        conversations: [fakeMessagesData.conversations.def],
+        unreadConversations: 0,
+      },
+    )
 
     const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
 
@@ -221,11 +233,11 @@ describe('Messages', () => {
   })
 
   it(`
-      Given initial state
-      When user logs out
-        And user is set to null
-      Then messages state should go back to default value
-      `, async () => {
+    Given initial state
+    When user logs out
+      And user is set to null
+    Then messages state should go back to default value
+    `, async () => {
     const messagesGateway = new TestMessagesGateway()
     const store = configureStoreWithMessages({
       dependencies: { messagesGateway },

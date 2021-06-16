@@ -62,6 +62,8 @@ export function ConversationsList(props: ConversationsListProps) {
 
         const pendingMembers = entourageWithMembers?.members ?? []
 
+        const iAmAuthor = conversation.author.id === me.id
+
         return (
           <S.ListItem
             key={conversationUuid}
@@ -76,11 +78,12 @@ export function ConversationsList(props: ConversationsListProps) {
                   excerpt={(
                     <ConversationItemExcerpt
                       feedJoinStatus={conversation.joinStatus}
-                      iAmAuthor={conversation.author.id === me.id}
+                      iAmAuthor={iAmAuthor}
                       pendingMembers={pendingMembers}
                       text={conversation.lastMessage?.text ?? ''}
                     />
                   )}
+                  hasUnreadMessages={conversation.numberOfUnreadMessages > 0}
                   isActive={conversationUuid === entourageUuid}
                   profilePictureURL={conversation.author.avatarUrl}
                   title={conversation.title}

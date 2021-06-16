@@ -1,4 +1,3 @@
-import Box from '@material-ui/core/Box'
 import React from 'react'
 import { Avatar } from 'src/components/Avatar'
 import * as S from './ConversationItem.styles'
@@ -8,22 +7,26 @@ interface ConversationItemProps {
   isActive: boolean;
   profilePictureURL?: string;
   title: string;
+  hasUnreadMessages: boolean;
 }
 
 export function ConversationItem(props: ConversationItemProps) {
-  const { excerpt, profilePictureURL, title, isActive } = props
+  const { excerpt, profilePictureURL, title, isActive, hasUnreadMessages } = props
 
   return (
-    <Box width="100%">
-      <S.Container isActive={isActive}>
+    <S.Container isActive={isActive}>
+      <S.ConversationContainer>
         <S.Picture>
           <Avatar alt="Profile" src={profilePictureURL || null} />
         </S.Picture>
         <S.Texts>
           <S.Title>{title}</S.Title>
-          <S.Excerpt>{excerpt}</S.Excerpt>
+          <S.Excerpt hasUnreadMessages={hasUnreadMessages}>{excerpt}</S.Excerpt>
         </S.Texts>
-      </S.Container>
-    </Box>
+      </S.ConversationContainer>
+      {
+        hasUnreadMessages && <S.Dot />
+      }
+    </S.Container>
   )
 }

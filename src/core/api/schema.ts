@@ -27,7 +27,7 @@ import {
   POIItem,
   POIDetailsItem,
   POIPartnersFilters,
-  Message,
+  Conversation,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -273,10 +273,11 @@ export const schema = {
     data: null,
     response: {} as {
       feeds: {
-        data: Message;
+        data: Conversation;
         heatmapSize: number;
         type: FeedType;
       }[];
+      unreadCount: number;
     },
   },
   '/pois GET': {
