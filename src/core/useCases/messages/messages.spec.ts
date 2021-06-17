@@ -12,7 +12,8 @@ import {
   selectConversationList,
   selectMessagesCurrentPage,
   selectConversationsIsFetching,
-  selectMessagesIsIdle, selectNumberOfUnreadConversations,
+  selectMessagesIsIdle,
+  selectNumberOfUnreadConversations,
 
 } from './messages.selectors'
 

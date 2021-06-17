@@ -134,10 +134,7 @@ export function messagesReducer(
           selectedConversationUuid: action.payload,
           conversations: {
             ...state.conversations,
-            [action.payload]: {
-              ...state.conversations[action.payload],
-              numberOfUnreadMessages: 0,
-            },
+            [action.payload]: state.conversations[action.payload],
           },
         }
       }
@@ -164,7 +161,9 @@ export function messagesReducer(
       )
       uniqMessages.sort((a, b) => b.id - a.id)
 
-      const mutatedConversations = state.conversations[action.payload.conversationUuid] ? {
+      const conversationDetails = state.conversations[action.payload.conversationUuid]
+
+      const mutatedConversations = conversationDetails ? {
         ...state.conversations,
         [action.payload.conversationUuid]: {
           ...state.conversations[action.payload.conversationUuid],
@@ -172,8 +171,16 @@ export function messagesReducer(
         },
       } : state.conversations
 
+      const shouldDecrementUnreadConversationsCount = conversationDetails
+        && conversationDetails.numberOfUnreadMessages > 0
+        && state.unreadConversations > 0
+
       return {
         ...state,
+        unreadConversations:
+          shouldDecrementUnreadConversationsCount
+            ? state.unreadConversations - 1
+            : state.unreadConversations,
         conversationsMessages: {
           ...state.conversationsMessages,
           [action.payload.conversationUuid]: uniqMessages,
@@ -197,6 +204,7 @@ export function messagesReducer(
               lastMessage: {
                 text: action.payload.message,
               },
+              updatedAt: new Date().toISOString(),
             },
           },
           conversationsUuids: [
