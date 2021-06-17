@@ -1,11 +1,13 @@
-import Link from 'next/link'
-import React from 'react'
+import { useRouter } from 'next/router'
+import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { Button } from 'src/components/Button'
 import { Link as CustomLink } from 'src/components/Link'
 import { openModal, useModalContext } from 'src/components/Modal'
 import { ModalPartnerCard } from 'src/components/ModalPartnerCard'
 import { PartnerCard } from 'src/components/PartnerCard'
+import { ModalSignIn } from 'src/containers/ModalSignIn'
+import { useMe } from 'src/hooks/useMe'
 import * as S from './UserCard.styles'
 
 interface UserCardProps {
@@ -40,7 +42,21 @@ export function UserCard(props: UserCardProps) {
     }
   }, [partner])
 
-  // TODO FIX BUTTON LINK
+  const me = useMe()
+  const router = useRouter()
+
+  const goToConversation = useCallback(() => {
+    router.push('/messages/[messagesId]', `/messages/${conversationUuid}`)
+    onClose()
+  }, [conversationUuid, onClose, router])
+
+  const onClickContactButton = useCallback(() => {
+    if (!me) {
+      openModal(<ModalSignIn onSuccess={goToConversation} />)
+    } else {
+      goToConversation()
+    }
+  }, [goToConversation, me])
 
   return (
     <S.Container>
@@ -70,11 +86,9 @@ export function UserCard(props: UserCardProps) {
       )}
       {allowContact && conversationUuid && (
         <S.ContactBtn>
-          <Link as={`/messages/${conversationUuid}`} href="/messages/[messagesId]" passHref={true}>
-            <CustomLink>
-              <Button onClick={onClose}>Contacter</Button>
-            </CustomLink>
-          </Link>
+          <CustomLink>
+            <Button onClick={onClickContactButton}>Contacter</Button>
+          </CustomLink>
         </S.ContactBtn>
       )}
     </S.Container>
