@@ -52,6 +52,7 @@ function retrieveConversationsStarted() {
 function retrieveConversationsSuccess(
   payload: {
     conversations: MessagesState['conversations'][string][];
+    unreadConversations: MessagesState['unreadConversations'];
   },
 ) {
   return {

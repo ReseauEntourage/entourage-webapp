@@ -15,6 +15,7 @@ export function createConversationItem(): ConversationItem {
     title: 'Test conversation titre',
     groupType: 'action',
     updatedAt: new Date().toISOString(),
+    numberOfUnreadMessages: 0,
   }
 }
 
@@ -27,8 +28,14 @@ export const fakeMessagesData: MessagesState = {
   fetching: false,
   conversationsUuids: ['abc', 'def'],
   conversations: {
-    abc: createConversationItem(),
-    def: createConversationItem(),
+    abc: {
+      ...createConversationItem(),
+      uuid: 'abc',
+    },
+    def: {
+      ...createConversationItem(),
+      uuid: 'def',
+    },
   },
   selectedConversationUuid: null,
 }

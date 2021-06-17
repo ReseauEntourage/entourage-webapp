@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core'
+import { Badge, Typography } from '@material-ui/core'
 import Box from '@material-ui/core/Box'
 import AddCircleIcon from '@material-ui/icons/AddCircle'
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline'
@@ -7,6 +7,7 @@ import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import Link from 'next/link'
 import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { LoggedChunk } from '../LoggedChunk'
 import * as S from '../Nav.styles'
 import { NavTakeAction } from '../NavTakeAction'
@@ -14,6 +15,7 @@ import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
 import { Link as CustomLink } from 'src/components/Link'
 import { openModal } from 'src/components/Modal'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
+import { selectNumberOfUnreadConversations } from 'src/core/useCases/messages'
 import { useCurrentRoute } from 'src/hooks/useCurrentRoute'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
@@ -22,6 +24,8 @@ import { variants } from 'src/styles'
 export function NavItemsDeskTop() {
   const iAmLogged = !!useMe()
   const { routeTitle, currentRoute } = useCurrentRoute()
+
+  const numberOfUnreadConversations = useSelector(selectNumberOfUnreadConversations)
 
   useOpenModalsOnLogin()
 
@@ -43,7 +47,6 @@ export function NavItemsDeskTop() {
           </Typography>
         </Box>
       </S.TitleContainer>
-
       <S.Grow />
       <S.NavItem
         href="/actions"
@@ -61,7 +64,18 @@ export function NavItemsDeskTop() {
         <>
           <S.NavItem
             href="/messages"
-            icon={<ChatBubbleOutlineIcon />}
+            icon={(
+              <Badge
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                badgeContent={numberOfUnreadConversations}
+                color="error"
+              >
+                <ChatBubbleOutlineIcon />
+              </Badge>
+            )}
             isActive={currentRoute === '/messages'}
             label={texts.nav.messages}
           />

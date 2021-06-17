@@ -9,7 +9,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
         page,
       },
     }).then((res) => {
-      const { feeds } = res.data
+      const { feeds, unreadCount } = res.data
       const items = feeds.map((conversation) => {
         return {
           author: conversation.data.author,
@@ -20,11 +20,13 @@ export class HTTPMessagesGateway implements IMessagesGateway {
           id: conversation.data.id,
           groupType: conversation.data.groupType,
           updatedAt: conversation.data.updatedAt,
+          numberOfUnreadMessages: conversation.data.numberOfUnreadMessages,
         }
       })
 
       return {
         conversations: items,
+        unreadConversations: unreadCount,
       }
     })
   }
@@ -80,6 +82,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
         id: entourage.id,
         groupType: entourage.groupType,
         updatedAt: entourage.updatedAt,
+        numberOfUnreadMessages: entourage.numberOfUnreadMessages,
       }
     })
   }

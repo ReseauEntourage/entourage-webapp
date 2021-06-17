@@ -14,6 +14,7 @@ export const colors = {
     greyishBrown: '#4a4a4a',
     borderColorNav: '#979797',
     white: '#fff',
+    badgeRed: '#ff0000',
   },
   pois: {
     0: '#4A4A4A',

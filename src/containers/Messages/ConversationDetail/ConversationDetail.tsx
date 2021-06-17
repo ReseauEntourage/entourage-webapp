@@ -106,7 +106,7 @@ export function ConversationDetail(props: ConversationDetailProps) {
       {!userIsAccepted ? (
         <S.Pending>
           Votre demande est en attente. Lorsque vous serez accepté.e,
-          vous verrez ici la conversation des participants à
+          vous verrez ici la conversation des participants à{' '}
           {entourage.groupType === 'action' ? 'cette action' : 'cet évènement'}.
         </S.Pending>
       ) : (
