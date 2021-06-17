@@ -21,7 +21,7 @@ export function ConversationItem(props: ConversationItemProps) {
         </S.Picture>
         <S.Texts>
           <S.Title>{title}</S.Title>
-          <S.Excerpt hasUnreadMessages={hasUnreadMessages}>{excerpt}</S.Excerpt>
+          <S.Excerpt $hasUnreadMessages={hasUnreadMessages}>{excerpt}</S.Excerpt>
         </S.Texts>
       </S.ConversationContainer>
       {

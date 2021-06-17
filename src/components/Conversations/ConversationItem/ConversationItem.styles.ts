@@ -42,11 +42,11 @@ export const Title = styled(Typography).attrs(() => ({
 export const Excerpt = styled(Typography).attrs(() => ({
   variant: variants.footNote,
   component: 'div',
-}))<{ hasUnreadMessages: boolean; }>`
+}))<{ $hasUnreadMessages: boolean; }>`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  font-weight: ${(props) => (props.hasUnreadMessages ? 'bold' : 'regular')} !important;
+  font-weight: ${(props) => (props.$hasUnreadMessages ? 'bold' : 'regular')} !important;
 `
 
 export const Dot = styled.div`

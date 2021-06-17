@@ -17,7 +17,7 @@ const animation = keyframes`
 
 export const Container = styled.div`
   position: absolute;
-  z-index: 10;
+  z-index: 9999;
   top: 0;
   left: 0;
   width: 100%;
