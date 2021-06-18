@@ -12,12 +12,13 @@ import {
 } from 'src/components/GoogleMapLocation'
 import { ImageCropper, ImageCropperValue } from 'src/components/ImageCropper'
 import { Modal } from 'src/components/Modal'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { api, User } from 'src/core/api'
 import { authUserActions, selectUserIsUpdating } from 'src/core/useCases/authUser'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
-import { useGetCurrentPosition } from 'src/utils/hooks'
-import { notifServerError } from 'src/utils/misc'
+import { useDelayLoadingNext, useGetCurrentPosition } from 'src/utils/hooks'
+import { notifServerError, useLoadGoogleMapApi } from 'src/utils/misc'
 
 interface FormField {
   about: User['about'];
@@ -66,6 +67,19 @@ function useUploadImageProfile() {
 }
 
 export function ModalProfile() {
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
+  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
+
+  if (isLoading) {
+    return <OverlayLoader />
+  }
+
+  return googleMapApiIsLoaded
+    ? <ModalProfileWithApi />
+    : null
+}
+
+function ModalProfileWithApi() {
   const me = useMe()
   const [onValidateImageProfile, upload] = useUploadImageProfile()
   const closeOnNextRender = useSelector(selectUserIsUpdating)
@@ -133,7 +147,11 @@ export function ModalProfile() {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
   }, [register])
 
-  const requiredInfoAreCompleted = !!(user.firstName && user.lastName && user.address?.displayAddress)
+  const requiredInfoAreCompleted = !!(
+    user.firstName?.trim()
+    && user.lastName?.trim()
+    && user.address?.displayAddress?.trim()
+  )
 
   return (
     <Modal
@@ -152,6 +170,9 @@ export function ModalProfile() {
             fullWidth={true}
             inputRef={register({
               required: true,
+              validate: {
+                firstName: validators.firstName,
+              },
             })}
             label={modalTexts.firstNameLabel}
             name={'firstName' as FormFieldKey}
@@ -161,6 +182,9 @@ export function ModalProfile() {
             fullWidth={true}
             inputRef={register({
               required: true,
+              validate: {
+                lastName: validators.lastName,
+              },
             })}
             label={modalTexts.lastNameLabel}
             name={'lastName' as FormFieldKey}
