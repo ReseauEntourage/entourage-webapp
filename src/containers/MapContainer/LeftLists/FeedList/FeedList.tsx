@@ -1,9 +1,10 @@
-import { formatDistance, format } from 'date-fns' // eslint-disable-line
+import { format, isSameDay} from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
+import { getDistance } from 'geolib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import * as S from '../LeftList.styles'
 import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedEntourage } from 'src/components/FeedEntourage'
@@ -14,6 +15,7 @@ import { constants } from 'src/constants'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { feedActions } from 'src/core/useCases/feed'
+import { selectGeolocation } from 'src/core/useCases/location'
 import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll } from 'src/utils/hooks'
 import { formatWebLink } from 'src/utils/misc'
@@ -23,6 +25,7 @@ export function FeedList() {
   const actionId = useActionId()
   const dispatch = useDispatch()
   const { feeds } = useNextFeed()
+  const geolocation = useSelector(selectGeolocation)
 
   const { sendEvent } = useFirebase()
 
@@ -62,23 +65,62 @@ export function FeedList() {
       )
     }
 
-    let secondText = ''
+    let subtitle
+    let distance = ''
+    let distanceString = ''
     let label = ''
-    if (feedItem.groupType === 'action') {
-      const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
-      secondText = `
-        Créé il y a ${createAtDistance}
-        par ${feedItem.author.displayName}
-      `
 
+    if (geolocation) {
+      const { lat, lng } = geolocation
+
+      const distanceInMeters = getDistance({ lat, lng }, feedItem.location)
+
+      if (distanceInMeters > 1000) {
+        distance = `${Math.round(distanceInMeters / 1000)} km`
+      } else {
+        distance = `${distanceInMeters.toString()} m`
+      }
+
+      distanceString = `à ${distance}`
+    } else {
+      distanceString = feedItem.postalCode ?? ''
+    }
+    distanceString += feedItem.postalCode ? ` - ${feedItem.postalCode}` : ''
+
+    if (feedItem.groupType === 'action') {
       const categoryTextKey = feedItem.entourageType === FilterEntourageType.CONTRIBUTION
         ? 'categoryContributionList' : 'categoryHelpList'
+
       label = texts.types[categoryTextKey][feedItem.displayCategory]
+      const category = texts.content.map.actions[feedItem.entourageType]
+
+      subtitle = (
+        <span>
+          <S.Colored category={feedItem.entourageType}>{category}</S.Colored>
+          &nbsp;de&nbsp;
+          <S.Bold>{feedItem.author.displayName}</S.Bold>
+        </span>
+      )
     }
+
     if (feedItem.groupType === 'outing') {
       const startDate = new Date(feedItem.metadata.startsAt)
-      secondText = format(startDate, "'Rendez-vous le' d MMMM 'à' H'h'mm", { locale: fr })
+      if (feedItem.metadata.endsAt && !isSameDay(startDate, new Date(feedItem.metadata.endsAt))) {
+        const endDate = new Date(feedItem.metadata.endsAt)
+        subtitle = `${
+          format(startDate, "'Événement du' dd/MM", { locale: fr })
+        }  ${
+          format(endDate, "'au' dd/MM", { locale: fr })
+        }`
+      } else {
+        subtitle = `${format(startDate, "'Événement le' eeee dd/MM", { locale: fr })}`
+      }
+
       label = texts.types.event
+
+      if (feedItem.online) {
+        distanceString = texts.content.map.actions.online
+      }
     }
 
     return (
@@ -94,6 +136,7 @@ export function FeedList() {
             style={{ width: '100%' }}
           >
             <FeedEntourage
+              distance={distanceString}
               icon={(
                 <FeedItemIcon
                   displayCategory={feedItem.displayCategory}
@@ -104,9 +147,9 @@ export function FeedList() {
               )}
               isActive={feedItem.uuid === actionId}
               numberOfPeople={feedItem.numberOfPeople}
-              primaryText={feedItem.title}
               profilePictureURL={feedItem.author.avatarUrl}
-              secondText={secondText}
+              subtitle={subtitle}
+              title={feedItem.title}
             />
           </CustomLink>
         </Link>

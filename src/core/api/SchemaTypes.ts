@@ -259,6 +259,7 @@ export interface FeedItemEntourage {
     uuid: string;
     online: boolean;
     eventUrl: string;
+    postalCode: string;
   };
   heatmapSize: number;
   type: 'Entourage';
