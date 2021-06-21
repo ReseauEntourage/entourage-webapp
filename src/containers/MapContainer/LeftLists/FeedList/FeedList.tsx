@@ -1,10 +1,9 @@
 import { format, isSameDay} from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import { getDistance } from 'geolib'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
 import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedEntourage } from 'src/components/FeedEntourage'
@@ -15,9 +14,9 @@ import { constants } from 'src/constants'
 import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { feedActions } from 'src/core/useCases/feed'
-import { selectGeolocation } from 'src/core/useCases/location'
 import { texts } from 'src/i18n'
-import { useFirebase, useOnScroll } from 'src/utils/hooks'
+import { useFirebase, useOnScroll, useGetDistanceFromPosition } from 'src/utils/hooks'
+
 import { formatWebLink } from 'src/utils/misc'
 import { FilterEntourageType } from 'src/utils/types'
 
@@ -25,8 +24,7 @@ export function FeedList() {
   const actionId = useActionId()
   const dispatch = useDispatch()
   const { feeds } = useNextFeed()
-  const geolocation = useSelector(selectGeolocation)
-
+  const getDistanceFromPosition = useGetDistanceFromPosition()
   const { sendEvent } = useFirebase()
 
   const router = useRouter()
@@ -66,26 +64,17 @@ export function FeedList() {
     }
 
     let subtitle
-    let distance = ''
+    const distance = getDistanceFromPosition(feedItem.location)
     let distanceString = ''
     let label = ''
 
-    if (geolocation) {
-      const { lat, lng } = geolocation
-
-      const distanceInMeters = getDistance({ lat, lng }, feedItem.location)
-
-      if (distanceInMeters > 1000) {
-        distance = `${Math.round(distanceInMeters / 1000)} km`
-      } else {
-        distance = `${distanceInMeters.toString()} m`
-      }
-
-      distanceString = `à ${distance}`
-    } else {
-      distanceString = feedItem.postalCode ?? ''
+    if (distance && feedItem.postalCode) {
+      distanceString = `${distance} - ${feedItem.postalCode}`
+    } else if (distance) {
+      distanceString = `${distance}`
+    } else if (feedItem.postalCode) {
+      distanceString = feedItem.postalCode
     }
-    distanceString += feedItem.postalCode ? ` - ${feedItem.postalCode}` : ''
 
     if (feedItem.groupType === 'action') {
       const categoryTextKey = feedItem.entourageType === FilterEntourageType.CONTRIBUTION
@@ -96,8 +85,7 @@ export function FeedList() {
 
       subtitle = (
         <span>
-          <S.Colored category={feedItem.entourageType}>{category}</S.Colored>
-          &nbsp;de&nbsp;
+          <S.Colored category={feedItem.entourageType}>{category}&nbsp;de&nbsp;</S.Colored>
           <S.Bold>{feedItem.author.displayName}</S.Bold>
         </span>
       )

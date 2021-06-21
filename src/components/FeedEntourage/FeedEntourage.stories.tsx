@@ -1,8 +1,8 @@
 import { MoreHorizOutlined } from '@material-ui/icons'
 import React from 'react'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
-import * as S from 'src/containers/MapContainer/LeftLists/LeftList.styles'
 import { colors } from 'src/styles'
+import { FeedEntourageTypeColors } from 'src/utils/types'
 import { FeedEntourage } from './FeedEntourage'
 
 export default {
@@ -20,9 +20,9 @@ export const Base = () => (
       profilePictureURL="https://i.pravatar.cc/100"
       subtitle={(
         <span>
-          <S.Colored category="ask_for_help">Demande</S.Colored>
+          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
           &nbsp;de&nbsp;
-          <S.Bold>Inès D.</S.Bold>
+          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
         </span>
       )}
       title="Goearge recherche un télépone portable"
@@ -42,9 +42,9 @@ export const Active = () => (
       profilePictureURL="https://i.pravatar.cc/100"
       subtitle={(
         <span>
-          <S.Colored category="ask_for_help">Demande</S.Colored>
+          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
           &nbsp;de&nbsp;
-          <S.Bold>Inès D.</S.Bold>
+          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
         </span>
       )}
       title="Goearge recherche un télépone portable"

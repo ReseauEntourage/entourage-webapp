@@ -19,6 +19,7 @@ interface POIProps {
   name: string;
   address: string;
   phone: string | null;
+  distance?: string;
 }
 
 export function POI(props: POIProps) {
@@ -28,6 +29,7 @@ export function POI(props: POIProps) {
     name,
     address,
     phone,
+    distance,
   } = props
 
   return (
@@ -69,6 +71,16 @@ export function POI(props: POIProps) {
             link={`tel:${phone}`}
           />
         )}
+        {
+          distance
+          && (
+            <Box alignItems="flex-start" display="flex" marginTop={1}>
+              <Typography variant={variants.footNote}>
+                {distance}
+              </Typography>
+            </Box>
+          )
+        }
 
       </S.LeftContainer>
       <Box flexGrow="1" />

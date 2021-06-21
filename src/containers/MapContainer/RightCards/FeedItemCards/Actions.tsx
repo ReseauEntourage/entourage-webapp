@@ -72,7 +72,8 @@ export function Actions(props: ActionsProps) {
           id: feedItem.id,
           title: feedItem.title,
           description: feedItem.description,
-          dateISO: feedItem.metadata.startsAt,
+          startDateISO: feedItem.metadata.startsAt,
+          endDateISO: feedItem.metadata.endsAt,
           displayAddress: feedItem.metadata.displayAddress,
         }}
       />,

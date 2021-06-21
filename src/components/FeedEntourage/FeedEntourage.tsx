@@ -37,17 +37,17 @@ export function FeedEntourage(props: FeedEntourageProps) {
       <div>
         <S.TitleContainer>
           {icon}
-          <Typography variant="subtitle2">
+          <Typography variant={variants.title2}>
             {titleCropped}
           </Typography>
         </S.TitleContainer>
         <Box marginTop={1}>
-          <Typography variant="caption">
+          <Typography variant={variants.footNote}>
             {subtitle}
           </Typography>
         </Box>
         <Box marginTop={1}>
-          <Typography variant="caption">
+          <Typography variant={variants.footNote}>
             {distance}
           </Typography>
         </Box>

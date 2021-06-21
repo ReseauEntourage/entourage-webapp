@@ -20,7 +20,11 @@ export function createConversationItem(): ConversationItem {
 }
 
 export function createConversationList(): ConversationItem[] {
-  return new Array(10).fill(null).map(() => createConversationItem())
+  return new Array(10).fill(null).map(() => createConversationItem()).sort((a, b) => {
+    const dateA = new Date(a.updatedAt)
+    const dateB = new Date(b.updatedAt)
+    return dateB.getTime() - dateA.getTime()
+  })
 }
 
 export const fakeMessagesData: MessagesState = {
