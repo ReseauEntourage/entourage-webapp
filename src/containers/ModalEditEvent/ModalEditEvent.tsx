@@ -4,8 +4,10 @@ import DescriptionIcon from '@material-ui/icons/Description'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  DateTimePicker,
 } from '@material-ui/pickers'
+import { isBefore, addHours, set } from 'date-fns'
+
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields } from 'src/components/Form'
@@ -32,7 +34,8 @@ type FormFieldKey = keyof FormField
 
 interface ModalEditEventProps {
   event?: {
-    dateISO: DateISO;
+    startDateISO: DateISO;
+    endDateISO?: DateISO;
     description: string;
     displayAddress: string;
     id: number;
@@ -61,31 +64,41 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
   const modalTexts = texts.content.modalEditEvent
 
-  const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
-  const defaultTime = existingEvent?.dateISO ? new Date(existingEvent.dateISO).toLocaleTimeString('fr-FR') : '12:00'
+  const defaultStartDate = existingEvent?.startDateISO
+    ? new Date(existingEvent?.startDateISO)
+    : set(new Date(), {
+      hours: 12,
+      minutes: 0,
+      seconds: 0,
+    })
 
-  const [date, setDate] = useState(defaultDate)
-  const [time, setTime] = useState(defaultTime)
+  const futureDate = addHours(defaultStartDate, 3)
 
-  const onChangeDate = useCallback((nextDate) => {
-    setDate(nextDate)
-  }, [])
+  const defaultEndDate = existingEvent?.endDateISO ? new Date(existingEvent?.endDateISO) : futureDate
 
-  const onChangeTime = useCallback((event) => {
-    const { value } = event.target
-    setTime(value)
-  }, [])
+  const [startDate, setStartDate] = useState(defaultStartDate)
+
+  const [endDate, setEndDate] = useState(defaultEndDate)
+
+  const onChangeStartDate = useCallback((nextDate) => {
+    setStartDate(nextDate)
+    if (isBefore(endDate, nextDate)) {
+      const futureEndDate = addHours(nextDate, 3)
+      setEndDate(futureEndDate)
+    }
+  }, [endDate])
+
+  const onChangeEndDate = useCallback((nextDate) => {
+    if (isBefore(nextDate, startDate)) {
+      setEndDate(startDate)
+    }
+  }, [startDate])
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
     if (!await trigger()) return false
-
-    const formatedDate = date
-    const [hours, minutes] = time.split(':')
-    formatedDate.setHours(Number(hours))
-    formatedDate.setMinutes(Number(minutes))
 
     const {
       autocompletePlace,
@@ -134,7 +147,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         location: locationMeta?.location,
         metadata: {
           googlePlaceId: locationMeta?.googlePlaceId,
-          startsAt: formatedDate.toISOString(),
+          startsAt: startDate.toISOString(),
+          endsAt: endDate.toISOString(),
           placeName: locationMeta?.placeName,
           streetAddress: locationMeta?.streetAddress,
         },
@@ -162,7 +176,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         location,
         metadata: {
           googlePlaceId,
-          startsAt: formatedDate.toISOString(),
+          startsAt: startDate.toISOString(),
+          endsAt: endDate.toISOString(),
           placeName,
           streetAddress,
         },
@@ -176,7 +191,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [trigger, date, time, getValues, existingEvent, updateEntourage, createEntourage])
+  }, [trigger, startDate, endDate, getValues, existingEvent, updateEntourage, createEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -223,38 +238,48 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             }}
           />
           {/* date and hour */}
-          <Label>{modalTexts.step3}</Label>
           <RowFields>
-            <KeyboardDatePicker
-              disableToolbar={true}
-              format="dd/MM/yyyy"
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-              label={modalTexts.fieldLabelDate}
-              margin="normal"
-              onChange={onChangeDate}
-              TextFieldComponent={(textFieldProps) => (
-                <TextField {...textFieldProps} />
-              )}
-              value={date}
-              variant="dialog"
-            />
-            <TextField
-              id="time"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              label={modalTexts.fieldLabelTime}
-              onChange={onChangeTime}
-              type="time"
-              value={time}
-            />
+            <div>
+              <Label>{modalTexts.step3}</Label>
+              <DateTimePicker
+                ampm={false}
+                disablePast={true}
+                disableToolbar={true}
+                format="'Le' dd/MM/yyyy à HH'h'mm"
+                fullWidth={true}
+                label={modalTexts.fieldLabelStartDate}
+                margin="normal"
+                onChange={onChangeStartDate}
+                TextFieldComponent={(textFieldProps) => (
+                  <TextField {...textFieldProps} />
+                )}
+                value={startDate}
+                variant="dialog"
+              />
+            </div>
+            <div>
+              <Label>{modalTexts.step4}</Label>
+              <DateTimePicker
+                ampm={false}
+                disablePast={true}
+                disableToolbar={true}
+                format="'Le' dd/MM/yyyy à HH'h'mm"
+                fullWidth={true}
+                label={modalTexts.fieldLabelEndDate}
+                margin="normal"
+                minDate={startDate}
+                onChange={onChangeEndDate}
+                TextFieldComponent={(textFieldProps) => (
+                  <TextField {...textFieldProps} />
+                )}
+                value={endDate}
+                variant="dialog"
+              />
+            </div>
+
           </RowFields>
-          <Label>{modalTexts.step4}</Label>
+
+          <Label>{modalTexts.step5}</Label>
           <TextField
             fullWidth={true}
             InputProps={{

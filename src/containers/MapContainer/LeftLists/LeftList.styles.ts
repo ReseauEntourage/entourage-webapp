@@ -1,6 +1,8 @@
 import { Box } from '@material-ui/core'
 import styled from 'styled-components'
+import { FeedEntourageType } from 'src/core/api'
 import { devices, colors } from 'src/styles'
+import { FeedEntourageTypeColors } from 'src/utils/types'
 
 export const Container = styled.div`
   display: flex;
@@ -33,4 +35,12 @@ export const Scroll = styled.div`
   position: relative;
   height: 100%;
   overflow: auto;
+`
+
+export const Colored = styled.span<{ category: FeedEntourageType; }>`
+  color: ${((props) => FeedEntourageTypeColors[props.category])}
+`
+
+export const Bold = styled.span`
+  font-weight: bold;
 `

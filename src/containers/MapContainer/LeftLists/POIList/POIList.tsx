@@ -5,14 +5,17 @@ import { Link as CustomLink } from 'src/components/Link'
 import { POIIcon } from 'src/components/Map'
 import { POI } from 'src/components/POI'
 import { usePOIId, usePOIs } from 'src/containers/MapContainer'
-import { useFirebase } from 'src/utils/hooks'
+import { useFirebase, useGetDistanceFromPosition } from 'src/utils/hooks'
 
 export function POIList() {
   const poiId = usePOIId()
   const pois = usePOIs()
   const { sendEvent } = useFirebase()
+  const getDistanceFromPosition = useGetDistanceFromPosition()
 
   const poiListContent = pois.map((poi) => {
+    const distance = getDistanceFromPosition({ latitude: poi.latitude, longitude: poi.longitude })
+
     return (
       <S.ListItem key={poi.uuid}>
         <Link as={`/pois/${poi.uuid}`} href="/pois/[poiId]" passHref={true}>
@@ -25,6 +28,7 @@ export function POIList() {
             <POI
               key={poi.uuid}
               address={poi.address}
+              distance={distance ?? undefined}
               icon={<POIIcon poiCategory={poi.categoryId} />}
               isActive={poi.uuid === poiId}
               name={poi.name}

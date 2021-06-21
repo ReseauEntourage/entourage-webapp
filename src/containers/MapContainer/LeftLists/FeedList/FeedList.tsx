@@ -1,4 +1,4 @@
-import { formatDistance, format } from 'date-fns' // eslint-disable-line
+import { format, isSameDay} from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -15,7 +15,8 @@ import { useActionId, useNextFeed } from 'src/containers/MapContainer'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
 import { feedActions } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
-import { useFirebase, useOnScroll } from 'src/utils/hooks'
+import { useFirebase, useOnScroll, useGetDistanceFromPosition } from 'src/utils/hooks'
+
 import { formatWebLink } from 'src/utils/misc'
 import { FilterEntourageType } from 'src/utils/types'
 
@@ -23,7 +24,7 @@ export function FeedList() {
   const actionId = useActionId()
   const dispatch = useDispatch()
   const { feeds } = useNextFeed()
-
+  const getDistanceFromPosition = useGetDistanceFromPosition()
   const { sendEvent } = useFirebase()
 
   const router = useRouter()
@@ -62,23 +63,52 @@ export function FeedList() {
       )
     }
 
-    let secondText = ''
+    let subtitle
+    const distance = getDistanceFromPosition(feedItem.location)
+    let distanceString = ''
     let label = ''
-    if (feedItem.groupType === 'action') {
-      const createAtDistance = formatDistance(new Date(feedItem.createdAt), new Date(), { locale: fr })
-      secondText = `
-        Créé il y a ${createAtDistance}
-        par ${feedItem.author.displayName}
-      `
 
+    if (distance && feedItem.postalCode) {
+      distanceString = `${distance} - ${feedItem.postalCode}`
+    } else if (distance) {
+      distanceString = `${distance}`
+    } else if (feedItem.postalCode) {
+      distanceString = feedItem.postalCode
+    }
+
+    if (feedItem.groupType === 'action') {
       const categoryTextKey = feedItem.entourageType === FilterEntourageType.CONTRIBUTION
         ? 'categoryContributionList' : 'categoryHelpList'
+
       label = texts.types[categoryTextKey][feedItem.displayCategory]
+      const category = texts.content.map.actions[feedItem.entourageType]
+
+      subtitle = (
+        <span>
+          <S.Colored category={feedItem.entourageType}>{category}&nbsp;de&nbsp;</S.Colored>
+          <S.Bold>{feedItem.author.displayName}</S.Bold>
+        </span>
+      )
     }
+
     if (feedItem.groupType === 'outing') {
       const startDate = new Date(feedItem.metadata.startsAt)
-      secondText = format(startDate, "'Rendez-vous le' d MMMM 'à' H'h'mm", { locale: fr })
+      if (feedItem.metadata.endsAt && !isSameDay(startDate, new Date(feedItem.metadata.endsAt))) {
+        const endDate = new Date(feedItem.metadata.endsAt)
+        subtitle = `${
+          format(startDate, "'Événement du' dd/MM", { locale: fr })
+        }  ${
+          format(endDate, "'au' dd/MM", { locale: fr })
+        }`
+      } else {
+        subtitle = `${format(startDate, "'Événement le' eeee dd/MM", { locale: fr })}`
+      }
+
       label = texts.types.event
+
+      if (feedItem.online) {
+        distanceString = texts.content.map.actions.online
+      }
     }
 
     return (
@@ -94,6 +124,7 @@ export function FeedList() {
             style={{ width: '100%' }}
           >
             <FeedEntourage
+              distance={distanceString}
               icon={(
                 <FeedItemIcon
                   displayCategory={feedItem.displayCategory}
@@ -104,9 +135,9 @@ export function FeedList() {
               )}
               isActive={feedItem.uuid === actionId}
               numberOfPeople={feedItem.numberOfPeople}
-              primaryText={feedItem.title}
               profilePictureURL={feedItem.author.avatarUrl}
-              secondText={secondText}
+              subtitle={subtitle}
+              title={feedItem.title}
             />
           </CustomLink>
         </Link>

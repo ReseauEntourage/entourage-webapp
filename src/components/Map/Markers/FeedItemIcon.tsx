@@ -3,10 +3,10 @@ import { Tooltip } from '@material-ui/core'
 import SvgIcon from '@material-ui/core/SvgIcon'
 import React, { CSSProperties } from 'react'
 import { Event } from 'src/assets'
-import { FeedEntourageType } from 'src/core/api'
 import { FeedEntourage as FeedItemType } from 'src/core/useCases/feed'
 import { colors } from 'src/styles'
 import { feedItemCategoryIcons, roundToEven } from 'src/utils/misc'
+import { FeedEntourageTypeColors } from 'src/utils/types'
 
 interface FeedItemIconProps {
   displayCategory: FeedItemType['displayCategory'];
@@ -49,12 +49,6 @@ export function FeedItemIcon(props: FeedItemIconProps) {
     </div>
   )
 
-  const iconColors: Record<FeedEntourageType, string> = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    ask_for_help: colors.main.primary,
-    contribution: colors.main.blue,
-  }
-
   const IconComponent = feedItemCategoryIcons[displayCategory] || feedItemCategoryIcons.other
 
   const { width, height } = IconComponent({}).props
@@ -66,7 +60,7 @@ export function FeedItemIcon(props: FeedItemIconProps) {
           component={IconComponent}
           style={{
             fontSize,
-            color: iconColors[entourageType],
+            color: FeedEntourageTypeColors[entourageType],
           }}
           viewBox={`0 0 ${width} ${height}`}
         />

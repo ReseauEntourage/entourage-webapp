@@ -77,6 +77,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           online: item.data.online,
           eventUrl: item.data.eventUrl,
           numberOfPeople: item.data.numberOfPeople,
+          postalCode: item.data.postalCode,
         }
       })
 
@@ -131,6 +132,7 @@ export class HTTPFeedGateway implements IFeedGateway {
           online: item.data.entourage.online,
           eventUrl: item.data.entourage.eventUrl,
           numberOfPeople: item.data.entourage.numberOfPeople,
+          postalCode: item.data.entourage.postalCode,
         },
       }
     })

@@ -57,6 +57,7 @@ export interface FeedEntourage {
   online: boolean;
   eventUrl: string;
   numberOfPeople: number;
+  postalCode: string;
 }
 
 export interface FeedAnnouncement {

@@ -36,6 +36,7 @@ export const Base = () => (
   <TransparentWrapper style={{ width: 500 }}>
     <POI
       address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+      distance="à 250 m"
       icon={<Icon />}
       name="Bagagerie solidaire de Clichy"
       phone="0102030405"
@@ -47,6 +48,7 @@ export const Active = () => (
   <TransparentWrapper style={{ width: 500 }}>
     <POI
       address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+      distance="à 250 m"
       icon={<Icon />}
       isActive={true}
       name="Bagagerie solidaire de Clichy"

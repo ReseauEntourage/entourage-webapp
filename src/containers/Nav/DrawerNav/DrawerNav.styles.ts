@@ -8,11 +8,3 @@ export const DrawerHeader = styled.div`
   min-height: ${theme.mixins.toolbar.minHeight}px;
   justify-content: flex-start;
 `
-
-export const DrawerNotificationItem = styled.div`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 250px;
-`
