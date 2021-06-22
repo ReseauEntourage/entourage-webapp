@@ -240,6 +240,8 @@ export const texts = {
         SMSCode: "Entrez le code d'activation reçu",
         passwordForgotten: 'Mot de passe oublié ?',
         resendActivationCode: "Renvoyer le code d'activation",
+        limitResendCode1: 'Veuillez patienter encore',
+        limitResendCode2: 'avant de renouveller la demande',
         chooseYourPassword: 'Choisissez votre mot de passe',
         confirmYourPassword: 'Confirmez votre mot de passe',
       },
