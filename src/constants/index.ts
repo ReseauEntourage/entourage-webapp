@@ -28,4 +28,5 @@ export const constants = {
   WEBAPP_PROD_LINK: 'https://app.entourage.social/actions',
   IOS_LINK: 'https://apps.apple.com/fr/app/entourage-r%C3%A9seau-solidaire/id1072244410',
   ANDROID_LINK: 'https://play.google.com/store/apps/details?id=social.entourage.android',
+  PASSWORD_TIMEOUT: 30, // unit: seconds
 }
