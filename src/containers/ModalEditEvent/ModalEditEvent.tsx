@@ -91,6 +91,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const onChangeEndDate = useCallback((nextDate) => {
     if (isBefore(nextDate, startDate)) {
       setEndDate(startDate)
+    } else {
+      setEndDate(nextDate)
     }
   }, [startDate])
 
