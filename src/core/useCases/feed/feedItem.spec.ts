@@ -27,7 +27,7 @@ import {
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
   selectIsUpdatingStatus,
-  selectStatus,
+  selectStatus, selectEventImagesFetching, selectEventImages,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -856,6 +856,57 @@ describe('Feed Item', () => {
 
       expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
       expect(selectStatus(store.getState(), 'abc')).toEqual(RequestStatus.OPEN)
+    })
+  })
+
+  describe('Create / Update', () => {
+    it(`
+      Given initial state
+      When user wants to create an event
+        And user asks to get the list event images
+      Then images should be fetching during request
+        And images should not be fetching after request succeeded
+        And the images list should be retrieved from gateway
+    `, async () => {
+      const feedGateway = new TestFeedGateway()
+
+      const store = configureStoreWithFeed(
+        {
+          dependencies: {
+            feedGateway,
+          },
+          initialAppState: {
+            feed: {
+              ...fakeFeedData,
+            },
+          },
+        },
+      )
+
+      const deferredValueRetrieveImages = [
+        {
+          id: 118,
+          title: 'Café solidaire',
+          landscapeUrl: 'path-to-img.jpeg',
+          landscapeSmallUrl: 'path-to-img.jpeg',
+          portraitUrl: null,
+          portraitSmallUrl: null,
+        },
+      ]
+
+      feedGateway.retrieveEventImages.mockDeferredValueOnce({ eventImages: deferredValueRetrieveImages })
+
+      store.dispatch(publicActions.retrieveEventImages())
+
+      expect(selectEventImagesFetching(store.getState())).toBe(true)
+
+      feedGateway.retrieveEventImages.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(selectEventImagesFetching(store.getState())).toBe(false)
+      expect(feedGateway.retrieveEventImages).toHaveBeenCalledTimes(1)
+      expect(selectEventImages(store.getState())).toStrictEqual(deferredValueRetrieveImages)
     })
   })
 })

@@ -167,6 +167,7 @@ export function FeedItemCards() {
         </Box>
       )}
       href="/actions"
+      imageUrl={feedItem.metadata.landscapeUrl}
     />
   )
 }

@@ -197,4 +197,14 @@ export class HTTPFeedGateway implements IFeedGateway {
       return null
     })
   }
+
+  retrieveEventImages: IFeedGateway['retrieveEventImages'] = () => {
+    return api.request({
+      name: '/entourage_images GET',
+    }).then(({ data }) => {
+      return {
+        eventImages: data.entourageImages,
+      }
+    })
+  }
 }

@@ -7,7 +7,12 @@ import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
-import { selectCurrentFeedItem, selectCurrentFeedItemUuid, selectFeed } from './feed.selectors'
+import {
+  selectCurrentFeedItem,
+  selectCurrentFeedItemUuid,
+  selectEventImagesFetching,
+  selectFeed,
+} from './feed.selectors'
 
 export interface Dependencies {
   feedGateway: IFeedGateway;
@@ -145,6 +150,25 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
   yield put(actions.reopenEntourageSucceeded({ entourageUuid }))
 }
 
+function* retrieveEventImagesSaga() {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { retrieveEventImages } = dependencies.feedGateway
+
+  const eventImagesFetching: ReturnType<typeof selectEventImagesFetching> = yield select(selectEventImagesFetching)
+
+  if (eventImagesFetching) {
+    return
+  }
+
+  yield put(actions.retrieveEventImagesStarted())
+
+  const response: CallReturnType<typeof retrieveEventImages> = yield call(
+    retrieveEventImages,
+  )
+
+  yield put(actions.retrieveEventImagesSuccess(response))
+}
+
 export function* feedSaga() {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
   yield takeEvery(FeedActionType.TOGGLE_ACTION_TYPES_FILTER, retrieveFeed)
@@ -155,6 +179,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.LEAVE_ENTOURAGE, leaveEntourage)
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
   yield takeEvery(FeedActionType.REOPEN_ENTOURAGE, reopenEntourage)
+  yield takeEvery(FeedActionType.RETRIEVE_EVENT_IMAGES, retrieveEventImagesSaga)
 
   while (yield take(FeedActionType.INIT_FEED)) {
     const setLocationRetrieveFeed = yield takeEvery(LocationActionType.SET_LOCATION, retrieveFeed)

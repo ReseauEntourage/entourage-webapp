@@ -1,6 +1,11 @@
 import DateFnsUtils from '@date-io/date-fns'
+import { Box, MenuItem, Select } from '@material-ui/core'
+import FormControl from '@material-ui/core/FormControl'
+import FormHelperText from '@material-ui/core/FormHelperText'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import DescriptionIcon from '@material-ui/icons/Description'
+import ImageIcon from '@material-ui/icons/Image'
+import ListIcon from '@material-ui/icons/List'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import {
   MuiPickersUtilsProvider,
@@ -11,16 +16,20 @@ import { fr } from 'date-fns/locale'  // eslint-disable-line
 
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
-import { TextField, Label, RowFields } from 'src/components/Form'
+import { useDispatch, useSelector } from 'react-redux'
+import { TextField, Label, RowFields, SelectImage } from 'src/components/Form'
+
 import {
   AutocompleteFormField,
   AutocompleteFormFieldKey,
   GoogleMapLocation,
 } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
-import { useGetCurrentPosition } from 'src/utils/hooks'
+import { useGetCurrentPosition, useMount } from 'src/utils/hooks'
 import {
   assertIsDefined,
   getLocationFromPlace,
@@ -32,6 +41,7 @@ interface FormField {
   category: string;
   description: string;
   title: string;
+  imageId: number;
 }
 
 type FormFieldKey = keyof FormField
@@ -44,17 +54,26 @@ interface ModalEditEventProps {
     displayAddress: string;
     id: number;
     title: string;
+    imageUrl?: string;
   };
 }
 
 export function ModalEditEvent(props: ModalEditEventProps) {
   const { event: existingEvent } = props
 
+  const dispatch = useDispatch()
+
+  const eventImages = useSelector(selectEventImages)
+  const eventImagesFetching = useSelector(selectEventImagesFetching)
+
   const isCreation = !existingEvent
+
+  const defaultImage = eventImages.find((eventImage) => eventImage.landscapeSmallUrl === existingEvent?.imageUrl)
 
   const defaultValues = {
     description: existingEvent?.description,
     title: existingEvent?.title,
+    imageId: defaultImage?.id,
   }
 
   const {
@@ -103,6 +122,10 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
+  useMount(() => {
+    dispatch(feedActions.retrieveEventImages())
+  })
+
   const onValidate = useCallback(async () => {
     if (!await trigger()) return false
 
@@ -110,7 +133,20 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       autocompletePlace,
       title,
       description,
+      imageId,
     } = getValues()
+
+    const updatedImage = eventImages.find((eventImage) => eventImage.id === imageId)
+
+    console.log(imageId)
+    console.log(updatedImage)
+
+    const imageValuesToSend = {
+      landscapeUrl: defaultImage?.landscapeUrl,
+      landscapeThumbnailUrl: defaultImage?.landscapeSmallUrl,
+      portraitUrl: defaultImage?.portraitUrl,
+      portraitThumbnailUrl: defaultImage?.portraitSmallUrl,
+    }
 
     if (existingEvent) {
       const locationMeta = autocompletePlace
@@ -128,6 +164,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           endsAt: endDate.toISOString(),
           placeName: locationMeta?.placeName,
           streetAddress: locationMeta?.streetAddress,
+          ...imageValuesToSend,
         },
       }
 
@@ -157,6 +194,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           endsAt: endDate.toISOString(),
           placeName,
           streetAddress,
+          ...imageValuesToSend,
         },
       }
 
@@ -168,7 +206,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [trigger, startDate, endDate, getValues, existingEvent, updateEntourage, createEntourage])
+  }, [trigger, getValues, eventImages, defaultImage, existingEvent, startDate, endDate, updateEntourage, createEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -180,6 +218,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       title={modalTexts.title}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
+
       <FormProvider {...form}>
         <MuiPickersUtilsProvider locale={fr} utils={DateFnsUtils}>
           <Label>{modalTexts.step1}</Label>
@@ -253,9 +292,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                 variant="dialog"
               />
             </div>
-
           </RowFields>
-
           <Label>{modalTexts.step5}</Label>
           <TextField
             fullWidth={true}
@@ -275,6 +312,35 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             rows="4"
             type="text"
           />
+          <Label>{modalTexts.step6}</Label>
+          {
+            eventImagesFetching
+              ? <OverlayLoader />
+              : (
+                <SelectImage
+                  fullWidth={true}
+                  inputRef={register({
+                    required: true,
+                  })}
+                  name={'imageId' as FormFieldKey}
+                  options={eventImages.map((eventImage) => ({
+                    image:
+                      (
+                        <Box alignItems="center" display="flex" justifyContent="center" width="100%">
+                          <img alt={eventImage.title} src={eventImage.landscapeSmallUrl} width={300} />
+                        </Box>
+                      ),
+                    value: eventImage.id,
+                  }))}
+                  placeholder={modalTexts.fieldDescriptionPlaceholder}
+                  startAdornment={(
+                    <InputAdornment position="start">
+                      <ImageIcon />
+                    </InputAdornment>
+                  )}
+                />
+              )
+          }
         </MuiPickersUtilsProvider>
       </FormProvider>
     </Modal>

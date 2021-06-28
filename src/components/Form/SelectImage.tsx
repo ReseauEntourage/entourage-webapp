@@ -1,3 +1,4 @@
+import { MenuItem } from '@material-ui/core'
 import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import InputLabel from '@material-ui/core/InputLabel'
@@ -7,31 +8,26 @@ import { FieldError } from 'react-hook-form/dist/types'
 import React, { useEffect } from 'react'
 import { helperTextError } from './helperTextErrors'
 
-interface OptionWithoutGroup {
-  label: string;
-  value: string;
-}
-
-interface OptionWithGroup {
-  label: string;
-  options: OptionWithoutGroup[];
+interface Option {
+  image: React.ReactNode;
+  value: string | number;
 }
 
 type Errors = Partial<Record<string, FieldError>>
 
 interface SelectProps extends SelectBaseProps {
   formErrors?: Errors;
-  label: string;
-  options: (OptionWithGroup | OptionWithoutGroup)[];
+  label?: string;
+  options: Option[];
 }
 
-function renderOptions(options: OptionWithoutGroup[]) {
-  return options.map(({ label, value }) => (
-    <option key={value} value={value}>{label}</option>
+function renderOptions(options: Option[]) {
+  return options.map(({ image, value }) => (
+    <MenuItem key={value} alignItems="center" value={value}>{image}</MenuItem>
   ))
 }
 
-export function Select(props: SelectProps) {
+export function SelectImage(props: SelectProps) {
   const {
     label,
     options,
@@ -59,31 +55,25 @@ export function Select(props: SelectProps) {
       margin={restProps.margin ?? 'normal'}
       variant="outlined"
     >
-      <InputLabel
-        ref={inputLabel}
-        htmlFor="outlined-age-native-simple"
-      >
-        {label}
-      </InputLabel>
+      {
+        label && (
+          <InputLabel
+            ref={inputLabel}
+            htmlFor="outlined-age-native-simple"
+          >
+            {label}
+          </InputLabel>
+        )
+      }
       <SelectBase
         labelWidth={labelWidth}
         name={name}
-        native={true}
         {...restProps}
       >
-        <option value="">&nbsp;</option>
+        <MenuItem value="">&nbsp;</MenuItem>
         {
           options.map((option) => {
-            const subOptions = (option as OptionWithGroup)
-            if (subOptions.options) {
-              return (
-                <optgroup key={subOptions.label} label={subOptions.label}>
-                  {renderOptions(subOptions.options as OptionWithoutGroup[])}
-                </optgroup>
-              )
-            }
-
-            return renderOptions([option] as OptionWithoutGroup[])
+            return renderOptions([option] as Option[])
           })
         }
       </SelectBase>

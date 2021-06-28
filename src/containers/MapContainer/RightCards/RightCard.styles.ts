@@ -6,7 +6,6 @@ export const Container = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: ${theme.spacing(2, 0)};
   box-sizing: border-box;
 `
 
@@ -14,4 +13,12 @@ export const Scroll = styled.div`
   height: 100%;
   position: relative;
   overflow: auto;
+`
+
+export const Image = styled.img`
+  width: 100%;
+`
+
+export const ContentContainer = styled.div`
+  padding: ${theme.spacing(2, 0)};
 `

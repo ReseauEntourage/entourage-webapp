@@ -73,6 +73,15 @@ export interface FeedAnnouncement {
   iconUrl: string;
 }
 
+export interface EventImage {
+  id: number;
+  title: string;
+  landscapeUrl: string;
+  landscapeSmallUrl: string;
+  portraitUrl: string;
+  portraitSmallUrl: string;
+}
+
 export interface FeedState {
   fetching: boolean;
   filters: {
@@ -89,6 +98,8 @@ export interface FeedState {
   isUpdatingJoinStatus: boolean;
   isUpdatingStatus: boolean;
   isIdle: boolean;
+  eventImages: EventImage[];
+  eventImagesFetching: boolean;
 }
 
 export const defaultFeedState: FeedState = {
@@ -116,6 +127,8 @@ export const defaultFeedState: FeedState = {
   isUpdatingJoinStatus: false,
   isUpdatingStatus: false,
   isIdle: true,
+  eventImages: [],
+  eventImagesFetching: false,
 }
 
 export function feedReducer(
@@ -357,6 +370,21 @@ export function feedReducer(
           timeRange: action.payload,
         },
         nextPageToken: null,
+      }
+    }
+
+    case FeedActionType.RETRIEVE_EVENT_IMAGES_STARTED: {
+      return {
+        ...state,
+        eventImagesFetching: true,
+      }
+    }
+
+    case FeedActionType.RETRIEVE_EVENT_IMAGES_SUCCEEDED: {
+      return {
+        ...state,
+        eventImagesFetching: false,
+        eventImages: action.payload.eventImages,
       }
     }
 

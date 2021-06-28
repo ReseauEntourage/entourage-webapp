@@ -1,6 +1,6 @@
 import { LocationState } from '../location'
 import { FeedJoinStatus, FeedTypesFilter } from 'src/core/api'
-import { FeedState, FeedEntourage, FeedAnnouncement } from './feed.reducer'
+import { FeedState, FeedEntourage, FeedAnnouncement, EventImage } from './feed.reducer'
 
 interface FeedItemsFilter {
   location: Pick<LocationState, 'center' | 'zoom'>;
@@ -28,4 +28,5 @@ export interface IFeedGateway {
   closeEntourage(entourageUuid: string, success: boolean): Promise<void | null>;
   reopenEntourage(entourageUuid: string): Promise<void | null>;
 
+  retrieveEventImages(): Promise<{ eventImages: EventImage[]; }>;
 }
