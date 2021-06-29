@@ -11,7 +11,7 @@ import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
-import { assertIsNumber, getDetailPlacesService } from 'src/utils/misc'
+import { getLocationFromPlace } from 'src/utils/misc'
 
 const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other'/* , 'info', 'skill' */]
 
@@ -93,27 +93,9 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
     const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
-    const getLocation = async () => {
-      const placeDetail = await getDetailPlacesService(
-        autocompletePlace.place.place_id,
-        autocompletePlace.sessionToken,
-      )
-
-      const latitude = placeDetail.geometry?.location.lat()
-      const longitude = placeDetail.geometry?.location.lng()
-
-      assertIsNumber(latitude)
-      assertIsNumber(longitude)
-
-      return {
-        latitude,
-        longitude,
-      }
-    }
-
     if (existedAction) {
-      const location = autocompletePlace
-        ? await getLocation()
+      const locationMeta = autocompletePlace
+        ? await getLocationFromPlace(autocompletePlace)
         : undefined
 
       const action = {
@@ -122,7 +104,12 @@ export function ModalEditAction(props: ModalEditActionProps) {
         description,
         displayCategory,
         entourageType,
-        location,
+        location: locationMeta?.location,
+        metadata: {
+          googlePlaceId: locationMeta?.googlePlaceId,
+          placeName: locationMeta?.placeName,
+          streetAddress: locationMeta?.streetAddress,
+        },
       }
 
       try {
@@ -131,14 +118,19 @@ export function ModalEditAction(props: ModalEditActionProps) {
         return false
       }
     } else {
-      const location = await getLocation()
+      const locationMeta = await getLocationFromPlace(autocompletePlace)
 
       const action = {
         title,
         description,
         displayCategory,
         entourageType,
-        location,
+        location: locationMeta?.location,
+        metadata: {
+          googlePlaceId: locationMeta?.googlePlaceId,
+          placeName: locationMeta?.placeName,
+          streetAddress: locationMeta?.streetAddress,
+        },
       }
 
       try {

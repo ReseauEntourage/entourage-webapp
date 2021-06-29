@@ -6,7 +6,8 @@ import {
   MuiPickersUtilsProvider,
   DateTimePicker,
 } from '@material-ui/pickers'
-import { isBefore, addHours, set } from 'date-fns'
+import { isBefore, addHours, set } from 'date-fns'  // eslint-disable-line
+import { fr } from 'date-fns/locale'  // eslint-disable-line
 
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -20,7 +21,10 @@ import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
-import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
+import {
+  assertIsDefined,
+  getLocationFromPlace,
+} from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
 interface FormField {
@@ -108,38 +112,9 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       description,
     } = getValues()
 
-    const getLocation = async () => {
-      assertIsDefined(autocompletePlace)
-
-      const placeDetail = await getDetailPlacesService(
-        autocompletePlace.place.place_id,
-        autocompletePlace.sessionToken,
-      )
-
-      const latitude = placeDetail.geometry?.location.lat()
-      const longitude = placeDetail.geometry?.location.lng()
-      const googlePlaceId = autocompletePlace.place.place_id
-      const streetAddress = placeDetail.formatted_address
-      const placeName = placeDetail.name
-
-      assertIsNumber(latitude)
-      assertIsNumber(longitude)
-      assertIsString(streetAddress)
-
-      return {
-        location: {
-          latitude,
-          longitude,
-        },
-        googlePlaceId,
-        streetAddress,
-        placeName,
-      }
-    }
-
     if (existingEvent) {
       const locationMeta = autocompletePlace
-        ? await getLocation()
+        ? await getLocationFromPlace(autocompletePlace)
         : null
 
       const event = {
@@ -169,7 +144,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         googlePlaceId,
         streetAddress,
         placeName,
-      } = await getLocation()
+      } = await getLocationFromPlace(autocompletePlace)
 
       const event = {
         title,
@@ -206,7 +181,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
       <FormProvider {...form}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiPickersUtilsProvider locale={fr} utils={DateFnsUtils}>
           <Label>{modalTexts.step1}</Label>
           <TextField
             fullWidth={true}
@@ -246,7 +221,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               <DateTimePicker
                 ampm={false}
                 disablePast={true}
-                disableToolbar={true}
+                disableToolbar={false}
                 format="'Le' dd/MM/yyyy à HH'h'mm"
                 fullWidth={true}
                 label={modalTexts.fieldLabelStartDate}
@@ -264,7 +239,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
               <DateTimePicker
                 ampm={false}
                 disablePast={true}
-                disableToolbar={true}
+                disableToolbar={false}
                 format="'Le' dd/MM/yyyy à HH'h'mm"
                 fullWidth={true}
                 label={modalTexts.fieldLabelEndDate}
