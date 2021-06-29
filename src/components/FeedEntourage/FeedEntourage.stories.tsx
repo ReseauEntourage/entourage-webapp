@@ -1,7 +1,8 @@
-import { Event } from '@material-ui/icons'
+import { MoreHorizOutlined } from '@material-ui/icons'
 import React from 'react'
 import { TransparentWrapper } from 'src/components/StorybookUtils'
 import { colors } from 'src/styles'
+import { FeedEntourageTypeColors } from 'src/utils/types'
 import { FeedEntourage } from './FeedEntourage'
 
 export default {
@@ -11,13 +12,20 @@ export default {
 export const Base = () => (
   <TransparentWrapper style={{ width: 500 }}>
     <FeedEntourage
+      distance="à 750 m - 69007"
       icon={(
-        <Event style={{ color: colors.main.primary, fontSize: 22 }} />
+        <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
       )}
       numberOfPeople={3}
-      primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
-      secondText="Créé ce mois-ci par Ines"
+      subtitle={(
+        <span>
+          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
+          &nbsp;de&nbsp;
+          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
+        </span>
+      )}
+      title="Goearge recherche un télépone portable"
     />
   </TransparentWrapper>
 )
@@ -25,14 +33,21 @@ export const Base = () => (
 export const Active = () => (
   <TransparentWrapper style={{ width: 500 }}>
     <FeedEntourage
+      distance="à 750 m - 69007"
       icon={(
-        <Event style={{ color: colors.main.primary, fontSize: 22 }} />
+        <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
       )}
       isActive={true}
       numberOfPeople={3}
-      primaryText=" Goearge recherche un télépone portable"
       profilePictureURL="https://i.pravatar.cc/100"
-      secondText="Créé ce mois-ci par Ines"
+      subtitle={(
+        <span>
+          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
+          &nbsp;de&nbsp;
+          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
+        </span>
+      )}
+      title="Goearge recherche un télépone portable"
     />
   </TransparentWrapper>
 )

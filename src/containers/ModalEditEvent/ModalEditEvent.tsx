@@ -4,8 +4,11 @@ import DescriptionIcon from '@material-ui/icons/Description'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import {
   MuiPickersUtilsProvider,
-  KeyboardDatePicker,
+  DateTimePicker,
 } from '@material-ui/pickers'
+import { isBefore, addHours, set } from 'date-fns'  // eslint-disable-line
+import { fr } from 'date-fns/locale'  // eslint-disable-line
+
 import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { TextField, Label, RowFields } from 'src/components/Form'
@@ -18,7 +21,10 @@ import { Modal } from 'src/components/Modal'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
-import { getDetailPlacesService, assertIsString, assertIsNumber, assertIsDefined } from 'src/utils/misc'
+import {
+  assertIsDefined,
+  getLocationFromPlace,
+} from 'src/utils/misc'
 import { DateISO } from 'src/utils/types'
 
 interface FormField {
@@ -32,7 +38,8 @@ type FormFieldKey = keyof FormField
 
 interface ModalEditEventProps {
   event?: {
-    dateISO: DateISO;
+    startDateISO: DateISO;
+    endDateISO?: DateISO;
     description: string;
     displayAddress: string;
     id: number;
@@ -61,20 +68,37 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
   const modalTexts = texts.content.modalEditEvent
 
-  const defaultDate = existingEvent?.dateISO ? new Date(existingEvent?.dateISO) : new Date()
-  const defaultTime = existingEvent?.dateISO ? new Date(existingEvent.dateISO).toLocaleTimeString('fr-FR') : '12:00'
+  const defaultStartDate = existingEvent?.startDateISO
+    ? new Date(existingEvent?.startDateISO)
+    : set(new Date(), {
+      hours: 12,
+      minutes: 0,
+      seconds: 0,
+    })
 
-  const [date, setDate] = useState(defaultDate)
-  const [time, setTime] = useState(defaultTime)
+  const futureDate = addHours(defaultStartDate, 3)
 
-  const onChangeDate = useCallback((nextDate) => {
-    setDate(nextDate)
-  }, [])
+  const defaultEndDate = existingEvent?.endDateISO ? new Date(existingEvent?.endDateISO) : futureDate
 
-  const onChangeTime = useCallback((event) => {
-    const { value } = event.target
-    setTime(value)
-  }, [])
+  const [startDate, setStartDate] = useState(defaultStartDate)
+
+  const [endDate, setEndDate] = useState(defaultEndDate)
+
+  const onChangeStartDate = useCallback((nextDate) => {
+    setStartDate(nextDate)
+    if (isBefore(endDate, nextDate)) {
+      const futureEndDate = addHours(nextDate, 3)
+      setEndDate(futureEndDate)
+    }
+  }, [endDate])
+
+  const onChangeEndDate = useCallback((nextDate) => {
+    if (isBefore(nextDate, startDate)) {
+      setEndDate(startDate)
+    } else {
+      setEndDate(nextDate)
+    }
+  }, [startDate])
 
   const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
@@ -82,49 +106,15 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const onValidate = useCallback(async () => {
     if (!await trigger()) return false
 
-    const formatedDate = date
-    const [hours, minutes] = time.split(':')
-    formatedDate.setHours(Number(hours))
-    formatedDate.setMinutes(Number(minutes))
-
     const {
       autocompletePlace,
       title,
       description,
     } = getValues()
 
-    const getLocation = async () => {
-      assertIsDefined(autocompletePlace)
-
-      const placeDetail = await getDetailPlacesService(
-        autocompletePlace.place.place_id,
-        autocompletePlace.sessionToken,
-      )
-
-      const latitude = placeDetail.geometry?.location.lat()
-      const longitude = placeDetail.geometry?.location.lng()
-      const googlePlaceId = autocompletePlace.place.place_id
-      const streetAddress = placeDetail.formatted_address
-      const placeName = placeDetail.name
-
-      assertIsNumber(latitude)
-      assertIsNumber(longitude)
-      assertIsString(streetAddress)
-
-      return {
-        location: {
-          latitude,
-          longitude,
-        },
-        googlePlaceId,
-        streetAddress,
-        placeName,
-      }
-    }
-
     if (existingEvent) {
       const locationMeta = autocompletePlace
-        ? await getLocation()
+        ? await getLocationFromPlace(autocompletePlace)
         : null
 
       const event = {
@@ -134,7 +124,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         location: locationMeta?.location,
         metadata: {
           googlePlaceId: locationMeta?.googlePlaceId,
-          startsAt: formatedDate.toISOString(),
+          startsAt: startDate.toISOString(),
+          endsAt: endDate.toISOString(),
           placeName: locationMeta?.placeName,
           streetAddress: locationMeta?.streetAddress,
         },
@@ -153,7 +144,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         googlePlaceId,
         streetAddress,
         placeName,
-      } = await getLocation()
+      } = await getLocationFromPlace(autocompletePlace)
 
       const event = {
         title,
@@ -162,7 +153,8 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         location,
         metadata: {
           googlePlaceId,
-          startsAt: formatedDate.toISOString(),
+          startsAt: startDate.toISOString(),
+          endsAt: endDate.toISOString(),
           placeName,
           streetAddress,
         },
@@ -176,7 +168,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [trigger, date, time, getValues, existingEvent, updateEntourage, createEntourage])
+  }, [trigger, startDate, endDate, getValues, existingEvent, updateEntourage, createEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -189,7 +181,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
     >
       <FormProvider {...form}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MuiPickersUtilsProvider locale={fr} utils={DateFnsUtils}>
           <Label>{modalTexts.step1}</Label>
           <TextField
             fullWidth={true}
@@ -223,38 +215,48 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             }}
           />
           {/* date and hour */}
-          <Label>{modalTexts.step3}</Label>
           <RowFields>
-            <KeyboardDatePicker
-              disableToolbar={true}
-              format="dd/MM/yyyy"
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
-              label={modalTexts.fieldLabelDate}
-              margin="normal"
-              onChange={onChangeDate}
-              TextFieldComponent={(textFieldProps) => (
-                <TextField {...textFieldProps} />
-              )}
-              value={date}
-              variant="dialog"
-            />
-            <TextField
-              id="time"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              inputProps={{
-                step: 300, // 5 min
-              }}
-              label={modalTexts.fieldLabelTime}
-              onChange={onChangeTime}
-              type="time"
-              value={time}
-            />
+            <div>
+              <Label>{modalTexts.step3}</Label>
+              <DateTimePicker
+                ampm={false}
+                disablePast={true}
+                disableToolbar={false}
+                format="'Le' dd/MM/yyyy à HH'h'mm"
+                fullWidth={true}
+                label={modalTexts.fieldLabelStartDate}
+                margin="normal"
+                onChange={onChangeStartDate}
+                TextFieldComponent={(textFieldProps) => (
+                  <TextField {...textFieldProps} />
+                )}
+                value={startDate}
+                variant="dialog"
+              />
+            </div>
+            <div>
+              <Label>{modalTexts.step4}</Label>
+              <DateTimePicker
+                ampm={false}
+                disablePast={true}
+                disableToolbar={false}
+                format="'Le' dd/MM/yyyy à HH'h'mm"
+                fullWidth={true}
+                label={modalTexts.fieldLabelEndDate}
+                margin="normal"
+                minDate={startDate}
+                onChange={onChangeEndDate}
+                TextFieldComponent={(textFieldProps) => (
+                  <TextField {...textFieldProps} />
+                )}
+                value={endDate}
+                variant="dialog"
+              />
+            </div>
+
           </RowFields>
-          <Label>{modalTexts.step4}</Label>
+
+          <Label>{modalTexts.step5}</Label>
           <TextField
             fullWidth={true}
             InputProps={{

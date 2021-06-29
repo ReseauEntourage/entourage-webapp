@@ -3,6 +3,7 @@ import { ConversationItem, ConversationMessage, MessagesState } from './messages
 export interface IMessagesGateway {
   retrieveConversations(data: { page: MessagesState['page']; }): Promise<{
     conversations: ConversationItem[];
+    unreadConversations: number;
   }>;
 
   retrieveConversation(data: { entourageUuid: string; }): Promise<ConversationItem>;

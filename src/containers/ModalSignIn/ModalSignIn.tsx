@@ -1,10 +1,11 @@
 import { Typography } from '@material-ui/core'
 import Box from '@material-ui/core/Box'
 import { useForm } from 'react-hook-form'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { TextField, TextFieldPassword } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
+import { constants } from 'src/constants'
 import { useOnLogin } from 'src/core/events'
 import {
   selectStep,
@@ -35,6 +36,7 @@ export function ModalSignIn(props: ModalSignInProps) {
   const errors = useSelector(selectErrors)
   const closeOnNextRender = useSelector(selectLoginIsCompleted)
   const phoneForm = useForm<FormFields>()
+  const [limitCounter, setLimitCounter] = useState(0)
 
   const isDesktop = useIsDesktop()
 
@@ -79,15 +81,28 @@ export function ModalSignIn(props: ModalSignInProps) {
     return false
   }
 
-  const resetPassword = () => {
-    if (step === 'PASSWORD') {
-      sendEvent('Action__Login__PasswordForgotten')
-    } else {
-      sendEvent('Action__SignUp__ResendSMSCode')
+  useEffect(() => {
+    if (limitCounter > 0) {
+      setTimeout(() => {
+        const decrementedCounter = limitCounter - 1
+        setLimitCounter(decrementedCounter)
+      }, 1000)
     }
-    const { phone } = phoneForm.getValues()
-    dispatch(authUserActions.resetPassword({ phone }))
-  }
+  }, [limitCounter])
+
+  const resetPassword = useCallback(() => {
+    if (limitCounter === 0) {
+      if (step === 'PASSWORD') {
+        sendEvent('Action__Login__PasswordForgotten')
+      } else {
+        sendEvent('Action__SignUp__ResendSMSCode')
+      }
+      setLimitCounter(constants.PASSWORD_TIMEOUT)
+
+      const { phone } = phoneForm.getValues()
+      dispatch(authUserActions.resetPassword({ phone }))
+    }
+  }, [dispatch, limitCounter, phoneForm, sendEvent, step])
 
   const { buttonLabels, fieldLabels } = texts.content.modalLogin
 
@@ -126,6 +141,18 @@ export function ModalSignIn(props: ModalSignInProps) {
   const passwordConfirmationError = errors?.passwordConfirmation === 'UNKNOWN_SERVER_ERROR'
     ? errors?.passwordUnknowServerError
     : errors?.passwordConfirmation && texts.form[errors?.passwordConfirmation]
+
+  const resetPasswordLink = limitCounter > 0
+    ? (
+      <Typography variant={variants.footNote}>
+        {fieldLabels.limitResendCode1} {limitCounter} secondes {fieldLabels.limitResendCode2}
+      </Typography>
+    )
+    : (
+      <S.ForgottenPasswordLink onClick={resetPassword}>
+        {step === 'PASSWORD' ? fieldLabels.passwordForgotten : fieldLabels.resendActivationCode}
+      </S.ForgottenPasswordLink>
+    )
 
   return (
     <Modal
@@ -185,11 +212,7 @@ export function ModalSignIn(props: ModalSignInProps) {
             name="SMSCode"
           />
         )}
-        {showForgottenPasswordLink && (
-          <S.ForgottenPasswordLink onClick={resetPassword}>
-            {step === 'PASSWORD' ? fieldLabels.passwordForgotten : fieldLabels.resendActivationCode}
-          </S.ForgottenPasswordLink>
-        )}
+        {showForgottenPasswordLink && resetPasswordLink}
         {showDefinePasswordFields && (
           <>
             <TextFieldPassword

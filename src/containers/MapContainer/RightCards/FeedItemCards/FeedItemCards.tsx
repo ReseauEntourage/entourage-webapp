@@ -1,8 +1,7 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import { formatDistance, format } from 'date-fns' // eslint-disable-line
+import { formatDistance, format, isSameDay } from 'date-fns' // eslint-disable-line
 import { fr } from 'date-fns/locale' // eslint-disable-line
-import capitalize from 'lodash/capitalize'
 import React, { useCallback } from 'react'
 import { RightCard } from '../RightCard'
 import { openModal } from 'src/components/Modal'
@@ -93,11 +92,27 @@ export function FeedItemCards() {
     const { partner } = author
 
     const organizerName = partner ? partner.name : author.displayName
+
+    let dateLabel = ''
     const startDate = new Date(metadata.startsAt)
-    const endDate = new Date(metadata.endsAt)
-    const formattedEndHour = format(endDate, "H'h'mm", { locale: fr })
-    const formattedStartDate = format(startDate, "iiii d MMMM 'de' H'h'mm", { locale: fr })
-    const dateLabel = capitalize(`${formattedStartDate} à ${formattedEndHour}`)
+    if (metadata.endsAt) {
+      const endDate = new Date(metadata.endsAt)
+      if (!isSameDay(startDate, endDate)) {
+        dateLabel = `${
+          format(startDate, "'Du' eeee dd MMMM yyyy 'à' HH'h'mm", { locale: fr })
+        }  ${
+          format(endDate, "'au' eeee dd MMMM yyyy 'à' HH'h'mm", { locale: fr })
+        }`
+      } else {
+        dateLabel = `${
+          format(startDate, "'Le' eeee dd MMMM yyyy 'de' HH'h'mm", { locale: fr })
+        } ${
+          format(endDate, "'à' HH'h'mm", { locale: fr })
+        }`
+      }
+    } else {
+      dateLabel = `${format(startDate, "'Le' eeee dd MMMM yyyy 'à' HH'h'mm", { locale: fr })}`
+    }
 
     const shareTitle = `${texts.content.map.actions.shareTitles.participate} ${organizerName}`
     card = (

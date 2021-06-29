@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core'
+import { Badge } from '@material-ui/core'
 import Divider from '@material-ui/core/Divider'
 import Drawer from '@material-ui/core/Drawer'
 import IconButton from '@material-ui/core/IconButton'
@@ -13,8 +13,8 @@ import ExploreIcon from '@material-ui/icons/Explore'
 import MapIcon from '@material-ui/icons/Map'
 import PersonIcon from '@material-ui/icons/Person'
 import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { NavItem } from '../NavItem'
-import { FeedBackButton } from '../NavNotificationBar'
 import { NavTakeAction } from '../NavTakeAction'
 import { useOnClickLogout } from '../useOnClickLogout'
 import { useOpenModalsOnLogin } from '../useOpenModalsOnLogin'
@@ -23,10 +23,11 @@ import { openModal } from 'src/components/Modal'
 import { useLayoutContext } from 'src/containers/LayoutContext'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { ModalSignIn } from 'src/containers/ModalSignIn'
+import { selectNumberOfUnreadConversations } from 'src/core/useCases/messages'
 import { useCurrentRoute } from 'src/hooks/useCurrentRoute'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
-import { theme, variants } from 'src/styles'
+import { theme } from 'src/styles'
 import * as S from './DrawerNav.styles'
 
 export function DrawerNavMobile() {
@@ -34,6 +35,7 @@ export function DrawerNavMobile() {
   const iAmLogged = !!me
   const { drawerIsOpen: open, setDrawerIsOpen: setOpen } = useLayoutContext()
   const { currentRoute } = useCurrentRoute()
+  const numberOfUnreadConversations = useSelector(selectNumberOfUnreadConversations)
 
   useOpenModalsOnLogin()
 
@@ -90,7 +92,18 @@ export function DrawerNavMobile() {
             <ListItem key="messages" button={true}>
               <NavItem
                 href="/messages"
-                icon={<ChatBubbleOutlineIcon />}
+                icon={(
+                  <Badge
+                    anchorOrigin={{
+                      vertical: 'top',
+                      horizontal: 'left',
+                    }}
+                    badgeContent={numberOfUnreadConversations}
+                    color="error"
+                  >
+                    <ChatBubbleOutlineIcon />
+                  </Badge>
+                )}
                 isActive={currentRoute === '/messages'}
                 label={texts.nav.messages}
                 onClick={onClickDrawerClose}
@@ -126,25 +139,6 @@ export function DrawerNavMobile() {
             label={iAmLogged ? texts.nav.logout : texts.nav.signIn}
             onClick={onClickDrawerClose}
           />
-        </ListItem>
-      </List>
-      <Divider />
-      <List>
-        <ListItem>
-          <S.DrawerNotificationItem>
-            <Typography
-              align="center"
-              color="textPrimary"
-              variant={variants.bodyBold}
-            >
-              {texts.nav.notificationBar.welcome}
-            </Typography>
-          </S.DrawerNotificationItem>
-        </ListItem>
-        <ListItem>
-          <S.DrawerNotificationItem>
-            <FeedBackButton closeDrawer={onClickDrawerClose} />
-          </S.DrawerNotificationItem>
         </ListItem>
       </List>
     </Drawer>

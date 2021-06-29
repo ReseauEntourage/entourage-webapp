@@ -250,7 +250,7 @@ export interface FeedItemEntourage {
     location: Location;
     metadata: FeedMetadata;
     numberOfPeople: number;
-    numberOfUnreadMessages: number | null;
+    numberOfUnreadMessages: number;
     public: boolean;
     shareUrl: string;
     status: FeedStatus;
@@ -259,6 +259,7 @@ export interface FeedItemEntourage {
     uuid: string;
     online: boolean;
     eventUrl: string;
+    postalCode: string;
   };
   heatmapSize: number;
   type: 'Entourage';
@@ -308,7 +309,7 @@ export interface FeedItemTour {
   type: 'Tour';
 }
 
-export interface Message {
+export interface Conversation {
   author: {
     avatarUrl: string;
     displayName: string;

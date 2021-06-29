@@ -20,6 +20,17 @@ export default {
 export const ConversationItemDefault = () => (
   <ConversationItem
     excerpt={loremIpsum(10)}
+    hasUnreadMessages={false}
+    isActive={false}
+    profilePictureURL="https://i.pravatar.cc/100"
+    title={loremIpsum(10)}
+  />
+)
+
+export const ConversationItemNewMessage = () => (
+  <ConversationItem
+    excerpt={loremIpsum(10)}
+    hasUnreadMessages={true}
     isActive={false}
     profilePictureURL="https://i.pravatar.cc/100"
     title={loremIpsum(10)}
@@ -93,7 +104,7 @@ function generateMessages() {
       return {
         authorName: 'John',
         authorId: 1,
-        content: 'Message content',
+        content: 'Conversation content',
         date: new Date().toISOString(),
         id: Date.now() + index,
       }
@@ -102,7 +113,7 @@ function generateMessages() {
     return {
       authorName: 'John',
       authorId: 2,
-      content: 'Message content',
+      content: 'Conversation content',
       date: new Date().toISOString(),
       id: Date.now() + index,
     }

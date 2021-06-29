@@ -1,13 +1,17 @@
+import { Badge } from '@material-ui/core'
 import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import Link from 'next/link'
 import React, { useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import * as S from '../Nav.styles'
 import { Link as CustomLink } from 'src/components/Link'
 import { useLayoutContext } from 'src/containers/LayoutContext'
+import { selectNumberOfUnreadConversations } from 'src/core/useCases/messages'
 
 export function NavItemsMobile() {
   const { setDrawerIsOpen: setOpen } = useLayoutContext()
+  const numberOfUnreadConversations = useSelector(selectNumberOfUnreadConversations)
 
   const handleDrawerOpen = useCallback(() => setOpen(true), [setOpen])
 
@@ -20,7 +24,17 @@ export function NavItemsMobile() {
         name="OpenDrawerButton"
         onClick={handleDrawerOpen}
       >
-        <MenuIcon />
+        <Badge
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          badgeContent={numberOfUnreadConversations}
+          color="error"
+          variant="dot"
+        >
+          <MenuIcon />
+        </Badge>
       </IconButton>
       <S.Grow />
       <Link href="/actions" passHref={true}>

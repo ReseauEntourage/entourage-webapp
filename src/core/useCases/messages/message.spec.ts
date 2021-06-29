@@ -23,6 +23,7 @@ import {
   selectCanFetchMoreMessages,
   selectCurrentConversationMessages,
   selectLastMessageDateFromConversation,
+  selectNumberOfUnreadConversations,
 } from './messages.selectors'
 
 function configureStoreWithMessages(
@@ -60,7 +61,10 @@ function configureStoreWithSelectedMessages() {
   const conversationMessagesFromGateway = createConversationMessages()
 
   const messagesGateway = new TestMessagesGateway()
-  messagesGateway.retrieveConversations.mockDeferredValueOnce({ conversations: conversationsFromGateway })
+  messagesGateway.retrieveConversations.mockDeferredValueOnce({
+    conversations: conversationsFromGateway,
+    unreadConversations: 5,
+  })
   messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(
     { conversationMessages: conversationMessagesFromGateway },
   )
@@ -107,6 +111,8 @@ describe('Conversation', () => {
       And selected conversation be defined with the conversation details
       And selected conversation messages be defined with these conversation messages
       And messages fetching state be false after server response
+      And current conversation unread messages count should be set to 0
+      And unread conversations count should be decremented
   `, async () => {
     const messagesGateway = new TestMessagesGateway()
 
@@ -115,6 +121,14 @@ describe('Conversation', () => {
       initialAppState: {
         messages: {
           ...fakeMessagesData,
+          unreadConversations: 3,
+          conversations: {
+            ...fakeMessagesData.conversations,
+            abc: {
+              ...fakeMessagesData.conversations.abc,
+              numberOfUnreadMessages: 5,
+            },
+          },
           isIdle: false,
         },
       },
@@ -132,6 +146,8 @@ describe('Conversation', () => {
     messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
     messagesGateway.retrieveConversationMessages.resolveDeferredValue()
 
+    expect(store.getState().messages.conversations[selectedConversationId].numberOfUnreadMessages).toBe(5)
+
     store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
     expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
 
@@ -139,10 +155,15 @@ describe('Conversation', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
-    expect(selectCurrentConversation(store.getState())).toEqual(fakeMessagesData.conversations[selectedConversationId])
+    expect(selectCurrentConversation(store.getState())).toEqual({
+      ...fakeMessagesData.conversations[selectedConversationId],
+      numberOfUnreadMessages: 0,
+    })
     expect(selectCurrentConversationMessages(store.getState())).toEqual(conversationMessagesFromGateway)
 
     expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+
+    expect(selectNumberOfUnreadConversations(store.getState())).toEqual(2)
   })
 
   it(`
@@ -352,19 +373,21 @@ describe('Conversation', () => {
   it(`
     Given messages have not been retrieved from gateway
     When user sets selected conversation uuid
-      And selected conversation is not new
+      And selected conversation is part of the first page of conversation
     Then conversation messages should be retrieved from gateway
       And conversation list should be retrieved from gateway
       And conversation details should not have been retrieved from gateway
       And conversation messages should be updated with the values from gateway
       And conversation list should be updated with the values from gateway
       And current conversation should be defined with the conversation details from the list
+      And current conversation unread messages count should be set to 0
   `, async () => {
     const conversationsFromGateway = createConversationList()
     const conversationMessagesFromGateway = createConversationMessages()
 
     const deferredValueRetrieveConversations = {
       conversations: conversationsFromGateway,
+      unreadConversations: 3,
     }
     const deferredValueRetrieveConversationMessages = {
       conversationMessages: conversationMessagesFromGateway,
@@ -412,11 +435,13 @@ describe('Conversation', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
     expect(messagesGateway.retrieveConversations).toHaveBeenCalledWith({ page: 1 })
-    // expect(messagesGateway.retrieveConversation).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
     expect(messagesGateway.retrieveConversation).toHaveBeenCalledTimes(0)
 
     expect(selectCurrentConversation(store.getState())).toBeTruthy()
-    expect(selectCurrentConversation(store.getState())).toStrictEqual(conversationsFromGateway[0])
+    expect(selectCurrentConversation(store.getState())).toStrictEqual({
+      ...conversationsFromGateway[0],
+      numberOfUnreadMessages: 0,
+    })
     expect(selectCurrentConversationMessages(store.getState())).toStrictEqual(conversationMessagesFromGateway)
     expect(selectConversationList(store.getState())).toStrictEqual(conversationsFromGateway)
   })
@@ -424,24 +449,28 @@ describe('Conversation', () => {
   it(`
     Given messages have not been retrieved from gateway
     When user sets selected conversation uuid
-      And selected conversation is new
+      And selected conversation is not on the first page of the list
     Then conversation list should be retrieved from gateway
       And conversation details should be retrieved from gateway
       And conversation list should be updated with the values from gateway
       And current conversation should be defined with the conversation details from the gateway
-      And current conversation messages should be empty
+      And current conversation unread messages count should be set to 0
   `, async () => {
     const conversationsFromGateway = createConversationList()
     const conversationMessagesFromGateway: ConversationMessage[] = []
 
     const deferredValueRetrieveConversations = {
       conversations: conversationsFromGateway,
+      unreadConversations: 3,
     }
     const deferredValueRetrieveConversationMessages = {
       conversationMessages: conversationMessagesFromGateway,
     }
 
-    const deferredValueRetrieveConversation = createConversationItem()
+    const deferredValueRetrieveConversation = {
+      ...createConversationItem(),
+      numberOfUnreadMessages: 5,
+    }
 
     const messagesGateway = new TestMessagesGateway()
     messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValueRetrieveConversations)
@@ -485,10 +514,12 @@ describe('Conversation', () => {
     expect(messagesGateway.retrieveConversation).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
     expect(selectCurrentConversation(store.getState())).toBeTruthy()
-    expect(selectCurrentConversation(store.getState())).toStrictEqual(deferredValueRetrieveConversation)
-    expect(selectConversationList(store.getState())).toStrictEqual(conversationsFromGateway)
+    expect(selectCurrentConversation(store.getState())).toStrictEqual({
+      ...deferredValueRetrieveConversation,
+      numberOfUnreadMessages: 0,
+    })
 
-    expect(selectCurrentConversationMessages(store.getState())).toStrictEqual([])
+    expect(selectConversationList(store.getState())).toStrictEqual(conversationsFromGateway)
   })
 
   it(`
@@ -501,6 +532,7 @@ describe('Conversation', () => {
 
     const deferredValueRetrieveConversations = {
       conversations: conversationsFromGateway,
+      unreadConversations: 3,
     }
 
     const messagesGateway = new TestMessagesGateway()
@@ -774,6 +806,7 @@ describe('Conversation', () => {
       lastMessage: {
         text: newMessageParams.message,
       },
+      updatedAt: selectCurrentConversation(store.getState())?.updatedAt,
     })
   })
 
@@ -855,6 +888,7 @@ describe('Conversation', () => {
         storeConversation,
         updatedConversation,
       ],
+      unreadConversations: 5,
     }
 
     messagesGateway.sendMessage.mockDeferredValueOnce()
@@ -882,10 +916,16 @@ describe('Conversation', () => {
       newMessageEntity,
     ])
 
-    expect(selectCurrentConversation(store.getState())).toStrictEqual(updatedConversation)
+    expect(selectCurrentConversation(store.getState())).toStrictEqual({
+      ...updatedConversation,
+      updatedAt: selectCurrentConversation(store.getState())?.updatedAt,
+    })
 
     expect(selectConversationList(store.getState())).toStrictEqual([
-      updatedConversation,
+      {
+        ...updatedConversation,
+        updatedAt: selectCurrentConversation(store.getState())?.updatedAt,
+      },
       storeConversation,
     ])
   })

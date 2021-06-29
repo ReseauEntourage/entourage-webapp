@@ -5,6 +5,9 @@ import { TestFirebaseService } from '../firebase/TestFirebaseService'
 import { locationSaga, selectLocation, selectMapPosition } from '../location'
 import { TestGeolocationService } from '../location/TestGeolocationService'
 import { defaultLocationState } from '../location/location.reducer'
+import { messagesSaga, selectNumberOfUnreadConversations } from '../messages'
+import { TestMessagesGateway } from '../messages/TestMessagesGateway'
+import { fakeMessagesData } from '../messages/__mocks__'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
 import { assertIsDefined } from 'src/utils/misc'
@@ -79,7 +82,7 @@ function configureStoreWithAuthUser(
       geolocationService: createSilentGeolocationService(),
       ...dependencies,
     },
-    sagas: [authUserSaga, firebaseSaga, locationSaga],
+    sagas: [authUserSaga, firebaseSaga, locationSaga, messagesSaga],
   })
 }
 
@@ -87,6 +90,8 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
   const authUserGateway = new TestAuthUserGateway()
   const firebaseService = new TestFirebaseService()
   const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+  const messagesGateway = new TestMessagesGateway()
+
   const user = createUser(isFirstSignIn, isActiveUser)
 
   const deferredValues = {
@@ -94,12 +99,14 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
     resetPassword: null,
     loginWithPassword: user,
     loginWithSMSCode: user,
+    conversations: { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 },
   }
 
   authUserGateway.phoneLookUp.mockDeferredValueOnce(deferredValues.phoneLookup)
   authUserGateway.resetPassword.mockDeferredValueOnce(deferredValues.resetPassword)
   authUserGateway.loginWithPassword.mockDeferredValueOnce(deferredValues.loginWithPassword)
   authUserGateway.loginWithSMSCode.mockDeferredValueOnce(deferredValues.loginWithSMSCode)
+  messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValues.conversations)
   firebaseService.setUser.mockReturnValueOnce()
 
   const resolveAllDeferredValue = () => {
@@ -107,18 +114,22 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
     authUserGateway.resetPassword.resolveDeferredValue()
     authUserGateway.loginWithPassword.resolveDeferredValue()
     authUserGateway.loginWithSMSCode.resolveDeferredValue()
+    messagesGateway.retrieveConversations.resolveDeferredValue()
   }
 
   const store = configureStoreWithAuthUser({
     dependencies: {
       authUserGateway,
       authUserSensitizationStorage,
-      firebaseService },
+      firebaseService,
+      messagesGateway,
+    },
   })
 
   return {
     store,
     authUserGateway,
+    messagesGateway,
     authUserSensitizationStorage,
     firebaseService,
     resolveAllDeferredValue,
@@ -811,6 +822,7 @@ describe('Auth User', () => {
       const authUserTokenStorage = new TestAuthUserTokenStorage()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
       const authUserGateway = new TestAuthUserGateway()
+      const messagesGateway = new TestMessagesGateway()
       authUserTokenStorage.setToken.mockReturnValueOnce()
       authUserGateway.loginWithPassword.mockDeferredValueOnce(user)
 
@@ -819,6 +831,7 @@ describe('Auth User', () => {
           authUserGateway,
           authUserTokenStorage,
           authUserSensitizationStorage,
+          messagesGateway,
         },
       })
 
@@ -827,6 +840,10 @@ describe('Auth User', () => {
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      messagesGateway.retrieveConversations.resolveDeferredValue()
 
       store.dispatch(publicActions.loginWithPassword({ phone, password }))
 
@@ -882,11 +899,13 @@ describe('Auth User', () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
       const firebaseService = new TestFirebaseService()
+      const messagesGateway = new TestMessagesGateway()
       const store = configureStoreWithAuthUser({
         dependencies: {
           authUserGateway,
           authUserSensitizationStorage,
           firebaseService,
+          messagesGateway,
         },
       })
       const user = createUser()
@@ -896,8 +915,13 @@ describe('Auth User', () => {
       firebaseService.setUser.mockReturnValueOnce()
       firebaseService.sendEvent.mockReturnValueOnce()
 
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      messagesGateway.retrieveConversations.resolveDeferredValue()
+
       store.dispatch(publicActions.setUser(user))
       await store.waitForActionEnd()
+
       expect(selectUser(store.getState())).toBeTruthy()
       expect(selectUser(store.getState())).toEqual(user)
       expect(selectLoginIsCompleted(store.getState())).toEqual(true)
@@ -1060,10 +1084,22 @@ describe('Auth User', () => {
     `, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const messagesGateway = new TestMessagesGateway()
+
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          messagesGateway,
+          authUserGateway,
+          authUserSensitizationStorage,
+        },
+      })
       const user = createUser(false, false)
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      messagesGateway.retrieveConversations.resolveDeferredValue()
 
       store.dispatch(publicActions.setUser(user))
 
@@ -1106,10 +1142,22 @@ describe('Auth User', () => {
     `, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const messagesGateway = new TestMessagesGateway()
+
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          messagesGateway,
+          authUserGateway,
+          authUserSensitizationStorage,
+        },
+      })
       const user = createUser(false, false)
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(true)
+
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      messagesGateway.retrieveConversations.resolveDeferredValue()
 
       store.dispatch(publicActions.setUser(user))
 
@@ -1153,11 +1201,23 @@ describe('Auth User', () => {
     `, async () => {
       const authUserGateway = new TestAuthUserGateway()
       const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
-      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway, authUserSensitizationStorage } })
+      const messagesGateway = new TestMessagesGateway()
+
+      const store = configureStoreWithAuthUser({
+        dependencies: {
+          messagesGateway,
+          authUserGateway,
+          authUserSensitizationStorage,
+        },
+      })
       const user = createUser(false, true)
 
       authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
       authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      messagesGateway.retrieveConversations.resolveDeferredValue()
 
       store.dispatch(publicActions.setUser(user))
 
@@ -1366,6 +1426,80 @@ describe('Auth User', () => {
           lng: updatedAddress.longitude,
         },
         zoom: constants.DEFAULT_LOCATION.ZOOM,
+      })
+    })
+  })
+
+  describe('Retrieve conversations on log in', () => {
+    it(`
+      Given initial state
+      When user is automatically logged in
+      Then conversations should be retrieved from gateway
+        And the number of unread conversations should be set with value from gateway
+    `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      const authUserSensitizationStorage = new TestAuthUserSensitizationStorage()
+      const messagesGateway = new TestMessagesGateway()
+      const store = configureStoreWithAuthUser(
+        {
+          dependencies: {
+            authUserGateway,
+            authUserSensitizationStorage,
+            messagesGateway,
+          },
+        },
+      )
+      const user = createUser(false, true)
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(false)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+
+      store.dispatch(publicActions.setUser(user))
+
+      messagesGateway.retrieveConversations.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(selectNumberOfUnreadConversations(store.getState())).toEqual(5)
+      expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
+      expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
+        page: 1,
+      })
+    })
+
+    it(`
+      Given initial state
+      When the user has successfully logged in
+      Then messages should be retrieved from gateway
+        And the number of unread conversations should be set with value from gateway
+    `, async () => {
+      const {
+        store,
+        resolveAllDeferredValue,
+        authUserSensitizationStorage,
+        messagesGateway,
+      } = configureStoreWithUserAccount(false, true)
+
+      const phone = '0700000000'
+      const password = 'abcdefghi'
+
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      resolveAllDeferredValue()
+
+      authUserSensitizationStorage.getHasSeenPopup.mockReturnValueOnce(true)
+      authUserSensitizationStorage.setHasSeenPopup.mockReturnValueOnce()
+
+      await store.waitForActionEnd()
+
+      expect(selectNumberOfUnreadConversations(store.getState())).toEqual(5)
+      expect(messagesGateway.retrieveConversations).toHaveBeenCalledTimes(1)
+      expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
+        page: 1,
       })
     })
   })

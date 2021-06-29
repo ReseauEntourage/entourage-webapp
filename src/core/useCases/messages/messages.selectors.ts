@@ -25,6 +25,10 @@ export const selectConversationList = createSelector(
   }),
 )
 
+export function selectNumberOfUnreadConversations(state: AppState) {
+  return state.messages.unreadConversations
+}
+
 export function selectMessagesCurrentPage(state: AppState) {
   return state.messages.page
 }

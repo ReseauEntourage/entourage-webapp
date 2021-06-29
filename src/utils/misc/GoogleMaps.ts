@@ -1,7 +1,8 @@
 import { useMemo, useCallback } from 'react'
+import { GoogleMapLocationValue } from '../../components/GoogleMapLocation'
 import { useStateGetter } from '../hooks'
 import { env } from 'src/core/env'
-import { isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
+import { assertIsDefined, assertIsNumber, assertIsString, isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
 const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`
 
@@ -27,6 +28,35 @@ export function getDetailPlacesService(
         resolve(res)
       })
   })
+}
+
+export async function getLocationFromPlace(autocompletePlace: GoogleMapLocationValue) {
+  assertIsDefined(autocompletePlace)
+
+  const placeDetail = await getDetailPlacesService(
+    autocompletePlace.place.place_id,
+    autocompletePlace.sessionToken,
+  )
+
+  const latitude = placeDetail.geometry?.location.lat()
+  const longitude = placeDetail.geometry?.location.lng()
+  const googlePlaceId = autocompletePlace.place.place_id
+  const streetAddress = placeDetail.formatted_address
+  const placeName = placeDetail.name
+
+  assertIsNumber(latitude)
+  assertIsNumber(longitude)
+  assertIsString(streetAddress)
+
+  return {
+    location: {
+      latitude,
+      longitude,
+    },
+    googlePlaceId,
+    streetAddress,
+    placeName,
+  }
 }
 
 export function getDetailPlacesFromCoordinatesService(

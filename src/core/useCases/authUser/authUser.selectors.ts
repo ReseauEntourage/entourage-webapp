@@ -29,7 +29,7 @@ export function selectUserInfosAreIncomplete(state: AppState) {
   if (user) {
     const { firstName, lastName, address } = user
 
-    return !firstName || !lastName || !address
+    return !(firstName?.trim()) || !(lastName?.trim()) || !address
   }
   return true
 }

@@ -9,38 +9,46 @@ import * as S from './FeedEntourage.styles'
 interface FeedEntourageProps {
   icon?: JSX.Element;
   isActive?: boolean;
-  primaryText: string;
+  title: string;
   profilePictureURL?: string;
-  secondText: string;
   numberOfPeople: number;
+  subtitle: React.ReactNode;
+  distance: string;
+  hasJoined?: boolean;
 }
 
 export function FeedEntourage(props: FeedEntourageProps) {
   const {
-    primaryText,
-    secondText,
+    title,
     isActive,
     profilePictureURL,
     icon,
     numberOfPeople,
+    subtitle,
+    distance,
   } = props
 
-  const primaryTextCropped = primaryText.length < 100
-    ? primaryText
-    : `${primaryText.substring(0, 100)}...`
+  const titleCropped = title.length < 100
+    ? title
+    : `${title.substring(0, 100)}...`
 
   return (
     <S.Container isActive={isActive}>
       <div>
         <S.TitleContainer>
           {icon}
-          <Typography variant="subtitle2">
-            {primaryTextCropped}
+          <Typography variant={variants.title2}>
+            {titleCropped}
           </Typography>
         </S.TitleContainer>
         <Box marginTop={1}>
-          <Typography variant="caption">
-            {secondText}
+          <Typography variant={variants.footNote}>
+            {subtitle}
+          </Typography>
+        </Box>
+        <Box marginTop={1}>
+          <Typography variant={variants.footNote}>
+            {distance}
           </Typography>
         </Box>
       </div>
