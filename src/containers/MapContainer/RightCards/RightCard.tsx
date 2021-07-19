@@ -22,7 +22,7 @@ export function RightCard(props: RightCardProps) {
   return (
     <S.Container>
       <S.Scroll>
-        {imageUrl && <S.Image alt="Événement Entourage" src={imageUrl} />}
+        {imageUrl && <S.Image alt="Événement Entourage" fallback="/placeholder-event.jpeg" src={imageUrl} />}
         <S.ContentContainer>
           <Box display="flex" justifyContent="flex-end" marginRight={1}>
             <Link href={href} passHref={true}>

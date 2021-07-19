@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { theme } from 'src/styles'
 
 export const Container = styled.div`
@@ -15,7 +16,7 @@ export const Scroll = styled.div`
   overflow: auto;
 `
 
-export const Image = styled.img`
+export const Image = styled(ImageWithFallback)`
   width: 100%;
 `
 

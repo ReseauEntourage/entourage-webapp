@@ -889,8 +889,8 @@ describe('Feed Item', () => {
           title: 'Café solidaire',
           landscapeUrl: 'path-to-img.jpeg',
           landscapeSmallUrl: 'path-to-img.jpeg',
-          portraitUrl: null,
-          portraitSmallUrl: null,
+          portraitUrl: undefined,
+          portraitSmallUrl: undefined,
         },
       ]
 

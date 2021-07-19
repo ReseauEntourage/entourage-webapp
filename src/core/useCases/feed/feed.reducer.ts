@@ -30,6 +30,15 @@ export const RequestStatus = {
 
 export type RequestStatus = keyof typeof RequestStatus
 
+export interface EventImage {
+  id: number;
+  title: string;
+  landscapeUrl: string;
+  landscapeSmallUrl: string;
+  portraitUrl?: string;
+  portraitSmallUrl?: string;
+}
+
 export interface FeedEntourage {
   itemType: 'Entourage';
   author: {
@@ -71,15 +80,6 @@ export interface FeedAnnouncement {
   url: string;
   webappUrl?: string;
   iconUrl: string;
-}
-
-export interface EventImage {
-  id: number;
-  title: string;
-  landscapeUrl: string;
-  landscapeSmallUrl: string;
-  portraitUrl: string;
-  portraitSmallUrl: string;
 }
 
 export interface FeedState {

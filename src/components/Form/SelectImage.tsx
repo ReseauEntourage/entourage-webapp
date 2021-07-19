@@ -42,6 +42,7 @@ export function SelectImage(props: SelectProps) {
 
   const inputLabel = React.useRef<HTMLLabelElement>(null)
   const [labelWidth, setLabelWidth] = React.useState(0)
+
   useEffect(() => {
     if (inputLabel.current) {
       setLabelWidth(inputLabel.current.offsetWidth)

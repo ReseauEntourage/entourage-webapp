@@ -1,11 +1,8 @@
 import DateFnsUtils from '@date-io/date-fns'
-import { Box, MenuItem, Select } from '@material-ui/core'
-import FormControl from '@material-ui/core/FormControl'
-import FormHelperText from '@material-ui/core/FormHelperText'
+import { Box } from '@material-ui/core'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import DescriptionIcon from '@material-ui/icons/Description'
 import ImageIcon from '@material-ui/icons/Image'
-import ListIcon from '@material-ui/icons/List'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import {
   MuiPickersUtilsProvider,
@@ -14,7 +11,7 @@ import {
 import { isBefore, addHours, set } from 'date-fns'  // eslint-disable-line
 import { fr } from 'date-fns/locale'  // eslint-disable-line
 
-import { FormProvider } from 'react-hook-form'
+import { FormProvider, Controller } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { TextField, Label, RowFields, SelectImage } from 'src/components/Form'
@@ -24,10 +21,10 @@ import {
   AutocompleteFormFieldKey,
   GoogleMapLocation,
 } from 'src/components/GoogleMapLocation'
+import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { Modal } from 'src/components/Modal'
-import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
+import { feedActions, selectEventImages } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition, useMount } from 'src/utils/hooks'
 import {
@@ -64,16 +61,12 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const dispatch = useDispatch()
 
   const eventImages = useSelector(selectEventImages)
-  const eventImagesFetching = useSelector(selectEventImagesFetching)
 
   const isCreation = !existingEvent
-
-  const defaultImage = eventImages.find((eventImage) => eventImage.landscapeSmallUrl === existingEvent?.imageUrl)
 
   const defaultValues = {
     description: existingEvent?.description,
     title: existingEvent?.title,
-    imageId: defaultImage?.id,
   }
 
   const {
@@ -83,7 +76,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     form,
   } = useGetCurrentPosition<FormField>(defaultValues as FormField, existingEvent?.displayAddress ?? '')
 
-  const { register, trigger, getValues, setValue } = form
+  const { register, trigger, getValues, setValue, control } = form
 
   const modalTexts = texts.content.modalEditEvent
 
@@ -138,14 +131,11 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
     const updatedImage = eventImages.find((eventImage) => eventImage.id === imageId)
 
-    console.log(imageId)
-    console.log(updatedImage)
-
     const imageValuesToSend = {
-      landscapeUrl: defaultImage?.landscapeUrl,
-      landscapeThumbnailUrl: defaultImage?.landscapeSmallUrl,
-      portraitUrl: defaultImage?.portraitUrl,
-      portraitThumbnailUrl: defaultImage?.portraitSmallUrl,
+      landscapeUrl: updatedImage?.landscapeUrl,
+      landscapeThumbnailUrl: updatedImage?.landscapeSmallUrl,
+      portraitUrl: updatedImage?.portraitUrl,
+      portraitThumbnailUrl: updatedImage?.portraitSmallUrl,
     }
 
     if (existingEvent) {
@@ -206,7 +196,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
 
     return true
-  }, [trigger, getValues, eventImages, defaultImage, existingEvent, startDate, endDate, updateEntourage, createEntourage])
+  }, [createEntourage, endDate, eventImages, existingEvent, getValues, startDate, trigger, updateEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -313,34 +303,41 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             type="text"
           />
           <Label>{modalTexts.step6}</Label>
-          {
-            eventImagesFetching
-              ? <OverlayLoader />
-              : (
+          <Controller
+            control={control}
+            name={'imageId' as FormFieldKey}
+            render={({ onChange, onBlur, name, value }) => {
+              return (
                 <SelectImage
                   fullWidth={true}
-                  inputRef={register({
-                    required: true,
-                  })}
-                  name={'imageId' as FormFieldKey}
+                  name={name}
+                  onBlur={onBlur}
+                  onChange={onChange}
                   options={eventImages.map((eventImage) => ({
                     image:
-                      (
-                        <Box alignItems="center" display="flex" justifyContent="center" width="100%">
-                          <img alt={eventImage.title} src={eventImage.landscapeSmallUrl} width={300} />
-                        </Box>
-                      ),
+                    (
+                      <Box alignItems="center" display="flex" justifyContent="center" width="100%">
+                        <ImageWithFallback
+                          alt={eventImage.title}
+                          fallback="/placeholder-event.jpeg"
+                          src={eventImage.landscapeSmallUrl}
+                          width={300}
+                        />
+                      </Box>
+                    ),
                     value: eventImage.id,
                   }))}
-                  placeholder={modalTexts.fieldDescriptionPlaceholder}
                   startAdornment={(
                     <InputAdornment position="start">
                       <ImageIcon />
                     </InputAdornment>
                   )}
+                  value={value}
                 />
               )
-          }
+            }}
+            rules={{ required: false }}
+          />
         </MuiPickersUtilsProvider>
       </FormProvider>
     </Modal>
