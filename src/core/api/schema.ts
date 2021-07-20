@@ -28,6 +28,7 @@ import {
   POIDetailsItem,
   POIPartnersFilters,
   Conversation,
+  EntourageImage,
 } from './SchemaTypes'
 
 export interface TypeScriptRequestSchemaConf {
@@ -194,6 +195,15 @@ export const schema = {
     params: null,
     data: null,
     response: null,
+  },
+  '/entourage_images GET': {
+    url: 'entourage_images',
+    method: 'GET',
+    params: null,
+    data: null,
+    response: {} as {
+      entourageImages: EntourageImage[];
+    },
   },
   '/feeds GET': {
     url: 'feeds',

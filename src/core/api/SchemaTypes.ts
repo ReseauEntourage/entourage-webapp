@@ -143,6 +143,10 @@ export interface FeedOutingMetadata {
   placeName: string;
   startsAt: DateISO;
   streetAddress: string;
+  landscapeUrl?: string;
+  landscapeThumbnailUrl?: string;
+  portraitUrl?: string;
+  portraitThumbnailUrl?: string;
 }
 
 export type FeedMetadata = FeedOutingMetadata
@@ -345,6 +349,15 @@ export interface Conversation {
   uuid: string;
 }
 
+export interface EntourageImage {
+  id: number;
+  title: string;
+  landscapeUrl: string;
+  landscapeSmallUrl: string;
+  portraitUrl: string | null;
+  portraitSmallUrl: string | null;
+}
+
 export interface DTOCreateEntourageAsAction {
   description: string;
   displayCategory: FeedDisplayCategory;
@@ -386,6 +399,10 @@ export interface DTOCreateEntourageAsEvent {
     placeName: string;
     startsAt: string;
     streetAddress: string;
+    landscapeUrl?: string;
+    landscapeThumbnailUrl?: string;
+    portraitUrl?: string;
+    portraitThumbnailUrl?: string;
   };
   title: string;
 }
@@ -402,6 +419,10 @@ export interface DTOUpdateEntourageAsEvent {
     placeName?: string;
     startsAt?: string;
     streetAddress?: string;
+    landscapeUrl?: string;
+    landscapeThumbnailUrl?: string;
+    portraitUrl?: string;
+    portraitThumbnailUrl?: string;
   };
   title?: string;
 }

@@ -210,6 +210,7 @@ export const texts = {
       step3: '3. Indiquez la date et l\'heure de début',
       step4: '4. Indiquez la date et l\'heure de fin',
       step5: '5. Quel est le but de cet événement ?',
+      step6: '5. Choisissez une photo pour l\'événement',
       fieldTitlePlaceholder: 'Ex: Apéro entre voisins',
       fieldAddressPlaceholder: 'Adresse précise',
       fieldLabelStartDate: 'Début',

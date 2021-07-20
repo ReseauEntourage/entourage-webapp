@@ -103,3 +103,11 @@ export function selectStatus(state: AppState, entourageUuid: string) {
   assertCondition(entourage.itemType === 'Entourage')
   return MapFeedStatusToRequestStatus[entourage.status]
 }
+
+export function selectEventImages(state: AppState) {
+  return state.feed.eventImages
+}
+
+export function selectEventImagesFetching(state: AppState) {
+  return state.feed.eventImagesFetching
+}
