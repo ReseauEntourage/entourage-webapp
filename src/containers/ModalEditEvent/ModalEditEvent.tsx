@@ -23,8 +23,9 @@ import {
 } from 'src/components/GoogleMapLocation'
 import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { Modal } from 'src/components/Modal'
+import { OverlayLoader } from 'src/components/OverlayLoader'
 import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
-import { feedActions, selectEventImages } from 'src/core/useCases/feed'
+import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition, useMount } from 'src/utils/hooks'
 import {
@@ -61,6 +62,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
   const dispatch = useDispatch()
 
   const eventImages = useSelector(selectEventImages)
+  const eventImagesFetching = useSelector(selectEventImagesFetching)
 
   const isCreation = !existingEvent
 
@@ -305,6 +307,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           <Label>{modalTexts.step6}</Label>
           <Controller
             control={control}
+            defaultValue=""
             name={'imageId' as FormFieldKey}
             render={({ onChange, onBlur, name, value }) => {
               return (
@@ -316,7 +319,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                   options={eventImages.map((eventImage) => ({
                     image:
                     (
-                      <Box alignItems="center" display="flex" justifyContent="center" width="100%">
+                      <Box alignItems="center" display="flex" height="100px" justifyContent="center" width="100%">
                         <ImageWithFallback
                           alt={eventImage.title}
                           fallback="/placeholder-event.jpeg"
@@ -339,6 +342,9 @@ export function ModalEditEvent(props: ModalEditEventProps) {
             rules={{ required: false }}
           />
         </MuiPickersUtilsProvider>
+        {
+          eventImagesFetching && <OverlayLoader />
+        }
       </FormProvider>
     </Modal>
   )
