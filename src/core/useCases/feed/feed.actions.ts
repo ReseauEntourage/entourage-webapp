@@ -26,6 +26,9 @@ export const FeedActionType = {
   TOGGLE_ACTION_TYPES_FILTER: 'FEED/TOGGLE_ACTION_TYPES_FILTER',
   TOGGLE_EVENTS_FILTER: 'FEED/TOGGLE_EVENTS_FILTER',
   SET_TIME_RANGE_FILTER: 'FEED/SET_TIME_RANGE_FILTER',
+  RETRIEVE_EVENT_IMAGES: 'FEED/RETRIEVE_EVENT_IMAGES',
+  RETRIEVE_EVENT_IMAGES_STARTED: 'FEED/RETRIEVE_EVENT_IMAGES_STARTED',
+  RETRIEVE_EVENT_IMAGES_SUCCEEDED: 'FEED/RETRIEVE_EVENT_IMAGES_SUCCEEDED',
 } as const
 
 export type FeedActionType = keyof typeof FeedActionType;
@@ -195,6 +198,27 @@ function setTimeRangeFilter(payload: number) {
   }
 }
 
+function retrieveEventImages() {
+  return {
+    type: FeedActionType.RETRIEVE_EVENT_IMAGES,
+  }
+}
+
+function retrieveEventImagesStarted() {
+  return {
+    type: FeedActionType.RETRIEVE_EVENT_IMAGES_STARTED,
+  }
+}
+
+function retrieveEventImagesSuccess(payload: {
+  eventImages: FeedState['eventImages'][number][];
+}) {
+  return {
+    type: FeedActionType.RETRIEVE_EVENT_IMAGES_SUCCEEDED,
+    payload,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -213,6 +237,7 @@ export const publicActions = {
   toggleActionTypesFilter,
   toggleEventsFilter,
   setTimeRangeFilter,
+  retrieveEventImages,
 }
 
 const privateActions = {
@@ -224,6 +249,8 @@ const privateActions = {
   leaveEntourageSucceeded,
   closeEntourageSucceeded,
   reopenEntourageSucceeded,
+  retrieveEventImagesStarted,
+  retrieveEventImagesSuccess,
 }
 
 export const actions = {

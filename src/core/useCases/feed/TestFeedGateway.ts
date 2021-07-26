@@ -13,4 +13,6 @@ export class TestFeedGateway implements IFeedGateway {
   closeEntourage = jestFn<IFeedGateway['closeEntourage']>('closeEntourage')
 
   reopenEntourage = jestFn<IFeedGateway['reopenEntourage']>('reopenEntourage')
+
+  retrieveEventImages = jestFn<IFeedGateway['retrieveEventImages']>('retrieveEventImages')
 }

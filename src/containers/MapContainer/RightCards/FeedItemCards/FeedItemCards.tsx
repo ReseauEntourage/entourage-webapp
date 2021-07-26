@@ -167,6 +167,8 @@ export function FeedItemCards() {
         </Box>
       )}
       href="/actions"
+      imageUrl={feedItem.metadata.landscapeUrl}
+      showImage={feedItem.groupType === 'outing'}
     />
   )
 }

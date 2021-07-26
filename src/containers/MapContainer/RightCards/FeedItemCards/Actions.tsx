@@ -75,6 +75,7 @@ export function Actions(props: ActionsProps) {
           startDateISO: feedItem.metadata.startsAt,
           endDateISO: feedItem.metadata.endsAt,
           displayAddress: feedItem.metadata.displayAddress,
+          imageUrl: feedItem.metadata.landscapeThumbnailUrl,
         }}
       />,
     )
