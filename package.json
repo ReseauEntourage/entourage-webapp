@@ -55,7 +55,7 @@
     "linkifyjs": "^2.1.9",
     "lodash": "^4.17.21",
     "mobile-detect": "^1.4.4",
-    "next": "9.5.4",
+    "next": "11.1.0",
     "nookies": "^2.0.8",
     "path-to-regexp": "^5.0.0",
     "react": "16.11.0",
