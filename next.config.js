@@ -1,16 +1,15 @@
-
 // eslint-disable-next-line
 require('dotenv').config()
 
 const SentryWebpackPlugin = require('@sentry/webpack-plugin');
-const withCSS = require('@zeit/next-css')
 
 const dev = process.env.NODE_ENV !== 'production';
 
-module.exports = withCSS({
+module.exports = {
   cssLoaderOptions: {
     url: false
   },
+  webpack5: false,
   webpack(config, options) {
     if (!options.isServer) {
       config.resolve.alias['@sentry/node'] = '@sentry/react';
@@ -69,4 +68,4 @@ module.exports = withCSS({
       },
     ]
   },
-})
+}
