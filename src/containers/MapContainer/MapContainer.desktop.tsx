@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Map, RefreshButton } from 'src/components/Map'
 import { LeftList } from './LeftLists'
 import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerDesktop(props: MapContainerProps) {
-  const { markers, cards, list, isLoading, filters } = props
+  const { markers, cards, list, isLoading, filters, onNoContentOnMap } = props
+
+  useEffect(() => {
+    if (markers.length === 0) {
+      onNoContentOnMap()
+    }
+  }, [markers, onNoContentOnMap])
 
   return (
     <S.Container>

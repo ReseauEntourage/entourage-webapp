@@ -125,6 +125,13 @@ export const texts = {
           comeToHelp: 'Venez en aide à',
           participate: 'Venez participer à l\'événement de',
         },
+        noActions: {
+          modal: {
+            title: 'On dirait que c\'est calme ici !',
+            text: 'Déplacez la carte pour trouver demandes, des contributions ou des activités du réseau. Vous aussi, vous pouvez créer une action solidaire : appuyez sur le bouton "Passer à l\'action" dans le menu en haut de l\'écran',
+          },
+          list: 'C\'est tout pour les actions solidaires dans ce rayon autour de vous...',
+        },
       },
       pois: {
         directions: 'Itinéraire',
@@ -133,6 +140,23 @@ export const texts = {
         languages: 'Langues',
         contact: 'Contact',
         shareDescription: 'Retrouvez toutes les informations sur cette structure sur la carte des lieux solidaires de notre application !',
+        noPOIs: {
+          modal: {
+            title: 'On dirait que c\'est calme ici !',
+            text: 'Déplacez la carte pour trouver des structures d\'assistance : restaurants solidaires, douches publiques, centres médicaux ouverts aux personnes de la rue...',
+            addText: 'Une structure manque sur la carte ?',
+            addButton: 'Proposez une structure',
+            restText: 'Le Centre Communal d\'Action Sociale de votre commune peut vous renseigner sur toutes les associations locales et les aides sociales à disposition des habitants.',
+          },
+          list: 'C\'est tout pour les lieux solidaires dans ce rayon autour de vous...',
+        },
+      },
+    },
+    messages: {
+      send: 'Envoyer',
+      noMessages: {
+        title: 'Vous n\'avez pas encore de messages...',
+        text: 'Demandez à rejoindre des actions, contactez des membres et vous retrouverez vos conversations avec les membres du réseau ici.',
       },
     },
     navActions: {

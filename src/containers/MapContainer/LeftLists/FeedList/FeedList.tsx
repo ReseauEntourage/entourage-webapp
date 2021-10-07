@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useDispatch } from 'react-redux'
 import * as S from '../LeftList.styles'
+import { NoContent } from '../NoContent'
 import { FeedAnnouncement } from 'src/components/FeedAnnouncement'
 import { FeedEntourage } from 'src/components/FeedEntourage'
 import { Link as CustomLink } from 'src/components/Link'
@@ -152,6 +153,10 @@ export function FeedList() {
       <ul>
         {feedsListContent}
       </ul>
+      {feeds.filter((feedItem) => feedItem.itemType === 'Entourage'
+        && (feedItem.groupType === 'action'
+          || (feedItem.groupType === 'outing' && !feedItem.online)
+        )).length === 0 && <NoContent text={texts.content.map.actions.noActions.list} />}
     </S.Scroll>
   )
 }

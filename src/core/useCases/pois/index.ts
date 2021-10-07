@@ -1,5 +1,5 @@
 export type { IPOIsGateway } from './IPOIsGateway'
-export type { POIsState, POI } from './pois.reducer'
+export type { POIsState, POI, POIDetails } from './pois.reducer'
 export type { Dependencies } from './pois.saga'
 export { poisReducer } from './pois.reducer'
 export { poisSaga } from './pois.saga'

@@ -16,6 +16,7 @@ export interface MapContainerProps {
   list: JSX.Element;
   filters?: JSX.Element;
   isLoading: boolean;
+  onNoContentOnMap: () => void;
 }
 
 export const MapContainer = plateform({

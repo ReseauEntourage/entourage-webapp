@@ -1,5 +1,5 @@
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Map, RefreshButton } from 'src/components/Map'
 import { texts } from 'src/i18n'
 import { LeftList } from './LeftLists'
@@ -7,9 +7,15 @@ import * as S from './MapContainer.styles'
 import { MapContainerProps } from './index'
 
 export function MapContainerMobile(props: MapContainerProps) {
-  const { markers, cards, list, isLoading, filters } = props
+  const { markers, cards, list, isLoading, filters, onNoContentOnMap } = props
 
   const [isMapOpen, setIsMapOpen] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (markers.length === 0 && isMapOpen) {
+      onNoContentOnMap()
+    }
+  }, [isMapOpen, markers.length, onNoContentOnMap])
 
   if (cards) {
     return (
