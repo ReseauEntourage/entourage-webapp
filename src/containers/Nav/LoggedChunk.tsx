@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'
 import { Avatar } from 'src/components/Avatar'
 import { Link } from 'src/components/Link'
 import { openModal } from 'src/components/Modal'
+import { constants } from 'src/constants'
 import { ModalProfile } from 'src/containers/ModalProfile'
 import { env } from 'src/core/env'
 import { useMeNonNullable } from 'src/hooks/useMe'
@@ -30,7 +31,7 @@ export function LoggedChunk() {
   }, [])
 
   const openAdminAsso = useCallback(() => {
-    window.open(env.ADMIN_ASSO_URL + authToken, '_blank')
+    window.open(`${env.API_V1_URL}${constants.ADMIN_ASSO_URL}${authToken}`, '_blank')
   }, [authToken])
 
   const onClickLogout = useOnClickLogout()

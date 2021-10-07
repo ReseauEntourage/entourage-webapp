@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import React from 'react'
 import * as S from '../LeftList.styles'
+import { NoContent } from '../NoContent'
 import { Link as CustomLink } from 'src/components/Link'
 import { POIIcon } from 'src/components/Map'
 import { POI } from 'src/components/POI'
 import { usePOIId, usePOIs } from 'src/containers/MapContainer'
+import { texts } from 'src/i18n'
 import { useFirebase, useGetDistanceFromPosition } from 'src/utils/hooks'
 
 export function POIList() {
@@ -42,9 +44,14 @@ export function POIList() {
 
   return (
     <S.Scroll>
-      <ul>
-        {poiListContent}
-      </ul>
+      {
+        pois.length > 0 ? (
+          <ul>
+            {poiListContent}
+          </ul>
+        ) : <NoContent text={texts.content.map.pois.noPOIs.list} />
+      }
+
     </S.Scroll>
   )
 }

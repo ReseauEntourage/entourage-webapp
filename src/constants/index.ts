@@ -18,6 +18,8 @@ export const constants = {
   WORKSHOP_LINK_POPUP: 'https://bit.ly/2O7naY7',
   WORKSHOP_LINK_CARD: 'https://bit.ly/3shEwjc',
   WORKSHOP_LINK_MOBILE: 'http://bit.ly/2YIFPvl',
+  ADMIN_ASSO_URL: 'organization_admin_redirect?token=',
+  POI_FORM_LINK: 'links/propose-poi/redirect?token=',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
   GEOLOCATION_TTL: 1000 * 60,
   GEOLOCATION_TIMEOUT: 1000 * 5,
