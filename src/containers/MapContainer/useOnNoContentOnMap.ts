@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { openModal } from 'src/components/Modal'
-import { selectShowSensitizationPopup } from 'src/core/useCases/authUser'
+import { selectIsLogged, selectShowSensitizationPopup, selectUserInfosAreIncomplete } from 'src/core/useCases/authUser'
 import { usePrevious } from 'src/utils/hooks'
 
 export function useOnNoContentOnMap(
@@ -9,16 +9,21 @@ export function useOnNoContentOnMap(
   hasCurrentItem: boolean,
   modal: React.ReactElement,
 ) {
+  const isLogged = useSelector(selectIsLogged)
+  const userInfosAreIncompleted = useSelector(selectUserInfosAreIncomplete)
   const showSensitizationPopup = useSelector(selectShowSensitizationPopup)
+
+  const shouldShowAnotherPopup = isLogged && (showSensitizationPopup || userInfosAreIncompleted)
+
   const prevFetching = usePrevious(fetching)
 
   return useCallback(() => {
     if (
-      !showSensitizationPopup
+      !shouldShowAnotherPopup
       && !fetching
       && prevFetching
       && !hasCurrentItem) {
       openModal(modal)
     }
-  }, [hasCurrentItem, fetching, modal, prevFetching, showSensitizationPopup])
+  }, [shouldShowAnotherPopup, fetching, prevFetching, hasCurrentItem, modal])
 }
