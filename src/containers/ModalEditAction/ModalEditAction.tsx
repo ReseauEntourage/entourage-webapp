@@ -131,6 +131,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
           placeName: locationMeta?.placeName,
           streetAddress: locationMeta?.streetAddress,
         },
+        public: true,
       }
 
       try {
