@@ -14,7 +14,7 @@ export function SendButtonDesktop(props: SendButtonProps) {
       startIcon={<SendIcon />}
       style={{ marginLeft: theme.spacing(2) }}
     >
-      {texts}
+      {texts.content.messages.send}
     </Button>
   )
 }

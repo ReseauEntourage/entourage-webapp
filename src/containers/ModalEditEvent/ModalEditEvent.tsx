@@ -188,6 +188,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
           streetAddress,
           ...imageValuesToSend,
         },
+        public: true,
       }
 
       try {

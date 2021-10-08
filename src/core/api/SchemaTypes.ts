@@ -362,6 +362,7 @@ export interface DTOCreateEntourageAsAction {
   description: string;
   displayCategory: FeedDisplayCategory;
   entourageType: FeedEntourageType;
+  public: boolean;
   location: {
     latitude: number;
     longitude: number;
@@ -390,6 +391,7 @@ export interface DTOReopenEntourage {
 export interface DTOCreateEntourageAsEvent {
   description: string;
   groupType: string;
+  public: boolean;
   location: {
     latitude: number;
     longitude: number;
