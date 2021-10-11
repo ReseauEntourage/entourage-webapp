@@ -1,6 +1,6 @@
 import Box from '@material-ui/core/Box'
 import React from 'react'
-import { OverlayLoader } from 'src/components/OverlayLoader'
+import { LeftListSkeleton } from 'src/components/LeftListSkeleton'
 import * as S from './LeftList.styles'
 import { SearchCity } from './SearchCity'
 
@@ -12,7 +12,6 @@ interface LeftListProps {
 
 export const LeftList = React.memo((props: LeftListProps) => {
   const { isLoading, list, filters } = props
-
   return (
     <S.Container>
       <S.SearchContainer>
@@ -23,8 +22,7 @@ export const LeftList = React.memo((props: LeftListProps) => {
         width={350}
         zIndex={2}
       >
-        {list}
-        {isLoading && <OverlayLoader />}
+        {isLoading ? <LeftListSkeleton /> : list}
       </S.ListContainer>
       <Box />
     </S.Container>

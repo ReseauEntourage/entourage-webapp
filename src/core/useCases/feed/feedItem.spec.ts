@@ -859,7 +859,7 @@ describe('Feed Item', () => {
     })
   })
 
-  describe('Create / Update', () => {
+  describe('Event Image', () => {
     it(`
       Given initial state
       When user wants to create an event
