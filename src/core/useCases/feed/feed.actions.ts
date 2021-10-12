@@ -1,6 +1,6 @@
-import { FeedJoinStatus } from 'src/core/api'
+import { FeedJoinStatus, DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent } from 'src/core/api'
 import { ActionFromMapObject, ActionsFromMapObject, FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
-import { FeedState } from './feed.reducer'
+import { FeedState, FeedEntourage } from './feed.reducer'
 
 export const FeedActionType = {
   INIT_FEED: 'FEED/INIT_FEED',
@@ -17,6 +17,8 @@ export const FeedActionType = {
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
   INSERT_FEED_ITEM: 'FEED/INSERT_FEED_ITEM',
   REMOVE_CURRENT_ITEM_UUID: 'FEED/REMOVE_CURRENT_ITEM_UUID',
+  CREATE_ENTOURAGE: 'FEED/CREATE_ENTOURAGE',
+  CREATE_ENTOURAGE_SUCCEEDED: 'FEED/CREATE_ENTOURAGE_SUCCEEDED',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
   JOIN_ENTOURAGE_FAILED: 'FEED/JOIN_ENTOURAGE_FAILED',
@@ -138,6 +140,23 @@ function insertFeedItem(payload: FeedState['items'][string]) {
 function removeCurrentFeedItemUuid() {
   return {
     type: FeedActionType.REMOVE_CURRENT_ITEM_UUID,
+  }
+}
+
+function createEntourage(payload: {
+  entourage: DTOCreateEntourageAsAction | DTOCreateEntourageAsEvent;
+  onCreateSucceeded?: (entourageUuid: string) => void;
+}) {
+  return {
+    type: FeedActionType.CREATE_ENTOURAGE,
+    payload,
+  }
+}
+
+function createEntourageSucceeded(payload: { entourage: FeedEntourage; }) {
+  return {
+    type: FeedActionType.CREATE_ENTOURAGE_SUCCEEDED,
+    payload,
   }
 }
 
@@ -278,6 +297,7 @@ export const publicActions = {
   retrieveFeedNextPage,
   updateItem,
   setCurrentFeedItemUuid,
+  createEntourage,
   joinEntourage,
   leaveEntourage,
   closeEntourage,
@@ -296,6 +316,7 @@ const privateActions = {
   insertFeedItem,
   retrieveFeedNextPageSuccess,
   retrieveFeedNextPageFail,
+  createEntourageSucceeded,
   joinEntourageSucceeded,
   joinEntourageFailed,
   leaveEntourageSucceeded,

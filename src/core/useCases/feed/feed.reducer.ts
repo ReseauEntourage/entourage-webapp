@@ -62,6 +62,7 @@ export interface FeedState {
   isUpdatingJoinStatus: boolean;
   isUpdatingStatus: boolean;
   isIdle: boolean;
+  isUpdatingItems: boolean; // add or update or delete item
   eventImages: EventImage[];
   eventImagesFetching: boolean;
 }
@@ -91,6 +92,7 @@ export const defaultFeedState: FeedState = {
   isUpdatingJoinStatus: false,
   isUpdatingStatus: false,
   isIdle: true,
+  isUpdatingItems: false,
   eventImages: [],
   eventImagesFetching: false,
 }
@@ -216,11 +218,32 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.CREATE_ENTOURAGE: {
+      return {
+        ...state,
+        isUpdatingItems: true,
+      }
+    }
+
     case FeedActionType.JOIN_ENTOURAGE:
     case FeedActionType.LEAVE_ENTOURAGE: {
       return {
         ...state,
         isUpdatingJoinStatus: true,
+      }
+    }
+
+    case FeedActionType.CREATE_ENTOURAGE_SUCCEEDED: {
+      const newEntourageUuid = action.payload.entourage.uuid
+      return {
+        ...state,
+        isUpdatingItems: false,
+        items: produce(state.items, (cachedItems) => {
+          // eslint-disable-next-line no-param-reassign
+          cachedItems[newEntourageUuid] = action.payload.entourage
+        }),
+        itemsUuids: [newEntourageUuid, ...state.itemsUuids],
+        filters: defaultFeedState.filters, // we reset the filters to be sure the event is visible
       }
     }
 

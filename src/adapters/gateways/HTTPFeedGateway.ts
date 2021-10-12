@@ -142,6 +142,18 @@ export class HTTPFeedGateway implements IFeedGateway {
     })
   }
 
+  createEntourage: IFeedGateway['createEntourage'] = (entourage) => {
+    return api.request({
+      name: '/entourages POST',
+      data: { entourage },
+    }).then(({ data }) => {
+      return {
+        ...data.entourage,
+        itemType: 'Entourage',
+      }
+    })
+  }
+
   joinEntourage: IFeedGateway['joinEntourage'] = (entourageUuid: string) => {
     return api.request({
       name: '/entourages/:entourageId/users POST',

@@ -13,7 +13,7 @@ import { selectAlerts } from '../notifications/notifications.selectors'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
-import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { FeedJoinStatus, FeedStatus, DTOCreateEntourageAsEvent } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -31,6 +31,8 @@ import {
   selectStatus,
   selectEventImagesFetching,
   selectEventImages,
+  selectIsUpdatingItems,
+  selectFeed,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -910,6 +912,56 @@ describe('Feed Item', () => {
       expect(selectEventImagesFetching(store.getState())).toBe(false)
       expect(feedGateway.retrieveEventImages).toHaveBeenCalledTimes(1)
       expect(selectEventImages(store.getState())).toStrictEqual(deferredValueRetrieveImages)
+    })
+  })
+
+  describe('CRUD feedItem', () => {
+    it(`
+    Given state has items
+    When user want to create an entourage
+    Then updating status request should be active
+      And create entourage gateway should be called with the values submitted by the user
+      And updating status request should not be active after succeeded
+      And the items must be updated with the new item
+      And the created entourage is in the beginning of the itemUuidq
+      And the list of filter must be reset
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeEvent: DTOCreateEntourageAsEvent = {
+        ...feedData,
+        metadata: {
+          ...feedData.metadata,
+          googlePlaceId: 'fake',
+          placeName: 'myPlace',
+          startsAt: new Date().toISOString(),
+          streetAddress: 'Lyon',
+        },
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      const initialItemSize = Object.keys(selectFeed(store.getState()).items).length
+
+      // When
+      store.dispatch(publicActions.createEntourage({ entourage: fakeEvent }))
+
+      // Then
+      expect(selectIsUpdatingItems(store.getState())).toEqual(true)
+
+      expect(feedGateway.createEntourage).toHaveBeenCalledWith(fakeEvent)
+
+      feedGateway.createEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItems(store.getState())).toEqual(false)
+      // check if in list
+      const feedStateAfterCreation = selectFeed(store.getState())
+      expect(Object.keys(feedStateAfterCreation.items).length).toEqual(initialItemSize + 1)
+      expect(feedStateAfterCreation.itemsUuids[0]).toEqual(feedData.uuid)
+      expect(feedStateAfterCreation.filters).toEqual(defaultFeedState.filters)
     })
   })
 

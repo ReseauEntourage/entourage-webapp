@@ -136,6 +136,35 @@ function* retrieveCurrentFeedItem() {
   }
 }
 
+function* createEntourage(action: FeedActions['createEntourage']) {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { feedGateway } = dependencies
+  const { entourage } = action.payload
+  const response: CallReturnType<typeof feedGateway.createEntourage> = yield call(
+    feedGateway.createEntourage,
+    entourage,
+  )
+  yield put(actions.createEntourageSucceeded({ entourage: response }))
+  if (action.payload.onCreateSucceeded) {
+    action.payload.onCreateSucceeded(response.uuid)
+  }
+  const center = {
+    lat: response.location.latitude,
+    lng: response.location.longitude,
+  }
+  yield put(locationActions.setMapPosition({
+    center,
+    zoom: constants.DEFAULT_LOCATION.ZOOM,
+  }))
+  yield put(locationActions.setLocation({
+    location: {
+      center,
+      displayAddress: response.metadata.displayAddress,
+      zoom: constants.DEFAULT_LOCATION.ZOOM,
+    },
+  }))
+}
+
 function* joinEntourage(action: FeedActions['joinEntourage']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { feedGateway } = dependencies
@@ -240,6 +269,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.TOGGLE_EVENTS_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.SET_TIME_RANGE_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
+  yield takeEvery(FeedActionType.CREATE_ENTOURAGE, createEntourage)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
   yield takeEvery(FeedActionType.LEAVE_ENTOURAGE, leaveEntourage)
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)
