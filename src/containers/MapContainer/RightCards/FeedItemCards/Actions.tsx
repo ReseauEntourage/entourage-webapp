@@ -12,6 +12,7 @@ import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus, FeedE
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
+import { FeedMetadata } from 'src/utils/types'
 import * as S from './Actions.styles'
 import { ParticipateButton } from './ParticipateButton'
 
@@ -66,19 +67,24 @@ export function Actions(props: ActionsProps) {
   ])
 
   const onClickUpdateEvent = useCallback(() => {
-    openModal(
-      <ModalEditEvent
-        event={{
-          id: feedItem.id,
-          title: feedItem.title,
-          description: feedItem.description,
-          startDateISO: feedItem.metadata.startsAt,
-          endDateISO: feedItem.metadata.endsAt,
-          displayAddress: feedItem.metadata.displayAddress,
-          imageUrl: feedItem.metadata.landscapeThumbnailUrl,
-        }}
-      />,
-    )
+    if (feedItem.groupType === 'outing') {
+      // FIX ME: will be fixed with uprade of ts
+      // eslint-disable-next-line prefer-destructuring
+      const metadata = feedItem.metadata as FeedMetadata<'outing'>
+      openModal(
+        <ModalEditEvent
+          event={{
+            id: feedItem.id,
+            title: feedItem.title,
+            description: feedItem.description,
+            startDateISO: metadata.startsAt,
+            endDateISO: metadata.endsAt,
+            displayAddress: metadata.displayAddress,
+            imageUrl: metadata.landscapeThumbnailUrl,
+          }}
+        />,
+      )
+    }
   }, [feedItem])
 
   const onClickClose = useCallback(() => {

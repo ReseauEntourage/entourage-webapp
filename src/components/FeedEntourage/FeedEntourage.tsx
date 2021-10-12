@@ -10,7 +10,7 @@ interface FeedEntourageProps {
   icon?: JSX.Element;
   isActive?: boolean;
   title: string;
-  profilePictureURL?: string;
+  profilePictureURL: string | null;
   numberOfPeople: number;
   subtitle: React.ReactNode;
   distance: string;

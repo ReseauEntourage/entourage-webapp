@@ -1,17 +1,9 @@
 import produce from 'immer'
 import { LocationAction, LocationActionType } from '../location/location.actions'
 import { POIsActionType, POIsAction } from '../pois/pois.actions'
-import {
-  FeedMetadata,
-  FeedDisplayCategory,
-  FeedGroupType,
-  UserPartner,
-  FeedEntourageType,
-  FeedJoinStatus,
-  FeedStatus,
-} from 'src/core/api'
 import { assertCondition } from 'src/utils/misc'
-import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
+import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues, FeedBaseEntourage } from 'src/utils/types'
+
 import { FeedAction, FeedActionType } from './feed.actions'
 
 export const JoinRequestStatus = {
@@ -38,37 +30,9 @@ export interface EventImage {
   portraitUrl?: string;
   portraitSmallUrl?: string;
 }
-
-export interface FeedEntourage {
+export interface FeedEntourage extends FeedBaseEntourage {
   itemType: 'Entourage';
-  author: {
-    id: number;
-    avatarUrl?: string;
-    displayName: string;
-    partner: UserPartner | null;
-  };
-  createdAt: string;
-  updatedAt: string;
-  description: string;
-  id: number;
-  uuid: string;
-  title: string;
-  location: {
-    latitude: number;
-    longitude: number;
-  };
-  metadata: FeedMetadata;
-  displayCategory: FeedDisplayCategory;
-  entourageType: FeedEntourageType;
-  groupType: FeedGroupType;
-  joinStatus: FeedJoinStatus;
-  status: FeedStatus;
-  online: boolean;
-  eventUrl: string;
-  numberOfPeople: number;
-  postalCode: string;
 }
-
 export interface FeedAnnouncement {
   itemType: 'Announcement';
   id: number;

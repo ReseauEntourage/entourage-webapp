@@ -22,7 +22,9 @@ export function createFeedItem() {
       latitude: 12,
       longitude: 14,
     },
-    metadata: {},
+    metadata: {
+      googlePlaceId: 'no-place',
+    },
   } as FeedEntourage
 }
 

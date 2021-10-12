@@ -19,7 +19,7 @@ import { texts } from 'src/i18n'
 import { useFirebase, useOnScroll, useGetDistanceFromPosition } from 'src/utils/hooks'
 
 import { formatWebLink } from 'src/utils/misc'
-import { FilterEntourageType } from 'src/utils/types'
+import { FilterEntourageType, FeedMetadata } from 'src/utils/types'
 
 export function FeedList() {
   const actionId = useActionId()
@@ -93,16 +93,21 @@ export function FeedList() {
     }
 
     if (feedItem.groupType === 'outing') {
-      const startDate = new Date(feedItem.metadata.startsAt)
-      if (feedItem.metadata.endsAt && !isSameDay(startDate, new Date(feedItem.metadata.endsAt))) {
-        const endDate = new Date(feedItem.metadata.endsAt)
-        subtitle = `${
-          format(startDate, "'Événement du' dd/MM", { locale: fr })
-        }  ${
-          format(endDate, "'au' dd/MM", { locale: fr })
-        }`
-      } else {
-        subtitle = `${format(startDate, "'Événement le' eeee dd/MM", { locale: fr })}`
+      // FIX ME: will be fixed with uprade of ts
+      // eslint-disable-next-line prefer-destructuring
+      const metadata = feedItem.metadata as FeedMetadata<'outing'>
+      if (metadata.startsAt) {
+        const startDate = new Date(metadata.startsAt)
+        if (metadata.endsAt && !isSameDay(startDate, new Date(metadata.endsAt))) {
+          const endDate = new Date(metadata.endsAt)
+          subtitle = `${
+            format(startDate, "'Événement du' dd/MM", { locale: fr })
+          }  ${
+            format(endDate, "'au' dd/MM", { locale: fr })
+          }`
+        } else {
+          subtitle = `${format(startDate, "'Événement le' eeee dd/MM", { locale: fr })}`
+        }
       }
 
       label = texts.types.event

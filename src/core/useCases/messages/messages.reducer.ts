@@ -1,21 +1,21 @@
 import uniqBy from 'lodash/uniqBy'
 import { AuthUserAction, AuthUserActionType } from '../authUser/authUser.actions'
-import { FeedGroupType, FeedJoinStatus, User } from 'src/core/api'
+import { MyFeedGroupType, FeedJoinStatus, User } from 'src/core/api'
 import { DateISO } from 'src/utils/types'
 import { MessagesAction, MessagesActionType } from './messages.actions'
 
 export interface ConversationItem {
   author: {
-    avatarUrl?: string;
+    avatarUrl: string | null;
     id: number;
   };
   joinStatus: FeedJoinStatus;
-  lastMessage?: {
+  lastMessage: {
     text: string;
-  };
+  } | null;
   title: string;
   uuid: string;
-  groupType: FeedGroupType;
+  groupType: MyFeedGroupType;
   updatedAt: DateISO;
   numberOfUnreadMessages: number;
 }

@@ -78,6 +78,8 @@ export class HTTPFeedGateway implements IFeedGateway {
           eventUrl: item.data.eventUrl,
           numberOfPeople: item.data.numberOfPeople,
           postalCode: item.data.postalCode,
+          numberOfUnreadMessages: item.data.numberOfUnreadMessages,
+          shareUrl: item.data.shareUrl,
         }
       })
 
@@ -133,6 +135,8 @@ export class HTTPFeedGateway implements IFeedGateway {
           eventUrl: item.data.entourage.eventUrl,
           numberOfPeople: item.data.entourage.numberOfPeople,
           postalCode: item.data.entourage.postalCode,
+          numberOfUnreadMessages: item.data.entourage.numberOfUnreadMessages,
+          shareUrl: item.data.entourage.shareUrl,
         },
       }
     })

@@ -13,7 +13,7 @@ interface EventCardProps {
   description: string;
   isAssociation?: boolean;
   organizerLabel: string | JSX.Element;
-  organizerPictureURL?: string;
+  organizerPictureURL: string | null;
   title: string;
 }
 

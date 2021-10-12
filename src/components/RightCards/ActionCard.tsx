@@ -13,7 +13,7 @@ interface ActionCardProps {
   isAssociation?: boolean;
   onClickAvatar?: React.ComponentProps<typeof Avatar>['onClick'];
   organizerLabel: string | JSX.Element;
-  organizerPictureURL?: string;
+  organizerPictureURL: string | null;
   title: string;
 }
 

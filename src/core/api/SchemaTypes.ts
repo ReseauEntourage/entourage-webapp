@@ -1,4 +1,4 @@
-import { DateISO, AnyToFix } from 'src/utils/types'
+import { DateISO, AnyToFix, FeedBaseEntourage } from 'src/utils/types'
 
 export type UserType = 'public'
 
@@ -6,7 +6,9 @@ export type FeedType = 'Entourage' | 'Tour'
 
 export type FeedStatus = 'open' | 'closed' | 'suspended'
 
-export type FeedGroupType = 'action' | 'outing' | 'conversation'
+export type FeedGroupType = 'action' | 'outing'
+
+export type MyFeedGroupType = FeedGroupType | 'conversation'
 
 export type FeedEntourageType = 'contribution' | 'ask_for_help'
 
@@ -136,20 +138,25 @@ export type POICategoriesIds = string
  */
 export type FeedTypesFilter = string
 
-export interface FeedOutingMetadata {
+export interface FeedOutingActionMetadata {
   displayAddress: string;
-  endsAt: DateISO;
-  googlePlaceId: string;
-  placeName: string;
+  city: string;
+}
+export interface FeedOutingEventMetadata {
   startsAt: DateISO;
-  streetAddress: string;
+  displayAddress: string;
+  endsAt?: DateISO;
+  googlePlaceId?: string;
+  placeName?: string;
+  streetAddress?: string;
   landscapeUrl?: string;
   landscapeThumbnailUrl?: string;
   portraitUrl?: string;
   portraitThumbnailUrl?: string;
 }
 
-export type FeedMetadata = FeedOutingMetadata
+export type FeedMetadata<type extends FeedGroupType> = type extends 'action' ?
+  FeedOutingActionMetadata : type extends 'outing' ? FeedOutingEventMetadata : undefined
 
 export interface UserStats {
   encounterCount: number;
@@ -237,34 +244,7 @@ export interface LoggedUser {
 export type User = AnonymousUser | LoggedUser;
 
 export interface FeedItemEntourage {
-  data: {
-    author: {
-      avatarUrl?: string;
-      displayName: string;
-      id: number;
-      partner: UserPartner | null;
-    };
-    createdAt: DateISO;
-    description: string;
-    displayCategory: FeedDisplayCategory;
-    entourageType: FeedEntourageType;
-    groupType: FeedGroupType;
-    id: number;
-    joinStatus: FeedJoinStatus;
-    location: Location;
-    metadata: FeedMetadata;
-    numberOfPeople: number;
-    numberOfUnreadMessages: number;
-    public: boolean;
-    shareUrl: string;
-    status: FeedStatus;
-    title: string;
-    updatedAt: DateISO;
-    uuid: string;
-    online: boolean;
-    eventUrl: string;
-    postalCode: string;
-  };
+  data: FeedBaseEntourage;
   heatmapSize: number;
   type: 'Entourage';
 }
@@ -327,13 +307,13 @@ export interface Conversation {
   groupType: FeedGroupType;
   id: number;
   joinStatus: FeedJoinStatus;
-  lastMessage?: {
+  lastMessage: {
     author: {
       firstName: string;
       lastName: string;
     };
     text: string;
-  };
+  } | null;
   location: Location;
   metadata: {
     city: string;
@@ -400,6 +380,7 @@ export interface DTOCreateEntourageAsEvent {
     googlePlaceId: string;
     placeName: string;
     startsAt: string;
+    endsAt?: string;
     streetAddress: string;
     landscapeUrl?: string;
     landscapeThumbnailUrl?: string;
