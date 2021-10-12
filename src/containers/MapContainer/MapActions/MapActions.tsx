@@ -7,7 +7,6 @@ import { useActionId } from '../useActionId'
 import { useOnNoContentOnMap } from '../useOnNoContentOnMap'
 import { SplashScreen } from 'src/components/SplashScreen'
 import { MapContainer } from 'src/containers/MapContainer'
-import { ModalNoContent } from 'src/containers/ModalNoContent'
 
 import { feedActions, selectFeedIsFetching, selectFeedIsIdle } from 'src/core/useCases/feed'
 import { texts } from 'src/i18n'
@@ -45,7 +44,10 @@ export function MapActions() {
   const onNoContentOnMap = useOnNoContentOnMap(
     feedFetching,
     !!currentFeedItem,
-    <ModalNoContent text={modalTexts.text} title={modalTexts.title} />,
+    {
+      text: modalTexts.text,
+      title: modalTexts.title,
+    },
   )
 
   return (

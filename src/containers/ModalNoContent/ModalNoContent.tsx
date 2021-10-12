@@ -6,7 +6,7 @@ import { Modal } from 'src/components/Modal'
 import { useIsDesktop, variants } from 'src/styles'
 import * as S from './ModalNoContent.styles'
 
-interface Props {
+export interface ModalNoContentProps {
   title: string;
   text: string;
   action?: string;
@@ -15,7 +15,7 @@ interface Props {
   restText?: string;
 }
 
-export function ModalNoContent(props: Props) {
+export function ModalNoContent(props: ModalNoContentProps) {
   const { title, text, action, actionText, actionButton, restText } = props
   const isDesktop = useIsDesktop()
 

@@ -8,7 +8,6 @@ import { usePOIId } from '../usePOIId'
 import { SplashScreen } from 'src/components/SplashScreen'
 import { constants } from 'src/constants'
 import { MapContainer } from 'src/containers/MapContainer'
-import { ModalNoContent } from 'src/containers/ModalNoContent'
 import { env } from 'src/core/env'
 import { poisActions, selectPOIDetailsIsFetching, selectPOIsIsFetching, selectPOIsIsIdle } from 'src/core/useCases/pois'
 import { useMe } from 'src/hooks/useMe'
@@ -45,14 +44,14 @@ export function MapPOIs() {
 
   const modalTexts = texts.content.map.pois.noPOIs.modal
 
-  const onNoContentOnMap = useOnNoContentOnMap(poisFetching, !!currentPOI, <ModalNoContent
-    action={`${env.API_V1_URL}${constants.POI_FORM_LINK}${me?.token}`}
-    actionButton={modalTexts.addButton}
-    actionText={modalTexts.addText}
-    restText={modalTexts.restText}
-    text={modalTexts.text}
-    title={modalTexts.title}
-  />)
+  const onNoContentOnMap = useOnNoContentOnMap(poisFetching, Boolean(currentPOI), {
+    action: `${env.API_V1_URL}${constants.POI_FORM_LINK}${me?.token}`,
+    actionButton: modalTexts.addButton,
+    actionText: modalTexts.addText,
+    restText: modalTexts.restText,
+    text: modalTexts.text,
+    title: modalTexts.title,
+  })
 
   return (
     <>

@@ -27,7 +27,9 @@ import {
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
   selectIsUpdatingStatus,
-  selectStatus, selectEventImagesFetching, selectEventImages,
+  selectStatus,
+  selectEventImagesFetching,
+  selectEventImages,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
