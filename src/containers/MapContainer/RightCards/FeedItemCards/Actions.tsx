@@ -48,7 +48,7 @@ export function Actions(props: ActionsProps) {
     openModal(
       <ModalEditAction
         action={{
-          id: feedItem.id,
+          uuid: feedItem.uuid,
           title: feedItem.title,
           description: feedItem.description,
           displayCategory: feedItem.displayCategory,
@@ -61,7 +61,7 @@ export function Actions(props: ActionsProps) {
     feedItem.description,
     feedItem.displayCategory,
     feedItem.entourageType,
-    feedItem.id,
+    feedItem.uuid,
     feedItem.metadata.displayAddress,
     feedItem.title,
   ])
@@ -74,7 +74,7 @@ export function Actions(props: ActionsProps) {
       openModal(
         <ModalEditEvent
           event={{
-            id: feedItem.id,
+            uuid: feedItem.uuid,
             title: feedItem.title,
             description: feedItem.description,
             startDateISO: metadata.startsAt,

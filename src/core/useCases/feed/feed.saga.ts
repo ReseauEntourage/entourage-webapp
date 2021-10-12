@@ -165,6 +165,18 @@ function* createEntourage(action: FeedActions['createEntourage']) {
   }))
 }
 
+function* updateEntourage(action: FeedActions['updateEntourage']) {
+  const dependencies: Dependencies = yield getContext('dependencies')
+  const { feedGateway } = dependencies
+  const { entourageUuid, entourage } = action.payload
+  const response: CallReturnType<typeof feedGateway.updateEntourage> = yield call(
+    feedGateway.updateEntourage,
+    entourageUuid,
+    entourage,
+  )
+  yield put(actions.updateEntourageSucceeded({ entourage: response }))
+}
+
 function* joinEntourage(action: FeedActions['joinEntourage']) {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { feedGateway } = dependencies
@@ -270,6 +282,7 @@ export function* feedSaga() {
   yield takeEvery(FeedActionType.SET_TIME_RANGE_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.RETRIEVE_FEED_NEXT_PAGE, retrieveFeedNextPage)
   yield takeEvery(FeedActionType.CREATE_ENTOURAGE, createEntourage)
+  yield takeEvery(FeedActionType.UPDATE_ENTOURAGE, updateEntourage)
   yield takeEvery(FeedActionType.JOIN_ENTOURAGE, joinEntourage)
   yield takeEvery(FeedActionType.LEAVE_ENTOURAGE, leaveEntourage)
   yield takeEvery(FeedActionType.CLOSE_ENTOURAGE, closeEntourage)

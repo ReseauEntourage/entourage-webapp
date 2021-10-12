@@ -351,10 +351,14 @@ export interface DTOCreateEntourageAsAction {
 }
 
 export interface DTOUpdateEntourageAsAction {
-  description: string;
-  displayCategory: FeedDisplayCategory;
-  entourageType: FeedEntourageType;
-  title: string;
+  description?: string;
+  displayCategory?: FeedDisplayCategory;
+  entourageType?: FeedEntourageType;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  title?: string;
 }
 
 export interface DTOCloseEntourage {
@@ -376,37 +380,17 @@ export interface DTOCreateEntourageAsEvent {
     latitude: number;
     longitude: number;
   };
-  metadata: {
-    googlePlaceId: string;
-    placeName: string;
-    startsAt: string;
-    endsAt?: string;
-    streetAddress: string;
-    landscapeUrl?: string;
-    landscapeThumbnailUrl?: string;
-    portraitUrl?: string;
-    portraitThumbnailUrl?: string;
-  };
+  metadata: Omit<FeedOutingEventMetadata, 'displayAddress'>;
   title: string;
 }
 
 export interface DTOUpdateEntourageAsEvent {
   description?: string;
-  groupType?: string;
   location?: {
     latitude: number;
     longitude: number;
   };
-  metadata: {
-    googlePlaceId?: string;
-    placeName?: string;
-    startsAt?: string;
-    streetAddress?: string;
-    landscapeUrl?: string;
-    landscapeThumbnailUrl?: string;
-    portraitUrl?: string;
-    portraitThumbnailUrl?: string;
-  };
+  metadata?: Partial<Omit<FeedOutingEventMetadata, 'displayAddress'>>;
   title?: string;
 }
 export interface UserPartnerWithDetails extends UserPartner {

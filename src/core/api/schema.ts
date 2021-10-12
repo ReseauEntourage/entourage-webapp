@@ -65,7 +65,9 @@ export const schema = {
     data: {} as {
       entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent | DTOCloseEntourage | DTOReopenEntourage;
     },
-    response: {} as {},
+    response: {} as {
+      entourage: FeedBaseEntourage;
+    },
   },
   '/entourages/:entourageId GET': {
     url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}`,

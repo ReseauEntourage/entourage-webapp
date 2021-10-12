@@ -218,7 +218,8 @@ export function feedReducer(
       }
     }
 
-    case FeedActionType.CREATE_ENTOURAGE: {
+    case FeedActionType.CREATE_ENTOURAGE:
+    case FeedActionType.UPDATE_ENTOURAGE: {
       return {
         ...state,
         isUpdatingItems: true,
@@ -244,6 +245,18 @@ export function feedReducer(
         }),
         itemsUuids: [newEntourageUuid, ...state.itemsUuids],
         filters: defaultFeedState.filters, // we reset the filters to be sure the event is visible
+      }
+    }
+
+    case FeedActionType.UPDATE_ENTOURAGE_SUCCEEDED: {
+      const { uuid } = action.payload.entourage
+      return {
+        ...state,
+        isUpdatingItems: false,
+        items: produce(state.items, (cachedItems) => {
+          // eslint-disable-next-line no-param-reassign
+          cachedItems[uuid] = action.payload.entourage
+        }),
       }
     }
 

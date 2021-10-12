@@ -923,7 +923,7 @@ describe('Feed Item', () => {
       And create entourage gateway should be called with the values submitted by the user
       And updating status request should not be active after succeeded
       And the items must be updated with the new item
-      And the created entourage is in the beginning of the itemUuidq
+      And the created entourage is in the beginning of the itemUuid
       And the list of filter must be reset
     `, async () => {
       // Given
@@ -962,6 +962,47 @@ describe('Feed Item', () => {
       expect(Object.keys(feedStateAfterCreation.items).length).toEqual(initialItemSize + 1)
       expect(feedStateAfterCreation.itemsUuids[0]).toEqual(feedData.uuid)
       expect(feedStateAfterCreation.filters).toEqual(defaultFeedState.filters)
+    })
+
+    it(`
+    Given state has items
+    When user want to update an entourage
+    Then updating status request should be active
+      And create entourage gateway should be called with the values submitted by the user
+      And updating status request should not be active after succeeded
+      And the items must be updated with the new item
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const previousState = selectFeed(store.getState())
+      const entourageBeforeChange = previousState.items[previousState.itemsUuids[0]]
+      const updatedEntourage = {
+        ...entourageBeforeChange,
+        description: 'my new description',
+      } as FeedEntourage
+
+      feedGateway.updateEntourage.mockDeferredValueOnce(updatedEntourage)
+
+      // When
+      store.dispatch(publicActions.updateEntourage({
+        entourageUuid: updatedEntourage.uuid,
+        entourage: updatedEntourage,
+      }))
+
+      // Then
+      expect(selectIsUpdatingItems(store.getState())).toEqual(true)
+
+      expect(feedGateway.updateEntourage).toHaveBeenCalledWith(updatedEntourage.uuid, updatedEntourage)
+
+      feedGateway.updateEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItems(store.getState())).toEqual(false)
+      // check if has been updated
+      const newValueInState = selectFeedItems(
+        store.getState(),
+      ).find((elt) => elt.uuid === updatedEntourage.uuid) as FeedEntourage
+      expect(newValueInState.description).toEqual(updatedEntourage.description)
     })
   })
 

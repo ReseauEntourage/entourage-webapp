@@ -1,5 +1,6 @@
 import { LocationState } from '../location'
-import { FeedJoinStatus, FeedTypesFilter, DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent } from 'src/core/api'
+import { FeedJoinStatus, FeedTypesFilter, DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent,
+  DTOUpdateEntourageAsEvent, DTOUpdateEntourageAsAction } from 'src/core/api'
 import { FeedState, FeedEntourage, FeedAnnouncement, EventImage } from './feed.reducer'
 
 interface FeedItemsFilter {
@@ -24,6 +25,8 @@ export interface IFeedGateway {
   }>;
 
   createEntourage(entourageData: DTOCreateEntourageAsAction | DTOCreateEntourageAsEvent): Promise<FeedEntourage>;
+  updateEntourage(entourageUuid: string, entourageData: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent):
+  Promise<FeedEntourage>;
   joinEntourage(entourageUuid: string): Promise<{ status: FeedJoinStatus; }>;
   leaveEntourage(entourageUuid: string, userId: number): Promise<void | null>;
   closeEntourage(entourageUuid: string, success: boolean): Promise<void | null>;

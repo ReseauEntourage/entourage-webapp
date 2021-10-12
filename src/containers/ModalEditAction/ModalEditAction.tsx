@@ -8,8 +8,7 @@ import { Label, RowFields, Select, TextField } from 'src/components/Form'
 import { AutocompleteFormField, AutocompleteFormFieldKey, GoogleMapLocation } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateUpdateEntourages } from 'src/core/store'
-import { useCreateEntourage } from 'src/hooks/useCreateEntourage'
+import { useCreateOrUpdateEntourage } from 'src/hooks/useCreateOrUpdateEntourage'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getLocationFromPlace } from 'src/utils/misc'
@@ -52,7 +51,7 @@ interface ModalEditActionProps {
     displayAddress: string;
     displayCategory: string;
     entourageType: string;
-    id: number;
+    uuid: string;
     title: string;
   };
 }
@@ -60,7 +59,7 @@ interface ModalEditActionProps {
 export function ModalEditAction(props: ModalEditActionProps) {
   const { action: existedAction } = props
 
-  const { createEntourage, hasBeenUpdated } = useCreateEntourage()
+  const { createEntourage, updateEntourage, hasBeenUpdated } = useCreateOrUpdateEntourage()
   const isCreation = !existedAction
 
   const defaultValues = {
@@ -80,8 +79,6 @@ export function ModalEditAction(props: ModalEditActionProps) {
   const modalTexts = texts.content.modalEditAction
   const typesTexts = texts.types
 
-  const [updateEntourage] = useMutateUpdateEntourages()
-
   const onValidate = useCallback(async () => {
     if (!await trigger()) return false
 
@@ -100,7 +97,6 @@ export function ModalEditAction(props: ModalEditActionProps) {
         : undefined
 
       const action = {
-        id: existedAction.id,
         title,
         description,
         displayCategory,
@@ -114,7 +110,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
       }
 
       try {
-        await updateEntourage(action)
+        await updateEntourage(existedAction.uuid, action)
       } catch (error) {
         return false
       }

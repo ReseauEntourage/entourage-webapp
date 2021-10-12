@@ -23,9 +23,8 @@ import {
 import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { Modal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { useMutateUpdateEntourages } from 'src/core/store'
 import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
-import { useCreateEntourage } from 'src/hooks/useCreateEntourage'
+import { useCreateOrUpdateEntourage } from 'src/hooks/useCreateOrUpdateEntourage'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition, useMount } from 'src/utils/hooks'
 import {
@@ -50,7 +49,7 @@ interface ModalEditEventProps {
     endDateISO?: DateISO;
     description: string;
     displayAddress: string;
-    id: number;
+    uuid: string;
     title: string;
     imageUrl?: string;
   };
@@ -59,7 +58,7 @@ interface ModalEditEventProps {
 export function ModalEditEvent(props: ModalEditEventProps) {
   const { event: existingEvent } = props
   const dispatch = useDispatch()
-  const { createEntourage, hasBeenUpdated } = useCreateEntourage()
+  const { createEntourage, updateEntourage, hasBeenUpdated } = useCreateOrUpdateEntourage()
 
   const eventImages = useSelector(selectEventImages)
   const eventImagesFetching = useSelector(selectEventImagesFetching)
@@ -110,8 +109,6 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
   }, [startDate])
 
-  const [updateEntourage] = useMutateUpdateEntourages()
-
   useMount(() => {
     dispatch(feedActions.retrieveEventImages())
   })
@@ -141,7 +138,6 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         : null
 
       const event = {
-        id: existingEvent.id,
         title,
         description,
         location: locationMeta?.location,
@@ -156,7 +152,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
       }
 
       try {
-        await updateEntourage(event)
+        updateEntourage(existingEvent.uuid, event)
       } catch (error) {
         return false
       }
