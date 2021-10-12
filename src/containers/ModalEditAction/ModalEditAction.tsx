@@ -8,7 +8,8 @@ import { Label, RowFields, Select, TextField } from 'src/components/Form'
 import { AutocompleteFormField, AutocompleteFormFieldKey, GoogleMapLocation } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
 import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import { useMutateUpdateEntourages } from 'src/core/store'
+import { useCreateEntourage } from 'src/hooks/useCreateEntourage'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getLocationFromPlace } from 'src/utils/misc'
@@ -59,6 +60,7 @@ interface ModalEditActionProps {
 export function ModalEditAction(props: ModalEditActionProps) {
   const { action: existedAction } = props
 
+  const { createEntourage, hasBeenUpdated } = useCreateEntourage()
   const isCreation = !existedAction
 
   const defaultValues = {
@@ -78,7 +80,6 @@ export function ModalEditAction(props: ModalEditActionProps) {
   const modalTexts = texts.content.modalEditAction
   const typesTexts = texts.types
 
-  const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
@@ -133,16 +134,10 @@ export function ModalEditAction(props: ModalEditActionProps) {
         },
         public: true,
       }
-
-      try {
-        await createEntourage(action)
-      } catch (error) {
-        return false
-      }
+      createEntourage(action)
     }
-
-    return true
-  }, [createEntourage, existedAction, getValues, updateEntourage, trigger])
+    return false
+  }, [existedAction, getValues, updateEntourage, trigger, createEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -167,6 +162,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
   return (
     <Modal
+      closeOnNextRender={hasBeenUpdated}
       onValidate={onValidate}
       title={isCreation ? modalTexts.titleCreate : modalTexts.titleUpdate}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}

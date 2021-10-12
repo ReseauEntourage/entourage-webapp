@@ -8,9 +8,8 @@ import {
   MuiPickersUtilsProvider,
   DateTimePicker,
 } from '@material-ui/pickers'
-import { isBefore, addHours, set } from 'date-fns'  // eslint-disable-line
+import { isBefore, addHours } from 'date-fns'  // eslint-disable-line
 import { fr } from 'date-fns/locale'  // eslint-disable-line
-
 import { FormProvider, Controller } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,8 +23,9 @@ import {
 import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { Modal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
-import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import { useMutateUpdateEntourages } from 'src/core/store'
 import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
+import { useCreateEntourage } from 'src/hooks/useCreateEntourage'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition, useMount } from 'src/utils/hooks'
 import {
@@ -58,8 +58,8 @@ interface ModalEditEventProps {
 
 export function ModalEditEvent(props: ModalEditEventProps) {
   const { event: existingEvent } = props
-
   const dispatch = useDispatch()
+  const { createEntourage, hasBeenUpdated } = useCreateEntourage()
 
   const eventImages = useSelector(selectEventImages)
   const eventImagesFetching = useSelector(selectEventImagesFetching)
@@ -84,11 +84,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
   const defaultStartDate = existingEvent?.startDateISO
     ? new Date(existingEvent?.startDateISO)
-    : set(new Date(), {
-      hours: 12,
-      minutes: 0,
-      seconds: 0,
-    })
+    : new Date()
 
   const futureDate = addHours(defaultStartDate, 3)
 
@@ -114,7 +110,6 @@ export function ModalEditEvent(props: ModalEditEventProps) {
     }
   }, [startDate])
 
-  const [createEntourage] = useMutateCreateEntourages()
   const [updateEntourage] = useMutateUpdateEntourages()
 
   useMount(() => {
@@ -190,15 +185,10 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         },
         public: true,
       }
-
-      try {
-        await createEntourage(event)
-      } catch (error) {
-        return false
-      }
+      createEntourage(event)
     }
 
-    return true
+    return false
   }, [createEntourage, endDate, eventImages, existingEvent, getValues, startDate, trigger, updateEntourage])
 
   useEffect(() => {
@@ -207,6 +197,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
 
   return (
     <Modal
+      closeOnNextRender={hasBeenUpdated}
       onValidate={onValidate}
       title={modalTexts.title}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}
