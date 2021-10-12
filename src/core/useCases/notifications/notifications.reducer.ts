@@ -40,7 +40,7 @@ export function notificationsReducer(
       const alertToShow = alerts[0]
       return {
         ...state,
-        alerts: alerts.length >= 1 ? alerts.slice(1) : [],
+        alerts: alerts.length > 1 ? alerts.slice(1) : [],
         alertToShow: alertToShow ?? null,
       }
     }

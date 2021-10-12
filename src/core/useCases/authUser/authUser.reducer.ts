@@ -72,6 +72,13 @@ export function authUserReducer(state: AuthUserState = defaultAuthUserState, act
       }
     }
 
+    case AuthUserActionType.PHONE_LOOK_UP_FAILED: {
+      return {
+        ...state,
+        isLogging: false,
+      }
+    }
+
     case AuthUserActionType.CREATE_ACCOUNT: {
       return {
         ...state,
@@ -83,6 +90,13 @@ export function authUserReducer(state: AuthUserState = defaultAuthUserState, act
       return {
         ...state,
         step: LoginSteps.SMS_CODE,
+        isLogging: false,
+      }
+    }
+
+    case AuthUserActionType.CREATE_ACCOUNT_FAILED: {
+      return {
+        ...state,
         isLogging: false,
       }
     }
@@ -193,6 +207,13 @@ export function authUserReducer(state: AuthUserState = defaultAuthUserState, act
         user: {
           ...action.payload.user,
         },
+        userUpdating: false,
+      }
+    }
+
+    case AuthUserActionType.UPDATE_USER_FAILED: {
+      return {
+        ...state,
         userUpdating: false,
       }
     }

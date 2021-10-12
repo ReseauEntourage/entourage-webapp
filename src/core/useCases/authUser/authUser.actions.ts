@@ -3,8 +3,10 @@ import { AuthUserState } from './authUser.reducer'
 
 export const AuthUserActionType = {
   PHONE_LOOK_UP: 'AUTH/PHONE_LOOK_UP',
+  PHONE_LOOK_UP_FAILED: 'AUTH/PHONE_LOOK_UP_FAILED',
   CREATE_ACCOUNT: 'AUTH/CREATE_ACCOUNT',
   CREATE_ACCOUNT_SUCCEEDED: 'AUTH/CREATE_ACCOUNT_SUCCEEDED',
+  CREATE_ACCOUNT_FAILED: 'AUTH/CREATE_ACCOUNT_FAILED',
   ASK_CREATE_ACCOUNT: 'AUTH/ASK_CREATE_ACCOUNT',
   ASK_SMS_CODE: 'AUTH/ASK_SMS_CODE',
   ASK_PASSWORD: 'AUTH/ASK_PASSWORD',
@@ -23,6 +25,7 @@ export const AuthUserActionType = {
   HIDE_SENSITIZATION_POPUP: 'AUTH/HIDE_SENSITIZATION_POPUP',
   UPDATE_USER: 'AUTH/UPDATE_USER',
   UPDATE_USER_SUCCEEDED: 'AUTH/UPDATE_USER_SUCCEEDED',
+  UPDATE_USER_FAILED: 'AUTH/UPDATE_USER_FAILED',
 } as const
 
 export type AuthUserActionType = keyof typeof AuthUserActionType;
@@ -33,6 +36,12 @@ function phoneLookUp(phone: string) {
     payload: {
       phone,
     },
+  }
+}
+
+function phoneLookUpFailed() {
+  return {
+    type: AuthUserActionType.PHONE_LOOK_UP_FAILED,
   }
 }
 
@@ -48,6 +57,12 @@ function createAccount(phone: string) {
 function createAccountSuccess() {
   return {
     type: AuthUserActionType.CREATE_ACCOUNT_SUCCEEDED,
+  }
+}
+
+function createAccountFail() {
+  return {
+    type: AuthUserActionType.CREATE_ACCOUNT_FAILED,
   }
 }
 
@@ -181,6 +196,11 @@ function updateUserSuccess(payload: { user: NonNullable<AuthUserState['user']>; 
   }
 }
 
+function updateUserFail() {
+  return {
+    type: AuthUserActionType.UPDATE_USER_FAILED,
+  }
+}
 // ------------------------------------------------------------------------
 
 export const publicActions = {
@@ -199,8 +219,10 @@ export const publicActions = {
 }
 
 const privateActions = {
+  phoneLookUpFailed,
   askCreateAccount,
   createAccountSuccess,
+  createAccountFail,
   loginWithSMSCodeSuccess,
   createPasswordSuccess,
   resetPasswordSuccess,
@@ -208,6 +230,7 @@ const privateActions = {
   setErrors,
   setShowSensitizationPopup,
   updateUserSuccess,
+  updateUserFail,
 }
 
 export const actions = {

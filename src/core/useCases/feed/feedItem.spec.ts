@@ -85,6 +85,85 @@ function configureStoreWithSelectedItems() {
   }
 }
 
+function configureStoreForStatus(status: FeedStatus) {
+  const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
+    items: {
+      abc: {
+        ...fakeFeedData.items.abc,
+        status,
+      } as FeedEntourage,
+    },
+    selectedItemUuid: 'abc',
+  }
+
+  const feedGateway = new TestFeedGateway()
+  feedGateway.closeEntourage.mockDeferredValueOnce(null)
+  feedGateway.reopenEntourage.mockDeferredValueOnce(null)
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: { feed: defaultFeedDataJoinEntourage },
+  })
+
+  return {
+    store,
+    feedGateway,
+  }
+}
+
+function configureStoreWithJoinRequestNotRequested() {
+  const defaultFeedDataJoinEntourage: FeedState = {
+    ...fakeFeedData,
+    items: {
+      ...fakeFeedData.items,
+      abc: {
+        ...fakeFeedData.items.abc,
+        joinStatus: 'not_requested' as FeedJoinStatus,
+      } as FeedEntourage,
+    },
+  }
+
+  const feedGateway = new TestFeedGateway()
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: {
+      feed: defaultFeedDataJoinEntourage,
+    },
+  })
+
+  return {
+    store,
+    feedGateway,
+  }
+}
+
+function configureStoreWithItemJoinRequestAccepted() {
+  const defaultFeedDataJoinEntourage: FeedState = {
+    ...fakeFeedData,
+    items: {
+      ...fakeFeedData.items,
+      abc: {
+        ...fakeFeedData.items.abc,
+        joinStatus: 'accepted' as FeedJoinStatus,
+      } as FeedEntourage,
+    },
+  }
+
+  const feedGateway = new TestFeedGateway()
+  feedGateway.leaveEntourage.mockDeferredValueOnce(null)
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: { feed: defaultFeedDataJoinEntourage },
+  })
+
+  return {
+    store,
+    feedGateway,
+  }
+}
+
 describe('Feed Item', () => {
   it(`
     Given feed is at initial state
@@ -626,33 +705,6 @@ describe('Feed Item', () => {
     })
   })
 
-  function configureStoreWithJoinRequestNotRequested() {
-    const defaultFeedDataJoinEntourage: FeedState = {
-      ...fakeFeedData,
-      items: {
-        ...fakeFeedData.items,
-        abc: {
-          ...fakeFeedData.items.abc,
-          joinStatus: 'not_requested' as FeedJoinStatus,
-        } as FeedEntourage,
-      },
-    }
-
-    const feedGateway = new TestFeedGateway()
-
-    const store = configureStoreWithFeed({
-      dependencies: { feedGateway },
-      initialAppState: {
-        feed: defaultFeedDataJoinEntourage,
-      },
-    })
-
-    return {
-      store,
-      feedGateway,
-    }
-  }
-
   describe('Join entourage', () => {
     it(`
         Given state has items
@@ -695,32 +747,6 @@ describe('Feed Item', () => {
     })
   })
 
-  function configureStoreWithItemJoinRequestAccepted() {
-    const defaultFeedDataJoinEntourage: FeedState = {
-      ...fakeFeedData,
-      items: {
-        ...fakeFeedData.items,
-        abc: {
-          ...fakeFeedData.items.abc,
-          joinStatus: 'accepted' as FeedJoinStatus,
-        } as FeedEntourage,
-      },
-    }
-
-    const feedGateway = new TestFeedGateway()
-    feedGateway.leaveEntourage.mockDeferredValueOnce(null)
-
-    const store = configureStoreWithFeed({
-      dependencies: { feedGateway },
-      initialAppState: { feed: defaultFeedDataJoinEntourage },
-    })
-
-    return {
-      store,
-      feedGateway,
-    }
-  }
-
   describe('Leave entourage', () => {
     it(`
         Given state has items
@@ -762,32 +788,6 @@ describe('Feed Item', () => {
       expect(selectJoinRequestStatus(store.getState(), 'abc')).toEqual(JoinRequestStatus.NOT_REQUEST)
     })
   })
-
-  function configureStoreForStatus(status: FeedStatus) {
-    const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
-      items: {
-        abc: {
-          ...fakeFeedData.items.abc,
-          status,
-        } as FeedEntourage,
-      },
-      selectedItemUuid: 'abc',
-    }
-
-    const feedGateway = new TestFeedGateway()
-    feedGateway.closeEntourage.mockDeferredValueOnce(null)
-    feedGateway.reopenEntourage.mockDeferredValueOnce(null)
-
-    const store = configureStoreWithFeed({
-      dependencies: { feedGateway },
-      initialAppState: { feed: defaultFeedDataJoinEntourage },
-    })
-
-    return {
-      store,
-      feedGateway,
-    }
-  }
 
   describe('Status entourage', () => {
     it(`

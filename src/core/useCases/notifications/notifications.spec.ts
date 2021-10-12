@@ -66,7 +66,7 @@ describe('Notifications', () => {
 
     await store.waitForActionEnd()
 
-    expect(selectAlertToShow(store.getState())).toEqual(fakeNotificationsData.alerts[1])
+    expect(selectAlertToShow(store.getState())).toEqual(fakeNotificationsData.alerts[0])
     expect(selectAlerts(store.getState()).length).toEqual(1)
   })
 })
