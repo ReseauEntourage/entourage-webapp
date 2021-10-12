@@ -96,7 +96,9 @@ function* retrieveCurrentConversationMessagesSaga() {
           conversationUuid: entourageUuid,
           conversationMessages: [],
         }))
+        return
       }
+      throw error
     }
   }
 

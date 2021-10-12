@@ -211,7 +211,7 @@ describe('Conversation', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
-    expect(selectCurrentConversationMessages(store.getState())).toEqual(null)
+    expect(selectCurrentConversationMessages(store.getState())).toEqual([])
 
     expect(selectCurrentConversation(store.getState())).toEqual({
       ...fakeMessagesData.conversations[selectedConversationId],
