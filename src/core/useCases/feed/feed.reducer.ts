@@ -169,6 +169,14 @@ export function feedReducer(
       }
     }
 
+    case FeedActionType.RETRIEVE_FEED_FAILED:
+    case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_FAILED: {
+      return {
+        ...state,
+        fetching: false,
+      }
+    }
+
     case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
@@ -275,6 +283,13 @@ export function feedReducer(
         }),
       }
     }
+    case FeedActionType.JOIN_ENTOURAGE_FAILED:
+    case FeedActionType.LEAVE_ENTOURAGE_FAILED: {
+      return {
+        ...state,
+        isUpdatingJoinStatus: false,
+      }
+    }
 
     case FeedActionType.REOPEN_ENTOURAGE:
     case FeedActionType.CLOSE_ENTOURAGE: {
@@ -305,6 +320,14 @@ export function feedReducer(
           assertCondition(item.itemType === 'Entourage')
           item.status = 'open'
         }),
+      }
+    }
+
+    case FeedActionType.CLOSE_ENTOURAGE_FAILED:
+    case FeedActionType.REOPEN_ENTOURAGE_FAILED: {
+      return {
+        ...state,
+        isUpdatingStatus: false,
       }
     }
 
@@ -385,6 +408,13 @@ export function feedReducer(
         ...state,
         eventImagesFetching: false,
         eventImages: action.payload.eventImages,
+      }
+    }
+
+    case FeedActionType.RETRIEVE_EVENT_IMAGES_FAILED: {
+      return {
+        ...state,
+        eventImagesFetching: false,
       }
     }
 

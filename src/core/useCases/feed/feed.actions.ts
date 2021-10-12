@@ -8,27 +8,34 @@ export const FeedActionType = {
   RETRIEVE_FEED: 'FEED/RETRIEVE_FEED',
   RETRIEVE_FEED_STARTED: 'FEED/RETRIEVE_FEED_STARTED',
   RETRIEVE_FEED_SUCCEEDED: 'FEED/RETRIEVE_FEED_SUCCEEDED',
+  RETRIEVE_FEED_FAILED: 'FEED/RETRIEVE_FEED_FAILED',
   RETRIEVE_FEED_NEXT_PAGE: 'FEED/RETRIEVE_FEED_NEXT_PAGE',
   RETRIEVE_FEED_NEXT_PAGE_STARTED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_STARTED',
   RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED',
+  RETRIEVE_FEED_NEXT_PAGE_FAILED: 'FEED/RETRIEVE_FEED_NEXT_PAGE_FAILED',
   UPDATE_ITEM: 'FEED/UPDATE_ITEM',
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
   INSERT_FEED_ITEM: 'FEED/INSERT_FEED_ITEM',
   REMOVE_CURRENT_ITEM_UUID: 'FEED/REMOVE_CURRENT_ITEM_UUID',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
+  JOIN_ENTOURAGE_FAILED: 'FEED/JOIN_ENTOURAGE_FAILED',
   LEAVE_ENTOURAGE: 'FEED/LEAVE_ENTOURAGE',
   LEAVE_ENTOURAGE_SUCCEEDED: 'FEED/LEAVE_ENTOURAGE_SUCCEEDED',
+  LEAVE_ENTOURAGE_FAILED: 'FEED/LEAVE_ENTOURAGE_FAILED',
   CLOSE_ENTOURAGE: 'FEED/CLOSE_ENTOURAGE',
   CLOSE_ENTOURAGE_SUCCEEDED: 'FEED/CLOSE_ENTOURAGE_SUCCEEDED',
+  CLOSE_ENTOURAGE_FAILED: 'FEED/CLOSE_ENTOURAGE_FAILED',
   REOPEN_ENTOURAGE: 'FEED/REOPEN_ENTOURAGE',
   REOPEN_ENTOURAGE_SUCCEEDED: 'FEED/REOPEN_ENTOURAGE_SUCCEEDED',
+  REOPEN_ENTOURAGE_FAILED: 'FEED/REOPEN_ENTOURAGE_FAILED',
   TOGGLE_ACTION_TYPES_FILTER: 'FEED/TOGGLE_ACTION_TYPES_FILTER',
   TOGGLE_EVENTS_FILTER: 'FEED/TOGGLE_EVENTS_FILTER',
   SET_TIME_RANGE_FILTER: 'FEED/SET_TIME_RANGE_FILTER',
   RETRIEVE_EVENT_IMAGES: 'FEED/RETRIEVE_EVENT_IMAGES',
   RETRIEVE_EVENT_IMAGES_STARTED: 'FEED/RETRIEVE_EVENT_IMAGES_STARTED',
   RETRIEVE_EVENT_IMAGES_SUCCEEDED: 'FEED/RETRIEVE_EVENT_IMAGES_SUCCEEDED',
+  RETRIEVE_EVENT_IMAGES_FAILED: 'FEED/RETRIEVE_EVENT_IMAGES_FAILED',
 } as const
 
 export type FeedActionType = keyof typeof FeedActionType;
@@ -71,6 +78,12 @@ function retrieveFeedSuccess(
   }
 }
 
+function retrieveFeedFail() {
+  return {
+    type: FeedActionType.RETRIEVE_FEED_FAILED,
+  }
+}
+
 function retrieveFeedNextPage() {
   return {
     type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE,
@@ -92,6 +105,12 @@ function retrieveFeedNextPageSuccess(
   return {
     type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED,
     payload,
+  }
+}
+
+function retrieveFeedNextPageFail() {
+  return {
+    type: FeedActionType.RETRIEVE_FEED_NEXT_PAGE_FAILED,
   }
 }
 
@@ -136,6 +155,12 @@ function joinEntourageSucceeded(payload: { entourageUuid: string; status: FeedJo
   }
 }
 
+function joinEntourageFailed() {
+  return {
+    type: FeedActionType.JOIN_ENTOURAGE_FAILED,
+  }
+}
+
 function leaveEntourage(payload: { entourageUuid: string; userId: number; }) {
   return {
     type: FeedActionType.LEAVE_ENTOURAGE,
@@ -147,6 +172,12 @@ function leaveEntourageSucceeded(payload: { entourageUuid: string; }) {
   return {
     type: FeedActionType.LEAVE_ENTOURAGE_SUCCEEDED,
     payload,
+  }
+}
+
+function leaveEntourageFailed() {
+  return {
+    type: FeedActionType.LEAVE_ENTOURAGE_FAILED,
   }
 }
 
@@ -164,6 +195,12 @@ function closeEntourageSucceeded(payload: { entourageUuid: string; }) {
   }
 }
 
+function closeEntourageFailed() {
+  return {
+    type: FeedActionType.CLOSE_ENTOURAGE_FAILED,
+  }
+}
+
 function reopenEntourage(payload: { entourageUuid: string; }) {
   return {
     type: FeedActionType.REOPEN_ENTOURAGE,
@@ -175,6 +212,12 @@ function reopenEntourageSucceeded(payload: { entourageUuid: string; }) {
   return {
     type: FeedActionType.REOPEN_ENTOURAGE_SUCCEEDED,
     payload,
+  }
+}
+
+function reopenEntourageFailed() {
+  return {
+    type: FeedActionType.REOPEN_ENTOURAGE_FAILED,
   }
 }
 
@@ -219,6 +262,12 @@ function retrieveEventImagesSuccess(payload: {
   }
 }
 
+function retrieveEventImagesFail() {
+  return {
+    type: FeedActionType.RETRIEVE_EVENT_IMAGES_FAILED,
+  }
+}
+
 // --------------------------------------------------------------------------------
 
 export const publicActions = {
@@ -243,14 +292,21 @@ export const publicActions = {
 const privateActions = {
   retrieveFeedStarted,
   retrieveFeedSuccess,
+  retrieveFeedFail,
   insertFeedItem,
   retrieveFeedNextPageSuccess,
+  retrieveFeedNextPageFail,
   joinEntourageSucceeded,
+  joinEntourageFailed,
   leaveEntourageSucceeded,
+  leaveEntourageFailed,
   closeEntourageSucceeded,
+  closeEntourageFailed,
   reopenEntourageSucceeded,
+  reopenEntourageFailed,
   retrieveEventImagesStarted,
   retrieveEventImagesSuccess,
+  retrieveEventImagesFail,
 }
 
 export const actions = {

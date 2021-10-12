@@ -14,6 +14,7 @@ import {
 } from './__mocks__'
 
 import { publicActions } from './messages.actions'
+import { MessagesErrorNoAcceptedInConversation } from './messages.errors'
 import { ConversationMessage } from './messages.reducer'
 import { messagesSaga } from './messages.saga'
 import {
@@ -202,7 +203,7 @@ describe('Conversation', () => {
     const selectedConversationId = 'abc'
 
     messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
-    messagesGateway.retrieveConversationMessages.rejectDeferredValue()
+    messagesGateway.retrieveConversationMessages.rejectDeferredValue(new MessagesErrorNoAcceptedInConversation())
 
     store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
 
