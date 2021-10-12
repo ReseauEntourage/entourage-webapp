@@ -1,6 +1,7 @@
 import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { authUserActions } from '../authUser'
+import { selectAlerts } from '../notifications/notifications.selectors'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { TestMessagesGateway } from './TestMessagesGateway'
 import { fakeMessagesData } from './__mocks__'
@@ -251,5 +252,61 @@ describe('Messages', () => {
     await store.waitForActionEnd()
 
     expect(store.getState().messages).toEqual(defaultMessagesState)
+  })
+  describe('Manage errors', () => {
+    it(`
+      Given conversations are retrieving
+      When an error occurs
+      Then conversations should not be fetching
+        And an error should be added to the alert queue
+  `, async () => {
+      const messagesGateway = new TestMessagesGateway()
+      const deferredValue = { conversations: [fakeMessagesData.conversations.abc], unreadConversations: 5 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      const store = configureStoreWithMessages({ dependencies: { messagesGateway } })
+
+      store.dispatch(publicActions.retrieveConversations())
+
+      expect(selectConversationsIsFetching(store.getState())).toEqual(true)
+
+      messagesGateway.retrieveConversations.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectConversationsIsFetching(store.getState())).toEqual(false)
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+    it(`
+      Given next conversations are retrieving
+      When an error occurs
+      Then conversations should not be fetching
+        And an error should be added to the alert queue`,
+    async () => {
+      const messagesGateway = new TestMessagesGateway()
+      const deferredValue = { conversations: [fakeMessagesData.conversations.def], unreadConversations: 0 }
+      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+      const store = configureStoreWithMessages({ dependencies: { messagesGateway },
+        initialAppState: {
+          ...defaultInitialAppState,
+          messages: {
+            ...defaultMessagesState,
+            conversationsUuids: ['abc'],
+            conversations: {
+              abc: fakeMessagesData.conversations.abc,
+            },
+          },
+        },
+      })
+
+      store.dispatch(publicActions.retrieveNextConversations())
+
+      expect(selectConversationsIsFetching(store.getState())).toEqual(true)
+
+      messagesGateway.retrieveConversations.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectConversationsIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
   })
 })

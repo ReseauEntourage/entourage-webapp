@@ -10,9 +10,11 @@ export const MessagesActionType = {
   RETRIEVE_NEXT_CONVERSATIONS: 'MESSAGES/RETRIEVE_NEXT_CONVERSATIONS',
   RETRIEVE_CONVERSATIONS_STARTED: 'MESSAGES/RETRIEVE_CONVERSATIONS_STARTED',
   RETRIEVE_CONVERSATIONS_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATIONS_SUCCEEDED',
+  RETRIEVE_CONVERSATIONS_FAILED: 'MESSAGES/RETRIEVE_CONVERSATIONS_FAILED',
   RETRIEVE_CONVERSATION_MESSAGES: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES',
   RETRIEVE_CONVERSATION_MESSAGES_STARTED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_STARTED',
   RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED',
+  RETRIEVE_CONVERSATION_MESSAGES_FAILED: 'MESSAGES/RETRIEVE_CONVERSATION_MESSAGES_FAILED',
   RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED: 'MESSAGES/RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED',
   RETRIEVE_OLDER_CONVERSATION_MESSAGES: 'MESSAGES/RETRIEVE_OLDER_CONVERSATION_MESSAGES',
   INSERT_CONVERSATION: 'MESSAGES/INSERT_CONVERSATION',
@@ -61,6 +63,12 @@ function retrieveConversationsSuccess(
   }
 }
 
+function retrieveConversationsFail() {
+  return {
+    type: MessagesActionType.RETRIEVE_CONVERSATIONS_FAILED,
+  }
+}
+
 function retrieveConversationMessages() {
   return {
     type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES,
@@ -82,6 +90,12 @@ function retrieveConversationMessagesSuccess(
   return {
     type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED,
     payload,
+  }
+}
+
+function retrieveConversationMessagesFail() {
+  return {
+    type: MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_FAILED,
   }
 }
 
@@ -134,8 +148,10 @@ export const publicActions = {
 const privateActions = {
   retrieveConversationsStarted,
   retrieveConversationsSuccess,
+  retrieveConversationsFail,
   retrieveConversationMessagesStarted,
   retrieveConversationMessagesSuccess,
+  retrieveConversationMessagesFail,
   decrementPageNumber,
   insertConversation,
   retrieveConversationDetailsIfNeeded,
