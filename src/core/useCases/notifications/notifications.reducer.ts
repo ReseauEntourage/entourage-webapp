@@ -45,6 +45,13 @@ export function notificationsReducer(
       }
     }
 
+    case NotificationsActionType.HIDE: {
+      return {
+        ...state,
+        alertToShow: null,
+      }
+    }
+
     default:
       return state
   }

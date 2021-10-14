@@ -1,13 +1,13 @@
-import Typography from '@material-ui/core/Typography'
-import cogoToast from 'cogo-toast'
 import { useForm } from 'react-hook-form'
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { useDispatch } from 'react-redux'
+import { notificationsActions } from 'src/core/useCases/notifications'
 import { texts } from 'src/i18n'
-import { variants } from 'src/styles'
 
 type Errors = ReturnType<typeof useForm>['errors']
 
 export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
+  const dispatch = useDispatch()
   const readErrors = useRef<{ [key: string]: boolean; }>({})
   readErrors.current = {}
 
@@ -33,14 +33,10 @@ export function useCatchUnreadFormErrors<T extends Errors>(errors: T): T {
       return message
     }).join('\n')
 
-    cogoToast.error(
-      // @ts-ignore
-      <Typography variant={variants.bodyRegular}>
-        {errorsMessages}
-      </Typography>,
-      { hideAfter: 5 },
-    )
-  }, [errors])
+    for (let i = 0; i < errorsMessages.length; i += 1) {
+      dispatch(notificationsActions.addAlert({ message: errorsMessages[i], severity: 'error' }))
+    }
+  }, [dispatch, errors])
 
   // eslint-disable-next-line
   return new Proxy(errors, {

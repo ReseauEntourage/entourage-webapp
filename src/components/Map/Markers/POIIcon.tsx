@@ -42,13 +42,14 @@ export function POIIcon(props: POIIconProps) {
         }}
       >
         <SvgIcon
-          component={Icon}
           style={{
             color: colors.main.white,
             fontSize,
           }}
           viewBox={`0 0 ${width} ${height}`}
-        />
+        >
+          <Icon />
+        </SvgIcon>
       </div>
     </Tooltip>
   )

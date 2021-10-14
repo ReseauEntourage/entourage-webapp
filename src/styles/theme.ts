@@ -1,7 +1,7 @@
-import { createMuiTheme } from '@material-ui/core/styles'
+import { createTheme } from '@material-ui/core/styles'
 import { colors } from './colors'
 
-export const theme = createMuiTheme({
+export const theme = createTheme({
   palette: {
     primary: {
       main: colors.main.primary,
@@ -55,6 +55,14 @@ export const theme = createMuiTheme({
       fontSize: 12,
       color: colors.main.greyishBrown,
       letterSpacing: 0,
+    },
+  },
+  overrides: {
+    MuiInputBase: {
+      root: {
+        fontWeight: 'normal',
+        fontSize: 16,
+      },
     },
   },
 })

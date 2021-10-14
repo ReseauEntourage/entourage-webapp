@@ -55,10 +55,9 @@ export function FeedEntourage(props: FeedEntourageProps) {
       <Box flexGrow="1" />
       <Box alignItems="flex-end" display="flex" flexDirection="column" justifyContent="center">
         <S.NumberContainer>
-          <S.NumberIcon
-            component={People}
-            viewBox="0 0 58 50"
-          />
+          <S.NumberIcon viewBox="0 0 58 50">
+            <People />
+          </S.NumberIcon>
           <Box>
             <Typography variant={variants.footNote}>{numberOfPeople}</Typography>
           </Box>

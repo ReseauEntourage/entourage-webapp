@@ -2,7 +2,7 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 
-import { fakeNotificationsData } from './__mocks__'
+import { createError, fakeNotificationsData } from './__mocks__'
 import { publicActions } from './notifications.actions'
 import { Alert } from './notifications.reducer'
 import { selectAlerts, selectAlertToShow } from './notifications.selectors'
@@ -68,5 +68,28 @@ describe('Notifications', () => {
 
     expect(selectAlertToShow(store.getState())).toEqual(fakeNotificationsData.alerts[0])
     expect(selectAlerts(store.getState()).length).toEqual(1)
+  })
+
+  it(`
+   Given initial state
+   When an alert is shown
+    And the alert is hidden
+   Then there should be no alert to show
+  `, async () => {
+    const store = configureStoreWithErrors({
+      initialAppState: {
+        ...defaultInitialAppState,
+        notifications: {
+          alerts: [],
+          alertToShow: createError(),
+        },
+      },
+    })
+
+    store.dispatch(publicActions.hideAlert())
+
+    await store.waitForActionEnd()
+
+    expect(selectAlertToShow(store.getState())).toEqual(null)
   })
 })
