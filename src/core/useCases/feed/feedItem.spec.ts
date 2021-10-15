@@ -9,7 +9,7 @@ import {
   selectMapPosition,
 } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
-import { selectAlerts } from '../notifications/notifications.selectors'
+import { selectAlerts } from '../notifications'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
@@ -31,7 +31,7 @@ import {
   selectStatus,
   selectEventImagesFetching,
   selectEventImages,
-  selectIsUpdatingItems,
+  selectIsUpdatingItem,
   selectFeed,
 } from './feed.selectors'
 
@@ -949,14 +949,14 @@ describe('Feed Item', () => {
       store.dispatch(publicActions.createEntourage({ entourage: fakeEvent }))
 
       // Then
-      expect(selectIsUpdatingItems(store.getState())).toEqual(true)
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
 
       expect(feedGateway.createEntourage).toHaveBeenCalledWith(fakeEvent)
 
       feedGateway.createEntourage.resolveDeferredValue()
       await store.waitForActionEnd()
 
-      expect(selectIsUpdatingItems(store.getState())).toEqual(false)
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
       // check if in list
       const feedStateAfterCreation = selectFeed(store.getState())
       expect(Object.keys(feedStateAfterCreation.items).length).toEqual(initialItemSize + 1)
@@ -990,14 +990,14 @@ describe('Feed Item', () => {
       }))
 
       // Then
-      expect(selectIsUpdatingItems(store.getState())).toEqual(true)
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
 
       expect(feedGateway.updateEntourage).toHaveBeenCalledWith(updatedEntourage.uuid, updatedEntourage)
 
       feedGateway.updateEntourage.resolveDeferredValue()
       await store.waitForActionEnd()
 
-      expect(selectIsUpdatingItems(store.getState())).toEqual(false)
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
       // check if has been updated
       const newValueInState = selectFeedItems(
         store.getState(),
@@ -1149,6 +1149,70 @@ describe('Feed Item', () => {
       await store.waitForActionEnd()
 
       expect(selectEventImagesFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed item is being created
+      When an error occurs
+      Then the feed item should not be creating
+        And an error should be added to the alert queue
+    `, async () => {
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeEvent: DTOCreateEntourageAsEvent = {
+        ...feedData,
+        metadata: {
+          ...feedData.metadata,
+          googlePlaceId: 'fake',
+          placeName: 'myPlace',
+          startsAt: new Date().toISOString(),
+          streetAddress: 'Lyon',
+        },
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      store.dispatch(publicActions.createEntourage({ entourage: fakeEvent }))
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      feedGateway.createEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed item is being updated
+      When an error occurs
+      Then the feed item should not be updating
+        And an error should be added to the alert queue
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const previousState = selectFeed(store.getState())
+      const entourageBeforeChange = previousState.items[previousState.itemsUuids[0]]
+      const updatedEntourage = {
+        ...entourageBeforeChange,
+        description: 'my new description',
+      } as FeedEntourage
+
+      feedGateway.updateEntourage.mockDeferredValueOnce(updatedEntourage)
+
+      store.dispatch(publicActions.updateEntourage({
+        entourageUuid: updatedEntourage.uuid,
+        entourage: updatedEntourage,
+      }))
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+      feedGateway.updateEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
       expect(selectAlerts(store.getState()).length).toEqual(1)
     })
   })

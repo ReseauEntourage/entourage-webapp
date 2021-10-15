@@ -3,14 +3,14 @@ import { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent, DTOUpdateEntourageAsAction,
   DTOUpdateEntourageAsEvent } from 'src/core/api'
-import { selectIsUpdatingItems, feedActions } from 'src/core/useCases/feed'
+import { selectIsUpdatingItem, feedActions } from 'src/core/useCases/feed'
 import { usePrevious } from 'src/utils/hooks'
 
 export function useCreateOrUpdateEntourage() {
   const dispatch = useDispatch()
-  const isUpdatingItems = useSelector(selectIsUpdatingItems)
-  const wasUpdatingItems = usePrevious(isUpdatingItems)
-  const hasBeenUpdated = useMemo(() => wasUpdatingItems && !isUpdatingItems, [wasUpdatingItems, isUpdatingItems])
+  const isUpdatingItem = useSelector(selectIsUpdatingItem)
+  const wasUpdatingItem = usePrevious(isUpdatingItem)
+  const hasBeenUpdated = useMemo(() => wasUpdatingItem && !isUpdatingItem, [wasUpdatingItem, isUpdatingItem])
   const router = useRouter()
 
   const onCreateSucceeded = useCallback((entourageUuid: string) => {
@@ -26,5 +26,5 @@ export function useCreateOrUpdateEntourage() {
     dispatch(feedActions.updateEntourage({ entourageUuid, entourage }))
   }, [dispatch])
 
-  return { createEntourage, updateEntourage, hasBeenUpdated, isUpdating: isUpdatingItems }
+  return { createEntourage, updateEntourage, hasBeenUpdated, isUpdating: isUpdatingItem }
 }

@@ -43,8 +43,8 @@ export function selectCurrentFeedItem(state: AppState) {
   return selectedItemUuid ? items[selectedItemUuid] : null
 }
 
-export function selectIsUpdatingItems(state: AppState) {
-  return state.feed.isUpdatingItems
+export function selectIsUpdatingItem(state: AppState) {
+  return state.feed.isUpdatingItem
 }
 
 export function selectIsUpdatingJoinStatus(state: AppState) {
