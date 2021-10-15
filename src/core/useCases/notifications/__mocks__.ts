@@ -1,18 +1,20 @@
 import { uniqIntId } from 'src/utils/misc'
 import { Alert, defaultNotificationsState, NotificationsState, Severity } from './notifications.reducer'
 
-export function createError(): Alert {
+export function createAlert(): Alert {
+  const id = uniqIntId()
   return {
-    message: `This is error n°${uniqIntId()}`,
+    message: `This is error n°${id}`,
     severity: 'error' as Severity,
+    id,
   }
 }
 
 export const fakeNotificationsData: NotificationsState = {
   ...defaultNotificationsState,
   alerts: [
-    createError(),
-    createError(),
+    createAlert(),
+    createAlert(),
   ],
   alertToShow: null,
 }

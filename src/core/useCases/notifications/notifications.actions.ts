@@ -2,7 +2,7 @@ import {
   ActionFromMapObject,
   ActionsFromMapObject,
 } from 'src/utils/types'
-import { Severity } from './notifications.reducer'
+import { Alert } from './notifications.reducer'
 
 export const NotificationsActionType = {
   ADD: 'NOTIFICATIONS/ADD',
@@ -12,10 +12,7 @@ export const NotificationsActionType = {
 
 // ------------------------------------------------------------------------
 
-function addAlert(payload: {
-  severity: Severity;
-  message: string;
-}) {
+function addAlert(payload: Pick<Alert, 'severity' | 'message'>) {
   return {
     type: NotificationsActionType.ADD,
     payload,

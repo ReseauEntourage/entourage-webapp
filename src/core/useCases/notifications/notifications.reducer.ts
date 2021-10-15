@@ -1,3 +1,5 @@
+import { constants } from 'src/constants'
+import { uniqIntId } from 'src/utils/misc'
 import { NotificationsActionType, NotificationAction } from './notifications.actions'
 
 export type Severity = 'error'
@@ -6,6 +8,7 @@ export type Severity = 'error'
 | 'warning'
 
 export interface Alert {
+  id: number;
   message: string;
   severity: Severity;
 }
@@ -26,12 +29,20 @@ export function notificationsReducer(
 ): NotificationsState {
   switch (action.type) {
     case NotificationsActionType.ADD: {
+      if (state.alerts.length < constants.NOTIFICATIONS_QUEUE_MAX) {
+        return {
+          ...state,
+          alerts: [
+            ...state.alerts,
+            {
+              ...action.payload,
+              id: uniqIntId(),
+            },
+          ],
+        }
+      }
       return {
         ...state,
-        alerts: [
-          ...state.alerts,
-          action.payload,
-        ],
       }
     }
 
