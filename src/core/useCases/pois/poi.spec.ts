@@ -10,6 +10,7 @@ import {
   selectMapPosition,
 } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
+import { selectAlerts } from '../notifications/notifications.selectors'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
 import { Cities, EntourageCities } from 'src/utils/types'
@@ -532,6 +533,48 @@ describe('POIs', () => {
           distance: constants.POI_DISTANCE,
         },
       },
+    })
+  })
+  describe('Manage errors', () => {
+    it(`
+      Given POI details is retrieving
+      When an error occurs
+      Then POIs details should not be fetching
+        And an error should be added to the alert queue`, async () => {
+      const poisGateway = new TestPOIsGateway()
+
+      const store = configureStoreWithPOIs({
+        dependencies: { poisGateway },
+        initialAppState: {
+          pois: {
+            ...fakePOIsData,
+            isIdle: false,
+          },
+        },
+      })
+      const poiDetailsFromGateway = {
+        ...createPOIDetails(),
+        uuid: 'abc',
+      }
+
+      const deferredValueRetrievePOI = {
+        poiDetails: poiDetailsFromGateway,
+      }
+
+      const selectedPOIId = poiDetailsFromGateway.uuid
+
+      poisGateway.retrievePOI.mockDeferredValueOnce(deferredValueRetrievePOI)
+
+      store.dispatch(publicActions.init())
+      store.dispatch(publicActions.setCurrentPOIUuid(selectedPOIId))
+      expect(selectPOIDetailsIsFetching(store.getState())).toEqual(true)
+
+      poisGateway.retrievePOI.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectPOIDetailsIsFetching(store.getState())).toEqual(false)
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
     })
   })
 })

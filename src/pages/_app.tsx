@@ -17,6 +17,7 @@ import { api, LoggedUser } from 'src/core/api'
 import { bootstrapStore } from 'src/core/boostrapStore'
 import { env } from 'src/core/env'
 import { initSentry } from 'src/core/sentry'
+import { createAnonymousUser } from 'src/core/services'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
 import { theme } from 'src/styles'
@@ -50,15 +51,24 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     // use to get token, either anonymous token or authenticated token
     if (isSSR) {
-      const meData = await api.ssr(appContext.ctx).request({
-        name: '/users/me GET',
-      })
+      try {
+        const meData = await api.ssr(appContext.ctx).request({
+          name: '/users/me GET',
+        })
 
-      // me = meData.data.user
-      me = {
-        data: {
-          user: meData.data.user,
-        },
+        me = {
+          data: {
+            user: meData.data.user,
+          },
+        }
+      } catch (err) {
+        if (err?.response?.status === 401) {
+          try {
+            await createAnonymousUser(appContext.ctx)
+          } catch (error) {
+            console.error(error)
+          }
+        }
       }
     }
 

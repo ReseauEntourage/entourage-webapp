@@ -46,15 +46,13 @@ export function ActionMarker(props: Props) {
     />
   )
 
-  const tooltipMarker = (
-    <Tooltip title={tooltip}>
-      {marker}
-    </Tooltip>
-  )
-
   return (
     <BaseMarker size={size}>
-      {tooltip ? tooltipMarker : marker}
+      {tooltip ? (
+        <Tooltip title={tooltip}>
+          {marker}
+        </Tooltip>
+      ) : marker}
     </BaseMarker>
   )
 }

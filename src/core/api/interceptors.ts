@@ -2,7 +2,6 @@ import { AxiosInstance } from 'axios'
 import humps from 'humps'
 import { env } from 'src/core/env'
 import { getTokenFromCookies } from 'src/core/services'
-import { notifServerError } from 'src/utils/misc'
 
 export function addAxiosInterceptors(client: AxiosInstance) {
   function getUserToken(): string | null {
@@ -32,23 +31,13 @@ export function addAxiosInterceptors(client: AxiosInstance) {
       }
     },
     (error) => {
-      console.error(error)
-
       if (error.response && error.response.status >= 500) {
         const errorMessage = `\n${error.response.status} SERVER ERROR: ${error.request.path}\n`
         console.error(errorMessage)
         throw errorMessage
       }
 
-      const timer = setTimeout(() => {
-        notifServerError(error)
-      }, 500)
-
-      // eslint-disable-next-line
-      error.stopPropagation = () => {
-        clearTimeout(timer)
-      }
-
+      console.error(error)
       throw error
     },
   )

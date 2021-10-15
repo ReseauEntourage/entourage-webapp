@@ -76,6 +76,7 @@ export const texts = {
     },
   },
   labels: {
+    error: 'Une erreur est survenue, veuillez ressayer plus tard.',
     save: 'Enregistrer',
     chooseImage: 'Choisir une image',
     changeImage: 'Changer d\'image',

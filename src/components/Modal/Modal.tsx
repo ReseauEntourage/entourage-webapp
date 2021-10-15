@@ -67,9 +67,13 @@ export function Modal(props: ModalProps) {
   return (
     <Dialog
       aria-labelledby="form-dialog-title"
-      disableBackdropClick={true}
       disableEscapeKeyDown={!showCloseButton}
-      onClose={onClose}
+      onClose={(event: {}, reason) => {
+        if (reason === 'backdropClick') {
+          return
+        }
+        onClose()
+      }}
       open={true}
     >
       <S.GlobalStyle />

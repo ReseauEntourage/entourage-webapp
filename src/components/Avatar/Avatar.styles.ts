@@ -7,7 +7,7 @@ import { colors, theme } from 'src/styles'
 export type Size = 'small' | 'large'
 
 export const iconSizes: Record<Size, SvgIconProps['fontSize']> = {
-  small: 'default',
+  small: 'medium',
   large: 'large',
 }
 

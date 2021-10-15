@@ -65,6 +65,13 @@ export function messagesReducer(
   action: MessagesAction | AuthUserAction,
 ): MessagesState {
   switch (action.type) {
+    case MessagesActionType.RETRIEVE_CONVERSATIONS: {
+      return {
+        ...state,
+        page: 1,
+      }
+    }
+
     case MessagesActionType.RETRIEVE_CONVERSATIONS_STARTED: {
       return {
         ...state,
@@ -106,10 +113,10 @@ export function messagesReducer(
       }
     }
 
-    case MessagesActionType.RETRIEVE_CONVERSATIONS: {
+    case MessagesActionType.RETRIEVE_CONVERSATIONS_FAILED: {
       return {
         ...state,
-        page: 1,
+        fetching: false,
       }
     }
 
@@ -186,6 +193,13 @@ export function messagesReducer(
           [action.payload.conversationUuid]: uniqMessages,
         },
         conversations: mutatedConversations,
+        messagesFetching: false,
+      }
+    }
+
+    case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_FAILED: {
+      return {
+        ...state,
         messagesFetching: false,
       }
     }

@@ -3,7 +3,8 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { createUser } from '../authUser/__mocks__'
 import { defaultAuthUserState } from '../authUser/authUser.reducer'
-import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
+import { selectAlerts } from '../notifications/notifications.selectors'
+import { defaultInitialAppState, PartialAppState, reducers } from '../reducers'
 import { uniqIntId } from 'src/utils/misc'
 import { TestMessagesGateway } from './TestMessagesGateway'
 import {
@@ -14,13 +15,14 @@ import {
 } from './__mocks__'
 
 import { publicActions } from './messages.actions'
+import { MessagesErrorNoAcceptedInConversation } from './messages.errors'
 import { ConversationMessage } from './messages.reducer'
 import { messagesSaga } from './messages.saga'
 import {
-  selectConversationList,
-  selectCurrentConversation,
-  selectConversationMessagesIsFetching,
   selectCanFetchMoreMessages,
+  selectConversationList,
+  selectConversationMessagesIsFetching,
+  selectCurrentConversation,
   selectCurrentConversationMessages,
   selectLastMessageDateFromConversation,
   selectNumberOfUnreadConversations,
@@ -202,7 +204,7 @@ describe('Conversation', () => {
     const selectedConversationId = 'abc'
 
     messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
-    messagesGateway.retrieveConversationMessages.rejectDeferredValue()
+    messagesGateway.retrieveConversationMessages.rejectDeferredValue(new MessagesErrorNoAcceptedInConversation())
 
     store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
 
@@ -210,7 +212,7 @@ describe('Conversation', () => {
 
     expect(messagesGateway.retrieveConversationMessages).toHaveBeenCalledWith({ entourageUuid: selectedConversationId })
 
-    expect(selectCurrentConversationMessages(store.getState())).toEqual(null)
+    expect(selectCurrentConversationMessages(store.getState())).toEqual([])
 
     expect(selectCurrentConversation(store.getState())).toEqual({
       ...fakeMessagesData.conversations[selectedConversationId],
@@ -928,6 +930,202 @@ describe('Conversation', () => {
       },
       storeConversation,
     ])
+  })
+  describe('Manage errors', () => {
+    it(`
+      Given conversation messages are retrieving
+      When an error occurs
+      Then conversation messages should not be fetching
+        And an error should be added to the alert queue
+  `, async () => {
+      const messagesGateway = new TestMessagesGateway()
+
+      const store = configureStoreWithMessages({
+        dependencies: { messagesGateway },
+        initialAppState: {
+          messages: {
+            ...fakeMessagesData,
+            selectedConversationUuid: 'abc',
+          },
+        },
+      })
+
+      messagesGateway.retrieveConversationMessages.mockDeferredValueOnce({ conversationMessages: [] })
+
+      store.dispatch(publicActions.retrieveConversationMessages())
+
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
+      messagesGateway.retrieveConversationMessages.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+
+      await store.waitForActionEnd()
+
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given older conversation messages are retrieving
+      When an error occurs
+      Then conversation messages should not be fetching
+        And an error should be added to the alert queue
+  `, async () => {
+      const messagesGateway = new TestMessagesGateway()
+
+      const messagesFromStore = []
+      for (let i = 0; i < 25; i += 1) {
+        messagesFromStore.push(createConversationMessages()[0])
+      }
+
+      messagesFromStore[messagesFromStore.length - 1].createdAt = '1998-04-22T06:00:00Z'
+
+      const store = configureStoreWithMessages({
+        dependencies: { messagesGateway },
+        initialAppState: {
+          messages: {
+            ...fakeMessagesData,
+            selectedConversationUuid: 'abc',
+            conversations: {
+              abc: createConversationItem(),
+            },
+            conversationsMessages: {
+              abc: messagesFromStore,
+            },
+            isIdle: false,
+          },
+        },
+      })
+
+      await store.waitForActionEnd()
+
+      const messagesFromGateway = []
+      for (let i = 0; i < 25; i += 1) {
+        messagesFromGateway.push(createConversationMessages()[0])
+      }
+
+      messagesGateway.retrieveConversationMessages.mockDeferredValueOnce({ conversationMessages: [] })
+
+      const lastMessageDate = selectLastMessageDateFromConversation(store.getState())
+
+      store.dispatch(publicActions.retrieveOlderConversationMessages({
+        before: lastMessageDate,
+      }))
+
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
+      messagesGateway.retrieveConversationMessages.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+
+      await store.waitForActionEnd()
+
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given conversation details are retrieving
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const messagesGateway = new TestMessagesGateway()
+
+      const store = configureStoreWithMessages({
+        dependencies: { messagesGateway },
+        initialAppState: {
+          messages: {
+            ...fakeMessagesData,
+            isIdle: false,
+          },
+        },
+      })
+
+      const deferredValueRetrieveConversations = {
+        conversationMessages: [],
+      }
+
+      const deferredValueConversationDetails = createConversationItem()
+
+      const selectedConversationId = deferredValueConversationDetails.uuid
+
+      messagesGateway.retrieveConversationMessages.mockDeferredValueOnce(deferredValueRetrieveConversations)
+
+      messagesGateway.retrieveConversation.mockDeferredValueOnce(deferredValueConversationDetails)
+
+      store.dispatch(publicActions.setCurrentConversationUuid(selectedConversationId))
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(true)
+
+      messagesGateway.retrieveConversation.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectConversationMessagesIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given message is sending
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const messagesGateway = new TestMessagesGateway()
+
+      const storeConversation = createConversationItem()
+
+      const storeMessages = []
+      for (let i = 0; i < 50; i += 1) {
+        storeMessages.push(createConversationMessages()[0])
+      }
+
+      const loggedInUser = createUser()
+
+      const store = configureStoreWithMessages({
+        dependencies: { messagesGateway },
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user: loggedInUser,
+          },
+          messages: {
+            ...fakeMessagesData,
+            selectedConversationUuid: 'abc',
+            conversations: {
+              abc: storeConversation,
+            },
+            conversationsMessages: {
+              abc: storeMessages,
+            },
+            isIdle: false,
+          },
+        },
+      })
+
+      const newMessageParams = { message: 'Bonsoir' }
+
+      const newMessageEntity: ConversationMessage = {
+        content: newMessageParams.message,
+        createdAt: '2021-04-22T06:00:00Z',
+        id: uniqIntId(),
+        user: {
+          avatarUrl: loggedInUser.avatarUrl,
+          displayName: `${loggedInUser.firstName} ${loggedInUser.lastName[0]}`,
+          id: loggedInUser.id,
+          partner: null,
+        },
+      }
+
+      messagesGateway.sendMessage.mockDeferredValueOnce()
+      messagesGateway.retrieveConversationMessages.mockDeferredValueOnce({
+        conversationMessages: [
+          ...storeMessages,
+          newMessageEntity,
+        ],
+      })
+
+      store.dispatch(publicActions.sendMessage(newMessageParams))
+
+      messagesGateway.sendMessage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      messagesGateway.retrieveConversationMessages.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
   })
 })
 

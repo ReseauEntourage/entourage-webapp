@@ -8,6 +8,7 @@ import { defaultLocationState } from '../location/location.reducer'
 import { messagesSaga, selectNumberOfUnreadConversations } from '../messages'
 import { TestMessagesGateway } from '../messages/TestMessagesGateway'
 import { fakeMessagesData } from '../messages/__mocks__'
+import { selectAlerts } from '../notifications/notifications.selectors'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
 import { assertIsDefined } from 'src/utils/misc'
@@ -134,6 +135,42 @@ function configureStoreWithUserAccount(isFirstSignIn?: boolean, isActiveUser?: b
     firebaseService,
     resolveAllDeferredValue,
     user,
+  }
+}
+
+const createUserWithUpdates = () => {
+  const user = createUser(false, false)
+
+  const newUserData = {
+    about: 'About test',
+    avatarKey: '/avatar.png',
+    email: 'test@gmail.com',
+    firstName: 'John',
+    lastName: 'Doe',
+  }
+
+  const updatedUser = {
+    ...user,
+    ...newUserData,
+  }
+
+  const newAddress = {
+    googlePlaceId: 'placeId',
+    googleSessionToken: '12345',
+  }
+
+  assertIsDefined(user.address)
+
+  const updatedAddress = {
+    ...user.address,
+  }
+
+  return {
+    user,
+    newUserData,
+    newAddress,
+    updatedUser,
+    updatedAddress,
   }
 }
 
@@ -374,7 +411,7 @@ describe('Auth User', () => {
   })
 
   it(`
-    Given user as an account
+    Given user has an account
     When user trigger phone lookup
     Then step should be password after request succeeded
       And login should not be completed
@@ -1263,38 +1300,14 @@ describe('Auth User', () => {
   })
 
   describe('Update user profile', () => {
-    const user = createUser(false, false)
-
-    const newUserData = {
-      about: 'About test',
-      avatarKey: '/avatar.png',
-      email: 'test@gmail.com',
-      firstName: 'John',
-      lastName: 'Doe',
-    }
-
-    const updatedUser = {
-      ...user,
-      ...newUserData,
-    }
-
-    const newAddress = {
-      googlePlaceId: 'placeId',
-      googleSessionToken: '12345',
-    }
-
-    assertIsDefined(user.address)
-
-    const updatedAddress = {
-      ...user.address,
-    }
-
     it(`
       Given initial state
          And user is logged in
       When no action is triggered
       Then the user should not be updating
   `, () => {
+      const { user } = createUserWithUpdates()
+
       const authUserGateway = new TestAuthUserGateway()
 
       const store = configureStoreWithAuthUser({
@@ -1323,6 +1336,8 @@ describe('Auth User', () => {
         And the update address gateway should not have been called
         And the user data should be updated
     `, async () => {
+      const { user, newUserData, updatedUser } = createUserWithUpdates()
+
       const authUserGateway = new TestAuthUserGateway()
 
       const store = configureStoreWithAuthUser({
@@ -1371,6 +1386,8 @@ describe('Auth User', () => {
         And the position filter should be set to the user's new address with default zoom value
         And the map position should be set to the user's new address with default zoom value
     `, async () => {
+      const { user, newUserData, updatedUser, newAddress, updatedAddress } = createUserWithUpdates()
+
       const authUserGateway = new TestAuthUserGateway()
 
       const store = configureStoreWithAuthUser({
@@ -1501,6 +1518,224 @@ describe('Auth User', () => {
       expect(messagesGateway.retrieveConversations).toHaveBeenNthCalledWith(1, {
         page: 1,
       })
+    })
+  })
+
+  describe('Manage errors', () => {
+    it(`
+     Given user is triggering phone lookup
+     When an error occurs
+     Then the user should not be logging
+        And an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.phoneLookUp.mockDeferredValueOnce(PhoneLookUpResponse.PASSWORD_NEEDED)
+
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+
+      store.dispatch(publicActions.phoneLookUp('0600000000'))
+
+      expect(selectIsLogging(store.getState())).toEqual(true)
+
+      authUserGateway.phoneLookUp.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsLogging(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is triggering account creation
+      When an error occurs
+      Then the user should not be logging
+        And an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+
+      const deferredValues = {
+        createAccount: null,
+        loginWithSMSCode: null,
+        definePassword: null,
+      }
+
+      authUserGateway.createAccount.mockDeferredValueOnce(deferredValues.createAccount)
+
+      const store = configureStoreWithAuthUser({
+        dependencies: { authUserGateway },
+      })
+      const phone = '0700000000'
+
+      store.dispatch(publicActions.createAccount(phone))
+
+      expect(selectIsLogging(store.getState())).toEqual(true)
+
+      authUserGateway.createAccount.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsLogging(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is logging in with password
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.loginWithPassword.mockDeferredValueOnce(createUser())
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+
+      const phone = '0600000000'
+      const password = 'xxx'
+
+      store.dispatch(publicActions.loginWithPassword({ phone, password }))
+
+      authUserGateway.loginWithPassword.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is logging in with SMS code
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.loginWithSMSCode.mockDeferredValueOnce(createUser())
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+
+      const phone = '0600000000'
+      const SMSCode = 'xxx'
+
+      store.dispatch(publicActions.loginWithSMSCode({ phone, SMSCode }))
+
+      authUserGateway.loginWithSMSCode.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is defining password
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.definePassword.mockDeferredValueOnce(null)
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+
+      const password = 'abcdefghi'
+
+      store.dispatch(publicActions.createPassword({
+        password,
+        passwordConfirmation: password,
+      }))
+
+      authUserGateway.definePassword.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is resetting password
+      When an error occurs
+      Then an error should be added to the alert queue
+  `, async () => {
+      const authUserGateway = new TestAuthUserGateway()
+      authUserGateway.resetPassword.mockDeferredValueOnce(null)
+
+      const store = configureStoreWithAuthUser({ dependencies: { authUserGateway } })
+
+      store.dispatch(publicActions.resetPassword({ phone: '0600000000' }))
+
+      authUserGateway.resetPassword.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is updating his profile
+      When an error occurs
+      Then user should not be updating
+        And an error should be added to the alert queue
+    `, async () => {
+      const { user, newUserData, updatedUser } = createUserWithUpdates()
+
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway },
+      })
+
+      authUserGateway.updateMe.mockDeferredValueOnce(updatedUser)
+      authUserGateway.updateMeAddress.mockDeferredValueOnce(null)
+
+      store.dispatch(publicActions.updateUser({
+        ...newUserData,
+      }))
+
+      expect(selectUserIsUpdating(store.getState())).toBe(true)
+
+      authUserGateway.updateMe.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      authUserGateway.updateMeAddress.resolveDeferredValue()
+
+      await store.waitForActionEnd()
+
+      expect(selectUserIsUpdating(store.getState())).toBe(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is updating his profile with address
+      When an error occurs
+      Then user should not be updating
+        And an error should be added to the alert queue
+    `, async () => {
+      const { user, newUserData, updatedUser, newAddress } = createUserWithUpdates()
+      const authUserGateway = new TestAuthUserGateway()
+
+      const store = configureStoreWithAuthUser({
+        initialAppState: {
+          authUser: {
+            ...defaultAuthUserState,
+            user,
+          },
+          location: {
+            ...defaultLocationState,
+          },
+        },
+        dependencies: { authUserGateway },
+      })
+
+      authUserGateway.updateMe.mockDeferredValueOnce(updatedUser)
+      authUserGateway.updateMeAddress.mockDeferredValueOnce(null)
+
+      store.dispatch(publicActions.updateUser({
+        ...newUserData,
+        address: newAddress,
+      }))
+
+      expect(selectUserIsUpdating(store.getState())).toBe(true)
+
+      authUserGateway.updateMe.resolveDeferredValue()
+      authUserGateway.updateMeAddress.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+
+      await store.waitForActionEnd()
+
+      expect(selectUserIsUpdating(store.getState())).toBe(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
     })
   })
 })

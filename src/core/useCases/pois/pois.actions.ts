@@ -11,8 +11,10 @@ export const POIsActionType = {
   RETRIEVE_POIS: 'POIS/RETRIEVE_POIS',
   RETRIEVE_POIS_STARTED: 'POIS/RETRIEVE_POIS_STARTED',
   RETRIEVE_POIS_SUCCEEDED: 'POIS/RETRIEVE_POIS_SUCCEEDED',
+  RETRIEVE_POIS_FAILED: 'POIS/RETRIEVE_POIS_FAILED',
   RETRIEVE_POI_DETAILS_STARTED: 'POIS/RETRIEVE_POI_DETAILS_STARTED',
   RETRIEVE_POI_DETAILS_SUCCEEDED: 'POIS/RETRIEVE_POI_DETAILS_SUCCEEDED',
+  RETRIEVE_POI_DETAILS_FAILED: 'POIS/RETRIEVE_POI_DETAILS_FAILED',
   SET_CURRENT_POI_UUID: 'POIS/SET_CURRENT_POI_UUID',
   REMOVE_CURRENT_POI_UUID: 'POIS/REMOVE_CURRENT_POI_UUID',
   TOGGLE_POIS_FILTER: 'POIS/TOGGLE_POIS_FILTER',
@@ -58,6 +60,12 @@ function retrievePOIsSuccess(
   }
 }
 
+function retrievePOIsFail() {
+  return {
+    type: POIsActionType.RETRIEVE_POIS_FAILED,
+  }
+}
+
 function retrievePOIDetailsStarted() {
   return {
     type: POIsActionType.RETRIEVE_POI_DETAILS_STARTED,
@@ -72,6 +80,12 @@ function retrievePOIDetailsSuccess(
   return {
     type: POIsActionType.RETRIEVE_POI_DETAILS_SUCCEEDED,
     payload,
+  }
+}
+
+function retrievePOIDetailsFail() {
+  return {
+    type: POIsActionType.RETRIEVE_POI_DETAILS_FAILED,
   }
 }
 
@@ -116,8 +130,10 @@ export const publicActions = {
 const privateActions = {
   retrievePOIsStarted,
   retrievePOIsSuccess,
+  retrievePOIsFail,
   retrievePOIDetailsStarted,
   retrievePOIDetailsSuccess,
+  retrievePOIDetailsFail,
 }
 
 export const actions = {
