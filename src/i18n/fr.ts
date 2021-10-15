@@ -128,7 +128,7 @@ export const texts = {
         noActions: {
           modal: {
             title: 'On dirait que c\'est calme ici !',
-            text: 'Déplacez la carte pour trouver demandes, des contributions ou des activités du réseau. Vous aussi, vous pouvez créer une action solidaire : appuyez sur le bouton "Passer à l\'action" dans le menu en haut de l\'écran',
+            text: 'Déplacez la carte pour trouver des demandes, des contributions ou des activités du réseau. Vous aussi, vous pouvez créer une action solidaire !',
           },
           list: 'C\'est tout pour les actions solidaires dans ce rayon autour de vous...',
         },
