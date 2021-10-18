@@ -68,8 +68,6 @@ export function Actions(props: ActionsProps) {
 
   const onClickUpdateEvent = useCallback(() => {
     if (feedItem.groupType === 'outing') {
-      // FIX ME: will be fixed with uprade of ts
-      // eslint-disable-next-line prefer-destructuring
       const metadata = feedItem.metadata as FeedMetadata<'outing'>
       openModal(
         <ModalEditEvent

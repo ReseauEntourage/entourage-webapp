@@ -23,6 +23,7 @@ import {
 import { ImageWithFallback } from 'src/components/ImageWithFallback'
 import { Modal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
+import { DTOCreateEntourageAsEvent, DTOUpdateEntourageAsEvent } from 'src/core/api'
 import { feedActions, selectEventImages, selectEventImagesFetching } from 'src/core/useCases/feed'
 import { useCreateOrUpdateEntourage } from 'src/hooks/useCreateOrUpdateEntourage'
 import { texts } from 'src/i18n'
@@ -137,7 +138,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         ? await getLocationFromPlace(autocompletePlace)
         : null
 
-      const event = {
+      const event: DTOUpdateEntourageAsEvent = {
         title,
         description,
         location: locationMeta?.location,
@@ -166,7 +167,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
         placeName,
       } = await getLocationFromPlace(autocompletePlace)
 
-      const event = {
+      const event: DTOCreateEntourageAsEvent = {
         title,
         description,
         groupType: 'outing',

@@ -90,8 +90,6 @@ export function FeedItemCards() {
 
   if (feedItem.groupType === 'outing') {
     const { author, title, description, uuid, online, eventUrl } = feedItem
-    // FIX ME: will be fixed with uprade of ts
-    // eslint-disable-next-line prefer-destructuring
     const metadata = feedItem.metadata as FeedMetadata<'outing'>
     const { partner } = author
 
