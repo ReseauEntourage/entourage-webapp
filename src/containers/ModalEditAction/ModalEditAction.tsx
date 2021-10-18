@@ -7,8 +7,13 @@ import React, { useCallback, useEffect } from 'react'
 import { Label, RowFields, Select, TextField } from 'src/components/Form'
 import { AutocompleteFormField, AutocompleteFormFieldKey, GoogleMapLocation } from 'src/components/GoogleMapLocation'
 import { Modal } from 'src/components/Modal'
-import { FeedDisplayCategory, FeedEntourageType } from 'src/core/api'
-import { useMutateCreateEntourages, useMutateUpdateEntourages } from 'src/core/store'
+import {
+  DTOCreateEntourageAsAction,
+  DTOUpdateEntourageAsAction,
+  FeedDisplayCategory,
+  FeedEntourageType,
+} from 'src/core/api'
+import { useCreateOrUpdateEntourage } from 'src/hooks/useCreateOrUpdateEntourage'
 import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getLocationFromPlace } from 'src/utils/misc'
@@ -51,20 +56,21 @@ interface ModalEditActionProps {
     displayAddress: string;
     displayCategory: string;
     entourageType: string;
-    id: number;
+    uuid: string;
     title: string;
   };
 }
 
 export function ModalEditAction(props: ModalEditActionProps) {
-  const { action: existedAction } = props
+  const { action: existingAction } = props
 
-  const isCreation = !existedAction
+  const { createEntourage, updateEntourage, hasBeenUpdated } = useCreateOrUpdateEntourage()
+  const isCreation = !existingAction
 
   const defaultValues = {
-    category: existedAction ? `${existedAction.entourageType}:${existedAction.displayCategory}` : '',
-    description: existedAction?.description,
-    title: existedAction?.title,
+    category: existingAction ? `${existingAction.entourageType}:${existingAction.displayCategory}` : '',
+    description: existingAction?.description,
+    title: existingAction?.title,
   }
 
   const {
@@ -72,14 +78,11 @@ export function ModalEditAction(props: ModalEditActionProps) {
     setDisplayAddress,
     getCurrentLocation,
     form,
-  } = useGetCurrentPosition<FormField>(defaultValues as FormField, existedAction?.displayAddress ?? '')
+  } = useGetCurrentPosition<FormField>(defaultValues as FormField, existingAction?.displayAddress ?? '')
 
   const { register, trigger, getValues, setValue } = form
   const modalTexts = texts.content.modalEditAction
   const typesTexts = texts.types
-
-  const [createEntourage] = useMutateCreateEntourages()
-  const [updateEntourage] = useMutateUpdateEntourages()
 
   const onValidate = useCallback(async () => {
     if (!await trigger()) return false
@@ -93,56 +96,39 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
     const { displayCategory, entourageType } = parseCategoryValue(plainCategory)
 
-    if (existedAction) {
+    if (existingAction) {
       const locationMeta = autocompletePlace
         ? await getLocationFromPlace(autocompletePlace)
         : undefined
 
-      const action = {
-        id: existedAction.id,
+      const action: DTOUpdateEntourageAsAction = {
         title,
         description,
         displayCategory,
         entourageType,
         location: locationMeta?.location,
-        metadata: {
-          googlePlaceId: locationMeta?.googlePlaceId,
-          placeName: locationMeta?.placeName,
-          streetAddress: locationMeta?.streetAddress,
-        },
       }
 
       try {
-        await updateEntourage(action)
+        await updateEntourage(existingAction.uuid, action)
       } catch (error) {
         return false
       }
     } else {
       const locationMeta = await getLocationFromPlace(autocompletePlace)
 
-      const action = {
+      const action: DTOCreateEntourageAsAction = {
         title,
         description,
         displayCategory,
         entourageType,
         location: locationMeta?.location,
-        metadata: {
-          googlePlaceId: locationMeta?.googlePlaceId,
-          placeName: locationMeta?.placeName,
-          streetAddress: locationMeta?.streetAddress,
-        },
         public: true,
       }
-
-      try {
-        await createEntourage(action)
-      } catch (error) {
-        return false
-      }
+      createEntourage(action)
     }
-
-    return true
-  }, [createEntourage, existedAction, getValues, updateEntourage, trigger])
+    return false
+  }, [existingAction, getValues, updateEntourage, trigger, createEntourage])
 
   useEffect(() => {
     register({ name: AutocompleteFormFieldKey as FormFieldKey })
@@ -167,6 +153,7 @@ export function ModalEditAction(props: ModalEditActionProps) {
 
   return (
     <Modal
+      closeOnNextRender={hasBeenUpdated}
       onValidate={onValidate}
       title={isCreation ? modalTexts.titleCreate : modalTexts.titleUpdate}
       validateLabel={isCreation ? modalTexts.validateLabelCreate : modalTexts.validateLabelUpdate}

@@ -1,6 +1,7 @@
-import { FeedJoinStatus } from 'src/core/api'
+import { FeedJoinStatus, DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent, DTOUpdateEntourageAsAction,
+  DTOUpdateEntourageAsEvent } from 'src/core/api'
 import { ActionFromMapObject, ActionsFromMapObject, FilterEntourageType, FilterFeedCategory } from 'src/utils/types'
-import { FeedState } from './feed.reducer'
+import { FeedState, FeedEntourage } from './feed.reducer'
 
 export const FeedActionType = {
   INIT_FEED: 'FEED/INIT_FEED',
@@ -17,6 +18,12 @@ export const FeedActionType = {
   SET_CURRENT_ITEM_UUID: 'FEED/SET_CURRENT_ITEM_UUID',
   INSERT_FEED_ITEM: 'FEED/INSERT_FEED_ITEM',
   REMOVE_CURRENT_ITEM_UUID: 'FEED/REMOVE_CURRENT_ITEM_UUID',
+  CREATE_ENTOURAGE: 'FEED/CREATE_ENTOURAGE',
+  CREATE_ENTOURAGE_SUCCEEDED: 'FEED/CREATE_ENTOURAGE_SUCCEEDED',
+  CREATE_ENTOURAGE_FAILED: 'FEED/CREATE_ENTOURAGE_FAILED',
+  UPDATE_ENTOURAGE: 'FEED/UPDATE_ENTOURAGE',
+  UPDATE_ENTOURAGE_SUCCEEDED: 'FEED/UPDATE_ENTOURAGE_SUCCEEDED',
+  UPDATE_ENTOURAGE_FAILED: 'FEED/UPDATE_ENTOURAGE_FAILED',
   JOIN_ENTOURAGE: 'FEED/JOIN_ENTOURAGE',
   JOIN_ENTOURAGE_SUCCEEDED: 'FEED/JOIN_ENTOURAGE_SUCCEEDED',
   JOIN_ENTOURAGE_FAILED: 'FEED/JOIN_ENTOURAGE_FAILED',
@@ -138,6 +145,52 @@ function insertFeedItem(payload: FeedState['items'][string]) {
 function removeCurrentFeedItemUuid() {
   return {
     type: FeedActionType.REMOVE_CURRENT_ITEM_UUID,
+  }
+}
+
+function createEntourage(payload: {
+  entourage: DTOCreateEntourageAsAction | DTOCreateEntourageAsEvent;
+  onCreateSucceeded?: (entourageUuid: string) => void;
+}) {
+  return {
+    type: FeedActionType.CREATE_ENTOURAGE,
+    payload,
+  }
+}
+
+function createEntourageSucceeded(payload: { entourage: FeedEntourage; }) {
+  return {
+    type: FeedActionType.CREATE_ENTOURAGE_SUCCEEDED,
+    payload,
+  }
+}
+
+function createEntourageFailed() {
+  return {
+    type: FeedActionType.CREATE_ENTOURAGE_FAILED,
+  }
+}
+
+function updateEntourage(payload: {
+  entourageUuid: string;
+  entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent;
+}) {
+  return {
+    type: FeedActionType.UPDATE_ENTOURAGE,
+    payload,
+  }
+}
+
+function updateEntourageSucceeded(payload: { entourage: FeedEntourage; }) {
+  return {
+    type: FeedActionType.UPDATE_ENTOURAGE_SUCCEEDED,
+    payload,
+  }
+}
+
+function updateEntourageFailed() {
+  return {
+    type: FeedActionType.UPDATE_ENTOURAGE_FAILED,
   }
 }
 
@@ -278,6 +331,8 @@ export const publicActions = {
   retrieveFeedNextPage,
   updateItem,
   setCurrentFeedItemUuid,
+  createEntourage,
+  updateEntourage,
   joinEntourage,
   leaveEntourage,
   closeEntourage,
@@ -296,6 +351,10 @@ const privateActions = {
   insertFeedItem,
   retrieveFeedNextPageSuccess,
   retrieveFeedNextPageFail,
+  createEntourageSucceeded,
+  createEntourageFailed,
+  updateEntourageSucceeded,
+  updateEntourageFailed,
   joinEntourageSucceeded,
   joinEntourageFailed,
   leaveEntourageSucceeded,

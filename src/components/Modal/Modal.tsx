@@ -25,6 +25,7 @@ interface BasicModalProps extends BaseProps {
   validate?: boolean;
   validateLabel?: string;
   closeOnNextRender?: boolean;
+  mustWaiting?: boolean;
 }
 
 interface ModalActionsProps extends BaseProps {
@@ -52,6 +53,7 @@ export function Modal(props: ModalProps) {
     showCloseButton,
     closeOnNextRender,
     actions,
+    mustWaiting,
   } = { ...defaultProps, ...props }
 
   const { onClose } = useModalContext()
@@ -112,6 +114,7 @@ export function Modal(props: ModalProps) {
             <DefaultActions
               cancel={cancel}
               cancelLabel={cancelLabel}
+              mustWaiting={mustWaiting}
               onClose={onClose}
               onValidate={onValidate}
               validate={validate}
@@ -127,6 +130,7 @@ export function Modal(props: ModalProps) {
 interface DefaultActionsProps {
   onValidate?: () => void | boolean | Promise<void | boolean>;
   onClose?: () => void;
+  mustWaiting?: boolean;
   cancel: boolean;
   cancelLabel: string;
   validate: boolean;
@@ -141,6 +145,7 @@ function DefaultActions(props: DefaultActionsProps) {
     cancelLabel,
     onClose,
     onValidate: onValidateProp,
+    mustWaiting,
   } = props
 
   const [loading, setLoading] = useDelayLoading(false)
@@ -172,7 +177,7 @@ function DefaultActions(props: DefaultActionsProps) {
         </Button>
       )}
       {validate && (
-        <Button color="primary" loading={loading} onClick={onValidate}>
+        <Button color="primary" loading={mustWaiting ?? loading} onClick={onValidate}>
           {validateLabel}
         </Button>
       )}

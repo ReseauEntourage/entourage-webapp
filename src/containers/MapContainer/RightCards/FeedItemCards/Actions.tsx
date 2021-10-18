@@ -12,6 +12,7 @@ import { feedActions, selectStatus, RequestStatus, selectIsUpdatingStatus, FeedE
 import { AppState } from 'src/core/useCases/reducers'
 import { texts } from 'src/i18n'
 import { assertIsDefined } from 'src/utils/misc'
+import { FeedMetadata } from 'src/utils/types'
 import * as S from './Actions.styles'
 import { ParticipateButton } from './ParticipateButton'
 
@@ -47,7 +48,7 @@ export function Actions(props: ActionsProps) {
     openModal(
       <ModalEditAction
         action={{
-          id: feedItem.id,
+          uuid: feedItem.uuid,
           title: feedItem.title,
           description: feedItem.description,
           displayCategory: feedItem.displayCategory,
@@ -60,25 +61,28 @@ export function Actions(props: ActionsProps) {
     feedItem.description,
     feedItem.displayCategory,
     feedItem.entourageType,
-    feedItem.id,
+    feedItem.uuid,
     feedItem.metadata.displayAddress,
     feedItem.title,
   ])
 
   const onClickUpdateEvent = useCallback(() => {
-    openModal(
-      <ModalEditEvent
-        event={{
-          id: feedItem.id,
-          title: feedItem.title,
-          description: feedItem.description,
-          startDateISO: feedItem.metadata.startsAt,
-          endDateISO: feedItem.metadata.endsAt,
-          displayAddress: feedItem.metadata.displayAddress,
-          imageUrl: feedItem.metadata.landscapeThumbnailUrl,
-        }}
-      />,
-    )
+    if (feedItem.groupType === 'outing') {
+      const metadata = feedItem.metadata as FeedMetadata<'outing'>
+      openModal(
+        <ModalEditEvent
+          event={{
+            uuid: feedItem.uuid,
+            title: feedItem.title,
+            description: feedItem.description,
+            startDateISO: metadata.startsAt,
+            endDateISO: metadata.endsAt,
+            displayAddress: metadata.displayAddress,
+            imageUrl: metadata.landscapeThumbnailUrl,
+          }}
+        />,
+      )
+    }
   }, [feedItem])
 
   const onClickClose = useCallback(() => {

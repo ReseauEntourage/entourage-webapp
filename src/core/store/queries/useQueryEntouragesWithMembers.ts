@@ -4,6 +4,10 @@ import { api, FeedJoinStatus } from 'src/core/api'
 import { queryKeys } from 'src/core/store'
 import { selectConversationList } from 'src/core/useCases/messages'
 
+/**
+ * @deprecated: The actions are now "public". At this moment, we have to keep this for the old actions
+ * @param memberStatus
+ */
 export function useQueryEntouragesWithMembers(memberStatus?: FeedJoinStatus) {
   const conversationList = useSelector(selectConversationList)
   const entourageUuids = conversationList.map((conversation) => conversation.uuid)
