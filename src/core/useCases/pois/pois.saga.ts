@@ -1,6 +1,7 @@
 import { call, put, select, getContext, take, cancel } from 'redux-saga/effects'
 import { locationActions, selectLocation } from '../location'
 import { LocationActionType } from '../location/location.actions'
+import { notificationsActions } from '../notifications'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
@@ -33,20 +34,28 @@ function* retrievePOIs() {
   const partners = categoryFilters.partners.length > 0
     ? formatPOIsPartners(categoryFilters.partners) : undefined
 
-  const response: CallReturnType<typeof poisGateway.retrievePOIs> = yield call(
-    poisGateway.retrievePOIs,
-    {
-      filters: {
-        location: {
-          center,
-          distance: constants.POI_DISTANCE,
+  try {
+    const response: CallReturnType<typeof poisGateway.retrievePOIs> = yield call(
+      poisGateway.retrievePOIs,
+      {
+        filters: {
+          location: {
+            center,
+            distance: constants.POI_DISTANCE,
+          },
+          categories,
+          partners,
         },
-        categories,
-        partners,
       },
-    },
-  )
-  yield put(actions.retrievePOIsSuccess(response))
+    )
+    yield put(actions.retrievePOIsSuccess(response))
+  } catch (err) {
+    yield put(actions.retrievePOIsFail())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
+  }
 }
 
 function* retrieveCurrentPOI() {
@@ -60,27 +69,35 @@ function* retrieveCurrentPOI() {
     const dependencies: Dependencies = yield getContext('dependencies')
     const { retrievePOI } = dependencies.poisGateway
 
-    const response: CallReturnType<typeof retrievePOI> = yield call(retrievePOI, { poiUuid })
+    try {
+      const response: CallReturnType<typeof retrievePOI> = yield call(retrievePOI, { poiUuid })
 
-    yield put(actions.retrievePOIDetailsSuccess(response))
+      yield put(actions.retrievePOIDetailsSuccess(response))
 
-    if (poisIsIdle) {
-      yield put(locationActions.setMapPosition({
-        center: {
-          lat: response.poiDetails.latitude,
-          lng: response.poiDetails.longitude,
-        },
-        zoom: constants.DEFAULT_LOCATION.ZOOM,
-      }))
-      yield put(locationActions.setLocation({
-        location: {
+      if (poisIsIdle) {
+        yield put(locationActions.setMapPosition({
           center: {
             lat: response.poiDetails.latitude,
             lng: response.poiDetails.longitude,
           },
-          displayAddress: response.poiDetails.address,
           zoom: constants.DEFAULT_LOCATION.ZOOM,
-        },
+        }))
+        yield put(locationActions.setLocation({
+          location: {
+            center: {
+              lat: response.poiDetails.latitude,
+              lng: response.poiDetails.longitude,
+            },
+            displayAddress: response.poiDetails.address,
+            zoom: constants.DEFAULT_LOCATION.ZOOM,
+          },
+        }))
+      }
+    } catch (err) {
+      yield put(actions.retrievePOIDetailsFail())
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
       }))
     }
   }

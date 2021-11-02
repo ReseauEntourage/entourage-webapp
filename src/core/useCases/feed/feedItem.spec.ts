@@ -9,10 +9,11 @@ import {
   selectMapPosition,
 } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
+import { selectAlerts } from '../notifications'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
-import { FeedJoinStatus, FeedStatus } from 'src/core/api'
+import { FeedJoinStatus, FeedStatus, DTOCreateEntourageAsEvent } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -27,7 +28,11 @@ import {
   selectIsUpdatingJoinStatus,
   selectJoinRequestStatus,
   selectIsUpdatingStatus,
-  selectStatus, selectEventImagesFetching, selectEventImages,
+  selectStatus,
+  selectEventImagesFetching,
+  selectEventImages,
+  selectIsUpdatingItem,
+  selectFeed,
 } from './feed.selectors'
 
 function configureStoreWithFeed(
@@ -79,6 +84,85 @@ function configureStoreWithSelectedItems() {
     store,
     feedGateway,
     itemsEntities,
+  }
+}
+
+function configureStoreForStatus(status: FeedStatus) {
+  const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
+    items: {
+      abc: {
+        ...fakeFeedData.items.abc,
+        status,
+      } as FeedEntourage,
+    },
+    selectedItemUuid: 'abc',
+  }
+
+  const feedGateway = new TestFeedGateway()
+  feedGateway.closeEntourage.mockDeferredValueOnce(null)
+  feedGateway.reopenEntourage.mockDeferredValueOnce(null)
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: { feed: defaultFeedDataJoinEntourage },
+  })
+
+  return {
+    store,
+    feedGateway,
+  }
+}
+
+function configureStoreWithJoinRequestNotRequested() {
+  const defaultFeedDataJoinEntourage: FeedState = {
+    ...fakeFeedData,
+    items: {
+      ...fakeFeedData.items,
+      abc: {
+        ...fakeFeedData.items.abc,
+        joinStatus: 'not_requested' as FeedJoinStatus,
+      } as FeedEntourage,
+    },
+  }
+
+  const feedGateway = new TestFeedGateway()
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: {
+      feed: defaultFeedDataJoinEntourage,
+    },
+  })
+
+  return {
+    store,
+    feedGateway,
+  }
+}
+
+function configureStoreWithItemJoinRequestAccepted() {
+  const defaultFeedDataJoinEntourage: FeedState = {
+    ...fakeFeedData,
+    items: {
+      ...fakeFeedData.items,
+      abc: {
+        ...fakeFeedData.items.abc,
+        joinStatus: 'accepted' as FeedJoinStatus,
+      } as FeedEntourage,
+    },
+  }
+
+  const feedGateway = new TestFeedGateway()
+  feedGateway.leaveEntourage.mockDeferredValueOnce(null)
+
+  const store = configureStoreWithFeed({
+    dependencies: { feedGateway },
+    initialAppState: { feed: defaultFeedDataJoinEntourage },
+  })
+
+  return {
+    store,
+    feedGateway,
   }
 }
 
@@ -624,33 +708,6 @@ describe('Feed Item', () => {
   })
 
   describe('Join entourage', () => {
-    function configureStoreWithJoinRequestNotRequested() {
-      const defaultFeedDataJoinEntourage: FeedState = {
-        ...fakeFeedData,
-        items: {
-          ...fakeFeedData.items,
-          abc: {
-            ...fakeFeedData.items.abc,
-            joinStatus: 'not_requested' as FeedJoinStatus,
-          } as FeedEntourage,
-        },
-      }
-
-      const feedGateway = new TestFeedGateway()
-
-      const store = configureStoreWithFeed({
-        dependencies: { feedGateway },
-        initialAppState: {
-          feed: defaultFeedDataJoinEntourage,
-        },
-      })
-
-      return {
-        store,
-        feedGateway,
-      }
-    }
-
     it(`
         Given state has items
           And feed item status is not requested
@@ -693,32 +750,6 @@ describe('Feed Item', () => {
   })
 
   describe('Leave entourage', () => {
-    function configureStoreWithItemJoinRequestAccepted() {
-      const defaultFeedDataJoinEntourage: FeedState = {
-        ...fakeFeedData,
-        items: {
-          ...fakeFeedData.items,
-          abc: {
-            ...fakeFeedData.items.abc,
-            joinStatus: 'accepted' as FeedJoinStatus,
-          } as FeedEntourage,
-        },
-      }
-
-      const feedGateway = new TestFeedGateway()
-      feedGateway.leaveEntourage.mockDeferredValueOnce(null)
-
-      const store = configureStoreWithFeed({
-        dependencies: { feedGateway },
-        initialAppState: { feed: defaultFeedDataJoinEntourage },
-      })
-
-      return {
-        store,
-        feedGateway,
-      }
-    }
-
     it(`
         Given state has items
           And feed item status is accepted
@@ -761,32 +792,6 @@ describe('Feed Item', () => {
   })
 
   describe('Status entourage', () => {
-    function configureStoreForStatus(status: FeedStatus) {
-      const defaultFeedDataJoinEntourage: FeedState = { ...fakeFeedData,
-        items: {
-          abc: {
-            ...fakeFeedData.items.abc,
-            status,
-          } as FeedEntourage,
-        },
-        selectedItemUuid: 'abc',
-      }
-
-      const feedGateway = new TestFeedGateway()
-      feedGateway.closeEntourage.mockDeferredValueOnce(null)
-      feedGateway.reopenEntourage.mockDeferredValueOnce(null)
-
-      const store = configureStoreWithFeed({
-        dependencies: { feedGateway },
-        initialAppState: { feed: defaultFeedDataJoinEntourage },
-      })
-
-      return {
-        store,
-        feedGateway,
-      }
-    }
-
     it(`
       Given state has items
         And feed item status is open
@@ -859,7 +864,7 @@ describe('Feed Item', () => {
     })
   })
 
-  describe('Create / Update', () => {
+  describe('Event Images', () => {
     it(`
       Given initial state
       When user wants to create an event
@@ -907,6 +912,308 @@ describe('Feed Item', () => {
       expect(selectEventImagesFetching(store.getState())).toBe(false)
       expect(feedGateway.retrieveEventImages).toHaveBeenCalledTimes(1)
       expect(selectEventImages(store.getState())).toStrictEqual(deferredValueRetrieveImages)
+    })
+  })
+
+  describe('CRUD feedItem', () => {
+    it(`
+    Given state has items
+    When user want to create an entourage
+    Then updating status request should be active
+      And create entourage gateway should be called with the values submitted by the user
+      And updating status request should not be active after succeeded
+      And the items must be updated with the new item
+      And the created entourage is in the beginning of the itemUuid
+      And the list of filter must be reset
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeEvent: DTOCreateEntourageAsEvent = {
+        ...feedData,
+        metadata: {
+          ...feedData.metadata,
+          googlePlaceId: 'fake',
+          placeName: 'myPlace',
+          startsAt: new Date().toISOString(),
+          streetAddress: 'Lyon',
+        },
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      const initialItemSize = Object.keys(selectFeed(store.getState()).items).length
+
+      // When
+      store.dispatch(publicActions.createEntourage({ entourage: fakeEvent }))
+
+      // Then
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      expect(feedGateway.createEntourage).toHaveBeenCalledWith(fakeEvent)
+
+      feedGateway.createEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      // check if in list
+      const feedStateAfterCreation = selectFeed(store.getState())
+      expect(Object.keys(feedStateAfterCreation.items).length).toEqual(initialItemSize + 1)
+      expect(feedStateAfterCreation.itemsUuids[0]).toEqual(feedData.uuid)
+      expect(feedStateAfterCreation.filters).toEqual(defaultFeedState.filters)
+    })
+
+    it(`
+    Given state has items
+    When user want to update an entourage
+    Then updating status request should be active
+      And create entourage gateway should be called with the values submitted by the user
+      And updating status request should not be active after succeeded
+      And the items must be updated with the new item
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const previousState = selectFeed(store.getState())
+      const entourageBeforeChange = previousState.items[previousState.itemsUuids[0]]
+      const updatedEntourage = {
+        ...entourageBeforeChange,
+        description: 'my new description',
+      } as FeedEntourage
+
+      feedGateway.updateEntourage.mockDeferredValueOnce(updatedEntourage)
+
+      // When
+      store.dispatch(publicActions.updateEntourage({
+        entourageUuid: updatedEntourage.uuid,
+        entourage: updatedEntourage,
+      }))
+
+      // Then
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      expect(feedGateway.updateEntourage).toHaveBeenCalledWith(updatedEntourage.uuid, updatedEntourage)
+
+      feedGateway.updateEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      // check if has been updated
+      const newValueInState = selectFeedItems(
+        store.getState(),
+      ).find((elt) => elt.uuid === updatedEntourage.uuid) as FeedEntourage
+      expect(newValueInState.description).toEqual(updatedEntourage.description)
+    })
+  })
+
+  describe('Manage errors', () => {
+    it(`
+      Given feed item is retrieving
+      When an error occurs
+      Then an error should be added to the alert queue
+    `, async () => {
+      const itemsFromGateway = createFeedItemList()
+      const selectedItemUuid = itemsFromGateway[0].uuid
+
+      const deferredValueRetrieveFeedItem = {
+        center: {
+          lat: 1,
+          lng: 2,
+        },
+        displayAddress: 'Marseille',
+        item: itemsFromGateway[0],
+      }
+
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveFeedItem.mockDeferredValueOnce(deferredValueRetrieveFeedItem)
+
+      const store = configureStoreWithFeed(
+        {
+          dependencies: {
+            feedGateway,
+          },
+        },
+      )
+
+      // --------------------------------------------------
+
+      store.dispatch(publicActions.init())
+      store.dispatch(publicActions.setCurrentFeedItemUuid(selectedItemUuid))
+
+      feedGateway.retrieveFeedItem.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed item is closing
+      When an error occurs
+      Then feed item should not be closing
+        And an error should be added to the alert queue
+    `, async () => {
+      const { store, feedGateway } = configureStoreForStatus('open')
+      const entourageUuid = 'abc'
+      const success = true
+
+      store.dispatch(publicActions.closeEntourage({ entourageUuid, success }))
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(true)
+
+      feedGateway.closeEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+     Given feed item is reopening
+     When an error occurs
+     Then feed item should not be reopening
+       And an error should be added to the alert queue
+    `, async () => {
+      const { store, feedGateway } = configureStoreForStatus('closed')
+      const entourageUuid = 'abc'
+
+      store.dispatch(publicActions.reopenEntourage({ entourageUuid }))
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(true)
+
+      feedGateway.reopenEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingStatus(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is joining a feed item
+      When an error occurs
+      Then feed item should not be joining
+        And an error should be added to the alert queue
+      `, async () => {
+      const { store, feedGateway } = configureStoreWithJoinRequestNotRequested()
+      const entourageUuid = 'abc'
+
+      feedGateway.joinEntourage.mockDeferredValueOnce({ status: 'accepted' })
+
+      store.dispatch(publicActions.joinEntourage({ entourageUuid }))
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
+
+      feedGateway.joinEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given user is leaving a feed item
+      When an error occurs
+      Then feed item should not be leaving
+        And an error should be added to the alert queue
+      `, async () => {
+      const { store, feedGateway } = configureStoreWithItemJoinRequestAccepted()
+      const entourageUuid = 'abc'
+
+      store.dispatch(publicActions.leaveEntourage({ entourageUuid, userId: 1 }))
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(true)
+
+      feedGateway.leaveEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingJoinStatus(store.getState())).toEqual(false)
+
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given event images are retrieving
+      When an error occurs
+      Then the event image should not be fetching
+        And an error should be added to the alert queue
+    `, async () => {
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveEventImages.mockDeferredValueOnce({ eventImages: [] })
+
+      const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+      store.dispatch(publicActions.retrieveEventImages())
+      expect(selectEventImagesFetching(store.getState())).toEqual(true)
+
+      feedGateway.retrieveEventImages.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectEventImagesFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed item is being created
+      When an error occurs
+      Then the feed item should not be creating
+        And an error should be added to the alert queue
+    `, async () => {
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeEvent: DTOCreateEntourageAsEvent = {
+        ...feedData,
+        metadata: {
+          ...feedData.metadata,
+          googlePlaceId: 'fake',
+          placeName: 'myPlace',
+          startsAt: new Date().toISOString(),
+          streetAddress: 'Lyon',
+        },
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      store.dispatch(publicActions.createEntourage({ entourage: fakeEvent }))
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      feedGateway.createEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed item is being updated
+      When an error occurs
+      Then the feed item should not be updating
+        And an error should be added to the alert queue
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const previousState = selectFeed(store.getState())
+      const entourageBeforeChange = previousState.items[previousState.itemsUuids[0]]
+      const updatedEntourage = {
+        ...entourageBeforeChange,
+        description: 'my new description',
+      } as FeedEntourage
+
+      feedGateway.updateEntourage.mockDeferredValueOnce(updatedEntourage)
+
+      store.dispatch(publicActions.updateEntourage({
+        entourageUuid: updatedEntourage.uuid,
+        entourage: updatedEntourage,
+      }))
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+      feedGateway.updateEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
     })
   })
 })

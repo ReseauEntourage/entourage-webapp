@@ -2,6 +2,7 @@ import { configureStore } from '../../configureStore'
 import { PartialAppDependencies } from '../Dependencies'
 import { locationActions, LocationState, selectLocation } from '../location'
 import { defaultLocationState } from '../location/location.reducer'
+import { selectAlerts } from '../notifications/notifications.selectors'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
@@ -632,6 +633,29 @@ describe('POIs', () => {
         ]),
         partners: formatPOIsPartners([FilterPOIPartner.DONATIONS]),
       },
+    })
+  })
+  describe('Manage errors', () => {
+    it(`
+      Given POIs are retrieving
+      When an error occurs
+      Then POIs should not be fetching
+        And an error should be added to the alert queue
+  `, async () => {
+      const poisGateway = new TestPOIsGateway()
+      poisGateway.retrievePOIs.mockDeferredValueOnce({ pois: [] })
+
+      const store = configureStoreWithPOIs({ dependencies: { poisGateway } })
+
+      store.dispatch(publicActions.retrievePOIs())
+
+      expect(selectPOIsIsFetching(store.getState())).toEqual(true)
+
+      poisGateway.retrievePOIs.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectPOIsIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
     })
   })
 })

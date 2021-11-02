@@ -1,5 +1,6 @@
 import { call, put, getContext, select } from 'redux-saga/effects'
 import { locationActions } from '../location'
+import { notificationsActions } from '../notifications'
 import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
@@ -68,13 +69,21 @@ function* phoneLookUpSaga(action: AuthUserActions['phoneLookUp']) {
 
   yield put(actions.setErrors({}))
 
-  const phoneLookuResponse: CallReturnType<typeof phoneLookUp> = yield call(phoneLookUp, { phone })
-  if (phoneLookuResponse === PhoneLookUpResponse.PHONE_NOT_FOUND) {
-    yield put(actions.askCreateAccount())
-  } else if (phoneLookuResponse === PhoneLookUpResponse.SMS_CODE_NEEDED) {
-    yield put(actions.askSMSCode())
-  } else if (phoneLookuResponse === PhoneLookUpResponse.PASSWORD_NEEDED) {
-    yield put(actions.askPassword())
+  try {
+    const phoneLookuResponse: CallReturnType<typeof phoneLookUp> = yield call(phoneLookUp, { phone })
+    if (phoneLookuResponse === PhoneLookUpResponse.PHONE_NOT_FOUND) {
+      yield put(actions.askCreateAccount())
+    } else if (phoneLookuResponse === PhoneLookUpResponse.SMS_CODE_NEEDED) {
+      yield put(actions.askSMSCode())
+    } else if (phoneLookuResponse === PhoneLookUpResponse.PASSWORD_NEEDED) {
+      yield put(actions.askPassword())
+    }
+  } catch (err) {
+    yield put(actions.phoneLookUpFailed())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
   }
 }
 
@@ -83,8 +92,16 @@ function* createAccountSaga(action: AuthUserActions['createAccount']) {
   const { createAccount: createAccountGateway } = dependencies.authUserGateway
   const { phone } = action.payload
 
-  yield call(createAccountGateway, { phone })
-  yield put(actions.createAccountSuccess())
+  try {
+    yield call(createAccountGateway, { phone })
+    yield put(actions.createAccountSuccess())
+  } catch (err) {
+    yield put(actions.createAccountFail())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
+  }
 }
 
 function* loginWithPasswordSaga(action: AuthUserActions['loginWithPassword']) {
@@ -114,7 +131,10 @@ function* loginWithPasswordSaga(action: AuthUserActions['loginWithPassword']) {
       return
     }
 
-    throw error
+    yield put(notificationsActions.addAlert({
+      message: error?.message,
+      severity: 'error',
+    }))
   }
 }
 
@@ -146,7 +166,10 @@ function* loginWithSMSCodeSaga(action: AuthUserActions['loginWithSMSCode']) {
       return
     }
 
-    throw error
+    yield put(notificationsActions.addAlert({
+      message: error?.message,
+      severity: 'error',
+    }))
   }
 }
 
@@ -180,7 +203,10 @@ function* createPasswordSaga(action: AuthUserActions['createPassword']) {
       return
     }
 
-    throw error
+    yield put(notificationsActions.addAlert({
+      message: error?.message,
+      severity: 'error',
+    }))
   }
 }
 
@@ -198,8 +224,15 @@ function* resetPasswordSaga(action: AuthUserActions['resetPassword']) {
 
   yield put(actions.setErrors({}))
 
-  yield call(authUserGateway.resetPassword, { phone })
-  yield put(actions.resetPasswordSuccess())
+  try {
+    yield call(authUserGateway.resetPassword, { phone })
+    yield put(actions.resetPasswordSuccess())
+  } catch (err) {
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
+  }
 }
 
 function* updateUserSaga(action: AuthUserActions['updateUser']) {
@@ -207,33 +240,41 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
   const { updateMe, updateMeAddress } = dependencies.authUserGateway
   const { address, ...updatedData } = action.payload
 
-  if (address) {
-    yield call(updateMeAddress, address)
-  }
+  try {
+    if (address) {
+      yield call(updateMeAddress, address)
+    }
 
-  const response: CallReturnType<typeof updateMe> = yield call(updateMe, updatedData)
+    const response: CallReturnType<typeof updateMe> = yield call(updateMe, updatedData)
 
-  if (response.address) {
-    yield put(locationActions.setMapPosition({
-      center: {
-        lat: response.address.latitude,
-        lng: response.address.longitude,
-      },
-      zoom: constants.DEFAULT_LOCATION.ZOOM,
-    }))
-    yield put(locationActions.setLocation({
-      location: {
+    if (response.address) {
+      yield put(locationActions.setMapPosition({
         center: {
           lat: response.address.latitude,
           lng: response.address.longitude,
         },
-        displayAddress: response.address.displayAddress,
         zoom: constants.DEFAULT_LOCATION.ZOOM,
-      },
+      }))
+      yield put(locationActions.setLocation({
+        location: {
+          center: {
+            lat: response.address.latitude,
+            lng: response.address.longitude,
+          },
+          displayAddress: response.address.displayAddress,
+          zoom: constants.DEFAULT_LOCATION.ZOOM,
+        },
+      }))
+    }
+
+    yield put(actions.updateUserSuccess({ user: response }))
+  } catch (err) {
+    yield put(actions.updateUserFail())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
     }))
   }
-
-  yield put(actions.updateUserSuccess({ user: response }))
 }
 
 export function* authUserSaga() {

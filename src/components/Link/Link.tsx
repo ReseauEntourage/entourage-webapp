@@ -1,5 +1,5 @@
 import { LinkProps } from '@material-ui/core/Link'
-import React from 'react'
+import React, { RefObject } from 'react'
 import { variants } from 'src/styles'
 import * as S from './Link.styles'
 
@@ -14,7 +14,7 @@ export const Link = React.forwardRef(
 
     return disableHover ? (
       <S.StyledLink
-        ref={ref}
+        ref={ref as RefObject<HTMLSpanElement>}
         color={color ?? 'inherit'}
         variant={variant ?? variants.bodyRegular}
         {...componentProp}
@@ -25,7 +25,7 @@ export const Link = React.forwardRef(
     )
       : (
         <S.HoverableStyledLink
-          ref={ref}
+          ref={ref as RefObject<HTMLSpanElement>}
           color={color ?? 'inherit'}
           variant={variant ?? variants.bodyRegular}
           {...componentProp}

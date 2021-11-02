@@ -17,6 +17,7 @@ import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 import { assertIsDefined } from 'src/utils/misc'
+import { FeedMetadata } from 'src/utils/types'
 import { Actions } from './Actions'
 
 export function FeedItemCards() {
@@ -88,7 +89,8 @@ export function FeedItemCards() {
   }
 
   if (feedItem.groupType === 'outing') {
-    const { author, title, description, metadata, uuid, online, eventUrl } = feedItem
+    const { author, title, description, uuid, online, eventUrl } = feedItem
+    const metadata = feedItem.metadata as FeedMetadata<'outing'>
     const { partner } = author
 
     const organizerName = partner ? partner.name : author.displayName
@@ -167,7 +169,7 @@ export function FeedItemCards() {
         </Box>
       )}
       href="/actions"
-      imageUrl={feedItem.metadata.landscapeUrl}
+      imageUrl={'landscapeUrl' in feedItem.metadata ? feedItem.metadata.landscapeUrl : undefined}
       showImage={feedItem.groupType === 'outing'}
     />
   )

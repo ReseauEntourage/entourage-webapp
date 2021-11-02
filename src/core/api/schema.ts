@@ -1,17 +1,13 @@
 import { validateSchema } from 'typescript-request-schema'
-import { DateISO } from 'src/utils/types'
+import { DateISO, FeedBaseEntourage } from 'src/utils/types'
 
 import {
   EntourageTypes,
   EntourageIdOrUUIDParams,
-  FeedDisplayCategory,
-  FeedEntourageType,
-  FeedGroupType,
   FeedItemTour,
   FeedItemAnnouncement,
   FeedItemEntourage,
   FeedJoinStatus,
-  FeedStatus,
   FeedType,
   FeedTypesFilter,
   POICategoriesIds,
@@ -59,32 +55,7 @@ export const schema = {
       entourage: DTOCreateEntourageAsAction | DTOCreateEntourageAsEvent;
     },
     response: {} as {
-      entourage: {
-        author: User;
-        createdAt: DateISO;
-        description: string;
-        displayCategory: FeedDisplayCategory;
-        entourageType: FeedEntourageType;
-        groupType: FeedGroupType;
-        id: number;
-        joinStatus: FeedJoinStatus;
-        location: {
-          latitude: number;
-          longitude: number;
-        };
-        metadata: {
-          city: string;
-          displayAddress: string;
-        };
-        numberOfPeople: number;
-        numberOfUnreadMessages: number;
-        public: boolean;
-        shareUrl: string;
-        status: FeedStatus;
-        title: string;
-        updatedAt: DateISO;
-        uuid: string;
-      };
+      entourage: FeedBaseEntourage;
     },
   },
   '/entourages PATCH': {
@@ -94,7 +65,9 @@ export const schema = {
     data: {} as {
       entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent | DTOCloseEntourage | DTOReopenEntourage;
     },
-    response: {} as {},
+    response: {} as {
+      entourage: FeedBaseEntourage;
+    },
   },
   '/entourages/:entourageId GET': {
     url: (params: EntourageIdOrUUIDParams) => `/entourages/${params.entourageId || params.entourageUuid}`,

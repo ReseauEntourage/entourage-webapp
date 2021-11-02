@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+
 import { SplashScreen } from 'src/components/SplashScreen'
 import {
   messagesActions,
@@ -10,6 +11,7 @@ import {
 import { ConversationDetail } from './ConversationDetail'
 import { ConversationsList } from './ConversationsList'
 import * as S from './Messages.styles'
+import { NoMessages } from './NoMessages'
 import { useEntourageUuid } from './useEntourageUuid'
 
 export function MessagesDesktop() {
@@ -46,10 +48,19 @@ export function MessagesDesktop() {
 
   return (
     <S.Container>
-      <ConversationsList entourageUuid={entourageUuid} />
-      <S.ConversationDetailContainer>
-        <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} />
-      </S.ConversationDetailContainer>
+      {
+        conversations && conversations.length === 0 ? (
+          <NoMessages />
+        ) : (
+          <>
+            <ConversationsList entourageUuid={entourageUuid} />
+            <S.ConversationDetailContainer>
+              <ConversationDetail key={entourageUuid} entourageUuid={entourageUuid} />
+            </S.ConversationDetailContainer>
+          </>
+        )
+      }
+
     </S.Container>
   )
 }

@@ -73,6 +73,11 @@ export class GeolocationService implements IGeolocationService {
           placeAddress: null,
           googlePlaceId: null,
         }
+      }).catch(() => {
+        return {
+          placeAddress: null,
+          googlePlaceId: null,
+        }
       })
   }
 }

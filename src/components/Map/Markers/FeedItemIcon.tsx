@@ -57,13 +57,14 @@ export function FeedItemIcon(props: FeedItemIconProps) {
     ? eventIcon : (
       <div style={style}>
         <SvgIcon
-          component={IconComponent}
           style={{
             fontSize,
             color: FeedEntourageTypeColors[entourageType],
           }}
           viewBox={`0 0 ${width} ${height}`}
-        />
+        >
+          <IconComponent />
+        </SvgIcon>
       </div>
     )
 

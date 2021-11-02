@@ -13,7 +13,8 @@ export function useActionMarkers() {
   const { sendEvent } = useFirebase()
 
   const feedsMarkersContent = feeds
-    .filter((feedItem) => feedItem.itemType === 'Entourage')
+    .filter((feedItem) => feedItem.itemType === 'Entourage'
+      && (feedItem.groupType === 'action' || (feedItem.groupType === 'outing' && !feedItem.online)))
     .map((feedItem) => {
       assertCondition(feedItem.itemType === 'Entourage')
 

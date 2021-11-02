@@ -1,6 +1,2 @@
 export * from './useMutateAcceptEntourageUser'
-export * from './useMutateCreateEntourageChatMessage'
 export * from './useMutateDeleteEntourageUser'
-export * from './useMutateCreateEntourages'
-export * from './useMutateUpdateEntourages'
-export * from './useMutateEntourageUsers'

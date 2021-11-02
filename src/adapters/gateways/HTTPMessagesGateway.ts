@@ -66,6 +66,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
     })
   }
 
+  // TODO: rename this (is call only to have meta of an action)
   retrieveConversation: IMessagesGateway['retrieveConversation'] = (data: { entourageUuid: string; }) => {
     return api.request({
       name: '/entourages/:entourageId GET',
@@ -83,6 +84,7 @@ export class HTTPMessagesGateway implements IMessagesGateway {
         groupType: entourage.groupType,
         updatedAt: entourage.updatedAt,
         numberOfUnreadMessages: entourage.numberOfUnreadMessages,
+        lastMessage: null,
       }
     })
   }

@@ -4,20 +4,24 @@ import { FeedList } from '../LeftLists'
 import { FeedFilters } from '../LeftLists/Filters'
 import { FeedItemCards } from '../RightCards/FeedItemCards'
 import { useActionId } from '../useActionId'
+import { useOnNoContentOnMap } from '../useOnNoContentOnMap'
 import { SplashScreen } from 'src/components/SplashScreen'
 import { MapContainer } from 'src/containers/MapContainer'
 
-import { feedActions, selectFeedIsIdle } from 'src/core/useCases/feed'
+import { feedActions, selectFeedIsFetching, selectFeedIsIdle } from 'src/core/useCases/feed'
+import { texts } from 'src/i18n'
 import { useFirebase, useMount } from 'src/utils/hooks'
 import { useActionMarkers } from './useActionMarkers'
 import { useCurrentFeedItem } from './useCurrentFeedItem'
 
 export function MapActions() {
   const dispatch = useDispatch()
-  const actionId = useActionId()
   const { sendEvent } = useFirebase()
+
+  const actionId = useActionId()
   const currentFeedItem = useCurrentFeedItem()
   const feedIsIdle = useSelector(selectFeedIsIdle)
+  const feedFetching = useSelector(selectFeedIsFetching)
 
   useMount(() => {
     sendEvent('View__Feed')
@@ -35,6 +39,17 @@ export function MapActions() {
 
   const cards = currentFeedItem ? <FeedItemCards key={actionId} /> : undefined
 
+  const modalTexts = texts.content.map.actions.noActions.modal
+
+  const onNoContentOnMap = useOnNoContentOnMap(
+    feedFetching,
+    !!currentFeedItem,
+    {
+      text: modalTexts.text,
+      title: modalTexts.title,
+    },
+  )
+
   return (
     <>
       <MapContainer
@@ -43,6 +58,7 @@ export function MapActions() {
         isLoading={isLoading}
         list={<FeedList />}
         markers={feedsMarkersContent}
+        onNoContentOnMap={onNoContentOnMap}
       />
       <SplashScreen in={feedIsIdle} />
     </>

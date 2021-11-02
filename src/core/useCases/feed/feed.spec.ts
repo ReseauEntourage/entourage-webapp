@@ -3,6 +3,7 @@ import { PartialAppDependencies } from '../Dependencies'
 import { locationActions, LocationState, selectLocation } from '../location'
 import { fakeLocationData } from '../location/__mocks__'
 import { defaultLocationState } from '../location/location.reducer'
+import { selectAlerts } from '../notifications/notifications.selectors'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { formatFeedTypes } from 'src/utils/misc'
 import { FilterEntourageType, FilterFeedCategory, FilterFeedTimeRangeValues } from 'src/utils/types'
@@ -696,5 +697,55 @@ describe('Feed', () => {
 
     expect(firstItemUpdated.title).toEqual('feed title updated')
     expect(firstItemUpdated.description).toEqual('feed description')
+  })
+
+  describe('Manage errors', () => {
+    it(`
+      Given feed is retrieving
+      When an error occurs
+      Then items should not be fetching
+        And an error should be added to the alert queue
+    `, async () => {
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveFeedItems.mockDeferredValueOnce({ items: [], nextPageToken: null })
+      const store = configureStoreWithFeed({ dependencies: { feedGateway } })
+
+      store.dispatch(publicActions.retrieveFeed())
+
+      expect(selectFeedIsFetching(store.getState())).toEqual(true)
+
+      feedGateway.retrieveFeedItems.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectFeedIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given feed next page is retrieving
+      When an error occurs
+      Then items should not be fetching
+        And an error should be added to the alert queue
+    `, async () => {
+      const feedGateway = new TestFeedGateway()
+      feedGateway.retrieveFeedItems.mockDeferredValueOnce({ nextPageToken: null, items: [] })
+      const store = configureStoreWithFeed({ dependencies: { feedGateway },
+        initialAppState: {
+          ...defaultInitialAppState,
+          feed: {
+            ...fakeFeedData,
+          },
+        } })
+
+      store.dispatch(publicActions.retrieveFeedNextPage())
+
+      expect(selectFeedIsFetching(store.getState())).toEqual(true)
+
+      feedGateway.retrieveFeedItems.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectFeedIsFetching(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
   })
 })

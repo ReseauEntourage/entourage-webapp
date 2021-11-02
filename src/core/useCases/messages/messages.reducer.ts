@@ -1,21 +1,21 @@
 import uniqBy from 'lodash/uniqBy'
 import { AuthUserAction, AuthUserActionType } from '../authUser/authUser.actions'
-import { FeedGroupType, FeedJoinStatus, User } from 'src/core/api'
+import { MyFeedGroupType, FeedJoinStatus, User } from 'src/core/api'
 import { DateISO } from 'src/utils/types'
 import { MessagesAction, MessagesActionType } from './messages.actions'
 
 export interface ConversationItem {
   author: {
-    avatarUrl?: string;
+    avatarUrl: string | null;
     id: number;
   };
   joinStatus: FeedJoinStatus;
-  lastMessage?: {
+  lastMessage: {
     text: string;
-  };
+  } | null;
   title: string;
   uuid: string;
-  groupType: FeedGroupType;
+  groupType: MyFeedGroupType;
   updatedAt: DateISO;
   numberOfUnreadMessages: number;
 }
@@ -65,6 +65,13 @@ export function messagesReducer(
   action: MessagesAction | AuthUserAction,
 ): MessagesState {
   switch (action.type) {
+    case MessagesActionType.RETRIEVE_CONVERSATIONS: {
+      return {
+        ...state,
+        page: 1,
+      }
+    }
+
     case MessagesActionType.RETRIEVE_CONVERSATIONS_STARTED: {
       return {
         ...state,
@@ -106,10 +113,10 @@ export function messagesReducer(
       }
     }
 
-    case MessagesActionType.RETRIEVE_CONVERSATIONS: {
+    case MessagesActionType.RETRIEVE_CONVERSATIONS_FAILED: {
       return {
         ...state,
-        page: 1,
+        fetching: false,
       }
     }
 
@@ -186,6 +193,13 @@ export function messagesReducer(
           [action.payload.conversationUuid]: uniqMessages,
         },
         conversations: mutatedConversations,
+        messagesFetching: false,
+      }
+    }
+
+    case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_FAILED: {
+      return {
+        ...state,
         messagesFetching: false,
       }
     }

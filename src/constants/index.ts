@@ -18,6 +18,8 @@ export const constants = {
   WORKSHOP_LINK_POPUP: 'https://bit.ly/2O7naY7',
   WORKSHOP_LINK_CARD: 'https://bit.ly/3shEwjc',
   WORKSHOP_LINK_MOBILE: 'http://bit.ly/2YIFPvl',
+  ADMIN_ASSO_URL: 'organization_admin_redirect?token=',
+  POI_FORM_LINK: 'links/propose-poi/redirect?token=',
   FEED_ITEM_CACHE_TTL_SECONDS: 1000 * 60,
   GEOLOCATION_TTL: 1000 * 60,
   GEOLOCATION_TIMEOUT: 1000 * 5,
@@ -29,4 +31,5 @@ export const constants = {
   IOS_LINK: 'https://apps.apple.com/fr/app/entourage-r%C3%A9seau-solidaire/id1072244410',
   ANDROID_LINK: 'https://play.google.com/store/apps/details?id=social.entourage.android',
   PASSWORD_TIMEOUT: 30, // unit: seconds
+  NOTIFICATIONS_QUEUE_MAX: 50,
 }

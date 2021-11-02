@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect'
 import { AuthUserState } from './authUser.reducer'
 
 interface AppState {
@@ -45,4 +46,14 @@ export function selectLoginIsCompleted(state: AppState) {
 export function selectShowSensitizationPopup(state: AppState) {
   return state.authUser.showSensitizationPopup
 }
+
+export const selectHasNoSetupPopupToShow = createSelector(
+  selectIsLogged,
+  selectUserInfosAreIncomplete,
+  selectShowSensitizationPopup,
+  (isLogged, userInfosAreIncompleted, showSensitizationPopup) => {
+    const willOpenAnotherPopup = isLogged && (userInfosAreIncompleted || showSensitizationPopup)
+    return !willOpenAnotherPopup
+  },
+)
 

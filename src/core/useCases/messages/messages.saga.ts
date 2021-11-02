@@ -1,6 +1,7 @@
 import { call, put, select, getContext } from 'redux-saga/effects'
 import { selectUser } from '../authUser'
 import { AuthUserActionType } from '../authUser/authUser.actions'
+import { notificationsActions } from '../notifications'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { IMessagesGateway } from './IMessagesGateway'
@@ -32,14 +33,22 @@ function* retrieveConversationsSaga() {
 
   yield put(actions.retrieveConversationsStarted())
 
-  const response: CallReturnType<typeof retrieveConversations> = yield call(
-    retrieveConversations,
-    {
-      page: 1,
-    },
-  )
-  yield put(actions.retrieveConversationsSuccess(response))
-  yield put(actions.retrieveConversationDetailsIfNeeded())
+  try {
+    const response: CallReturnType<typeof retrieveConversations> = yield call(
+      retrieveConversations,
+      {
+        page: 1,
+      },
+    )
+    yield put(actions.retrieveConversationsSuccess(response))
+    yield put(actions.retrieveConversationDetailsIfNeeded())
+  } catch (err) {
+    yield put(actions.retrieveConversationsFail())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
+  }
 }
 
 function* retrieveNextConversationsSaga() {
@@ -56,16 +65,34 @@ function* retrieveNextConversationsSaga() {
 
   yield put(actions.retrieveConversationsStarted())
 
-  const response: CallReturnType<typeof retrieveConversations> = yield call(
-    retrieveConversations,
-    {
-      page: currentPage,
-    },
-  )
-  yield put(actions.retrieveConversationsSuccess(response))
+  try {
+    const response: CallReturnType<typeof retrieveConversations> = yield call(
+      retrieveConversations,
+      {
+        page: currentPage,
+      },
+    )
+    yield put(actions.retrieveConversationsSuccess(response))
 
-  if (response.conversations.length === 0) {
-    yield put(actions.decrementPageNumber())
+    if (response.conversations.length === 0) {
+      yield put(actions.decrementPageNumber())
+    }
+  } catch (err) {
+    yield put(actions.retrieveConversationsFail())
+    yield put(notificationsActions.addAlert({
+      message: err?.message,
+      severity: 'error',
+    }))
+  }
+}
+
+function* retrieveConversationListOrDetails() {
+  const messagesIsIdle: ReturnType<typeof selectMessagesIsIdle> = yield select(selectMessagesIsIdle)
+
+  if (messagesIsIdle) {
+    yield put(actions.retrieveConversations())
+  } else {
+    yield put(actions.retrieveConversationDetailsIfNeeded())
   }
 }
 
@@ -73,7 +100,6 @@ function* retrieveCurrentConversationMessagesSaga() {
   const dependencies: Dependencies = yield getContext('dependencies')
   const { retrieveConversationMessages } = dependencies.messagesGateway
 
-  const messagesIsIdle: ReturnType<typeof selectMessagesIsIdle> = yield select(selectMessagesIsIdle)
   const entourageUuid: ReturnType<typeof selectCurrentConversationUuid> = yield select(selectCurrentConversationUuid)
 
   if (!entourageUuid) {
@@ -90,20 +116,22 @@ function* retrieveCurrentConversationMessagesSaga() {
         conversationUuid: entourageUuid,
         conversationMessages: response.conversationMessages,
       }))
+      yield call(retrieveConversationListOrDetails)
     } catch (error) {
       if (error instanceof MessagesErrorNoAcceptedInConversation) {
         yield put(actions.retrieveConversationMessagesSuccess({
           conversationUuid: entourageUuid,
           conversationMessages: [],
         }))
+        yield call(retrieveConversationListOrDetails)
+        return
       }
+      yield put(actions.retrieveConversationMessagesFail())
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
     }
-  }
-
-  if (messagesIsIdle) {
-    yield put(actions.retrieveConversations())
-  } else {
-    yield put(actions.retrieveConversationDetailsIfNeeded())
   }
 }
 
@@ -119,19 +147,26 @@ function* retrieveCurrentConversationDetailsIfNeededSaga() {
   const { retrieveConversation } = dependencies.messagesGateway
 
   if (!messagesIsIdle && entourageUuid && !currentConversationDetails) {
-    const conversationDetails: CallReturnType<typeof retrieveConversation> = yield call(
-      retrieveConversation,
-      {
-        entourageUuid,
-      },
-    )
+    try {
+      const conversationDetails: CallReturnType<typeof retrieveConversation> = yield call(
+        retrieveConversation,
+        {
+          entourageUuid,
+        },
+      )
 
-    const mutatedConversationDetails = {
-      ...conversationDetails,
-      uuid: entourageUuid,
+      const mutatedConversationDetails = {
+        ...conversationDetails,
+        uuid: entourageUuid,
+      }
+
+      yield put(actions.insertConversation(mutatedConversationDetails))
+    } catch (err) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
     }
-
-    yield put(actions.insertConversation(mutatedConversationDetails))
   }
 }
 
@@ -147,19 +182,27 @@ function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['
     const dependencies: Dependencies = yield getContext('dependencies')
     const { retrieveConversationMessages } = dependencies.messagesGateway
 
-    const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
-      {
-        entourageUuid,
-        before: before ?? undefined,
-      })
+    try {
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+        {
+          entourageUuid,
+          before: before ?? undefined,
+        })
 
-    yield put(actions.retrieveConversationMessagesSuccess({
-      conversationUuid: entourageUuid,
-      conversationMessages: response.conversationMessages,
-    }))
+      yield put(actions.retrieveConversationMessagesSuccess({
+        conversationUuid: entourageUuid,
+        conversationMessages: response.conversationMessages,
+      }))
 
-    if (messagesIsIdle) {
-      yield put(actions.retrieveConversations())
+      if (messagesIsIdle) {
+        yield put(actions.retrieveConversations())
+      }
+    } catch (err) {
+      yield put(actions.retrieveConversationMessagesFail())
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
     }
   }
 }
@@ -174,33 +217,40 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
     const dependencies: Dependencies = yield getContext('dependencies')
     const { sendMessage, retrieveConversationMessages, retrieveConversations } = dependencies.messagesGateway
 
-    yield call(sendMessage,
-      {
-        entourageUuid,
-        message,
-      })
-
-    const responseMessages: CallReturnType<typeof retrieveConversationMessages> = yield call(
-      retrieveConversationMessages,
-      {
-        entourageUuid,
-      },
-    )
-
-    yield put(actions.retrieveConversationMessagesSuccess({
-      conversationUuid: entourageUuid,
-      conversationMessages: responseMessages.conversationMessages,
-    }))
-
-    if (!conversationIsInList) {
-      const responseConversations: CallReturnType<typeof retrieveConversations> = yield call(
-        retrieveConversations,
+    try {
+      yield call(sendMessage,
         {
-          page: 1,
+          entourageUuid,
+          message,
+        })
+
+      const responseMessages: CallReturnType<typeof retrieveConversationMessages> = yield call(
+        retrieveConversationMessages,
+        {
+          entourageUuid,
         },
       )
 
-      yield put(actions.retrieveConversationsSuccess(responseConversations))
+      yield put(actions.retrieveConversationMessagesSuccess({
+        conversationUuid: entourageUuid,
+        conversationMessages: responseMessages.conversationMessages,
+      }))
+
+      if (!conversationIsInList) {
+        const responseConversations: CallReturnType<typeof retrieveConversations> = yield call(
+          retrieveConversations,
+          {
+            page: 1,
+          },
+        )
+
+        yield put(actions.retrieveConversationsSuccess(responseConversations))
+      }
+    } catch (err) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
     }
   }
 }

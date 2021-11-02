@@ -5,7 +5,7 @@ import * as S from './ConversationItem.styles'
 interface ConversationItemProps {
   excerpt: string | JSX.Element;
   isActive: boolean;
-  profilePictureURL?: string;
+  profilePictureURL: string | null;
   title: string;
   hasUnreadMessages: boolean;
 }

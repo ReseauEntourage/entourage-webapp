@@ -15,10 +15,11 @@ import { Modal } from 'src/components/Modal'
 import { OverlayLoader } from 'src/components/OverlayLoader'
 import { api, User } from 'src/core/api'
 import { authUserActions, selectUserIsUpdating } from 'src/core/useCases/authUser'
+import { notificationsActions } from 'src/core/useCases/notifications'
 import { useMe } from 'src/hooks/useMe'
 import { texts } from 'src/i18n'
 import { useDelayLoadingNext, useGetCurrentPosition } from 'src/utils/hooks'
-import { notifServerError, useLoadGoogleMapApi } from 'src/utils/misc'
+import { useLoadGoogleMapApi } from 'src/utils/misc'
 
 interface FormField {
   about: User['about'];
@@ -31,19 +32,20 @@ interface FormField {
 type FormFieldKey = keyof FormField
 
 function useUploadImageProfile() {
+  const dispatch = useDispatch()
   const [imageCropperValue, setImageCropperValue] = useState<ImageCropperValue>()
 
   const uploadIfNeeded = useCallback(async () => {
     if (!imageCropperValue) return null
 
-    const presignedURLResponse = await api.request({
-      name: '/users/me/presigned_avatar_upload/ POST',
-      data: {
-        contentType: imageCropperValue.blob.type,
-      },
-    })
-
     try {
+      const presignedURLResponse = await api.request({
+        name: '/users/me/presigned_avatar_upload/ POST',
+        data: {
+          contentType: imageCropperValue.blob.type,
+        },
+      })
+
       await axios.put(presignedURLResponse.data.presignedUrl, imageCropperValue.blob, {
         headers: {
           'Content-Type': imageCropperValue.blob.type,
@@ -52,10 +54,13 @@ function useUploadImageProfile() {
 
       return presignedURLResponse.data.avatarKey
     } catch (error) {
-      notifServerError(error)
+      dispatch(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
       return null
     }
-  }, [imageCropperValue])
+  }, [dispatch, imageCropperValue])
 
   return [
     setImageCropperValue,

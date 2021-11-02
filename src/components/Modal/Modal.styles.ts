@@ -1,18 +1,12 @@
-
 import IconButton from '@material-ui/core/IconButton'
 import styled, { createGlobalStyle } from 'styled-components'
 import { devices, theme } from 'src/styles'
 
 export const GlobalStyle = createGlobalStyle`
-  .MuiPaper-root {
-    @media ${devices.mobile} {
-      margin: ${theme.spacing(1)}px !important;
-    }
-  }
-
   .MuiDialog-paperScrollPaper {
     @media ${devices.mobile} {
       max-height: calc(100% - ${theme.spacing(2)}px) !important;
+      margin: ${theme.spacing(1)}px !important;
     }
   }
 

@@ -46,13 +46,14 @@ export function EventMarker(props: Props) {
           }}
         >
           <SvgIcon
-            component={Event}
             style={{
               color: colors.main.primary,
               fontSize,
             }}
             viewBox={`0 0 ${width} ${height}`}
-          />
+          >
+            <Event />
+          </SvgIcon>
         </div>
       </Tooltip>
     </BaseMarker>
