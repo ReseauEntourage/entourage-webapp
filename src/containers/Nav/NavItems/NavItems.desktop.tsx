@@ -22,7 +22,8 @@ import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
 
 export function NavItemsDeskTop() {
-  const iAmLogged = !!useMe()
+  const me = useMe()
+  const iAmLogged = !!me
   const { routeTitle, currentRoute } = useCurrentRoute()
 
   const numberOfUnreadConversations = useSelector(selectNumberOfUnreadConversations)
@@ -79,7 +80,7 @@ export function NavItemsDeskTop() {
             isActive={currentRoute === '/messages'}
             label={texts.nav.messages}
           />
-          <NavTakeAction>
+          <NavTakeAction hideEventCreation={!me?.partner}>
             <S.NavItem
               icon={<AddCircleIcon color="primary" style={{ fontSize: 30 }} />}
               label={texts.nav.takeAction}
