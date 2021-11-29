@@ -13,7 +13,7 @@ import { selectAlerts } from '../notifications'
 import { selectCurrentPOI } from '../pois'
 import { PartialAppState, defaultInitialAppState, reducers } from '../reducers'
 import { constants } from 'src/constants'
-import { FeedJoinStatus, FeedStatus, DTOCreateEntourageAsEvent } from 'src/core/api'
+import { FeedJoinStatus, FeedStatus, DTOCreateEntourageAsAction, DTOCreateEntourageAsEvent } from 'src/core/api'
 import { formatFeedTypes } from 'src/utils/misc'
 import { EntourageCities, Cities } from 'src/utils/types'
 import { TestFeedGateway } from './TestFeedGateway'
@@ -70,6 +70,10 @@ function configureStoreWithSelectedItems() {
     {
       dependencies: { feedGateway },
       initialAppState: {
+        authUser: {
+          ...defaultAuthUserState,
+          user: createUser(),
+        },
         feed: {
           ...fakeFeedData,
           items: itemsEntities,
@@ -917,20 +921,63 @@ describe('Feed Item', () => {
 
   describe('CRUD feedItem', () => {
     it(`
-    Given state has items
-    When user want to create an entourage
-    Then updating status request should be active
-      And create entourage gateway should be called with the values submitted by the user
-      And updating status request should not be active after succeeded
-      And the items must be updated with the new item
-      And the created entourage is in the beginning of the itemUuid
-      And the list of filter must be reset
+      Given state has items
+      When user want to create an action
+      Then updating status request should be active
+        And create entourage gateway should be called with the values submitted by the user
+        And updating status request should not be active after succeeded
+        And the items must be updated with the new item
+        And the created entourage is in the beginning of the itemUuid
+        And the list of filter must be reset
+    `, async () => {
+      // Given
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeAction: DTOCreateEntourageAsAction = {
+        ...feedData,
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      const initialItemSize = Object.keys(selectFeed(store.getState()).items).length
+
+      // When
+      store.dispatch(publicActions.createEntourage({ entourage: fakeAction }))
+
+      // Then
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      expect(feedGateway.createEntourage).toHaveBeenCalledWith(fakeAction)
+
+      feedGateway.createEntourage.resolveDeferredValue()
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      // check if in list
+      const feedStateAfterCreation = selectFeed(store.getState())
+      expect(Object.keys(feedStateAfterCreation.items).length).toEqual(initialItemSize + 1)
+      expect(feedStateAfterCreation.itemsUuids[0]).toEqual(feedData.uuid)
+      expect(feedStateAfterCreation.filters).toEqual(defaultFeedState.filters)
+    })
+
+    it(`
+      Given state has items
+      When user want to create an event
+      And user is part of a partner organisation
+      Then updating status request should be active
+        And create entourage gateway should be called with the values submitted by the user
+        And updating status request should not be active after succeeded
+        And the items must be updated with the new item
+        And the created entourage is in the beginning of the itemUuid
+        And the list of filter must be reset
     `, async () => {
       // Given
       const { store, feedGateway } = configureStoreWithSelectedItems()
       const feedData = createFeedItem()
       const fakeEvent: DTOCreateEntourageAsEvent = {
         ...feedData,
+        groupType: 'outing',
         metadata: {
           ...feedData.metadata,
           googlePlaceId: 'fake',
@@ -1153,7 +1200,33 @@ describe('Feed Item', () => {
     })
 
     it(`
-      Given feed item is being created
+      Given an action is being created
+      When an error occurs
+      Then the feed item should not be creating
+        And an error should be added to the alert queue
+    `, async () => {
+      const { store, feedGateway } = configureStoreWithSelectedItems()
+      const feedData = createFeedItem()
+      const fakeAction: DTOCreateEntourageAsAction = {
+        ...feedData,
+        public: true,
+      }
+
+      feedGateway.createEntourage.mockDeferredValueOnce(feedData)
+
+      store.dispatch(publicActions.createEntourage({ entourage: fakeAction }))
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(true)
+
+      feedGateway.createEntourage.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+      await store.waitForActionEnd()
+
+      expect(selectIsUpdatingItem(store.getState())).toEqual(false)
+      expect(selectAlerts(store.getState()).length).toEqual(1)
+    })
+
+    it(`
+      Given an event is being created
       When an error occurs
       Then the feed item should not be creating
         And an error should be added to the alert queue
@@ -1162,6 +1235,7 @@ describe('Feed Item', () => {
       const feedData = createFeedItem()
       const fakeEvent: DTOCreateEntourageAsEvent = {
         ...feedData,
+        groupType: 'outing',
         metadata: {
           ...feedData.metadata,
           googlePlaceId: 'fake',

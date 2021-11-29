@@ -110,7 +110,7 @@ export function DrawerNavMobile() {
               />
             </ListItem>
             <ListItem key="take_action" button={true}>
-              <NavTakeAction>
+              <NavTakeAction hideEventCreation={!me?.partner}>
                 <NavItem
                   icon={<AddCircleIcon color="primary" />}
                   label={texts.nav.takeAction}

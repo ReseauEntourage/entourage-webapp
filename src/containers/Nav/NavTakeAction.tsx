@@ -83,10 +83,11 @@ function IconExternalLink(props: IconExternalLinkProps) {
 
 interface NavTakeActionProps {
   children: JSX.Element;
+  hideEventCreation: boolean;
 }
 
 export function NavTakeAction(props: NavTakeActionProps) {
-  const { children } = props
+  const { children, hideEventCreation } = props
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const { drawerIsOpen, setDrawerIsOpen } = useLayoutContext()
   const { sendEvent } = useFirebase()
@@ -169,13 +170,17 @@ export function NavTakeAction(props: NavTakeActionProps) {
             labelColor={colors.main.primary}
             onClick={openActionModal}
           />
-          <IconAction
-            description="Évènement à une date précise: atelier, café de quartier, tournoi sportif..."
-            icon={<EventIcon />}
-            label="Créer un évènement"
-            labelColor={colors.main.primary}
-            onClick={openEventModal}
-          />
+          {
+            !hideEventCreation && (
+              <IconAction
+                description="Évènement à une date précise: atelier, café de quartier, tournoi sportif..."
+                icon={<EventIcon />}
+                label="Créer un évènement"
+                labelColor={colors.main.primary}
+                onClick={openEventModal}
+              />
+            )
+          }
           <Box marginBottom={1} marginTop={1}>
             <Divider />
           </Box>
