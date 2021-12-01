@@ -18,7 +18,7 @@ app.prepare()
 
     // TODO specify origin
     server.use(cors());
-    
+
     server.get('*', (req, res) => {
       return handle(req, res)
     })
