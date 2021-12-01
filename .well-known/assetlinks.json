@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "social.entourage.android",
+      "sha256_cert_fingerprints": [
+        "DA:C4:85:E4:D7:9F:59:E0:49:EE:A8:63:70:76:27:F9:1A:5C:09:79:F5:A1:66:81:3B:DB:76:cd:7D:64:2C:49",
+        "90:2D:BA:19:30:A7:A5:A9:3F:ab:B5:EA:72:DC:E0:3F:3F:AD:F4:6F:33:2C:3A:FA:12:8F:6C:61:C4:CA:6F:37"
+      ]
+    }
+  }
+]
