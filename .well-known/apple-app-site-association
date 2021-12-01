@@ -5,6 +5,10 @@
       {
         "appID": "RT7X9LLTN6.social.entourage.entourageios",
         "paths": [ "*" ]
+      },
+      {
+        "appID": "RT7X9LLTN6.social.entourage.entourageios.beta",
+        "paths": [ "*" ]
       }
     ]
   }
