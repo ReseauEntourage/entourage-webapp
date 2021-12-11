@@ -247,9 +247,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                 label={modalTexts.fieldLabelStartDate}
                 margin="normal"
                 onChange={onChangeStartDate}
-                TextFieldComponent={(textFieldProps) => (
-                  <TextField {...textFieldProps} />
-                )}
+                TextFieldComponent={TextField}
                 value={startDate}
                 variant="dialog"
               />
@@ -266,9 +264,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                 margin="normal"
                 minDate={startDate}
                 onChange={onChangeEndDate}
-                TextFieldComponent={(textFieldProps) => (
-                  <TextField {...textFieldProps} />
-                )}
+                TextFieldComponent={TextField}
                 value={endDate}
                 variant="dialog"
               />

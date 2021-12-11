@@ -126,7 +126,6 @@ module.exports = {
     'semi': 0,
     'default-param-last': 0,
     '@typescript-eslint/ban-types': 0,
-    'react/no-unstable-nested-components': 0,
   },
   'overrides': [
     {
