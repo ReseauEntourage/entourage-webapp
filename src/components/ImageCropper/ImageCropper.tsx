@@ -1,6 +1,6 @@
 import Box from '@material-ui/core/Box'
 import debounce from 'lodash/debounce'
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useMemo } from 'react'
 import ReactCrop, { ReactCropProps } from 'react-image-crop'
 import { Button } from 'src/components/Button'
 import 'react-image-crop/dist/ReactCrop.css'
@@ -100,15 +100,14 @@ export function ImageCropper(props: ImageCropperProps) {
     }
   }, [getCroppedImg, onChange])
 
-  const onCropChange = useCallback(
-    debounce(
+  const onCropChange = useMemo(() => {
+    return debounce(
       (nextCrop: ReactCropProps['crop']) => {
         setCrop(nextCrop)
       },
       10,
-    ),
-    [],
-  )
+    );
+  }, [])
 
   const onSelectFile = useCallback((e) => {
     if (e.target.files && e.target.files.length > 0) {

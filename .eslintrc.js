@@ -130,7 +130,6 @@ module.exports = {
     'react/jsx-props-no-multi-spaces': 0,
     'react/no-unused-prop-types': 0,
     'no-restricted-exports': 0,
-    'react-hooks/exhaustive-deps': 0,
   },
   'overrides': [
     {
