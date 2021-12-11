@@ -128,7 +128,6 @@ module.exports = {
     '@typescript-eslint/ban-types': 0,
     'react/no-unstable-nested-components': 0,
     'react/jsx-props-no-multi-spaces': 0,
-    'react/no-unused-prop-types': 0,
   },
   'overrides': [
     {
