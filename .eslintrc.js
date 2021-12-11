@@ -125,7 +125,6 @@ module.exports = {
     'react/jsx-no-constructed-context-values': 0,
     'semi': 0,
     'default-param-last': 0,
-    '@typescript-eslint/ban-types': 0,
   },
   'overrides': [
     {

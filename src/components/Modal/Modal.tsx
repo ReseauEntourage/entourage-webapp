@@ -70,7 +70,7 @@ export function Modal(props: ModalProps) {
     <Dialog
       aria-labelledby="form-dialog-title"
       disableEscapeKeyDown={!showCloseButton}
-      onClose={(event: {}, reason) => {
+      onClose={(event: Record<string, unknown>, reason) => {
         if (reason === 'backdropClick') {
           return
         }
