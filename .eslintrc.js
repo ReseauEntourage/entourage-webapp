@@ -129,7 +129,6 @@ module.exports = {
     'react/no-unstable-nested-components': 0,
     'react/jsx-props-no-multi-spaces': 0,
     'react/no-unused-prop-types': 0,
-    'no-restricted-exports': 0,
   },
   'overrides': [
     {
@@ -144,6 +143,7 @@ module.exports = {
       'rules': {
         'import/no-default-export': 0,
         'import/prefer-default-export': 2,
+        'no-restricted-exports': 0,
       }
     }
   ],
