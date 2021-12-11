@@ -86,10 +86,10 @@ export const PendingNotifWithRightContent = () => (
     rightContent={(
       <ButtonsList>
         <Button startIcon={<CheckIcon />}>
-            Accepter
+          Accepter
         </Button>
         <Button startIcon={<CloseIcon />} style={{ backgroundColor: colors.main.white }} variant="outlined">
-            Refuser
+          Refuser
         </Button>
       </ButtonsList>
     )}

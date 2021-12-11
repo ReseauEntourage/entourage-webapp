@@ -131,7 +131,6 @@ module.exports = {
     'react/no-unused-prop-types': 0,
     'no-restricted-exports': 0,
     'react-hooks/exhaustive-deps': 0,
-    'react/jsx-indent': 0,
   },
   'overrides': [
     {
