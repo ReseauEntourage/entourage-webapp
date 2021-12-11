@@ -54,7 +54,7 @@ export function useDelayLoading(defaultValue = false, options: Options = default
           clearTimeout(stopTimeout.current)
           timeoutIsActiveRef.current = false
           sub.unsubscribe()
-          resolve()
+          resolve(null)
         })
       })
     }

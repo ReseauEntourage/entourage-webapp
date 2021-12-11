@@ -12,7 +12,7 @@ export class GeolocationService implements IGeolocationService {
 
     if (!isSSR && 'geolocation' in navigator) {
       return new Promise((res, rej) => {
-        navigator.geolocation.getCurrentPosition((position: Position) => {
+        navigator.geolocation.getCurrentPosition((position) => {
           const coordinates = position.coords
           res({
             coordinates: {

@@ -75,12 +75,12 @@ export function configureStore<
   function waitForActionEnd() {
     return new Promise((resolve) => {
       if (sagaRunningCount === 0) {
-        resolve()
+        resolve(null)
       } else {
         const timer = setInterval(() => {
           if (sagaRunningCount === 0) {
             clearInterval(timer)
-            resolve()
+            resolve(null)
           }
         }, 50)
       }
