@@ -8,7 +8,7 @@ export default {
 
 export const Base = () => (
   <TransparentWrapper>
-    <ImageCropperBase onChange={() => {}} />
+    <ImageCropperBase onChange={() => null} />
   </TransparentWrapper>
 )
 

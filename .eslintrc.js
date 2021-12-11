@@ -132,7 +132,6 @@ module.exports = {
     'no-restricted-exports': 0,
     'react-hooks/exhaustive-deps': 0,
     'react/jsx-indent': 0,
-    '@typescript-eslint/no-empty-function': 0,
   },
   'overrides': [
     {
