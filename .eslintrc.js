@@ -124,7 +124,6 @@ module.exports = {
     'operator-linebreak': 0,
     'react/jsx-no-constructed-context-values': 0,
     'semi': 0,
-    'default-param-last': 0,
   },
   'overrides': [
     {
@@ -140,6 +139,12 @@ module.exports = {
         'import/no-default-export': 0,
         'import/prefer-default-export': 2,
         'no-restricted-exports': 0,
+      }
+    },
+    {
+      'files': ['src/**/*.reducer.ts'],
+      'rules': {
+        'default-param-last': 0,
       }
     }
   ],
