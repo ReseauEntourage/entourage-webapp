@@ -108,10 +108,12 @@ function* retrieveCurrentConversationMessagesSaga() {
     yield put(actions.retrieveConversationMessagesStarted())
 
     try {
-      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(
+        retrieveConversationMessages,
         {
           entourageUuid,
-        })
+        },
+      )
       yield put(actions.retrieveConversationMessagesSuccess({
         conversationUuid: entourageUuid,
         conversationMessages: response.conversationMessages,
@@ -183,11 +185,13 @@ function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['
     const { retrieveConversationMessages } = dependencies.messagesGateway
 
     try {
-      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(
+        retrieveConversationMessages,
         {
           entourageUuid,
           before: before ?? undefined,
-        })
+        },
+      )
 
       yield put(actions.retrieveConversationMessagesSuccess({
         conversationUuid: entourageUuid,
@@ -218,11 +222,13 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
     const { sendMessage, retrieveConversationMessages, retrieveConversations } = dependencies.messagesGateway
 
     try {
-      yield call(sendMessage,
+      yield call(
+        sendMessage,
         {
           entourageUuid,
           message,
-        })
+        },
+      )
 
       const responseMessages: CallReturnType<typeof retrieveConversationMessages> = yield call(
         retrieveConversationMessages,
@@ -268,8 +274,10 @@ export function* messagesSaga() {
   yield takeEvery(AuthUserActionType.SET_USER, retrieveConversationsIfLoggedIn)
   yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, retrieveConversationsIfLoggedIn)
   yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveNextConversationsSaga)
-  yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
-    retrieveCurrentConversationDetailsIfNeededSaga)
+  yield takeEvery(
+    MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
+    retrieveCurrentConversationDetailsIfNeededSaga,
+  )
 
   yield takeEvery(MessagesActionType.SET_CURRENT_CONVERSATION_UUID, retrieveCurrentConversationMessagesSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES, retrieveCurrentConversationMessagesSaga)

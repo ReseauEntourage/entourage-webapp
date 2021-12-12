@@ -121,14 +121,12 @@ export function feedReducer(
       return {
         ...state,
         isIdle: false,
-        items: action.payload.items.reduce(
-          (acc: FeedState['items'], item: FeedState['items'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.items,
-        ),
+        items: action.payload.items.reduce((acc: FeedState['items'], item: FeedState['items'][number]) => {
+          return {
+            ...acc,
+            [item.uuid]: item,
+          }
+        }, state.items),
         itemsUuids: action.payload.items.map((item: FeedEntourage | FeedAnnouncement) => item.uuid),
         nextPageToken: action.payload.nextPageToken,
         fetching: false,
@@ -146,14 +144,12 @@ export function feedReducer(
     case FeedActionType.RETRIEVE_FEED_NEXT_PAGE_SUCCEEDED: {
       return {
         ...state,
-        items: action.payload.items.reduce(
-          (acc: FeedState['items'], item: FeedState['items'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.items,
-        ),
+        items: action.payload.items.reduce((acc: FeedState['items'], item: FeedState['items'][number]) => {
+          return {
+            ...acc,
+            [item.uuid]: item,
+          }
+        }, state.items),
         itemsUuids: [
           ...state.itemsUuids,
           ...action.payload.items.map((item: FeedState['items'][number]) => item.uuid),

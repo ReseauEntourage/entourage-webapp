@@ -276,37 +276,39 @@ describe('Messages', () => {
 
       expect(selectAlerts(store.getState()).length).toEqual(1)
     })
-    it(`
+    it(
+      `
       Given next conversations are retrieving
       When an error occurs
       Then conversations should not be fetching
         And an error should be added to the alert queue`,
-    async () => {
-      const messagesGateway = new TestMessagesGateway()
-      const deferredValue = { conversations: [fakeMessagesData.conversations.def], unreadConversations: 0 }
-      messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
-      const store = configureStoreWithMessages({ dependencies: { messagesGateway },
-        initialAppState: {
-          ...defaultInitialAppState,
-          messages: {
-            ...defaultMessagesState,
-            conversationsUuids: ['abc'],
-            conversations: {
-              abc: fakeMessagesData.conversations.abc,
+      async () => {
+        const messagesGateway = new TestMessagesGateway()
+        const deferredValue = { conversations: [fakeMessagesData.conversations.def], unreadConversations: 0 }
+        messagesGateway.retrieveConversations.mockDeferredValueOnce(deferredValue)
+        const store = configureStoreWithMessages({ dependencies: { messagesGateway },
+          initialAppState: {
+            ...defaultInitialAppState,
+            messages: {
+              ...defaultMessagesState,
+              conversationsUuids: ['abc'],
+              conversations: {
+                abc: fakeMessagesData.conversations.abc,
+              },
             },
           },
-        },
-      })
+        })
 
-      store.dispatch(publicActions.retrieveNextConversations())
+        store.dispatch(publicActions.retrieveNextConversations())
 
-      expect(selectConversationsIsFetching(store.getState())).toEqual(true)
+        expect(selectConversationsIsFetching(store.getState())).toEqual(true)
 
-      messagesGateway.retrieveConversations.rejectDeferredValue(new Error('Une erreur s\'est produite'))
-      await store.waitForActionEnd()
+        messagesGateway.retrieveConversations.rejectDeferredValue(new Error('Une erreur s\'est produite'))
+        await store.waitForActionEnd()
 
-      expect(selectConversationsIsFetching(store.getState())).toEqual(false)
-      expect(selectAlerts(store.getState()).length).toEqual(1)
-    })
+        expect(selectConversationsIsFetching(store.getState())).toEqual(false)
+        expect(selectAlerts(store.getState()).length).toEqual(1)
+      },
+    )
   })
 })

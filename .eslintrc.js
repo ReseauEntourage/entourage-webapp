@@ -118,9 +118,6 @@ module.exports = {
     'import/order': 0,
     'react/jsx-no-useless-fragment': 0,
     'react/require-default-props': 0,
-    'function-paren-newline': 0,
-    '@typescript-eslint/indent': 0,
-    'indent': 0,
   },
   'overrides': [
     {

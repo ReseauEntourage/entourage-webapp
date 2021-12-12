@@ -20,10 +20,12 @@ export function POIPartnerFilter(props: TextFilterProps) {
 
   const checked = useSelector<AppState, boolean>((state) => selectIsActiveFilter(state, category, partner))
 
-  const onChange = useCallback(() => {
-    dispatch(poisActions.togglePOIsFilter({ category, partner }))
-  },
-  [category, dispatch, partner])
+  const onChange = useCallback(
+    () => {
+      dispatch(poisActions.togglePOIsFilter({ category, partner }))
+    },
+    [category, dispatch, partner],
+  )
 
   const label = texts.types.pois[partner]
 

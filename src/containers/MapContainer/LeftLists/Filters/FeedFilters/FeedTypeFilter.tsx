@@ -13,10 +13,12 @@ export function FeedTypeFilter(props: Omit<FeedCategoryFilterProps, 'color' | 'c
 
   const checked = useSelector<AppState, boolean>((state) => selectIsActiveActionTypesFilter(state, type))
 
-  const onChange = useCallback(() => {
-    dispatch(feedActions.toggleActionTypesFilter({ type }))
-  },
-  [dispatch, type])
+  const onChange = useCallback(
+    () => {
+      dispatch(feedActions.toggleActionTypesFilter({ type }))
+    },
+    [dispatch, type],
+  )
 
   const label = texts.content.map.filters[type].title
 

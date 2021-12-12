@@ -77,14 +77,12 @@ export function poisReducer(state: POIsState = defaultPOIsState, action: POIsAct
       return {
         ...state,
         isIdle: false,
-        pois: action.payload.pois.reduce(
-          (acc: POIsState['pois'], item: POIsState['pois'][number]) => {
-            return {
-              ...acc,
-              [item.uuid]: item,
-            }
-          }, state.pois,
-        ),
+        pois: action.payload.pois.reduce((acc: POIsState['pois'], item: POIsState['pois'][number]) => {
+          return {
+            ...acc,
+            [item.uuid]: item,
+          }
+        }, state.pois),
         poisUuids: action.payload.pois.map((item: POI) => item.uuid),
         fetching: false,
       }

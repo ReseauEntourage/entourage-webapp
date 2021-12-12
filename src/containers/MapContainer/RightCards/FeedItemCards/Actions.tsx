@@ -93,10 +93,12 @@ export function Actions(props: ActionsProps) {
     )
   }, [feedItem.uuid])
 
-  const onClickReopen = useCallback(() => {
-    dispatch(feedActions.reopenEntourage({ entourageUuid: feedItem.uuid }))
-  },
-  [dispatch, feedItem.uuid])
+  const onClickReopen = useCallback(
+    () => {
+      dispatch(feedActions.reopenEntourage({ entourageUuid: feedItem.uuid }))
+    },
+    [dispatch, feedItem.uuid],
+  )
 
   if (status === RequestStatus.CLOSED) {
     return iAmCreator ? (

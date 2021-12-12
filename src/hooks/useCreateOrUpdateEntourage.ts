@@ -21,8 +21,10 @@ export function useCreateOrUpdateEntourage() {
     dispatch(feedActions.createEntourage({ entourage, onCreateSucceeded }))
   }, [dispatch, onCreateSucceeded])
 
-  const updateEntourage = useCallback((entourageUuid: string,
-    entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent) => {
+  const updateEntourage = useCallback((
+    entourageUuid: string,
+    entourage: DTOUpdateEntourageAsAction | DTOUpdateEntourageAsEvent,
+  ) => {
     dispatch(feedActions.updateEntourage({ entourageUuid, entourage }))
   }, [dispatch])
 
