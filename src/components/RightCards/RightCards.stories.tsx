@@ -136,13 +136,12 @@ export const Event = () => (
 )
 
 export const POI = () => (
-  <>
-    <Wrapper>
-      <POICard
-        address="Paroisse Saint Vincent de Paul, 92110 Clichy"
-        audience="Femmes sans domicile fixe, sur inscription auprès des associations partenaires"
-        categoryIds={[1, 2, 63]}
-        description="La bagagerie, c’est une équipe et un lieu permettant à 15 femmes sans domicile
+  <Wrapper>
+    <POICard
+      address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+      audience="Femmes sans domicile fixe, sur inscription auprès des associations partenaires"
+      categoryIds={[1, 2, 63]}
+      description="La bagagerie, c’est une équipe et un lieu permettant à 15 femmes sans domicile
          fixe de déposer leurs sacs et leurs bagages en toute sécurité et d’y accéder,
          matin et soir, tous les jours de l’année. Des bénévoles s’y relaient pour assurer les permanences :
          - Lundi, mardi, jeudi et vendredi, de 7h15 à 9h15 et de 20h à 22h.
@@ -151,26 +150,24 @@ export const POI = () => (
          y trouveront un accueil amical et un casier personnel,
          ainsi que divers équipements (cabine individuelle pour se changer, sanitaires, accès à internet…).
          La bagagerie est située dans les locaux de la paroisse Saint-Vincent de Paul, accès par la rue Dagobert."
-        email="bagagerieclichy@gmail.com"
-        hours="9h-12h et 14h-18h"
-        languages="Français et Anglais"
-        name="Bagagerie solidaire de Clichy"
-        phone="0102030405"
-        source="entourage"
-        website="www.bagageriessolidaires92.org"
-      />
-    </Wrapper>
-  </>
+      email="bagagerieclichy@gmail.com"
+      hours="9h-12h et 14h-18h"
+      languages="Français et Anglais"
+      name="Bagagerie solidaire de Clichy"
+      phone="0102030405"
+      source="entourage"
+      website="www.bagageriessolidaires92.org"
+    />
+  </Wrapper>
 )
 
 export const POISoliguide = () => (
-  <>
-    <Wrapper>
-      <POICard
-        address="Paroisse Saint Vincent de Paul, 92110 Clichy"
-        audience="Femmes sans domicile fixe, sur inscription auprès des associations partenaires"
-        categoryIds={[1, 2, 63]}
-        description="La bagagerie, c’est une équipe et un lieu permettant à 15 femmes sans domicile
+  <Wrapper>
+    <POICard
+      address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+      audience="Femmes sans domicile fixe, sur inscription auprès des associations partenaires"
+      categoryIds={[1, 2, 63]}
+      description="La bagagerie, c’est une équipe et un lieu permettant à 15 femmes sans domicile
          fixe de déposer leurs sacs et leurs bagages en toute sécurité et d’y accéder,
          matin et soir, tous les jours de l’année. Des bénévoles s’y relaient pour assurer les permanences :
          - Lundi, mardi, jeudi et vendredi, de 7h15 à 9h15 et de 20h à 22h.
@@ -179,15 +176,14 @@ export const POISoliguide = () => (
          y trouveront un accueil amical et un casier personnel,
          ainsi que divers équipements (cabine individuelle pour se changer, sanitaires, accès à internet…).
          La bagagerie est située dans les locaux de la paroisse Saint-Vincent de Paul, accès par la rue Dagobert."
-        email="bagagerieclichy@gmail.com"
-        hours="9h-12h et 14h-18h"
-        languages="Français et Anglais"
-        name="Bagagerie solidaire de Clichy"
-        phone="0102030405"
-        source="soliguide"
-        sourceUrl="https://soliguide.fr/fiche/repas-chauds-la-chorba-paris-centre-10680"
-        website="www.bagageriessolidaires92.org"
-      />
-    </Wrapper>
-  </>
+      email="bagagerieclichy@gmail.com"
+      hours="9h-12h et 14h-18h"
+      languages="Français et Anglais"
+      name="Bagagerie solidaire de Clichy"
+      phone="0102030405"
+      source="soliguide"
+      sourceUrl="https://soliguide.fr/fiche/repas-chauds-la-chorba-paris-centre-10680"
+      website="www.bagageriessolidaires92.org"
+    />
+  </Wrapper>
 )

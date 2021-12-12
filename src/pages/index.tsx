@@ -7,9 +7,7 @@ interface Props {}
 
 const Home: StatelessPage<Props> = () => {
   return (
-    <>
-      <MetaData url={env.SERVER_URL} />
-    </>
+    <MetaData url={env.SERVER_URL} />
   )
 }
 

@@ -118,7 +118,6 @@ module.exports = {
     'import/extensions': 0,
     'no-promise-executor-return': 0,
     'import/order': 0,
-    'react/jsx-no-useless-fragment': 0,
   },
   'overrides': [
     {

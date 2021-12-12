@@ -25,9 +25,5 @@ export function PrivateRoute(props: PrivateRouteProps) {
     return null
   }
 
-  return (
-    <>
-      {children}
-    </>
-  )
+  return children
 }

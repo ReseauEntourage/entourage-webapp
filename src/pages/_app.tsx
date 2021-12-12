@@ -150,15 +150,13 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
         <MetaData url={`${env.SERVER_URL}/actions`} />
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
-          <>
-            <StylesProvider injectFirst={true}>
-              <ThemeProvider theme={theme}>
-                <Provider store={this.store}>
-                  {persistorWrappedContent}
-                </Provider>
-              </ThemeProvider>
-            </StylesProvider>
-          </>
+          <StylesProvider injectFirst={true}>
+            <ThemeProvider theme={theme}>
+              <Provider store={this.store}>
+                {persistorWrappedContent}
+              </Provider>
+            </ThemeProvider>
+          </StylesProvider>
         </SSRDataContext.Provider>
       </Sentry.ErrorBoundary>
     )
