@@ -69,6 +69,8 @@ module.exports = {
     // with TypeScript strict mode, no issue
     'react/jsx-props-no-spreading': 0,
     'react/jsx-sort-props': 1,
+     // with TypeScript, no default props
+    'react/require-default-props': 0,
 
     // Plain JavaScript Rules
     'arrow-body-style': 0,
@@ -117,7 +119,6 @@ module.exports = {
     'no-promise-executor-return': 0,
     'import/order': 0,
     'react/jsx-no-useless-fragment': 0,
-    'react/require-default-props': 0,
   },
   'overrides': [
     {
