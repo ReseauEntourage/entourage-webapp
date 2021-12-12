@@ -121,7 +121,6 @@ module.exports = {
     'function-paren-newline': 0,
     '@typescript-eslint/indent': 0,
     'indent': 0,
-    'operator-linebreak': 0,
   },
   'overrides': [
     {
