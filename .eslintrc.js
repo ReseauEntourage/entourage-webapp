@@ -123,7 +123,6 @@ module.exports = {
     'indent': 0,
     'operator-linebreak': 0,
     'react/jsx-no-constructed-context-values': 0,
-    'semi': 0,
   },
   'overrides': [
     {

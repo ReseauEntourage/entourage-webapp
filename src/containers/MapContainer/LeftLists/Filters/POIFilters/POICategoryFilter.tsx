@@ -27,7 +27,7 @@ export function POICategoryFilter(props: POICategoryFilter) {
     return (iconProps: SvgIconProps) => (
       <POIIcon poiCategory={categoryId} {...iconProps} />
     )
-  }, [categoryId]);
+  }, [categoryId])
 
   const dispatch = useDispatch()
 

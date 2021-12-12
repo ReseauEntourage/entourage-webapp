@@ -106,7 +106,7 @@ export function ImageCropper(props: ImageCropperProps) {
         setCrop(nextCrop)
       },
       10,
-    );
+    )
   }, [])
 
   const onSelectFile = useCallback((e) => {

@@ -37,9 +37,9 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  store: ReturnType<typeof bootstrapStore>['store'] | null = null;
+  store: ReturnType<typeof bootstrapStore>['store'] | null = null
 
-  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null;
+  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null
 
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
     const { req } = appContext.ctx
