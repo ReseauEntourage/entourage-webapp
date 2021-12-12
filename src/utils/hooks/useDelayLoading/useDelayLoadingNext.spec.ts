@@ -3,7 +3,9 @@ import { useState } from 'react'
 import { useDelayLoadingNext as useDelayLoading } from './useDelayLoadingNext'
 
 function timeout(delay: number) {
-  return new Promise((resolve) => setTimeout(resolve, delay))
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
 }
 
 function useDemo(initialValue: boolean, options: Parameters<typeof useDelayLoading>[1]) {
