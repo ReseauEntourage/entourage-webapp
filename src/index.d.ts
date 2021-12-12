@@ -8,7 +8,7 @@ declare module 'googlemaps';
  * https://github.com/microsoft/TypeScript/issues/36275
  */
 
-interface Array<T> {
+interface Array {
   /**
    * Determines whether an array includes a certain element, returning true or false as appropriate.
    * @param searchElement The element to search for.
@@ -17,7 +17,7 @@ interface Array<T> {
   includes(searchElement: any, fromIndex?: number): boolean;
 }
 
-interface ReadonlyArray<T> {
+interface ReadonlyArray {
   /**
    * Determines whether an array includes a certain element, returning true or false as appropriate.
    * @param searchElement The element to search for.

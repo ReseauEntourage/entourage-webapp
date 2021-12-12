@@ -120,7 +120,6 @@ module.exports = {
 
     // Override after dependencies upgrade. To Fix
     'react/function-component-definition': 0,
-    '@typescript-eslint/no-unused-vars': 0,
     'no-shadow': 0,
     'no-use-before-define': 0,
   },
