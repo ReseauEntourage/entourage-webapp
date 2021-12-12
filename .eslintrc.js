@@ -122,7 +122,6 @@ module.exports = {
     '@typescript-eslint/indent': 0,
     'indent': 0,
     'operator-linebreak': 0,
-    'react/jsx-no-constructed-context-values': 0,
   },
   'overrides': [
     {

@@ -92,6 +92,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
     // @ts-ignore
     const { Component, pageProps, me, userAgent, authUserData } = this.props
 
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     const SSRDataValue = { me, userAgent }
 
     if (!this.store) {
