@@ -22,13 +22,13 @@ export function jestFn<Fn extends(...args: AnyCantFix) => AnyCantFix>(fnKey: str
 
   output.mockDeferredValue = (value: ResolvedValue<ReturnType<Fn>>) => {
     deferred = new Defer(() => value)
-    // @ts-expect-error
+    // @ts-expect-error conflict with ResolvedValue<ReturnType<Fn>>
     output.mockReturnValue(deferred.promise)
   }
 
   output.mockDeferredValueOnce = (value: ResolvedValue<ReturnType<Fn>>) => {
     deferred = new Defer(() => value)
-    // @ts-expect-error
+    // @ts-expect-error conflict with ResolvedValue<ReturnType<Fn>>
     output.mockReturnValueOnce(deferred.promise)
   }
 

@@ -31,7 +31,16 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 0,
     // many times, typing will bring duplication
     '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/ban-ts-ignore': 0,
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true,
+        "ts-nocheck": true,
+        "ts-check": true,
+        "minimumDescriptionLength": 3
+      }
+    ],
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/interface-name-prefix': 0,
 
@@ -114,7 +123,6 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': 0,
     'no-shadow': 0,
     'no-use-before-define': 0,
-    '@typescript-eslint/ban-ts-comment': 0,
   },
   'overrides': [
     {

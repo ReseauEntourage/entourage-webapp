@@ -74,7 +74,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     return {
       ...appProps,
-      // @ts-ignore
+      // @ts-expect-error fore me
       me,
       authUserData: me?.data.user,
       userAgent,
@@ -89,7 +89,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   }
 
   render() {
-    // @ts-ignore
+    // @ts-expect-error force type for custom props
     const { Component, pageProps, me, userAgent, authUserData } = this.props
 
     // eslint-disable-next-line react/jsx-no-constructed-context-values

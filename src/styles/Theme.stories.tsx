@@ -35,11 +35,9 @@ export const Typography = () => {
     (
       <ThemeProvider theme={theme}>
         <div>
-          {Object.entries(usedTypo).map(([name, label]) => {
-            // @ts-ignore
+          {(Object.entries(usedTypo) as [keyof typeof usedTypo, string][]).map(([name, label]) => {
             const typography = theme.typography[name]
             const content = (
-              // @ts-ignore
               <TypographyMUI variant={name}>
                 <div style={{ display: 'flex' }}>
                   <Box m={1} width={100}>{label}</Box>

@@ -87,9 +87,9 @@ export function configureStore<
     })
   }
 
-  // @ts-expect-error
+  // @ts-expect-error use waitForActionEnd for unit test
   store.waitForActionEnd = waitForActionEnd
 
-  // @ts-expect-error
+  // @ts-expect-error output already typed
   return store
 }

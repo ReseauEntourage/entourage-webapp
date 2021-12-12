@@ -36,7 +36,7 @@ export function ModalsListener() {
   const [modals, setModals] = useState<{ [key in string]: React.ReactNode; }>({})
 
   const subscription = useMemo(() => {
-    // @ts-ignore
+    // @ts-expect-error force ReactNode type
     return modalsSubject.subscribe((modal: React.ReactNode) => {
       const modalKey = uniqid()
       setModals((prevModals) => ({

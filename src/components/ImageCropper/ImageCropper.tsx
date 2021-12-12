@@ -70,7 +70,7 @@ export function ImageCropper(props: ImageCropperProps) {
           return
         }
 
-        // @ts-ignore
+        // @ts-expect-error to fix
         // eslint-disable-next-line no-param-reassign
         blob.name = fileName
         window.URL.revokeObjectURL(fileUrl.current)
@@ -91,7 +91,7 @@ export function ImageCropper(props: ImageCropperProps) {
         'newFile.jpeg',
       )
 
-      // @ts-ignore to fix because of TS 3.8
+      // @ts-expect-error to fix because of TS 3.8
       setValue(internalValue)
 
       if (onChange) {
@@ -113,7 +113,7 @@ export function ImageCropper(props: ImageCropperProps) {
     if (e.target.files && e.target.files.length > 0) {
       setEditing(true)
       const reader = new FileReader()
-      // @ts-ignore
+      // @ts-expect-error to fix
       reader.addEventListener('load', () => setSrc(reader.result))
       reader.readAsDataURL(e.target.files[0])
     }
@@ -121,7 +121,7 @@ export function ImageCropper(props: ImageCropperProps) {
 
   const internalOnValidate = useCallback(() => {
     if (onValidate) {
-      // @ts-ignore to fix because of TS 3.8
+      // @ts-expect-error to fix because of TS 3.8
       onValidate(value)
     }
 
@@ -147,7 +147,7 @@ export function ImageCropper(props: ImageCropperProps) {
           onComplete={onCropComplete}
           onImageLoaded={onImageLoaded}
           ruleOfThirds={true}
-          // @ts-ignore to fix because of TS 3.8
+          // @ts-expect-error to fix because of TS 3.8
           src={src}
         />
       )}
@@ -167,7 +167,7 @@ export function ImageCropper(props: ImageCropperProps) {
         <div>
           <img
             alt="Copper preview"
-            // @ts-ignore to fix because of TS 3.8
+            // @ts-expect-error to fix because of TS 3.8
             src={value?.src || defaultSrc}
           />
         </div>

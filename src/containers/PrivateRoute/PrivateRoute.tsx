@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import { selectIsLogged, selectIsLogging } from 'src/core/useCases/authUser'
 
 interface PrivateRouteProps {
-  children: React.ReactNode;
+  children: JSX.Element;
 }
 
 export function PrivateRoute(props: PrivateRouteProps) {
