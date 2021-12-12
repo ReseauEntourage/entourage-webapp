@@ -71,19 +71,6 @@ function useUploadImageProfile() {
   ]
 }
 
-export function ModalProfile() {
-  const googleMapApiIsLoaded = useLoadGoogleMapApi()
-  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
-
-  if (isLoading) {
-    return <OverlayLoader />
-  }
-
-  return googleMapApiIsLoaded
-    ? <ModalProfileWithApi />
-    : null
-}
-
 function ModalProfileWithApi() {
   const me = useMe()
   const [onValidateImageProfile, upload] = useUploadImageProfile()
@@ -256,4 +243,17 @@ function ModalProfileWithApi() {
       </FormProvider>
     </Modal>
   )
+}
+
+export function ModalProfile() {
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
+  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
+
+  if (isLoading) {
+    return <OverlayLoader />
+  }
+
+  return googleMapApiIsLoaded
+    ? <ModalProfileWithApi />
+    : null
 }

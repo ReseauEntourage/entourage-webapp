@@ -12,6 +12,64 @@ import { AnyToFix } from 'src/utils/types'
 import * as S from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
+interface DefaultActionsProps {
+  onValidate?: () => void | boolean | Promise<void | boolean>;
+  onClose?: () => void;
+  mustWaiting?: boolean;
+  cancel: boolean;
+  cancelLabel: string;
+  validate: boolean;
+  validateLabel: string;
+}
+
+function DefaultActions(props: DefaultActionsProps) {
+  const {
+    validate,
+    cancel,
+    validateLabel,
+    cancelLabel,
+    onClose,
+    onValidate: onValidateProp,
+    mustWaiting,
+  } = props
+
+  const [loading, setLoading] = useDelayLoading(false)
+
+  const onValidate = useCallback(async () => {
+    if (onValidateProp) {
+      setLoading(true)
+      const onValidateRes = await onValidateProp()
+      await setLoading(false)
+      if (onValidateRes === false) {
+        return
+      }
+    }
+
+    if (onClose) {
+      onClose()
+    }
+  }, [onClose, onValidateProp, setLoading])
+
+  if (!validate && !cancel) {
+    return null
+  }
+
+  return (
+    <>
+      {cancel && (
+        <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+          {cancelLabel}
+        </Button>
+      )}
+      {validate && (
+        <Button color="primary" loading={mustWaiting ?? loading} onClick={onValidate}>
+          {validateLabel}
+        </Button>
+      )}
+    </>
+  )
+}
+
 interface BaseProps {
   children?: AnyToFix;
   onValidate?: () => void | boolean | Promise<void | boolean>;
@@ -124,63 +182,5 @@ export function Modal(props: ModalProps) {
         </DialogActions>
       ) : null }
     </Dialog>
-  )
-}
-
-interface DefaultActionsProps {
-  onValidate?: () => void | boolean | Promise<void | boolean>;
-  onClose?: () => void;
-  mustWaiting?: boolean;
-  cancel: boolean;
-  cancelLabel: string;
-  validate: boolean;
-  validateLabel: string;
-}
-
-function DefaultActions(props: DefaultActionsProps) {
-  const {
-    validate,
-    cancel,
-    validateLabel,
-    cancelLabel,
-    onClose,
-    onValidate: onValidateProp,
-    mustWaiting,
-  } = props
-
-  const [loading, setLoading] = useDelayLoading(false)
-
-  const onValidate = useCallback(async () => {
-    if (onValidateProp) {
-      setLoading(true)
-      const onValidateRes = await onValidateProp()
-      await setLoading(false)
-      if (onValidateRes === false) {
-        return
-      }
-    }
-
-    if (onClose) {
-      onClose()
-    }
-  }, [onClose, onValidateProp, setLoading])
-
-  if (!validate && !cancel) {
-    return null
-  }
-
-  return (
-    <>
-      {cancel && (
-        <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
-          {cancelLabel}
-        </Button>
-      )}
-      {validate && (
-        <Button color="primary" loading={mustWaiting ?? loading} onClick={onValidate}>
-          {validateLabel}
-        </Button>
-      )}
-    </>
   )
 }

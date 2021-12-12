@@ -121,7 +121,6 @@ module.exports = {
     // Override after dependencies upgrade. To Fix
     'react/function-component-definition': 0,
     'no-shadow': 0,
-    'no-use-before-define': 0,
   },
   'overrides': [
     {
