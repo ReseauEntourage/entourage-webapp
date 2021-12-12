@@ -115,7 +115,6 @@ module.exports = {
     'no-shadow': 0,
     'no-use-before-define': 0,
     '@typescript-eslint/ban-ts-comment': 0,
-    'import/extensions': 0,
   },
   'overrides': [
     {
