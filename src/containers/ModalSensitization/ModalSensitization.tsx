@@ -1,7 +1,7 @@
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import { useForm } from 'react-hook-form'
 import React, { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Select } from 'src/components/Form'
 import { Modal } from 'src/components/Modal'
 import { texts } from 'src/i18n'

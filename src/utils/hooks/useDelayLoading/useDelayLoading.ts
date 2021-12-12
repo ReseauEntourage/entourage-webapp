@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs'
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { Subject } from 'rxjs'
 
 const MIN_DELAY_START_LOADING = 500
 const MIN_DELAY_END_LOADING = 2000

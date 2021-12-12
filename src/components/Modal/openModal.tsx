@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs'
 import React, { useState, useEffect, useMemo } from 'react'
+import { Subject } from 'rxjs'
 import uniqid from 'uniqid'
 import { ModalContext } from './ModalContext'
 
