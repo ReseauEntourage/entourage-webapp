@@ -28,17 +28,19 @@ const partner = {
   id: '123',
 }
 
-export const Demo = () => (
-  <ThemeProvider>
-    <ModalsListener />
-    <UserCard
-      actionsCount={2}
-      conversationUuid="12"
-      description={loremIpsum(150)}
-      name="Name"
-      partner={
-        partner
-      }
-    />
-  </ThemeProvider>
-)
+export function Demo() {
+  return (
+    <ThemeProvider>
+      <ModalsListener />
+      <UserCard
+        actionsCount={2}
+        conversationUuid="12"
+        description={loremIpsum(150)}
+        name="Name"
+        partner={
+          partner
+        }
+      />
+    </ThemeProvider>
+  )
+}

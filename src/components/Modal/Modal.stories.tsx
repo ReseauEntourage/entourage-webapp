@@ -62,7 +62,7 @@ function FormModal() {
   )
 }
 
-export const Modals = () => {
+export function Modals() {
   const classes = useStyles()
 
   const onClickBasic = useCallback(() => {

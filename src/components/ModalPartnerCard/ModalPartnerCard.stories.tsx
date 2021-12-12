@@ -26,10 +26,12 @@ const partner = {
   id: '123',
 }
 
-export const Demo = () => (
-  <TransparentWrapper>
-    <ModalPartnerCard
-      partner={partner}
-    />
-  </TransparentWrapper>
-)
+export function Demo() {
+  return (
+    <TransparentWrapper>
+      <ModalPartnerCard
+        partner={partner}
+      />
+    </TransparentWrapper>
+  )
+}

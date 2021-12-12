@@ -9,19 +9,21 @@ export default {
   title: 'Theme',
 }
 
-export const Colors = () => (
-  <div>
-    <TypographyMUI>
-      {Object.entries(colors.main).map(([colorName, colorValue]) => (
-        <Box color={colors.main.white} m={1} p={1} style={{ backgroundColor: colorValue }}>
-          {colorName} - {colorValue}
-        </Box>
-      ))}
-    </TypographyMUI>
-  </div>
-)
+export function Colors() {
+  return (
+    <div>
+      <TypographyMUI>
+        {Object.entries(colors.main).map(([colorName, colorValue]) => (
+          <Box color={colors.main.white} m={1} p={1} style={{ backgroundColor: colorValue }}>
+            {colorName} - {colorValue}
+          </Box>
+        ))}
+      </TypographyMUI>
+    </div>
+  )
+}
 
-export const Typography = () => {
+export function Typography() {
   const usedTypo = {
     subtitle1: 'Title 1',
     subtitle2: 'Title 2',

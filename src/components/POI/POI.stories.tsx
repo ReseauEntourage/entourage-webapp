@@ -9,50 +9,56 @@ export default {
 }
 
 // Can't use POIIcon component because Storybook can't seem to import SVG files
-const Icon = () => (
-  <div
-    style={{
-      position: 'relative',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: 22,
-      width: 22,
-      borderRadius: '50%',
-      backgroundColor: colors.pois['3'],
-      cursor: 'pointer',
-    }}
-  >
-    <LocalHospital
+function Icon() {
+  return (
+    <div
       style={{
-        color: colors.main.white,
-        fontSize: 16,
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 22,
+        width: 22,
+        borderRadius: '50%',
+        backgroundColor: colors.pois['3'],
+        cursor: 'pointer',
       }}
-    />
-  </div>
-)
+    >
+      <LocalHospital
+        style={{
+          color: colors.main.white,
+          fontSize: 16,
+        }}
+      />
+    </div>
+  )
+}
 
-export const Base = () => (
-  <TransparentWrapper style={{ width: 500 }}>
-    <POI
-      address="Paroisse Saint Vincent de Paul, 92110 Clichy"
-      distance="à 250 m"
-      icon={<Icon />}
-      name="Bagagerie solidaire de Clichy"
-      phone="0102030405"
-    />
-  </TransparentWrapper>
-)
+export function Base() {
+  return (
+    <TransparentWrapper style={{ width: 500 }}>
+      <POI
+        address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+        distance="à 250 m"
+        icon={<Icon />}
+        name="Bagagerie solidaire de Clichy"
+        phone="0102030405"
+      />
+    </TransparentWrapper>
+  )
+}
 
-export const Active = () => (
-  <TransparentWrapper style={{ width: 500 }}>
-    <POI
-      address="Paroisse Saint Vincent de Paul, 92110 Clichy"
-      distance="à 250 m"
-      icon={<Icon />}
-      isActive={true}
-      name="Bagagerie solidaire de Clichy"
-      phone="0102030405"
-    />
-  </TransparentWrapper>
-)
+export function Active() {
+  return (
+    <TransparentWrapper style={{ width: 500 }}>
+      <POI
+        address="Paroisse Saint Vincent de Paul, 92110 Clichy"
+        distance="à 250 m"
+        icon={<Icon />}
+        isActive={true}
+        name="Bagagerie solidaire de Clichy"
+        phone="0102030405"
+      />
+    </TransparentWrapper>
+  )
+}

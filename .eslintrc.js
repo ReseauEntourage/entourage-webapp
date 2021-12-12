@@ -69,7 +69,12 @@ module.exports = {
     // disable anchor-is-valid due to NextJS <a> wrapper
     'jsx-a11y/anchor-is-valid': 0,
 
+
     // React Rules
+    'react/function-component-definition': [
+      2,
+      { 'namedComponents': 'function-declaration', 'unnamedComponents': 'arrow-function' }
+    ],
     'react/jsx-filename-extension': 0,
     'react/jsx-boolean-value': [1, 'always'],
     'react/jsx-one-expression-per-line': 0,
@@ -117,9 +122,6 @@ module.exports = {
     'no-useless-constructor': 0,
     'class-methods-use-this': 0,
     'max-classes-per-file': 0,
-
-    // Override after dependencies upgrade. To Fix
-    'react/function-component-definition': 0,
   },
   'overrides': [
     {

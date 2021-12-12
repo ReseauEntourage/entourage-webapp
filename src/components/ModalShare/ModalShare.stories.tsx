@@ -9,12 +9,14 @@ export default {
   },
 }
 
-export const Demo = () => (
-  <TransparentWrapper>
-    <ModalShare
-      content="Content"
-      entourageUuid="entourageUUID"
-      title="Title"
-    />
-  </TransparentWrapper>
-)
+export function Demo() {
+  return (
+    <TransparentWrapper>
+      <ModalShare
+        content="Content"
+        entourageUuid="entourageUUID"
+        title="Title"
+      />
+    </TransparentWrapper>
+  )
+}

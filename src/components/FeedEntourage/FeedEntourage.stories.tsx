@@ -9,45 +9,49 @@ export default {
   title: 'FeedEntourage',
 }
 
-export const Base = () => (
-  <TransparentWrapper style={{ width: 500 }}>
-    <FeedEntourage
-      distance="à 750 m - 69007"
-      icon={(
-        <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
-      )}
-      numberOfPeople={3}
-      profilePictureURL="https://i.pravatar.cc/100"
-      subtitle={(
-        <span>
-          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
+export function Base() {
+  return (
+    <TransparentWrapper style={{ width: 500 }}>
+      <FeedEntourage
+        distance="à 750 m - 69007"
+        icon={(
+          <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
+        )}
+        numberOfPeople={3}
+        profilePictureURL="https://i.pravatar.cc/100"
+        subtitle={(
+          <span>
+            <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
           &nbsp;de&nbsp;
-          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
-        </span>
-      )}
-      title="Goearge recherche un télépone portable"
-    />
-  </TransparentWrapper>
-)
+            <span style={{ fontWeight: 'bold' }}>Inès D.</span>
+          </span>
+        )}
+        title="Goearge recherche un télépone portable"
+      />
+    </TransparentWrapper>
+  )
+}
 
-export const Active = () => (
-  <TransparentWrapper style={{ width: 500 }}>
-    <FeedEntourage
-      distance="à 750 m - 69007"
-      icon={(
-        <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
-      )}
-      isActive={true}
-      numberOfPeople={3}
-      profilePictureURL="https://i.pravatar.cc/100"
-      subtitle={(
-        <span>
-          <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
+export function Active() {
+  return (
+    <TransparentWrapper style={{ width: 500 }}>
+      <FeedEntourage
+        distance="à 750 m - 69007"
+        icon={(
+          <MoreHorizOutlined style={{ color: colors.main.primary, fontSize: 22 }} />
+        )}
+        isActive={true}
+        numberOfPeople={3}
+        profilePictureURL="https://i.pravatar.cc/100"
+        subtitle={(
+          <span>
+            <span style={{ color: FeedEntourageTypeColors.ask_for_help }}>Demande</span>
           &nbsp;de&nbsp;
-          <span style={{ fontWeight: 'bold' }}>Inès D.</span>
-        </span>
-      )}
-      title="Goearge recherche un télépone portable"
-    />
-  </TransparentWrapper>
-)
+            <span style={{ fontWeight: 'bold' }}>Inès D.</span>
+          </span>
+        )}
+        title="Goearge recherche un télépone portable"
+      />
+    </TransparentWrapper>
+  )
+}

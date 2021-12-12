@@ -6,13 +6,15 @@ export default {
   title: 'ImageCropper',
 }
 
-export const Base = () => (
-  <TransparentWrapper>
-    <ImageCropperBase onChange={() => null} />
-  </TransparentWrapper>
-)
+export function Base() {
+  return (
+    <TransparentWrapper>
+      <ImageCropperBase onChange={() => null} />
+    </TransparentWrapper>
+  )
+}
 
-export const Preview = () => {
+export function Preview() {
   const [value, setValue] = useState<ImageCropperValue>()
 
   return (
