@@ -18,22 +18,30 @@ const firebaseConfig = {
 
 export class FirebaseService implements IFirebaseService {
   private static getAnalytics() {
-    if (firebase.apps.length === 0) {
-      firebase.initializeApp(firebaseConfig)
-    }
+    if (firebase) {
+      if (firebase.apps.length === 0) {
+        firebase.initializeApp(firebaseConfig)
+      }
 
-    return firebase.analytics()
+      return firebase.analytics()
+    }
+    return null
   }
 
   sendEvent(event: FirebaseEvent, props?: FirebaseProps) {
     if (isSSR) return
 
-    FirebaseService.getAnalytics().logEvent(event, props)
+    const firebaseAnalytics = FirebaseService.getAnalytics()
+    if (firebaseAnalytics) {
+      firebaseAnalytics.logEvent(event, props)
+    }
   }
 
   setUser(userId?: string) {
     if (isSSR) return
-
-    FirebaseService.getAnalytics().setUserId(userId ?? '')
+    const firebaseAnalytics = FirebaseService.getAnalytics()
+    if (firebaseAnalytics) {
+      firebaseAnalytics.setUserId(userId ?? '')
+    }
   }
 }
