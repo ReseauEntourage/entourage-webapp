@@ -9,28 +9,34 @@ export default {
   },
 }
 
-export const Default = () => (
-  <ContactLink
-    icon={<Mail />}
-    info="contact@entourage.social"
-    link="mailto:contact@entourage.social"
-  />
-)
+export function Default() {
+  return (
+    <ContactLink
+      icon={<Mail />}
+      info="contact@entourage.social"
+      link="mailto:contact@entourage.social"
+    />
+  )
+}
 
-export const Disabled = () => (
-  <ContactLink
-    disabled={true}
-    icon={<Mail />}
-    info="contact@entourage.social"
-    link="mailto:contact@entourage.social"
-  />
-)
+export function Disabled() {
+  return (
+    <ContactLink
+      disabled={true}
+      icon={<Mail />}
+      info="contact@entourage.social"
+      link="mailto:contact@entourage.social"
+    />
+  )
+}
 
-export const Color = () => (
-  <ContactLink
-    color="secondary"
-    icon={<Mail />}
-    info="contact@entourage.social"
-    link="mailto:contact@entourage.social"
-  />
-)
+export function Color() {
+  return (
+    <ContactLink
+      color="secondary"
+      icon={<Mail />}
+      info="contact@entourage.social"
+      link="mailto:contact@entourage.social"
+    />
+  )
+}

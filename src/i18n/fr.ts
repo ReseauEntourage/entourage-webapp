@@ -1,5 +1,4 @@
 /* eslint-disable max-len  */
-/* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
   types: {

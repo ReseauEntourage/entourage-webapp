@@ -6,7 +6,8 @@ export function createPromises<T extends { [key: string]: AnyCantFix; }>(obj: T)
       ...acc,
       [key]: Promise.resolve(obj[key]),
     }
-  }, {} as { [key in keyof T]: Promise<T[key]> })
+  // eslint-disable-next-line no-use-before-define
+  }, {} as { [Key in keyof T]: Promise<T[Key]> })
 
   const all = Promise.all(Object.values(promises))
 

@@ -83,14 +83,15 @@ export function messagesReducer(
       const newConversations = action.payload.conversations.filter(
         (conversation) => !state.conversationsUuids.includes(conversation.uuid),
       )
-      const updatedConversations = action.payload.conversations.reduce(
-        (acc: MessagesState['conversations'], item: MessagesState['conversations'][number]) => {
-          return {
-            ...acc,
-            [item.uuid]: item,
-          }
-        }, state.conversations,
-      )
+      const updatedConversations = action.payload.conversations.reduce((
+        acc: MessagesState['conversations'],
+        item: MessagesState['conversations'][number],
+      ) => {
+        return {
+          ...acc,
+          [item.uuid]: item,
+        }
+      }, state.conversations)
 
       const updatedConversationUuids = [
         ...state.conversationsUuids,
@@ -160,12 +161,10 @@ export function messagesReducer(
     }
 
     case MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES_SUCCEEDED: {
-      const uniqMessages = uniqBy(
-        [
-          ...state.conversationsMessages[action.payload.conversationUuid] || [],
-          ...action.payload.conversationMessages,
-        ], (message) => message.id,
-      )
+      const uniqMessages = uniqBy([
+        ...state.conversationsMessages[action.payload.conversationUuid] || [],
+        ...action.payload.conversationMessages,
+      ], (message) => message.id)
       uniqMessages.sort((a, b) => b.id - a.id)
 
       const conversationDetails = state.conversations[action.payload.conversationUuid]

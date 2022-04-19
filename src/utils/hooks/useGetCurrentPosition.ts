@@ -39,7 +39,6 @@ export function useGetCurrentPosition<T>(fields: T, defaultAddress?: string) {
       setValue(AutocompleteFormFieldKey, {
         sessionToken,
         place: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           place_id: geolocation.googlePlaceId,
         } as PlaceType,
       } as AnyToFix)

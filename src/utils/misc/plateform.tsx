@@ -10,8 +10,7 @@ interface PlateformParams<T> {
 export function plateform<T extends React.ComponentType<AnyCantFix>>(data: PlateformParams<T>): T {
   const { Mobile, Desktop } = data
 
-  // ignore type error because return statement is already typed
-  // @ts-ignore
+  // @ts-expect-error ignore type error because return statement is already typed
   return (props: React.ComponentProps<typeof T>) => {
     const isDesktop = useIsDesktop()
 

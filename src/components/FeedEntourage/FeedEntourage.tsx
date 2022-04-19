@@ -14,7 +14,6 @@ interface FeedEntourageProps {
   numberOfPeople: number;
   subtitle: React.ReactNode;
   distance: string;
-  hasJoined?: boolean;
 }
 
 export function FeedEntourage(props: FeedEntourageProps) {

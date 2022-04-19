@@ -2,7 +2,9 @@ import { renderHook, act } from '@testing-library/react-hooks'
 import { useDelayLoading } from '../useDelayLoading'
 
 function timeout(delay: number) {
-  return new Promise((resolve) => setTimeout(resolve, delay))
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
 }
 
 const options = {

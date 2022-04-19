@@ -45,7 +45,7 @@ export function ModalShare(props: ModalShareProps) {
   const emailHref = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(emailBody)}`
 
   const onClickFB = useCallback(() => {
-    // @ts-ignore
+    // @ts-expect-error FB is global
     FB.ui({
       method: 'share',
       hashtag: '#chaleurHumaine',

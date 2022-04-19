@@ -5,9 +5,9 @@ import { isSSR } from './isSSR'
 export function initFacebookApp() {
   if (isSSR) return
 
-  // @ts-ignore
+  // @ts-expect-error Force fbAsyncInit on window
   window.fbAsyncInit = () => {
-  // @ts-ignore
+  // @ts-expect-error FB is global
     FB.init({
       appId: constants.FB_APP_ID,
       autoLogAppEvents: true,

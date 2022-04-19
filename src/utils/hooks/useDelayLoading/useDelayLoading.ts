@@ -1,5 +1,5 @@
-import { Subject } from 'rxjs'
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { Subject } from 'rxjs'
 
 const MIN_DELAY_START_LOADING = 500
 const MIN_DELAY_END_LOADING = 2000
@@ -54,7 +54,7 @@ export function useDelayLoading(defaultValue = false, options: Options = default
           clearTimeout(stopTimeout.current)
           timeoutIsActiveRef.current = false
           sub.unsubscribe()
-          resolve()
+          resolve(null)
         })
       })
     }

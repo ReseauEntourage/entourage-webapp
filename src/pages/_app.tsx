@@ -1,12 +1,12 @@
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import * as Sentry from '@sentry/react'
 import NextApp, { AppContext, AppInitialProps } from 'next/app'
-import { PersistGate } from 'redux-persist/integration/react'
-import { hijackEffects } from 'stop-runaway-react-effects'
-import { Reset } from 'styled-reset'
 import React from 'react'
 import { ReactQueryConfigProvider } from 'react-query'
 import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react'
+import { hijackEffects } from 'stop-runaway-react-effects'
+import { Reset } from 'styled-reset'
 import { Layout } from 'src/components/Layout'
 import { ModalsListener } from 'src/components/Modal'
 import { SplashScreen } from 'src/components/SplashScreen'
@@ -37,9 +37,9 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   // perform automatic static optimization, causing every page in your app to
   // be server-side rendered.
 
-  store: ReturnType<typeof bootstrapStore>['store'] | null = null;
+  store: ReturnType<typeof bootstrapStore>['store'] | null = null
 
-  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null;
+  persistor: ReturnType<typeof bootstrapStore>['persistor'] | null = null
 
   static async getInitialProps(appContext: AppContext): Promise<AppInitialProps> {
     const { req } = appContext.ctx
@@ -74,7 +74,7 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
 
     return {
       ...appProps,
-      // @ts-ignore
+      // @ts-expect-error fore me
       me,
       authUserData: me?.data.user,
       userAgent,
@@ -89,9 +89,10 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
   }
 
   render() {
-    // @ts-ignore
+    // @ts-expect-error force type for custom props
     const { Component, pageProps, me, userAgent, authUserData } = this.props
 
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     const SSRDataValue = { me, userAgent }
 
     if (!this.store) {
@@ -149,15 +150,13 @@ export default class App extends NextApp<{ authUserData: LoggedUser; }> {
         <MetaData url={`${env.SERVER_URL}/actions`} />
         <Reset />
         <SSRDataContext.Provider value={SSRDataValue}>
-          <>
-            <StylesProvider injectFirst={true}>
-              <ThemeProvider theme={theme}>
-                <Provider store={this.store}>
-                  {persistorWrappedContent}
-                </Provider>
-              </ThemeProvider>
-            </StylesProvider>
-          </>
+          <StylesProvider injectFirst={true}>
+            <ThemeProvider theme={theme}>
+              <Provider store={this.store}>
+                {persistorWrappedContent}
+              </Provider>
+            </ThemeProvider>
+          </StylesProvider>
         </SSRDataContext.Provider>
       </Sentry.ErrorBoundary>
     )

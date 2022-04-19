@@ -5,11 +5,8 @@ import { Button } from 'src/components/Button'
 import { Link as CustomLink } from 'src/components/Link'
 import { texts } from 'src/i18n'
 import { variants } from 'src/styles'
-import { StatelessPage } from 'src/utils/types'
 
-interface Props {}
-
-const Custom404: StatelessPage<Props> = () => {
+export default function Custom404() {
   return (
     <Box
       alignItems="center"
@@ -44,5 +41,3 @@ const Custom404: StatelessPage<Props> = () => {
     </Box>
   )
 }
-
-export default Custom404

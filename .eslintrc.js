@@ -31,7 +31,16 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 0,
     // many times, typing will bring duplication
     '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/ban-ts-ignore': 0,
+    "@typescript-eslint/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description",
+        "ts-ignore": true,
+        "ts-nocheck": true,
+        "ts-check": true,
+        "minimumDescriptionLength": 3
+      }
+    ],
     '@typescript-eslint/indent': ['error', 2],
     '@typescript-eslint/interface-name-prefix': 0,
 
@@ -60,7 +69,12 @@ module.exports = {
     // disable anchor-is-valid due to NextJS <a> wrapper
     'jsx-a11y/anchor-is-valid': 0,
 
+
     // React Rules
+    'react/function-component-definition': [
+      2,
+      { 'namedComponents': 'function-declaration', 'unnamedComponents': 'arrow-function' }
+    ],
     'react/jsx-filename-extension': 0,
     'react/jsx-boolean-value': [1, 'always'],
     'react/jsx-one-expression-per-line': 0,
@@ -69,6 +83,8 @@ module.exports = {
     // with TypeScript strict mode, no issue
     'react/jsx-props-no-spreading': 0,
     'react/jsx-sort-props': 1,
+     // with TypeScript, no default props
+    'react/require-default-props': 0,
 
     // Plain JavaScript Rules
     'arrow-body-style': 0,
@@ -120,6 +136,13 @@ module.exports = {
       'rules': {
         'import/no-default-export': 0,
         'import/prefer-default-export': 2,
+        'no-restricted-exports': 0,
+      }
+    },
+    {
+      'files': ['src/**/*.reducer.ts'],
+      'rules': {
+        'default-param-last': 0,
       }
     }
   ],

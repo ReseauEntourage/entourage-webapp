@@ -60,8 +60,7 @@ export const api: APIInstanceWithSSR = {
       const configWithToken = {
         ...config,
         params: {
-          // @ts-expect-error
-          ...(config.params || {}),
+          ...(config.params ?? {}),
           token,
         },
       }

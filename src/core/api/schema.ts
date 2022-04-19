@@ -109,7 +109,7 @@ export const schema = {
         content: string;
       };
     },
-    response: {} as {},
+    response: {} as Record<string, never>,
   },
   '/entourages/:entourageId/users GET': {
     url: (params: EntourageIdOrUUIDParams) => `entourages/${params.entourageId || params.entourageUuid}/users`,
@@ -299,7 +299,7 @@ export const schema = {
         phone: string;
       };
     },
-    response: {} as {},
+    response: {} as Record<string, never>,
   },
   '/users/:id GET': {
     url: (params: { userId: number; }) => `users/${params.userId}`,
@@ -387,7 +387,7 @@ export const schema = {
         googleSessionToken: google.maps.places.AutocompleteSessionToken;
       };
     },
-    response: {} as {},
+    response: {} as Record<string, never>,
   },
   '/users/me/presigned_avatar_upload/ POST': {
     url: '/users/me/presigned_avatar_upload/',

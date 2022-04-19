@@ -83,7 +83,6 @@ export function MembersPendingRequest(props: MembersPendingRequestProps) {
       {nextMemberPending && (
         <PendingNotif
           pictureURL={nextMemberPending.avatarUrl}
-
           style={{
             borderRadius: 0,
             borderTopLeftRadius: 5,

@@ -75,21 +75,21 @@ export function configureStore<
   function waitForActionEnd() {
     return new Promise((resolve) => {
       if (sagaRunningCount === 0) {
-        resolve()
+        resolve(null)
       } else {
         const timer = setInterval(() => {
           if (sagaRunningCount === 0) {
             clearInterval(timer)
-            resolve()
+            resolve(null)
           }
         }, 50)
       }
     })
   }
 
-  // @ts-expect-error
+  // @ts-expect-error use waitForActionEnd for unit test
   store.waitForActionEnd = waitForActionEnd
 
-  // @ts-expect-error
+  // @ts-expect-error output already typed
   return store
 }

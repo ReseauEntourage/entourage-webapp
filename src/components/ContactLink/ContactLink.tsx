@@ -9,7 +9,6 @@ const stopPropagation = (event: React.SyntheticEvent) => event.stopPropagation()
 
 interface ContactLinkProps {
   icon?: JSX.Element;
-  highlighted?: boolean;
   disabled?: boolean;
   link: string;
   info: string;

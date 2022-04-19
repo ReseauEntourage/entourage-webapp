@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { selectIsLogged, selectIsLogging } from 'src/core/useCases/authUser'
 
 interface PrivateRouteProps {
-  children: React.ReactNode;
+  children: JSX.Element;
 }
 
 export function PrivateRoute(props: PrivateRouteProps) {
@@ -25,9 +25,5 @@ export function PrivateRoute(props: PrivateRouteProps) {
     return null
   }
 
-  return (
-    <>
-      {children}
-    </>
-  )
+  return children
 }
