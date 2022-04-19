@@ -38,7 +38,7 @@ export function FeedList() {
 
   const feedsListContent = feeds.map((feedItem) => {
     if (feedItem.itemType === 'Announcement') {
-      const { formattedUrl, isExternal, authRequired } = formatWebLink(feedItem.webappUrl ?? feedItem.url)
+      const { formattedUrl, isExternal, authRequired } = formatWebLink(feedItem.webappUrl || feedItem.url)
 
       const onClick = () => {
         if (authRequired) {

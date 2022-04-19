@@ -38,7 +38,7 @@ export function POICategoryFilter(props: POICategoryFilter) {
 
   const label = category === FilterPOICategory.PARTNERS
     ? texts.content.map.filters[category].title : poiLabels[categoryId]
-  const color = colors.pois[categoryId] ?? colors.pois[0]
+  const color = colors.pois[categoryId] || colors.pois[0]
 
   return (
     <LineFilter

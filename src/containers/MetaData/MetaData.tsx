@@ -29,8 +29,11 @@ export function MetaData(props: MetaDataProps) {
 
   const { title = metaTitle, description = metaDescription, url, children } = props
 
+  const domain = env.SERVER_URL.replace(/https:\/\/|http:\/\//g, '')
+
   return (
     <Head>
+      <script src={`https://tarteaucitron.io/load.js?domain=${domain}&uuid=0e7dccd2edb0f870afc26ab86d989e93ef6da0a9`} />
       <meta content={texts.nav.pageTitles.main} property="og:site_name" />
       <title>{title}</title>
       <meta content={title} name="twitter:title" />

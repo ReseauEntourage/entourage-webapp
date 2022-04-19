@@ -110,7 +110,7 @@ export function messagesReducer(
         conversations: updatedConversations,
         conversationsUuids: updatedConversationUuids,
         fetching: false,
-        unreadConversations: action.payload.unreadConversations ?? state.unreadConversations,
+        unreadConversations: action.payload.unreadConversations || state.unreadConversations,
       }
     }
 
