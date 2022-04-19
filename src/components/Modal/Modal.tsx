@@ -62,7 +62,7 @@ function DefaultActions(props: DefaultActionsProps) {
         </Button>
       )}
       {validate && (
-        <Button color="primary" loading={mustWaiting ?? loading} onClick={onValidate}>
+        <Button color="primary" loading={mustWaiting || loading} onClick={onValidate}>
           {validateLabel}
         </Button>
       )}

@@ -3,7 +3,7 @@ import EmailIcon from '@material-ui/icons/Email'
 import FacebookIcon from '@material-ui/icons/Facebook'
 import TwitterIcon from '@material-ui/icons/Twitter'
 import WhatsAppIcon from '@material-ui/icons/WhatsApp'
-import React, { useCallback } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Button as ButtonBase } from 'src/components/Button'
 import { Modal } from 'src/components/Modal'
@@ -38,20 +38,13 @@ export function ModalShare(props: ModalShareProps) {
   const twitterText = `${title} ${linkURL} #chaleurHumaine`
   const twitterHref = `https://twitter.com/intent/tweet?text=${encodeURIComponent(twitterText)}`
 
+  const fbHref = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(linkURL)}`
+
   const whatsAppText = `${title} ${linkURL}`
   const whatsAppHref = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsAppText)}`
 
   const emailBody = `${content}\n\nRendez-vous sur Entourage, le réseau de la chaleur humaine : ${linkURL}`
   const emailHref = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(emailBody)}`
-
-  const onClickFB = useCallback(() => {
-    // @ts-expect-error FB is global
-    FB.ui({
-      method: 'share',
-      hashtag: '#chaleurHumaine',
-      href: linkURL,
-    })
-  }, [linkURL])
 
   return (
     <Modal
@@ -61,9 +54,10 @@ export function ModalShare(props: ModalShareProps) {
       validate={false}
     >
       <Button
-        onClick={onClickFB}
+        href={fbHref}
         startIcon={<FacebookIcon />}
         style={{ backgroundColor: colors.facebook }}
+        target="_blank"
       >
         Partager sur Facebook
       </Button>

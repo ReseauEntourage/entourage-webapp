@@ -56,7 +56,7 @@ export function Select(props: SelectProps) {
     <FormControl
       error={!!formError}
       fullWidth={restProps.fullWidth}
-      margin={restProps.margin ?? 'normal'}
+      margin={restProps.margin || 'normal'}
       variant="outlined"
     >
       <InputLabel

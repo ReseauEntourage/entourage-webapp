@@ -21,14 +21,13 @@ import { createAnonymousUser } from 'src/core/services'
 import { config as queryConfig } from 'src/core/store'
 import { authUserActions } from 'src/core/useCases/authUser'
 import { theme } from 'src/styles'
-import { isSSR, initFacebookApp, initAppStoreBanner } from 'src/utils/misc'
+import { isSSR, initAppStoreBanner } from 'src/utils/misc'
 
 if (process.env.NODE_ENV !== 'production') {
   hijackEffects()
 }
 
 initSentry()
-initFacebookApp()
 initAppStoreBanner()
 
 export default class App extends NextApp<{ authUserData: LoggedUser; }> {
