@@ -30,7 +30,7 @@ const securityHeaders = [
   },
   {
     key: 'Permissions-Policy',
-    value: 'accelerometer=(), geolocation=(\'self\'), fullscreen=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), display-capture=(\'self\')',
+    value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()'
   },
   {
     key: 'X-Frame-Options',

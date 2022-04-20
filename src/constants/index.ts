@@ -15,6 +15,7 @@ export const constants = {
   },
   POI_DISTANCE: 1,
   CHARTER_LINK: 'https://blog.entourage.social/charte-ethique-grand-public',
+  CGU_LINK: 'https://www.entourage.social/cgu',
   WORKSHOP_LINK_POPUP: 'https://bit.ly/2O7naY7',
   WORKSHOP_LINK_CARD: 'https://bit.ly/3shEwjc',
   WORKSHOP_LINK_MOBILE: 'http://bit.ly/2YIFPvl',

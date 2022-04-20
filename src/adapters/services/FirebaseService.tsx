@@ -18,7 +18,7 @@ const firebaseConfig = {
 
 export class FirebaseService implements IFirebaseService {
   private static getAnalytics() {
-    if (firebase) {
+    if (firebase && firebase.apps.length === 0 && firebase.analytics) {
     /*
       if (firebase.apps.length === 0) {
         firebase.initializeApp(firebaseConfig)
