@@ -1,10 +1,9 @@
 import firebase from 'firebase/app'
-import { env } from 'src/core/env'
 import { IFirebaseService } from 'src/core/useCases/firebase'
 import { isSSR } from 'src/utils/misc'
 import { FirebaseEvent, FirebaseProps } from 'src/utils/types'
-import 'firebase/analytics'
 
+/*
 const firebaseConfig = {
   apiKey: env.FIREBASE_API_KEY,
   authDomain: env.FIREBASE_AUTH_DOMAIN,
@@ -15,14 +14,16 @@ const firebaseConfig = {
   appId: env.FIREBASE_APP_ID,
   measurementId: env.FIREBASE_MEASUREMENT_ID,
 }
+*/
 
 export class FirebaseService implements IFirebaseService {
   private static getAnalytics() {
     if (firebase) {
+    /*
       if (firebase.apps.length === 0) {
         firebase.initializeApp(firebaseConfig)
       }
-
+    */
       return firebase.analytics()
     }
     return null
