@@ -1,5 +1,5 @@
 import Box from '@material-ui/core/Box'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
 import { Link as CustomLink } from 'src/components/Link'
 import { OverlayLoader } from 'src/components/OverlayLoader'
@@ -17,6 +17,7 @@ interface LeftListProps {
 
 export const LeftList = React.memo((props: LeftListProps) => {
   const { isLoading, list, filters } = props
+  const { asPath } = useRouter()
 
   return (
     <S.Container>
@@ -40,9 +41,7 @@ export const LeftList = React.memo((props: LeftListProps) => {
         zIndex={3}
       >
         <CustomLink href={constants.CGU_LINK} target="_blank" variant={variants.footNote}>{texts.nav.cgu}</CustomLink>
-        <Link href="#cookies">
-          <CustomLink variant={variants.footNote}>{texts.nav.cookies}</CustomLink>
-        </Link>
+        <CustomLink href={`${asPath}#cookies`} variant={variants.footNote}>{texts.nav.cookies}</CustomLink>
       </Box>
     </S.Container>
   )
