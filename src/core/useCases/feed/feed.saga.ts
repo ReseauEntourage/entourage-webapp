@@ -6,6 +6,7 @@ import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatFeedTypes } from 'src/utils/misc'
+import { AnyGeneratorOutput } from 'src/utils/types'
 import { IFeedGateway } from './IFeedGateway'
 import { FeedActionType, actions, FeedActions } from './feed.actions'
 import {
@@ -292,7 +293,7 @@ function* retrieveEventImagesSaga() {
   }
 }
 
-export function* feedSaga() {
+export function* feedSaga(): AnyGeneratorOutput {
   yield takeEvery(FeedActionType.RETRIEVE_FEED, retrieveFeed)
   yield takeEvery(FeedActionType.TOGGLE_ACTION_TYPES_FILTER, retrieveFeed)
   yield takeEvery(FeedActionType.TOGGLE_EVENTS_FILTER, retrieveFeed)
