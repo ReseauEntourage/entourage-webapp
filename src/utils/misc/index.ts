@@ -1,5 +1,6 @@
 export * from './getPixelPerMeter'
 export * from './isSSR'
+export * from './isAxiosError'
 export * from './loremIpsum'
 export * from './asserts'
 export * from './plateform'

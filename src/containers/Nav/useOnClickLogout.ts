@@ -12,7 +12,11 @@ export function useOnClickLogout() {
     try {
       await createAnonymousUser()
     } catch (err) {
-      dispatch(notificationsActions.addAlert({ message: err.message, severity: 'error' }))
+      if (err instanceof Error) {
+        dispatch(notificationsActions.addAlert({ message: err.message, severity: 'error' }))
+      } else {
+        throw err
+      }
     }
     dispatch(authUserActions.setUser(null))
   }, [dispatch])

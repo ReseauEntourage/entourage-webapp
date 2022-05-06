@@ -61,10 +61,14 @@ function* retrieveFeed() {
     }
   } catch (err) {
     yield put(actions.retrieveFeedFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -94,10 +98,14 @@ function* retrieveFeedNextPage() {
     yield put(actions.retrieveFeedNextPageSuccess(response))
   } catch (err) {
     yield put(actions.retrieveFeedNextPageFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -129,10 +137,14 @@ function* retrieveCurrentFeedItem() {
         }))
       }
     } catch (err) {
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -167,10 +179,14 @@ function* createEntourage(action: FeedActions['createEntourage']) {
     }))
   } catch (err) {
     yield put(actions.createEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -188,10 +204,14 @@ function* updateEntourage(action: FeedActions['updateEntourage']) {
     yield put(actions.updateEntourageSucceeded({ entourage: response }))
   } catch (err) {
     yield put(actions.updateEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -208,10 +228,14 @@ function* joinEntourage(action: FeedActions['joinEntourage']) {
     yield put(actions.joinEntourageSucceeded({ entourageUuid, status: response.status }))
   } catch (err) {
     yield put(actions.joinEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -225,10 +249,14 @@ function* leaveEntourage(action: FeedActions['leaveEntourage']) {
     yield put(actions.leaveEntourageSucceeded({ entourageUuid }))
   } catch (err) {
     yield put(actions.leaveEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -242,10 +270,14 @@ function* closeEntourage(action: FeedActions['closeEntourage']) {
     yield put(actions.closeEntourageSucceeded({ entourageUuid }))
   } catch (err) {
     yield put(actions.closeEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -259,10 +291,14 @@ function* reopenEntourage(action: FeedActions['reopenEntourage']) {
     yield put(actions.reopenEntourageSucceeded({ entourageUuid }))
   } catch (err) {
     yield put(actions.reopenEntourageFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -286,10 +322,14 @@ function* retrieveEventImagesSaga() {
     yield put(actions.retrieveEventImagesSuccess(response))
   } catch (err) {
     yield put(actions.retrieveEventImagesFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
