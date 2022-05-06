@@ -88,6 +88,7 @@ module.exports = {
 
     // Plain JavaScript Rules
     'arrow-body-style': 0,
+    'indent': 0, // fix error because it's overidded by @typescript-eslint/indent. Should be removed after ESLint upgrade
     'max-len': [1, { code: 120 }],
     'no-console': [1, { allow: ['warn', 'error'] }],
     'no-multiple-empty-lines': [2, { "max": 1 }], // prettier like

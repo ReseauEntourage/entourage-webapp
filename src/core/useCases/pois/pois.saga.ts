@@ -6,6 +6,7 @@ import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
+import { AnyGeneratorOutput } from 'src/utils/types'
 import { IPOIsGateway } from './IPOIsGateway'
 import { POIsActionType, actions } from './pois.actions'
 import { selectCurrentPOI, selectCurrentPOIUuid, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
@@ -103,7 +104,7 @@ function* retrieveCurrentPOI() {
   }
 }
 
-export function* poisSaga() {
+export function* poisSaga(): AnyGeneratorOutput {
   yield takeEvery(POIsActionType.RETRIEVE_POIS, retrievePOIs)
   yield takeEvery(POIsActionType.TOGGLE_POIS_FILTER, retrievePOIs)
   yield takeEvery(POIsActionType.RESET_POIS_FILTERS, retrievePOIs)
