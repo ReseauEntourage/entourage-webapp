@@ -54,10 +54,15 @@ function useUploadImageProfile() {
 
       return presignedURLResponse.data.avatarKey
     } catch (error) {
-      dispatch(notificationsActions.addAlert({
-        message: error?.message,
-        severity: 'error',
-      }))
+      if (error instanceof Error) {
+        dispatch(notificationsActions.addAlert({
+          message: error?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw error
+      }
+
       return null
     }
   }, [dispatch, imageCropperValue])

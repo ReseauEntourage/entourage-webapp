@@ -52,10 +52,14 @@ function* retrievePOIs() {
     yield put(actions.retrievePOIsSuccess(response))
   } catch (err) {
     yield put(actions.retrievePOIsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -96,10 +100,14 @@ function* retrieveCurrentPOI() {
       }
     } catch (err) {
       yield put(actions.retrievePOIDetailsFail())
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }

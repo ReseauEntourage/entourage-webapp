@@ -44,10 +44,14 @@ function* retrieveConversationsSaga() {
     yield put(actions.retrieveConversationDetailsIfNeeded())
   } catch (err) {
     yield put(actions.retrieveConversationsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -79,10 +83,14 @@ function* retrieveNextConversationsSaga() {
     }
   } catch (err) {
     yield put(actions.retrieveConversationsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -129,10 +137,14 @@ function* retrieveCurrentConversationMessagesSaga() {
         return
       }
       yield put(actions.retrieveConversationMessagesFail())
-      yield put(notificationsActions.addAlert({
-        message: error?.message,
-        severity: 'error',
-      }))
+      if (error instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: error?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw error
+      }
     }
   }
 }
@@ -164,10 +176,14 @@ function* retrieveCurrentConversationDetailsIfNeededSaga() {
 
       yield put(actions.insertConversation(mutatedConversationDetails))
     } catch (err) {
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -203,10 +219,14 @@ function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['
       }
     } catch (err) {
       yield put(actions.retrieveConversationMessagesFail())
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -253,10 +273,14 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
         yield put(actions.retrieveConversationsSuccess(responseConversations))
       }
     } catch (err) {
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
