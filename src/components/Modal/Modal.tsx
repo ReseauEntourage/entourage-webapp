@@ -8,7 +8,7 @@ import React, { useCallback, useEffect } from 'react'
 import { Button } from 'src/components/Button'
 import { colors, variants } from 'src/styles'
 import { useDelayLoading } from 'src/utils/hooks'
-import { AnyToFix } from 'src/utils/types'
+import { AnyToFix, StrictUnion } from 'src/utils/types'
 import * as S from './Modal.styles'
 import { useModalContext } from './ModalContext'
 
@@ -57,12 +57,21 @@ function DefaultActions(props: DefaultActionsProps) {
   return (
     <>
       {cancel && (
-        <Button color="primary" onClick={onClose} tabIndex={-1} variant="outlined">
+        <Button
+          color="primary"
+          onClick={onClose}
+          tabIndex={-1}
+          variant="outlined"
+        >
           {cancelLabel}
         </Button>
       )}
       {validate && (
-        <Button color="primary" loading={mustWaiting || loading} onClick={onValidate}>
+        <Button
+          color="primary"
+          loading={mustWaiting || loading}
+          onClick={onValidate}
+        >
           {validateLabel}
         </Button>
       )}
@@ -75,6 +84,7 @@ interface BaseProps {
   onValidate?: () => void | boolean | Promise<void | boolean>;
   showCloseButton?: boolean;
   title?: string;
+  closeOnNextRender?: boolean;
 }
 
 interface BasicModalProps extends BaseProps {
@@ -82,7 +92,6 @@ interface BasicModalProps extends BaseProps {
   cancelLabel?: string;
   validate?: boolean;
   validateLabel?: string;
-  closeOnNextRender?: boolean;
   mustWaiting?: boolean;
 }
 
@@ -90,7 +99,7 @@ interface ModalActionsProps extends BaseProps {
   actions: JSX.Element;
 }
 
-type ModalProps = BasicModalProps | ModalActionsProps
+type ModalProps = StrictUnion<BasicModalProps | ModalActionsProps>;
 
 const defaultProps = {
   validateLabel: 'Valider',
@@ -156,11 +165,13 @@ export function Modal(props: ModalProps) {
           )}
         </DialogTitle>
       ) : (
-        <> { showCloseButton ? (
-          <S.CloseIconContainer aria-label="close" onClick={onClose}>
-            <CloseIcon color="primary" />
-          </S.CloseIconContainer>
-        ) : null}
+        <>
+          {' '}
+          {showCloseButton ? (
+            <S.CloseIconContainer aria-label="close" onClick={onClose}>
+              <CloseIcon color="primary" />
+            </S.CloseIconContainer>
+          ) : null}
         </>
       )}
       <Typography component={DialogContent} variant={variants.bodyRegular}>
@@ -180,7 +191,7 @@ export function Modal(props: ModalProps) {
             />
           )}
         </DialogActions>
-      ) : null }
+      ) : null}
     </Dialog>
   )
 }

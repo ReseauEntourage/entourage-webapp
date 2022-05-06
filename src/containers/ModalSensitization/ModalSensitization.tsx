@@ -48,10 +48,8 @@ export function ModalSensitization() {
           trigger={trigger}
         />
       )}
-      cancel={false}
       showCloseButton={false}
       title={modalTexts.title}
-      validate={false}
     >
       <S.ModalContainer>
         <Box marginBottom={4}>
