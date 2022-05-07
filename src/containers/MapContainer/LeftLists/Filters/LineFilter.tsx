@@ -6,7 +6,7 @@ import { colors, variants } from 'src/styles'
 import * as S from './Filters.styles'
 
 export interface LineFilterProps {
-  index: number;
+  index?: number;
   label: string;
   Icon?: (props: SvgIconProps) => JSX.Element;
   onChange: () => void;
@@ -16,7 +16,7 @@ export interface LineFilterProps {
 }
 
 export function LineFilter(props: LineFilterProps) {
-  const { index, Icon, iconColor, onChange, checked, variant = variants.bodyRegular, label } = props
+  const { index = 0, Icon, iconColor, onChange, checked, variant = variants.bodyRegular, label } = props
 
   return (
     <>
@@ -27,8 +27,4 @@ export function LineFilter(props: LineFilterProps) {
       <S.Switch index={index}><Switch checked={checked} color="primary" onChange={onChange} /></S.Switch>
     </>
   )
-}
-
-LineFilter.defaultProps = {
-  index: 0,
 }
