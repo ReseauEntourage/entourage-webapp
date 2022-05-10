@@ -165,14 +165,11 @@ export function Modal(props: ModalProps) {
           )}
         </DialogTitle>
       ) : (
-        <>
-          {' '}
-          {showCloseButton ? (
-            <S.CloseIconContainer aria-label="close" onClick={onClose}>
-              <CloseIcon color="primary" />
-            </S.CloseIconContainer>
-          ) : null}
-        </>
+        showCloseButton && (
+          <S.CloseIconContainer aria-label="close" onClick={onClose}>
+            <CloseIcon color="primary" />
+          </S.CloseIconContainer>
+        )
       )}
       <Typography component={DialogContent} variant={variants.bodyRegular}>
         {children}
