@@ -9,7 +9,6 @@ const stopPropagation = (event: React.SyntheticEvent) => event.stopPropagation()
 
 interface ContactLinkProps {
   icon?: JSX.Element;
-  highlighted?: boolean;
   disabled?: boolean;
   link: string;
   info: string;
@@ -37,7 +36,7 @@ export function ContactLink(props: ContactLinkProps) {
           {icon && iconComponent}
           <Typography
             align="left"
-            color={color ?? 'textPrimary'}
+            color={color || 'textPrimary'}
             variant={variants.bodyRegular}
           >
             {info}
@@ -50,7 +49,7 @@ export function ContactLink(props: ContactLinkProps) {
   return (
     <Box marginTop={1}>
       <S.StyledLink
-        color={color ?? 'primary'}
+        color={color || 'primary'}
         href={link}
         onClick={stopPropagation}
         rel="noopener noreferrer"

@@ -1,5 +1,4 @@
 /* eslint-disable max-len  */
-/* eslint-disable @typescript-eslint/camelcase */
 
 export const texts = {
   types: {
@@ -74,6 +73,8 @@ export const texts = {
       message: 'Désolé, la page demandée est introuvable...',
       back: 'Retour à l\'accueil',
     },
+    cgu: 'Mentions légales',
+    cookies: 'Gestion des cookies',
   },
   labels: {
     error: 'Une erreur est survenue, veuillez ressayer plus tard.',

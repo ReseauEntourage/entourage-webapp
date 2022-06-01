@@ -2,7 +2,7 @@ import { Subject } from 'rxjs'
 import { AnyCantFix } from 'src/utils/types'
 
 export class Defer<T> {
-  promise: Promise<T>;
+  promise: Promise<T>
 
   private resolveSubject = new Subject<T>()
 

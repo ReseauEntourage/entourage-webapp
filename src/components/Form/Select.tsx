@@ -2,9 +2,9 @@ import FormControl from '@material-ui/core/FormControl'
 import FormHelperText from '@material-ui/core/FormHelperText'
 import InputLabel from '@material-ui/core/InputLabel'
 import SelectBase, { SelectProps as SelectBaseProps } from '@material-ui/core/Select'
+import React, { useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { FieldError } from 'react-hook-form/dist/types'
-import React, { useEffect } from 'react'
 import { helperTextError } from './helperTextErrors'
 
 interface OptionWithoutGroup {
@@ -56,7 +56,7 @@ export function Select(props: SelectProps) {
     <FormControl
       error={!!formError}
       fullWidth={restProps.fullWidth}
-      margin={restProps.margin ?? 'normal'}
+      margin={restProps.margin || 'normal'}
       variant="outlined"
     >
       <InputLabel

@@ -21,7 +21,7 @@ export type PartialAppState = Partial<AppState>
 export const defaultInitialAppState = Object.keys(reducers).reduce((acc, reducerName) => {
   return {
     ...acc,
-    // @ts-expect-error
+    // @ts-expect-error output type already defined
     [reducerName]: reducers[reducerName](undefined, {}),
   }
 }, {} as AppState)

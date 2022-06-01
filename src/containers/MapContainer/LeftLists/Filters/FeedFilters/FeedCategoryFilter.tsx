@@ -1,5 +1,5 @@
 import { SvgIconProps } from '@material-ui/core/SvgIcon'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { LineFilter } from '../LineFilter'
 import { FeedItemIcon } from 'src/components/Map'
@@ -21,14 +21,16 @@ export function FeedCategoryFilter(props: FeedCategoryFilterProps) {
   const categoryTextKey = type === FilterEntourageType.CONTRIBUTION ? 'categoryContributionList' : 'categoryHelpList'
   const label = texts.types[categoryTextKey][category]
 
-  const CategoryIcon = (iconProps: SvgIconProps) => (
-    <FeedItemIcon
-      displayCategory={category}
-      entourageType={type}
-      tooltip={label}
-      {...iconProps}
-    />
-  )
+  const CategoryIcon = useMemo(() => {
+    return (iconProps: SvgIconProps) => (
+      <FeedItemIcon
+        displayCategory={category}
+        entourageType={type}
+        tooltip={label}
+        {...iconProps}
+      />
+    )
+  }, [category, type, label])
 
   const dispatch = useDispatch()
 

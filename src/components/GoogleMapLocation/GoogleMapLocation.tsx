@@ -45,19 +45,6 @@ export interface GoogleMapLocationProps {
 export type AutocompleteFormField = Parameters<GoogleMapLocationProps['onChange']>[0];
 export const AutocompleteFormFieldKey = 'autocompletePlace' as const
 
-export function GoogleMapLocation(props: GoogleMapLocationProps) {
-  const googleMapApiIsLoaded = useLoadGoogleMapApi()
-  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
-
-  if (isLoading) {
-    return <OverlayLoader />
-  }
-
-  return googleMapApiIsLoaded
-    ? <GoogleMapLocationWithApi {...props} />
-    : null
-}
-
 function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
   const { textFieldProps, onChange, inputValue: inputValueProp, defaultValue, onClickCurrentPosition } = props
   const { getSessionToken, regenerateSessionToken } = useAutocompleteSessionToken()
@@ -184,4 +171,17 @@ function GoogleMapLocationWithApi(props: GoogleMapLocationProps) {
       value={inputValueProp}
     />
   )
+}
+
+export function GoogleMapLocation(props: GoogleMapLocationProps) {
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
+  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
+
+  if (isLoading) {
+    return <OverlayLoader />
+  }
+
+  return googleMapApiIsLoaded
+    ? <GoogleMapLocationWithApi {...props} />
+    : null
 }

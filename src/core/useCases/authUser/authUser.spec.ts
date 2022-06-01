@@ -980,8 +980,8 @@ describe('Auth User', () => {
       const store = configureStoreWithAuthUser({
         initialAppState: {
           authUser: {
-            user,
             ...defaultAuthUserState,
+            user,
           },
         },
         dependencies: {

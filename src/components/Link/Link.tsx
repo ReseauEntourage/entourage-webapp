@@ -15,8 +15,8 @@ export const Link = React.forwardRef(
     return disableHover ? (
       <S.StyledLink
         ref={ref as RefObject<HTMLSpanElement>}
-        color={color ?? 'inherit'}
-        variant={variant ?? variants.bodyRegular}
+        color={color || 'inherit'}
+        variant={variant || variants.bodyRegular}
         {...componentProp}
         {...restProps}
       >
@@ -26,8 +26,8 @@ export const Link = React.forwardRef(
       : (
         <S.HoverableStyledLink
           ref={ref as RefObject<HTMLSpanElement>}
-          color={color ?? 'inherit'}
-          variant={variant ?? variants.bodyRegular}
+          color={color || 'inherit'}
+          variant={variant || variants.bodyRegular}
           {...componentProp}
           {...restProps}
         >

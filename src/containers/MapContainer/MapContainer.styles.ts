@@ -16,7 +16,7 @@ export const NavIcon = styled(NavigationIcon)`
 
 export const FabFeed = styled(FabMUI)`
   position: fixed;
-  bottom: ${theme.spacing(2)}px;
+  bottom: ${theme.spacing(4)}px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 2;

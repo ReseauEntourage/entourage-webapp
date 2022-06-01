@@ -6,11 +6,8 @@ import { PrivateRoute } from 'src/containers/PrivateRoute'
 import { env } from 'src/core/env'
 import { texts } from 'src/i18n'
 import { useFirebase, useMount } from 'src/utils/hooks'
-import { StatelessPage } from 'src/utils/types'
 
-interface MessagesProps {}
-
-const MessagesPage: StatelessPage<MessagesProps> = () => {
+export default function MessagesPage() {
   const { sendEvent } = useFirebase()
   const entourageUuid = useEntourageUuid()
 
@@ -30,5 +27,3 @@ const MessagesPage: StatelessPage<MessagesProps> = () => {
     </>
   )
 }
-
-export default MessagesPage

@@ -22,7 +22,7 @@ export function POICards() {
     return (
       <>
         <MetaData
-          description={description ?? texts.content.map.pois.shareDescription}
+          description={description || texts.content.map.pois.shareDescription}
           title={name}
           url={`${env.SERVER_URL}/pois/${uuid}`}
         />

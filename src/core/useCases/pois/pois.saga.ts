@@ -6,6 +6,7 @@ import { constants } from 'src/constants'
 import { CallReturnType } from 'src/core/utils/CallReturnType'
 import { takeEvery } from 'src/core/utils/takeEvery'
 import { formatPOIsCategories, formatPOIsPartners } from 'src/utils/misc'
+import { AnyGeneratorOutput } from 'src/utils/types'
 import { IPOIsGateway } from './IPOIsGateway'
 import { POIsActionType, actions } from './pois.actions'
 import { selectCurrentPOI, selectCurrentPOIUuid, selectPOIs, selectPOIsIsIdle } from './pois.selectors'
@@ -51,10 +52,14 @@ function* retrievePOIs() {
     yield put(actions.retrievePOIsSuccess(response))
   } catch (err) {
     yield put(actions.retrievePOIsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -95,15 +100,19 @@ function* retrieveCurrentPOI() {
       }
     } catch (err) {
       yield put(actions.retrievePOIDetailsFail())
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
 
-export function* poisSaga() {
+export function* poisSaga(): AnyGeneratorOutput {
   yield takeEvery(POIsActionType.RETRIEVE_POIS, retrievePOIs)
   yield takeEvery(POIsActionType.TOGGLE_POIS_FILTER, retrievePOIs)
   yield takeEvery(POIsActionType.RESET_POIS_FILTERS, retrievePOIs)

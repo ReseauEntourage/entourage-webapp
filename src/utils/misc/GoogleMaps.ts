@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react'
-import { GoogleMapLocationValue } from '../../components/GoogleMapLocation'
-import { useStateGetter } from '../hooks'
+import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { env } from 'src/core/env'
+import { useStateGetter } from 'src/utils/hooks'
 import { assertIsDefined, assertIsNumber, assertIsString, isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
 const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`

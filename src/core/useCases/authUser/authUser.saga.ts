@@ -80,10 +80,15 @@ function* phoneLookUpSaga(action: AuthUserActions['phoneLookUp']) {
     }
   } catch (err) {
     yield put(actions.phoneLookUpFailed())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -95,12 +100,17 @@ function* createAccountSaga(action: AuthUserActions['createAccount']) {
   try {
     yield call(createAccountGateway, { phone })
     yield put(actions.createAccountSuccess())
-  } catch (err) {
+  } catch (error) {
     yield put(actions.createAccountFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 
@@ -131,10 +141,14 @@ function* loginWithPasswordSaga(action: AuthUserActions['loginWithPassword']) {
       return
     }
 
-    yield put(notificationsActions.addAlert({
-      message: error?.message,
-      severity: 'error',
-    }))
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 
@@ -166,10 +180,14 @@ function* loginWithSMSCodeSaga(action: AuthUserActions['loginWithSMSCode']) {
       return
     }
 
-    yield put(notificationsActions.addAlert({
-      message: error?.message,
-      severity: 'error',
-    }))
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 
@@ -203,10 +221,14 @@ function* createPasswordSaga(action: AuthUserActions['createPassword']) {
       return
     }
 
-    yield put(notificationsActions.addAlert({
-      message: error?.message,
-      severity: 'error',
-    }))
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 
@@ -227,11 +249,15 @@ function* resetPasswordSaga(action: AuthUserActions['resetPassword']) {
   try {
     yield call(authUserGateway.resetPassword, { phone })
     yield put(actions.resetPasswordSuccess())
-  } catch (err) {
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+  } catch (error) {
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 
@@ -268,12 +294,17 @@ function* updateUserSaga(action: AuthUserActions['updateUser']) {
     }
 
     yield put(actions.updateUserSuccess({ user: response }))
-  } catch (err) {
+  } catch (error) {
     yield put(actions.updateUserFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+
+    if (error instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: error?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw error
+    }
   }
 }
 

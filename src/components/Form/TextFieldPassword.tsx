@@ -2,9 +2,7 @@ import React, { useState } from 'react'
 import { ToggleVisibility } from 'src/components/ToggleVisibility'
 import { TextField, TextFieldProps } from './TextField'
 
-type TextFieldPasswordProps = {
-
-} & TextFieldProps
+type TextFieldPasswordProps = TextFieldProps
 
 export function TextFieldPassword(props: TextFieldPasswordProps) {
   const { disabled, ...restProps } = props

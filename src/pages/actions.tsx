@@ -5,11 +5,8 @@ import { MetaData } from 'src/containers/MetaData'
 import { env } from 'src/core/env'
 import { texts } from 'src/i18n'
 import { useLoadGoogleMapApi } from 'src/utils/misc'
-import { StatelessPage } from 'src/utils/types'
 
-interface Props {}
-
-const Actions: StatelessPage<Props> = () => {
+export default function Actions() {
   const googleMapApiIsLoaded = useLoadGoogleMapApi()
 
   return (
@@ -28,5 +25,3 @@ const Actions: StatelessPage<Props> = () => {
 //    Wait until React Queries support SSR. Coming soon
 //    see https://github.com/tannerlinsley/react-query/issues/14
 // }
-
-export default Actions

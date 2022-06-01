@@ -20,8 +20,10 @@ const partner: React.ComponentProps<typeof PartnerCard> = {
   largeLogoUrl: '',
 }
 
-export const Demo = () => (
-  <PartnerCard
-    {...partner}
-  />
-)
+export function Demo() {
+  return (
+    <PartnerCard
+      {...partner}
+    />
+  )
+}

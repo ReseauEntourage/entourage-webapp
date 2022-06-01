@@ -14,7 +14,7 @@ export function SoliguideCard(props: SoliguideCardProps) {
   const { url } = props
   return (
     <Box marginBottom={2}>
-      <Link href={url ?? constants.SOLIGUIDE_URL} target="_blank">
+      <Link href={url || constants.SOLIGUIDE_URL} target="_blank">
         <S.SoliguideCard>
           <Box marginBottom={2}>
             <S.SoliguideLogo alt="Soliguide" src="/logo-soliguide.png" />

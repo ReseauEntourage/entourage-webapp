@@ -1,6 +1,6 @@
 import { createStyles, makeStyles } from '@material-ui/core/styles'
-import { useForm } from 'react-hook-form'
 import React, { useCallback } from 'react'
+import { useForm } from 'react-hook-form'
 import { Button } from 'src/components/Button'
 import { TextField, validators } from 'src/components/Form'
 import { ThemeProvider, theme } from 'src/styles'
@@ -62,7 +62,7 @@ function FormModal() {
   )
 }
 
-export const Modals = () => {
+export function Modals() {
   const classes = useStyles()
 
   const onClickBasic = useCallback(() => {

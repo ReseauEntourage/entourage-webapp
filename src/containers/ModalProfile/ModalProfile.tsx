@@ -1,8 +1,8 @@
 import InputAdornment from '@material-ui/core/InputAdornment'
 import EmailIcon from '@material-ui/icons/Email'
 import axios from 'axios'
-import { FormProvider } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
+import { FormProvider } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { TextField, Label, RowFields, validators } from 'src/components/Form'
 import {
@@ -54,10 +54,15 @@ function useUploadImageProfile() {
 
       return presignedURLResponse.data.avatarKey
     } catch (error) {
-      dispatch(notificationsActions.addAlert({
-        message: error?.message,
-        severity: 'error',
-      }))
+      if (error instanceof Error) {
+        dispatch(notificationsActions.addAlert({
+          message: error?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw error
+      }
+
       return null
     }
   }, [dispatch, imageCropperValue])
@@ -69,19 +74,6 @@ function useUploadImageProfile() {
     typeof setImageCropperValue,
     typeof uploadIfNeeded
   ]
-}
-
-export function ModalProfile() {
-  const googleMapApiIsLoaded = useLoadGoogleMapApi()
-  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
-
-  if (isLoading) {
-    return <OverlayLoader />
-  }
-
-  return googleMapApiIsLoaded
-    ? <ModalProfileWithApi />
-    : null
 }
 
 function ModalProfileWithApi() {
@@ -256,4 +248,17 @@ function ModalProfileWithApi() {
       </FormProvider>
     </Modal>
   )
+}
+
+export function ModalProfile() {
+  const googleMapApiIsLoaded = useLoadGoogleMapApi()
+  const isLoading = useDelayLoadingNext(!googleMapApiIsLoaded)
+
+  if (isLoading) {
+    return <OverlayLoader />
+  }
+
+  return googleMapApiIsLoaded
+    ? <ModalProfileWithApi />
+    : null
 }

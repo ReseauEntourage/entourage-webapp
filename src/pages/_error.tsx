@@ -2,7 +2,6 @@ import * as Sentry from '@sentry/node'
 import { NextPageContext } from 'next'
 import NextErrorComponent from 'next/error'
 import React from 'react'
-
 import { AnyCantFix } from 'src/utils/types'
 
 interface CustomErrorProps {
@@ -11,7 +10,7 @@ interface CustomErrorProps {
   err?: AnyCantFix;
 }
 
-const CustomError = ({ statusCode, hasGetInitialPropsRun, err }: CustomErrorProps) => {
+export default function CustomError({ statusCode, hasGetInitialPropsRun, err }: CustomErrorProps) {
   if (!hasGetInitialPropsRun && err) {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
@@ -68,5 +67,3 @@ CustomError.getInitialProps = async ({ res, err, asPath }: NextPageContext) => {
 
   return errorInitialProps
 }
-
-export default CustomError

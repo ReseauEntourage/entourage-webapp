@@ -6,7 +6,7 @@ export default {
   title: 'UsersList',
 }
 
-export const UsersList = () => {
+export function UsersList() {
   return (
     <TransparentWrapper style={{ maxWidth: 400 }}>
       <UsersListCpmt

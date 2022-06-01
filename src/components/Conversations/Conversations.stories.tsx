@@ -17,84 +17,98 @@ export default {
   },
 }
 
-export const ConversationItemDefault = () => (
-  <ConversationItem
-    excerpt={loremIpsum(10)}
-    hasUnreadMessages={false}
-    isActive={false}
-    profilePictureURL="https://i.pravatar.cc/100"
-    title={loremIpsum(10)}
-  />
-)
+export function ConversationItemDefault() {
+  return (
+    <ConversationItem
+      excerpt={loremIpsum(10)}
+      hasUnreadMessages={false}
+      isActive={false}
+      profilePictureURL="https://i.pravatar.cc/100"
+      title={loremIpsum(10)}
+    />
+  )
+}
 
-export const ConversationItemNewMessage = () => (
-  <ConversationItem
-    excerpt={loremIpsum(10)}
-    hasUnreadMessages={true}
-    isActive={false}
-    profilePictureURL="https://i.pravatar.cc/100"
-    title={loremIpsum(10)}
-  />
-)
+export function ConversationItemNewMessage() {
+  return (
+    <ConversationItem
+      excerpt={loremIpsum(10)}
+      hasUnreadMessages={true}
+      isActive={false}
+      profilePictureURL="https://i.pravatar.cc/100"
+      title={loremIpsum(10)}
+    />
+  )
+}
 
-export const MessageExternalUser = () => (
-  <Message
-    author="Jeanne B. Association pour l'amitié"
-    authorAvatarURL="https://i.pravatar.cc/100"
-    authorId={1}
-    content={`
+export function MessageExternalUser() {
+  return (
+    <Message
+      author="Jeanne B. Association pour l'amitié"
+      authorAvatarURL="https://i.pravatar.cc/100"
+      authorId={1}
+      content={`
       Bonjour Mathieu,
       Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
       Y a-t-il quelque chose que je peux apporter ?
     `}
-    date={new Date().toISOString()}
-    isMe={false}
-  />
-)
+      date={new Date().toISOString()}
+      isMe={false}
+    />
+  )
+}
 
-export const MessageMe = () => (
-  <Message
-    authorId={1}
-    content={`
+export function MessageMe() {
+  return (
+    <Message
+      authorId={1}
+      content={`
       Bonjour Mathieu,
       Oui j’ai hâte de voir ce vernissage, et nous venons à 3 colocs.
       Y a-t-il quelque chose que je peux apporter ?
     `}
-    date={new Date().toISOString()}
-    isMe={true}
-  />
-)
+      date={new Date().toISOString()}
+      isMe={true}
+    />
+  )
+}
 
-export const PendingNotifDefault = () => (
-  <PendingNotif
-    label={<div><b>Louise</b> souhaite participer</div>}
-    pictureURL="https://i.pravatar.cc/100"
-  />
-)
+export function PendingNotifDefault() {
+  return (
+    <PendingNotif
+      label={<div><b>Louise</b> souhaite participer</div>}
+      pictureURL="https://i.pravatar.cc/100"
+    />
+  )
+}
 
-export const PendingNotifMultipleRequest = () => (
-  <PendingNotif
-    label={<div>Plusieurs demandes en attentes</div>}
-    pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
-  />
-)
+export function PendingNotifMultipleRequest() {
+  return (
+    <PendingNotif
+      label={<div>Plusieurs demandes en attentes</div>}
+      pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
+    />
+  )
+}
 
-export const PendingNotifWithRightContent = () => (
-  <PendingNotif
-    label={<div>Plusieurs demandes en attentes</div>}
-    pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
-    rightContent={(
-      <ButtonsList>
-        <Button startIcon={<CheckIcon />}>
+export function PendingNotifWithRightContent() {
+  return (
+    <PendingNotif
+      label={<div>Plusieurs demandes en attentes</div>}
+      pictureURL={['https://i.pravatar.cc/100', 'https://i.pravatar.cc/100']}
+      rightContent={(
+        <ButtonsList>
+          <Button startIcon={<CheckIcon />}>
             Accepter
-        </Button>
-        <Button startIcon={<CloseIcon />} style={{ backgroundColor: colors.main.white }} variant="outlined">
+          </Button>
+          <Button startIcon={<CloseIcon />} style={{ backgroundColor: colors.main.white }} variant="outlined">
             Refuser
-        </Button>
-      </ButtonsList>
-    )}
-  />
-)
+          </Button>
+        </ButtonsList>
+      )}
+    />
+  )
+}
 
 function generateMessages() {
   return new Array(100).fill(null).map((value, index) => {
@@ -120,13 +134,15 @@ function generateMessages() {
   })
 }
 
-export const MessageDefault = () => (
-  <div style={{ height: 400 }}>
-    <Messages
-      fetchMore={() => null}
-      messages={generateMessages()}
-      meUserId={1}
-      onSendMessage={() => Promise.resolve()}
-    />
-  </div>
-)
+export function MessageDefault() {
+  return (
+    <div style={{ height: 400 }}>
+      <Messages
+        fetchMore={() => null}
+        messages={generateMessages()}
+        meUserId={1}
+        onSendMessage={() => Promise.resolve()}
+      />
+    </div>
+  )
+}

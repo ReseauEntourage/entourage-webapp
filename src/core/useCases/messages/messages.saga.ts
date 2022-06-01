@@ -44,10 +44,14 @@ function* retrieveConversationsSaga() {
     yield put(actions.retrieveConversationDetailsIfNeeded())
   } catch (err) {
     yield put(actions.retrieveConversationsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -79,10 +83,14 @@ function* retrieveNextConversationsSaga() {
     }
   } catch (err) {
     yield put(actions.retrieveConversationsFail())
-    yield put(notificationsActions.addAlert({
-      message: err?.message,
-      severity: 'error',
-    }))
+    if (err instanceof Error) {
+      yield put(notificationsActions.addAlert({
+        message: err?.message,
+        severity: 'error',
+      }))
+    } else {
+      throw err
+    }
   }
 }
 
@@ -108,10 +116,12 @@ function* retrieveCurrentConversationMessagesSaga() {
     yield put(actions.retrieveConversationMessagesStarted())
 
     try {
-      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(
+        retrieveConversationMessages,
         {
           entourageUuid,
-        })
+        },
+      )
       yield put(actions.retrieveConversationMessagesSuccess({
         conversationUuid: entourageUuid,
         conversationMessages: response.conversationMessages,
@@ -127,10 +137,14 @@ function* retrieveCurrentConversationMessagesSaga() {
         return
       }
       yield put(actions.retrieveConversationMessagesFail())
-      yield put(notificationsActions.addAlert({
-        message: error?.message,
-        severity: 'error',
-      }))
+      if (error instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: error?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw error
+      }
     }
   }
 }
@@ -162,10 +176,14 @@ function* retrieveCurrentConversationDetailsIfNeededSaga() {
 
       yield put(actions.insertConversation(mutatedConversationDetails))
     } catch (err) {
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -183,11 +201,13 @@ function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['
     const { retrieveConversationMessages } = dependencies.messagesGateway
 
     try {
-      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(retrieveConversationMessages,
+      const response: CallReturnType<typeof retrieveConversationMessages> = yield call(
+        retrieveConversationMessages,
         {
           entourageUuid,
           before: before ?? undefined,
-        })
+        },
+      )
 
       yield put(actions.retrieveConversationMessagesSuccess({
         conversationUuid: entourageUuid,
@@ -199,10 +219,14 @@ function* retrieveCurrentConversationOlderMessagesSaga(action: MessagesActions['
       }
     } catch (err) {
       yield put(actions.retrieveConversationMessagesFail())
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -218,11 +242,13 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
     const { sendMessage, retrieveConversationMessages, retrieveConversations } = dependencies.messagesGateway
 
     try {
-      yield call(sendMessage,
+      yield call(
+        sendMessage,
         {
           entourageUuid,
           message,
-        })
+        },
+      )
 
       const responseMessages: CallReturnType<typeof retrieveConversationMessages> = yield call(
         retrieveConversationMessages,
@@ -247,10 +273,14 @@ function* sendMessageSaga(action: MessagesActions['sendMessage']) {
         yield put(actions.retrieveConversationsSuccess(responseConversations))
       }
     } catch (err) {
-      yield put(notificationsActions.addAlert({
-        message: err?.message,
-        severity: 'error',
-      }))
+      if (err instanceof Error) {
+        yield put(notificationsActions.addAlert({
+          message: err?.message,
+          severity: 'error',
+        }))
+      } else {
+        throw err
+      }
     }
   }
 }
@@ -268,8 +298,10 @@ export function* messagesSaga() {
   yield takeEvery(AuthUserActionType.SET_USER, retrieveConversationsIfLoggedIn)
   yield takeEvery(AuthUserActionType.LOGIN_WITH_PASSWORD_SUCCEEDED, retrieveConversationsIfLoggedIn)
   yield takeEvery(MessagesActionType.RETRIEVE_NEXT_CONVERSATIONS, retrieveNextConversationsSaga)
-  yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
-    retrieveCurrentConversationDetailsIfNeededSaga)
+  yield takeEvery(
+    MessagesActionType.RETRIEVE_CONVERSATION_DETAILS_IF_NEEDED,
+    retrieveCurrentConversationDetailsIfNeededSaga,
+  )
 
   yield takeEvery(MessagesActionType.SET_CURRENT_CONVERSATION_UUID, retrieveCurrentConversationMessagesSaga)
   yield takeEvery(MessagesActionType.RETRIEVE_CONVERSATION_MESSAGES, retrieveCurrentConversationMessagesSaga)

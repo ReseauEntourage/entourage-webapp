@@ -1,6 +1,11 @@
 import Box from '@material-ui/core/Box'
+import { useRouter } from 'next/router'
 import React from 'react'
+import { Link as CustomLink } from 'src/components/Link'
 import { OverlayLoader } from 'src/components/OverlayLoader'
+import { constants } from 'src/constants'
+import { texts } from 'src/i18n'
+import { variants } from 'src/styles'
 import * as S from './LeftList.styles'
 import { SearchCity } from './SearchCity'
 
@@ -12,6 +17,7 @@ interface LeftListProps {
 
 export const LeftList = React.memo((props: LeftListProps) => {
   const { isLoading, list, filters } = props
+  const { asPath } = useRouter()
 
   return (
     <S.Container>
@@ -27,6 +33,16 @@ export const LeftList = React.memo((props: LeftListProps) => {
         {isLoading && <OverlayLoader />}
       </S.ListContainer>
       <Box />
+      <Box
+        bgcolor="white"
+        boxShadow={4}
+        display="flex"
+        justifyContent="space-evenly"
+        zIndex={3}
+      >
+        <CustomLink href={constants.CGU_LINK} target="_blank" variant={variants.footNote}>{texts.nav.cgu}</CustomLink>
+        <CustomLink href={`${asPath}#cookies`} variant={variants.footNote}>{texts.nav.cookies}</CustomLink>
+      </Box>
     </S.Container>
   )
 })

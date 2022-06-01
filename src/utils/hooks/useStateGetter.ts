@@ -1,6 +1,6 @@
 import { useRef, useState, useCallback } from 'react'
 
-export type Setter<State> = (state: State | ((state: State) => State)) => void
+export type Setter<State> = (state: State | ((prevState: State) => State)) => void
 export type Getter<State> = () => State
 
 export function useStateGetter<State>(initialValue?: State): [State, Setter<State>, Getter<State>] {

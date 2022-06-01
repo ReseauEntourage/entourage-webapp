@@ -12,21 +12,31 @@ export default {
   decorators: [withKnobs],
 }
 
-export const Small = () => <Avatar size="small" src="https://i.pravatar.cc/100" />
-export const Large = () => <Avatar size="large" src="https://i.pravatar.cc/100" />
+export function Small() {
+  return <Avatar size="small" src="https://i.pravatar.cc/100" />
+}
+export function Large() {
+  return <Avatar size="large" src="https://i.pravatar.cc/100" />
+}
 
-export const WithoutSource = () => <Avatar src={null} />
+export function WithoutSource() {
+  return <Avatar src={null} />
+}
 
-export const WithClickEvent = () => (
-  <Avatar
-    onClick={action('clicked')}
-    size="large"
-    src="https://i.pravatar.cc/100"
-  />
-)
+export function WithClickEvent() {
+  return (
+    <Avatar
+      onClick={action('clicked')}
+      size="large"
+      src="https://i.pravatar.cc/100"
+    />
+  )
+}
 
-export const Knobs = () => (
-  <TransparentWrapper>
-    <Avatar src={text('Url', 'https://i.pravatar.cc/100')} />
-  </TransparentWrapper>
-)
+export function Knobs() {
+  return (
+    <TransparentWrapper>
+      <Avatar src={text('Url', 'https://i.pravatar.cc/100')} />
+    </TransparentWrapper>
+  )
+}

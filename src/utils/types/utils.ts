@@ -8,11 +8,10 @@ export interface StatelessPage<P = void> extends React.SFC<P> {
   getInitialProps?: (ctx: PageContext) => Promise<P>;
 }
 
-export type Parameters<T> = T extends (...args: infer T) => unknown ? T : null;
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type AnyToFix = any;
 export type AnyCantFix = any;
+export type AnyGeneratorOutput = any;
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
 export type ValueOf<T> = T[keyof T];

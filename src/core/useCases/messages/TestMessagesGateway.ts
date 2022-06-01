@@ -4,13 +4,11 @@ import { IMessagesGateway } from './IMessagesGateway'
 export class TestMessagesGateway implements IMessagesGateway {
   retrieveConversations = jestFn<IMessagesGateway['retrieveConversations']>('retrieveConversations')
 
-  retrieveConversationMessages =
-  jestFn<IMessagesGateway['retrieveConversationMessages']>(
+  retrieveConversationMessages = jestFn<IMessagesGateway['retrieveConversationMessages']>(
     'retrieveConversationMessages',
   )
 
-  retrieveConversation =
-  jestFn<IMessagesGateway['retrieveConversation']>(
+  retrieveConversation = jestFn<IMessagesGateway['retrieveConversation']>(
     'retrieveConversation',
   )
 

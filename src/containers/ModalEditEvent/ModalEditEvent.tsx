@@ -10,8 +10,8 @@ import {
 } from '@material-ui/pickers'
 import { isBefore, addHours } from 'date-fns'  // eslint-disable-line
 import { fr } from 'date-fns/locale'  // eslint-disable-line
-import { FormProvider, Controller } from 'react-hook-form'
 import React, { useCallback, useEffect, useState } from 'react'
+import { FormProvider, Controller } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
 import { TextField, Label, RowFields, SelectImage } from 'src/components/Form'
 
@@ -247,9 +247,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                 label={modalTexts.fieldLabelStartDate}
                 margin="normal"
                 onChange={onChangeStartDate}
-                TextFieldComponent={(textFieldProps) => (
-                  <TextField {...textFieldProps} />
-                )}
+                TextFieldComponent={TextField}
                 value={startDate}
                 variant="dialog"
               />
@@ -266,9 +264,7 @@ export function ModalEditEvent(props: ModalEditEventProps) {
                 margin="normal"
                 minDate={startDate}
                 onChange={onChangeEndDate}
-                TextFieldComponent={(textFieldProps) => (
-                  <TextField {...textFieldProps} />
-                )}
+                TextFieldComponent={TextField}
                 value={endDate}
                 variant="dialog"
               />

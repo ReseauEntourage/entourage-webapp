@@ -57,11 +57,12 @@ export const api: APIInstanceWithSSR = {
     request: async (config) => {
       const token = getTokenFromCookies(ctx) || await createAnonymousUser(ctx)
 
+      const previousParam = config.params ?? {}
+
       const configWithToken = {
         ...config,
         params: {
-          // @ts-expect-error
-          ...(config.params || {}),
+          ...previousParam,
           token,
         },
       }

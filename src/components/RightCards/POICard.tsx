@@ -22,7 +22,6 @@ interface POICardProps {
   phone: string | null;
   description: string | null;
   categoryIds: POICategory[];
-  partnerId?: string | null;
   website: string | null;
   email: string | null;
   hours: string | null;
@@ -39,7 +38,6 @@ export function POICard(props: POICardProps) {
     phone,
     description,
     categoryIds,
-    // partnerId,
     website,
     email,
     hours,

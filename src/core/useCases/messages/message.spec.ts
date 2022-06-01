@@ -703,12 +703,10 @@ describe('Conversation', () => {
       entourageUuid: selectedConversationId, before: oldestDate,
     })
 
-    const uniqMessages = uniqBy(
-      [
-        ...messagesFromStore,
-        ...deferredValueRetrieveConversations.conversationMessages || [],
-      ], (message) => message.id,
-    )
+    const uniqMessages = uniqBy([
+      ...messagesFromStore,
+      ...deferredValueRetrieveConversations.conversationMessages || [],
+    ], (message) => message.id)
     uniqMessages.sort((a, b) => b.id - a.id)
 
     expect(selectCurrentConversationMessages(store.getState())).toStrictEqual(uniqMessages)
@@ -793,12 +791,10 @@ describe('Conversation', () => {
       entourageUuid: 'abc',
     })
 
-    const uniqMessages = uniqBy(
-      [
-        ...storeMessages,
-        newMessageEntity,
-      ], (message) => message.id,
-    )
+    const uniqMessages = uniqBy([
+      ...storeMessages,
+      newMessageEntity,
+    ], (message) => message.id)
     uniqMessages.sort((a, b) => b.id - a.id)
 
     expect(selectCurrentConversationMessages(store.getState())).toStrictEqual(uniqMessages)

@@ -1,5 +1,5 @@
-import { useForm } from 'react-hook-form'
 import { useEffect, useRef } from 'react'
+import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
 import { notificationsActions } from 'src/core/useCases/notifications'
 import { texts } from 'src/i18n'

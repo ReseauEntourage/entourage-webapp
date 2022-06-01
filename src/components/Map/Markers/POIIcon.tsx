@@ -15,9 +15,9 @@ interface POIIconProps {
 
 export function POIIcon(props: POIIconProps) {
   const { poiCategory, size = 22, isActive = false, tooltip } = props
-  const color = colors.pois[poiCategory ?? 0] ?? colors.pois[0]
-  const Icon = poiIcons[poiCategory ?? 0] ?? poiIcons[0]
-  const label = poiLabels[poiCategory ?? 0] ?? poiLabels[0]
+  const color = colors.pois[poiCategory ?? 0] || colors.pois[0]
+  const Icon = poiIcons[poiCategory ?? 0] || poiIcons[0]
+  const label = poiLabels[poiCategory ?? 0] || poiLabels[0]
 
   const displaySize = isActive ? size * 2 : roundToEven(size)
 

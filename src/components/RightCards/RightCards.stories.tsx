@@ -19,124 +19,128 @@ function Wrapper(props: { children: JSX.Element; }) {
   )
 }
 
-export const Action = () => (
-  <>
-    <Wrapper>
-      <ActionCard
-        actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
-            <Button>
-              Participer
-            </Button>
-            <Button color="secondary">
-              Partager
-            </Button>
-            <Button color="secondary">
-              Signaler
-            </Button>
-          </Box>
-        )}
-        dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
-        description={`
+export function Action() {
+  return (
+    <>
+      <Wrapper>
+        <ActionCard
+          actions={(
+            <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+              <Button>
+                Participer
+              </Button>
+              <Button color="secondary">
+                Partager
+              </Button>
+              <Button color="secondary">
+                Signaler
+              </Button>
+            </Box>
+          )}
+          dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
+          description={`
           Je donne quelques vêtements en très bon état
           pour fille ado ou femme : une parka à capuche 14 ans,
           des pulls XS, des jeans 12-14 ans.Paris 12ème
         `}
-        organizerLabel={<div>Contribution par <b>Aurore</b></div>}
-        organizerPictureURL="https://i.pravatar.cc/100"
-        title="Je donne un manteau, des pulls et jeans."
-      />
-    </Wrapper>
-    <Wrapper>
-      <ActionCard
-        actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
-            <Button>
-              Participer
-            </Button>
-            <Button color="secondary">
-              Partager
-            </Button>
-            <Button color="secondary">
-              Signaler
-            </Button>
-          </Box>
-        )}
-        dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
-        description={`
+          organizerLabel={<div>Contribution par <b>Aurore</b></div>}
+          organizerPictureURL="https://i.pravatar.cc/100"
+          title="Je donne un manteau, des pulls et jeans."
+        />
+      </Wrapper>
+      <Wrapper>
+        <ActionCard
+          actions={(
+            <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+              <Button>
+                Participer
+              </Button>
+              <Button color="secondary">
+                Partager
+              </Button>
+              <Button color="secondary">
+                Signaler
+              </Button>
+            </Box>
+          )}
+          dateLabel="Crée il y a 10 jours - Actif il y a 9 jours"
+          description={`
           Je donne quelques vêtements en très bon état
           pour fille ado ou femme : une parka à capuche 14 ans,
           des pulls XS, des jeans 12-14 ans.Paris 12ème
         `}
-        isAssociation={true}
-        organizerLabel={<div>Contribution par <b>Aurore</b></div>}
-        organizerPictureURL="https://i.pravatar.cc/100"
-        title="Je donne un manteau, des pulls et jeans."
-      />
-    </Wrapper>
-  </>
-)
+          isAssociation={true}
+          organizerLabel={<div>Contribution par <b>Aurore</b></div>}
+          organizerPictureURL="https://i.pravatar.cc/100"
+          title="Je donne un manteau, des pulls et jeans."
+        />
+      </Wrapper>
+    </>
+  )
+}
 
-export const Event = () => (
-  <>
-    <Wrapper>
-      <EventCard
-        actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
-            <Button>
-              Participer
-            </Button>
-            <Button color="secondary">
-              Partager
-            </Button>
-            <Button color="secondary">
-              Signaler
-            </Button>
-          </Box>
-        )}
-        address="35 avenue  des Batignolles 75017 Paris"
-        dateLabel="Jeudi 12 décembre à de 17h"
-        description={`
+export function Event() {
+  return (
+    <>
+      <Wrapper>
+        <EventCard
+          actions={(
+            <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+              <Button>
+                Participer
+              </Button>
+              <Button color="secondary">
+                Partager
+              </Button>
+              <Button color="secondary">
+                Signaler
+              </Button>
+            </Box>
+          )}
+          address="35 avenue  des Batignolles 75017 Paris"
+          dateLabel="Jeudi 12 décembre à de 17h"
+          description={`
           Les personnes hébergées au CHRS comptent parmi elles des artistes qui ont pu réaliser cette année des œuvres.
           Nous vous invitons à les découvrir lors d’un vernissage convivial.
         `}
-        organizerLabel={<div>Organisé par <b>Aurore</b></div>}
-        organizerPictureURL="https://i.pravatar.cc/100"
-        title="Vernissage au CHRS Parmentier"
-      />
-    </Wrapper>
-    <Wrapper>
-      <EventCard
-        actions={(
-          <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
-            <Button>
-              Participer
-            </Button>
-            <Button color="secondary">
-              Partager
-            </Button>
-            <Button color="secondary">
-              Signaler
-            </Button>
-          </Box>
-        )}
-        address="35 avenue  des Batignolles 75017 Paris"
-        dateLabel="Jeudi 12 décembre à de 17h"
-        description={`
+          organizerLabel={<div>Organisé par <b>Aurore</b></div>}
+          organizerPictureURL="https://i.pravatar.cc/100"
+          title="Vernissage au CHRS Parmentier"
+        />
+      </Wrapper>
+      <Wrapper>
+        <EventCard
+          actions={(
+            <Box display="flex" justifyContent="space-around" marginX={4} marginY={2}>
+              <Button>
+                Participer
+              </Button>
+              <Button color="secondary">
+                Partager
+              </Button>
+              <Button color="secondary">
+                Signaler
+              </Button>
+            </Box>
+          )}
+          address="35 avenue  des Batignolles 75017 Paris"
+          dateLabel="Jeudi 12 décembre à de 17h"
+          description={`
           Les personnes hébergées au CHRS comptent parmi elles des artistes qui ont pu réaliser cette année des œuvres.
           Nous vous invitons à les découvrir lors d’un vernissage convivial.
         `}
-        isAssociation={true}
-        organizerLabel={<div>Organisé par <b>Association Aurore</b></div>}
-        organizerPictureURL="https://i.pravatar.cc/100"
-        title="Vernissage au CHRS Parmentier"
-      />
-    </Wrapper>
-  </>
-)
+          isAssociation={true}
+          organizerLabel={<div>Organisé par <b>Association Aurore</b></div>}
+          organizerPictureURL="https://i.pravatar.cc/100"
+          title="Vernissage au CHRS Parmentier"
+        />
+      </Wrapper>
+    </>
+  )
+}
 
-export const POI = () => (
-  <>
+export function POI() {
+  return (
     <Wrapper>
       <POICard
         address="Paroisse Saint Vincent de Paul, 92110 Clichy"
@@ -160,11 +164,11 @@ export const POI = () => (
         website="www.bagageriessolidaires92.org"
       />
     </Wrapper>
-  </>
-)
+  )
+}
 
-export const POISoliguide = () => (
-  <>
+export function POISoliguide() {
+  return (
     <Wrapper>
       <POICard
         address="Paroisse Saint Vincent de Paul, 92110 Clichy"
@@ -189,5 +193,5 @@ export const POISoliguide = () => (
         website="www.bagageriessolidaires92.org"
       />
     </Wrapper>
-  </>
-)
+  )
+}
