@@ -3,7 +3,7 @@ export const constants = {
   SENSITIZATION_POPUP_KEY: 'hasSeenSensitizationPopup',
   AUTH_TOKEN_TTL: 30 * 24 * 60 * 60, // unit: seconds
   MARKER_DIAMETER: 250, // unit: meters
-  MAIL_TO_REPORT: 'guillaume@entourage.social',
+  MAIL_TO_REPORT: 'barbara@entourage.social',
   FB_APP_ID: '280727035774134',
   DEFAULT_LOCATION: {
     DISPLAY_ADDRESS: 'Paris',
