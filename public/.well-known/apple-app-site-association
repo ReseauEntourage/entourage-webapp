@@ -12,14 +12,24 @@
         "appID": "RT7X9LLTN6.social.entourage.entourageios",
         "paths": [
             "/",
-            "/actions/*"
+            "/actions/*",
+            "/outings/*" ,
+            "/neighborhoods/*",
+            "/conversation/*",
+            "/contributions/*",
+            "/resources/*"
         ]
       },
       {
         "appID": "RT7X9LLTN6.social.entourage.entourageios.beta",
         "paths": [
             "/",
-            "/actions/*"
+            "/actions/*",
+            "/outings/*" ,
+            "/neighborhoods/*",
+            "/conversation/*",
+            "/contributions/*",
+            "/resources/*"
         ]
       }
     ]
