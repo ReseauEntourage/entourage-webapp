@@ -110,6 +110,56 @@ module.exports = {
         destination: '/actions',
         permanent: true,
       },
+      {
+        source: '/profile/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/users/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/groups/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/contents/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/contributions/new/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/solicitations/new/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/outings/new/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/contributions/:id/:path*',
+        destination: '/actions/:id',
+        permanent: false,
+      },
+      {
+        source: '/solicitations/:id/:path*',
+        destination: '/actions/:id',
+        permanent: false,
+      },
+      {
+        source: '/outings/:id/:path*',
+        destination: '/actions/:id',
+        permanent: false,
+      },
     ]
   },
   async headers() {
