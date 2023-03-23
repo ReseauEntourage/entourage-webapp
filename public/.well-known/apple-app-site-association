@@ -15,7 +15,7 @@
             "/actions/*",
             "/outings/*" ,
             "/neighborhoods/*",
-            "/conversation/*",
+            "/conversations/*",
             "/contributions/*",
             "/resources/*"
         ]
@@ -27,7 +27,7 @@
             "/actions/*",
             "/outings/*" ,
             "/neighborhoods/*",
-            "/conversation/*",
+            "/conversations/*",
             "/contributions/*",
             "/resources/*"
         ]
