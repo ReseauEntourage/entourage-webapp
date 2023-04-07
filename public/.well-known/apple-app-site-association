@@ -13,11 +13,14 @@
         "paths": [
             "/",
             "/actions/*",
-            "/outings/*" ,
+            "/outings/*",
             "/neighborhoods/*",
             "/conversations/*",
+            "/groups/*",
+            "/messages/*",
+            "/resources/*",
             "/contributions/*",
-            "/resources/*"
+            "/solicitations/*"
         ]
       },
       {
@@ -25,11 +28,14 @@
         "paths": [
             "/",
             "/actions/*",
-            "/outings/*" ,
+            "/outings/*",
             "/neighborhoods/*",
             "/conversations/*",
+            "/groups/*",
+            "/messages/*",
+            "/resources/*",
             "/contributions/*",
-            "/resources/*"
+            "/solicitations/*"
         ]
       }
     ]
