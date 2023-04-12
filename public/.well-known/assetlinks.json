@@ -16,7 +16,7 @@
     "target": {
       "namespace": "android_app",
       "package_name": "social.entourage.android.preprod.debug",
-      "sha256_cert_fingerprints": [90:2D:BA:19:30:A7:A5:A9:3F:AB:B5:EA:72:DC:E0:3F:3F:AD:F4:6F:33:2C:3A:FA:12:8F:6C:61:C4:CA:6F:37]
+      "sha256_cert_fingerprints": ["90:2D:BA:19:30:A7:A5:A9:3F:AB:B5:EA:72:DC:E0:3F:3F:AD:F4:6F:33:2C:3A:FA:12:8F:6C:61:C4:CA:6F:37"]
     }
   }
 ]
