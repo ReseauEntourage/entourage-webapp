@@ -108,7 +108,7 @@ module.exports = {
       {
         source: '/',
         destination: '/actions',
-        permanent: true,
+        permanent: false,
       },
       {
         source: '/profile/:path*',
