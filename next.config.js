@@ -131,6 +131,31 @@ module.exports = {
         permanent: false,
       },
       {
+        source: '/neighborhoods/:path*',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/contributions',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/solicitations',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/outings',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
+        source: '/conversations',
+        destination: '/messages',
+        permanent: false,
+      },
+      {
         source: '/contributions/new/:path*',
         destination: '/actions',
         permanent: false,
@@ -146,6 +171,11 @@ module.exports = {
         permanent: false,
       },
       {
+        source: '/conversations/new/:path*',
+        destination: '/messages',
+        permanent: false,
+      },
+      {
         source: '/contributions/:id/:path*',
         destination: '/actions/:id',
         permanent: false,
@@ -158,6 +188,11 @@ module.exports = {
       {
         source: '/outings/:id/:path*',
         destination: '/actions/:id',
+        permanent: false,
+      },
+      {
+        source: '/conversations/:id/:path*',
+        destination: '/messages/:id',
         permanent: false,
       },
     ]
