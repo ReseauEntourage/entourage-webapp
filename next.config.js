@@ -136,6 +136,11 @@ module.exports = {
         permanent: false,
       },
       {
+        source: '/feed',
+        destination: '/actions',
+        permanent: false,
+      },
+      {
         source: '/contributions',
         destination: '/actions',
         permanent: false,
@@ -199,24 +204,6 @@ module.exports = {
   },
   async headers() {
     return [
-      {
-        source: '/.well-known/apple-app-site-association',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/json',
-          },
-        ],
-      },
-      {
-        source: '/.well-known/assetlinks.json',
-        headers: [
-          {
-            key: 'Content-Type',
-            value: 'application/json',
-          },
-        ],
-      },
       {
         source: '/:path*',
         headers: securityHeaders,
