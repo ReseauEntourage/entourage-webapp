@@ -29,6 +29,22 @@ Entourage Web App
 * [Storybook](https://storybook.js.org) - UI Components doc
 * [Sentry](https://sentry.io) - Bug tracker
 
+## Modules principaux & versions
+
+| App             | Version |
+|-----------------|---------|
+| **Node**        | 14.18.x |
+| **NPM**         | 6.14.x  |
+| **YARN**        | 1.22.x  |
+| **Next.js**     | 12.0.7  |
+| **React**       | 17.0.2  |
+| **Redux**       | 7.2.2   |
+| **Redux-Saga**  | 1.1.3   |
+| **React-Query** | 0.3.23  |
+| **Webpack**     | 4.41.2  |
+| **esLint**      | 8.15.0  |
+
+
 ## Bibliothèques internes
 * Forms - [react-hook-form](https://react-hook-form.com)
 * Design system - [@material-ui](https://material-ui.com/)
@@ -61,6 +77,7 @@ yarn dev
   * [`events`](#events)
   * [`store`](#store)
   * [`services`](#services)
+  * [`useCases`](#use-cases)
 * [`i18n`](#i18n)
 * [`pages`](#pages)
 * [`styles`](#styles)
@@ -148,30 +165,52 @@ function MyComponent() {
 }
 ```
 
-### store
+
+### Store Redux
+Persistance des données via [react-redux](https://react-redux.js.org)
+Ordonnancement des actions via [redux-saga](https://redux-saga.js.org)
+
+#### Use-Cases
+* `authUser`
+* `feed`
+* `firebase`
+* `location`
+* `messages`
+* `notifications`
+* `pois`
+
+#### Détails des uses-cases
+
+Chaque use case possède 
+* un fichier d'action `xxx.actions.ts`
+* un fichier saga `xxx.saga.ts`
+* un fichier de test `xxx.spec.ts`
+* un fichier de type `xxx.types.ts`
+* un fichier d'interface pour définir les méthode de l'API `IXXXGateway.ts`
+* un fichier de mock de l'API pour moquer l'interface `TestXXXGateway.ts`
+* éventuellement un fichier de mocks `__mocks__.ts`
+
+#### Tests
+Chaque use-case possède un fichier de test dans le dossier `xxx.spec.ts`. 
+
+Ce fichier permet de tester toute la logique métier du use-case, sans se soucier de l'interface.
+
+### Store legacy React-Query (à remplacer)
 Persistance des données via [react-query](https://github.com/tannerlinsley/react-query)
 
+Ce store était utilisé avant, mais il faut le remplacer par le store Redux.
+
+Il reste quelques use-cases à remplacer par le store Redux.
+
 #### Queries
-* `useQueryEntourageChatMessages`
-* `useQueryEntourageFromMyFeeds`
 * `useQueryEntouragesWithMembers`
 * `useQueryEntourageUsers`
-* `useQueryFeeds`
-* `useQueryIAmLogged`
-* `useQueryMe`
 * `useQueryMembersPending`
-* `useQueryMeNonNullable`
-* `useQueryMyFeeds`
-* `useQueryPOIs`
+* `useQueryUser`
 
 #### Mutations
 * `useMutateAcceptEntourageUser`
-* `useMutateCreateEntourageChatMessage`
 * `useMutateDeleteEntourageUser`
-* `useMutateEntourage`
-* `useMutateEntourageUsers`
-* `useMutateMe`
-* `useMutateMeAddress`
 
 ## i18n
 Contenu textuel  
