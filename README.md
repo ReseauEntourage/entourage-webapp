@@ -62,10 +62,37 @@ Pour lancer le projet, vous devez installer [Yarn](#https://yarnpkg.com/en/docs/
 yarn install
 ```
 
-## build dependencies
+## Build dependencies
 
 ```
 yarn dev
+```
+
+## Variable d'environnement
+
+```
+ADMIN_ASSO_URL=
+API_KEY=
+API_V1_URL= // utiliser l'URL de l'API en preprod
+FIREBASE_API_KEY=
+FIREBASE_APP_ID=
+FIREBASE_AUTH_DOMAIN=
+FIREBASE_DATABASE_URL=
+FIREBASE_MEASUREMENT_ID=
+FIREBASE_MESSAGING_SENDER_ID=
+FIREBASE_PROJECT_ID=
+FIREBASE_STORAGE_BUCKET=
+GOOGLE_MAP_API_KEY=
+HEROKU_APP_ID=
+HEROKU_APP_NAME=
+HEROKU_RELEASE_CREATED_AT=
+HEROKU_RELEASE_VERSION=
+HEROKU_SLUG_COMMIT=
+HEROKU_SLUG_DESCRIPTION=
+PAPERTRAIL_API_TOKEN=
+SENTRY_AUTH_TOKEN=
+SENTRY_DSN=
+SERVER_URL=
 ```
 
 # Architecture
