@@ -8,12 +8,16 @@ export const texts = {
       other: 'Autre chose',
       resource: 'Un service',
       social: 'Des voisins pour entourer une personne',
+      info: 'Une information',
+      skill: 'Une compétence',
     },
     categoryContributionList: {
       mat_help: 'Faire un don matériel',
       other: 'Aider à ma façon',
       resource: 'Offrir un service',
       social: 'Passer du temps avec une personne',
+      info: 'Partager une information',
+      skill: 'Offrir une compétence',
     },
     pois: {
       other: 'Autre',

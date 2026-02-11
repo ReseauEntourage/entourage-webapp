@@ -21,7 +21,7 @@ Entourage Web App
 # Technologies
 
 ## Outils
-* [React.js](https://fr.reactjs.org)
+* [React.js](https://fr.react.dev)
 * [Next.js](https://nextjs.org) - React Framework
 * [TypeScript](https://www.typescriptlang.org) - JavaScript superset
 * [ESLint](https://eslint.org) - JavaScript Linter
@@ -38,11 +38,11 @@ Entourage Web App
 | **YARN**        | 1.22.x  |
 | **Next.js**     | 12.0.7  |
 | **React**       | 17.0.2  |
-| **Redux**       | 7.2.2   |
+| **react-redux** | 7.2.2   |
 | **Redux-Saga**  | 1.1.3   |
 | **React-Query** | 0.3.23  |
 | **Webpack**     | 4.41.2  |
-| **esLint**      | 8.15.0  |
+| **ESLint**      | 8.15.0  |
 
 
 ## Bibliothèques internes
@@ -152,19 +152,25 @@ L'objet `api` est une instance axios.
 #### routes
 * `/anonymous_users POST`
 * `/entourages POST`
+* `/entourages PATCH`
+* `/entourages/:entourageId GET`
 * `/entourages/:entourageId/users GET`
 * `/entourages/:entourageId/users POST`
 * `/entourages/:entourageId/chat_messages GET`
 * `/entourages/:entourageId/chat_messages POST`
 * `/entourages/:entourageId/users/:userId PUT`
 * `/entourages/:entourageId/users/:userId DELETE`
+* `/entourage_images GET`
 * `/feeds GET`
 * `/login POST`
 * `/myfeeds GET`
 * `/pois GET`
+* `/pois/:poiUuid GET`
 * `/users POST`
+* `/users/:id GET`
 * `/users/me GET`
 * `/users/me PATCH`
+* `/users/me/code PATCH`
 * `/users/me/address POST`
 * `/users/me/presigned_avatar_upload/ POST`
 * `/users/lookup POST`
@@ -413,13 +419,13 @@ git push --no-verify
 
 # Versionning & Release
 
-* [Conventional Commits](https://www.conventionalcommits)
+* [Conventional Commits](https://www.conventionalcommits.org)
 
 # Ressources React
 
 ## Docs & blogs
 
-* Doc officielle React - [reactjs.org](https://fr.reactjs.org)
+* Doc officielle React - [react.dev](https://fr.react.dev)
 
 * Doc officielle Next - [nextjs.org](https://nextjs.org)
 
