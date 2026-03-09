@@ -1,4 +1,4 @@
-import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
+import { Loader } from '@googlemaps/js-api-loader'
 import { useMemo, useCallback, useState, useEffect } from 'react'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { env } from 'src/core/env'
@@ -8,12 +8,11 @@ import { assertIsDefined, assertIsNumber, assertIsString, isSSR } from 'src/util
 
 const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query='
 
-if (typeof window !== 'undefined') {
-  setOptions({
-    key: env.GOOGLE_MAP_API_KEY,
-    v: 'weekly',
-  })
-}
+const loader = typeof window !== 'undefined' ? new Loader({
+  apiKey: env.GOOGLE_MAP_API_KEY,
+  version: 'weekly',
+  libraries: ['places'],
+}) : null
 
 let apiStatus: 'idle' | 'loading' | 'ready' | 'error' = 'idle'
 
@@ -95,7 +94,8 @@ export function useLoadGoogleMapApi() {
       apiStatus = 'loading'
       setStatus('loading')
 
-      importLibrary('places')
+      const promise = (loader as Loader).load()
+      promise
         .then(() => {
           apiStatus = 'ready'
           setStatus('ready')
@@ -108,7 +108,8 @@ export function useLoadGoogleMapApi() {
       // apiStatus is 'loading', we need to wait for it.
       // JS API Loader's `load()` function handles multiple calls gracefully
       // by returning the same promise.
-      importLibrary('places')
+      const promise = (loader as Loader).load()
+      promise
         .then(() => setStatus('ready'))
         .catch(() => setStatus('error'))
     }
