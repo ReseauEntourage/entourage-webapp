@@ -28,8 +28,8 @@ export function SearchCity(props: SearchCityProps) {
 
     const placeDetail = await getDetailPlacesService(value.place.place_id, value.sessionToken)
 
-    const lat = placeDetail.geometry?.location.lat()
-    const lng = placeDetail.geometry?.location.lng()
+    const lat = placeDetail.geometry?.location?.lat()
+    const lng = placeDetail.geometry?.location?.lng()
     const address = placeDetail.formatted_address
 
     assertIsNumber(lat)

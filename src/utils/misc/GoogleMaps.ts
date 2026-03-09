@@ -1,12 +1,21 @@
-import { useMemo, useCallback } from 'react'
+import { setOptions, importLibrary } from '@googlemaps/js-api-loader'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { GoogleMapLocationValue } from 'src/components/GoogleMapLocation'
 import { env } from 'src/core/env'
 import { useStateGetter } from 'src/utils/hooks'
-import { assertIsDefined, assertIsNumber, assertIsString, isSSR, useScript, useScriptIsReady } from 'src/utils/misc'
 
-const scriptUrl = `https://maps.googleapis.com/maps/api/js?key=${env.GOOGLE_MAP_API_KEY}&libraries=places`
+import { assertIsDefined, assertIsNumber, assertIsString, isSSR } from 'src/utils/misc'
 
 const googleMapsUrl = 'https://www.google.com/maps/search/?api=1&query='
+
+if (typeof window !== 'undefined') {
+  setOptions({
+    key: env.GOOGLE_MAP_API_KEY,
+    v: 'weekly',
+  })
+}
+
+let apiStatus: 'idle' | 'loading' | 'ready' | 'error' = 'idle'
 
 class GoogleMapApiNotLoaded extends Error {
   name = 'Google Map Api is not loaded'
@@ -25,7 +34,7 @@ export function getDetailPlacesService(
   return new Promise((resolve) => {
     new google.maps.places.PlacesService(document.createElement('div'))
       .getDetails(requestGetDetail, (res) => {
-        resolve(res)
+        resolve(res as google.maps.places.PlaceResult)
       })
   })
 }
@@ -38,8 +47,8 @@ export async function getLocationFromPlace(autocompletePlace: GoogleMapLocationV
     autocompletePlace.sessionToken,
   )
 
-  const latitude = placeDetail.geometry?.location.lat()
-  const longitude = placeDetail.geometry?.location.lng()
+  const latitude = placeDetail.geometry?.location?.lat()
+  const longitude = placeDetail.geometry?.location?.lng()
   const googlePlaceId = autocompletePlace.place.place_id
   const streetAddress = placeDetail.formatted_address
   const placeName = placeDetail.name
@@ -69,17 +78,41 @@ export function getDetailPlacesFromCoordinatesService(
   return new Promise((resolve) => {
     new google.maps.Geocoder()
       .geocode(requestGetDetail, (res) => {
-        resolve(res)
+        resolve(res as google.maps.GeocoderResult[])
       })
   })
 }
 
 export function useLoadGoogleMapApi() {
-  const url = !isSSR
-    ? scriptUrl
-    : ''
+  const [status, setStatus] = useState(apiStatus)
 
-  const status = useScript(url)
+  useEffect(() => {
+    if (isSSR || apiStatus === 'ready' || apiStatus === 'error') {
+      return
+    }
+
+    if (apiStatus === 'idle') {
+      apiStatus = 'loading'
+      setStatus('loading')
+
+      importLibrary('places')
+        .then(() => {
+          apiStatus = 'ready'
+          setStatus('ready')
+        })
+        .catch(() => {
+          apiStatus = 'error'
+          setStatus('error')
+        })
+    } else {
+      // apiStatus is 'loading', we need to wait for it.
+      // JS API Loader's `load()` function handles multiple calls gracefully
+      // by returning the same promise.
+      importLibrary('places')
+        .then(() => setStatus('ready'))
+        .catch(() => setStatus('error'))
+    }
+  }, [])
 
   if (status === 'idle' || status === 'loading') {
     return false
@@ -93,7 +126,7 @@ export function useLoadGoogleMapApi() {
 }
 
 export function useAutocompleteSessionToken() {
-  if (!useScriptIsReady(scriptUrl)) {
+  if (apiStatus !== 'ready') {
     throw new GoogleMapApiNotLoaded()
   }
 
@@ -112,7 +145,7 @@ export function useAutocompleteSessionToken() {
 }
 
 export function useAutocompleteServices() {
-  if (!useScriptIsReady(scriptUrl)) {
+  if (apiStatus !== 'ready') {
     throw new GoogleMapApiNotLoaded()
   }
 
