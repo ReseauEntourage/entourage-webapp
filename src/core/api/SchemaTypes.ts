@@ -21,6 +21,8 @@ export type FeedDisplayCategory =
   | 'other'
   | 'resource'
   | 'social'
+  | 'info'
+  | 'skill'
 
 export type FeedJoinStatus =
   | 'accepted'

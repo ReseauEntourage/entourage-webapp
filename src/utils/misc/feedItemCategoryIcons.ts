@@ -1,5 +1,6 @@
 import { SVGProps } from 'react'
 import {
+  Info,
   MatHelp,
   Other,
   Resource,
@@ -12,4 +13,6 @@ export const feedItemCategoryIcons: Record<FeedDisplayCategory, (props: SVGProps
   other: Other,
   social: Social,
   resource: Resource,
+  info: Info,
+  skill: Other,
 }

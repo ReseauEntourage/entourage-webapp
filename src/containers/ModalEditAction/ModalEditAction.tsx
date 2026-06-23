@@ -18,7 +18,7 @@ import { texts } from 'src/i18n'
 import { useGetCurrentPosition } from 'src/utils/hooks'
 import { getLocationFromPlace } from 'src/utils/misc'
 
-const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other'/* , 'info', 'skill' */]
+const categories: FeedDisplayCategory[] = ['social', 'mat_help', 'resource', 'other', 'info', 'skill']
 
 function createCategoryValue(entourageType: FeedEntourageType, displayCategory: FeedDisplayCategory) {
   return `${entourageType}:${displayCategory}`
