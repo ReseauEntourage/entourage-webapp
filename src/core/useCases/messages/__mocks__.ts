@@ -35,10 +35,12 @@ export const fakeMessagesData: MessagesState = {
     abc: {
       ...createConversationItem(),
       uuid: 'abc',
+      updatedAt: '2026-03-09T15:34:50.322Z',
     },
     def: {
       ...createConversationItem(),
       uuid: 'def',
+      updatedAt: '2026-03-09T15:34:50.321Z',
     },
   },
   selectedConversationUuid: null,
